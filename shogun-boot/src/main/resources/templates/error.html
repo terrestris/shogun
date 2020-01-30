@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+      div {
+        background-color: lightblue;
+      }
+    </style>
+</head>
+<h1>Oops!</h1>
+<div class="errorPage">
+    <p>
+        There seems to be a problem with the page you requested
+        (
+        <span th:text="${path}"/>
+        ).
+    </p>
+    <p th:text="${'Status: ' + status}"/>
+</div>
+</html>

@@ -1,0 +1,30 @@
+html, body {
+  margin: auto;
+  width: 100%;
+  height: 100%;
+  background-color: #D4D9DD;
+  font-family: Verdana, Arial, sans-serif;
+}
+
+#error {
+  height: 100%;
+  background-color: white;
+  border-left: 1px solid #999999;
+  border-right: 1px solid #999999;
+  box-shadow: 0 0 5px 5px #C5CACD;
+}
+
+#error-box {
+  background: none repeat scroll 0% 0% #DECA16;
+  border: 1px solid #DECA16;
+  font-family: Arial, helvetica, sans-serif;
+    font-weight: bold;
+    border-radius: 8px;
+    -moz-border-radius: 8px;
+    margin: 0 70px 0 70px;
+    padding: 50px;
+}
+
+.error-code {
+      color: #BFAD13;
+}
