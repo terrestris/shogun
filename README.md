@@ -133,3 +133,11 @@ curl \
   -X DELETE \
   http://localhost:8080/shogun-boot/applications/1
 ``` 
+
+## Dev-Notes
+
+If you want to create a report with detailed information about the projects dependencies etc, you can use this command:
+
+`mvn site -Preporting`
+
+Just have a look at `/target/site/index.html` afterwards.
