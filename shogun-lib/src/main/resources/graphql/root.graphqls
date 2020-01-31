@@ -1,8 +1,32 @@
 scalar JSON
 
 type Query {
+    applicationById(id: ID): Application
+    allApplications: [Application]
+    layerById(id: ID): Layer
+    allLayers: [Layer]
     userById(id: ID): User
     allUsers: [User]
+}
+
+type Application {
+    id: ID
+    name: String
+    i18n: JSON
+    stateOnly: Boolean
+    clientConfig: JSON
+    layerTree: JSON
+    layerConfig: JSON
+    toolConfig: JSON
+}
+
+type Layer {
+    id: ID
+    name: String
+    clientConfig: JSON
+    sourceConfig: JSON
+    features: JSON
+    type: String
 }
 
 type User {
