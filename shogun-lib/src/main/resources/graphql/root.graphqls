@@ -1,0 +1,15 @@
+scalar JSON
+
+type Query {
+    userById(id: ID): User
+    allUsers: [User]
+}
+
+type User {
+    id: ID
+    username: String
+    email: String
+    enabled: Boolean
+    details: JSON
+    clientConfig: JSON
+}
