@@ -77,6 +77,12 @@
     <postgres.version>42.2.9</postgres.version>
     <flyway.version>6.2.0</flyway.version>
 
+    <!-- GraphQL -->
+    <graphql-spring-boot-starter.version>5.0.2</graphql-spring-boot-starter.version>
+    <graphiql-spring-boot-starter.version>5.0.2</graphiql-spring-boot-starter.version>
+    <graphql-java-tools.version>5.2.4</graphql-java-tools.version>
+    <graphql-java-extended-scalars.version>1.0.1</graphql-java-extended-scalars.version>
+
     <!-- Utils -->
     <lombok.version>1.18.10</lombok.version>
     <apache-httpclient.version>4.5.11</apache-httpclient.version>
@@ -290,6 +296,28 @@
         <groupId>com.vladmihalcea</groupId>
         <artifactId>hibernate-types-52</artifactId>
         <version>${hibernate-extra-types.version}</version>
+      </dependency>
+
+      <!-- GraphQL -->
+      <dependency>
+        <groupId>com.graphql-java</groupId>
+        <artifactId>graphql-spring-boot-starter</artifactId>
+        <version>${graphql-spring-boot-starter.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.graphql-java</groupId>
+        <artifactId>graphql-java-tools</artifactId>
+        <version>${graphql-java-tools.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.graphql-java</groupId>
+        <artifactId>graphiql-spring-boot-starter</artifactId>
+        <version>${graphiql-spring-boot-starter.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.graphql-java</groupId>
+        <artifactId>graphql-java-extended-scalars</artifactId>
+        <version>${graphql-java-extended-scalars.version}</version>
       </dependency>
 
       <!-- Logging -->
