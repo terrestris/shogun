@@ -1,3 +1,5 @@
+SET search_path TO shogun;
+
 INSERT INTO permissions VALUES (
     nextval('hibernate_sequence'),
     NOW()::timestamp,
