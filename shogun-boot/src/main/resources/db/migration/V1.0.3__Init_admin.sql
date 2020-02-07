@@ -1,3 +1,5 @@
+SET search_path TO shogun;
+
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 INSERT INTO users VALUES (
