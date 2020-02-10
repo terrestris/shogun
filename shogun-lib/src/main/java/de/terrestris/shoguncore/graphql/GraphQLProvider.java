@@ -3,6 +3,7 @@ package de.terrestris.shoguncore.graphql;
 import com.google.common.io.Resources;
 import graphql.GraphQL;
 import graphql.scalars.ExtendedScalars;
+import graphql.schema.GraphQLScalarType;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.*;
 import org.apache.commons.codec.Charsets;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class GraphQLProvider {
@@ -35,8 +38,8 @@ public class GraphQLProvider {
 
     @PostConstruct
     public void init() throws IOException {
-        LOG.info("Initializing Graph QL");
-        URL url = Resources.getResource("graphql/root.graphqls");
+        LOG.info("Initializing Graph QL for SHOGun");
+        URL url = Resources.getResource("graphql/shogun.graphqls");
         String sdl = Resources.toString(url, Charsets.UTF_8);
         buildSchema(sdl);
         this.graphQL = GraphQL.newGraphQL(graphQLSchema).build();
@@ -54,21 +57,53 @@ public class GraphQLProvider {
         this.graphQLSchema = schemaGenerator.makeExecutableSchema(typeRegistry, runtimeWiring);
     }
 
+    public List<GraphQLScalarType> gatherScalars() {
+        List<GraphQLScalarType> scalars = new ArrayList<>();
+        scalars.add(ExtendedScalars.Json);
+        return scalars;
+    }
+
+    public List<TypeRuntimeWiring.Builder> gatherTypes() {
+        List<TypeRuntimeWiring.Builder> typeBuilders = new ArrayList<>();
+
+        typeBuilders.add(
+            TypeRuntimeWiring.newTypeWiring("Query")
+                .dataFetcher("applicationById", graphQLDataFetchers.getApplicationById())
+        );
+        typeBuilders.add(
+            TypeRuntimeWiring.newTypeWiring("Query")
+                .dataFetcher("allApplications", graphQLDataFetchers.getAllApplications())
+        );
+        typeBuilders.add(
+            TypeRuntimeWiring.newTypeWiring("Query")
+                .dataFetcher("layerById", graphQLDataFetchers.getLayerById())
+        );
+        typeBuilders.add(
+            TypeRuntimeWiring.newTypeWiring("Query")
+                .dataFetcher("allLayers", graphQLDataFetchers.getAllLayers())
+        );
+        typeBuilders.add(
+            TypeRuntimeWiring.newTypeWiring("Query")
+                .dataFetcher("userById", graphQLDataFetchers.getUserById())
+        );
+        typeBuilders.add(
+            TypeRuntimeWiring.newTypeWiring("Query")
+                .dataFetcher("allUsers", graphQLDataFetchers.getAllUsers())
+        );
+
+        return typeBuilders;
+    }
+
     private RuntimeWiring buildWiring() {
-        return RuntimeWiring.newRuntimeWiring()
-            .scalar(ExtendedScalars.Json)
-            .type(TypeRuntimeWiring.newTypeWiring("Query")
-                .dataFetcher("applicationById", graphQLDataFetchers.getApplicationById()))
-            .type(TypeRuntimeWiring.newTypeWiring("Query")
-                .dataFetcher("allApplications", graphQLDataFetchers.getAllApplications()))
-            .type(TypeRuntimeWiring.newTypeWiring("Query")
-                .dataFetcher("layerById", graphQLDataFetchers.getLayerById()))
-            .type(TypeRuntimeWiring.newTypeWiring("Query")
-                .dataFetcher("allLayers", graphQLDataFetchers.getAllLayers()))
-            .type(TypeRuntimeWiring.newTypeWiring("Query")
-                .dataFetcher("userById", graphQLDataFetchers.getUserById()))
-            .type(TypeRuntimeWiring.newTypeWiring("Query")
-                .dataFetcher("allUsers", graphQLDataFetchers.getAllUsers()))
-            .build();
+        RuntimeWiring.Builder runtimeWiring = RuntimeWiring.newRuntimeWiring();
+        List<GraphQLScalarType> scalars = this.gatherScalars();
+        List<TypeRuntimeWiring.Builder> types = gatherTypes();
+        for (int i = 0; i < scalars.size(); i++) {
+            runtimeWiring = runtimeWiring.scalar(scalars.get(i));
+        }
+        for (int i = 0; i < types.size(); i++) {
+            runtimeWiring = runtimeWiring.type(types.get(i));
+        }
+        return runtimeWiring.build();
     }
 }
