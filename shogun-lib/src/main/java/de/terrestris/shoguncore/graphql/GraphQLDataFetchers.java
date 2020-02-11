@@ -1,16 +1,11 @@
 package de.terrestris.shoguncore.graphql;
 
-import de.terrestris.shoguncore.model.Application;
-import de.terrestris.shoguncore.model.Layer;
-import de.terrestris.shoguncore.model.User;
 import de.terrestris.shoguncore.repository.ApplicationRepository;
 import de.terrestris.shoguncore.repository.LayerRepository;
 import de.terrestris.shoguncore.repository.UserRepository;
 import graphql.schema.DataFetcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 @Component
 public class GraphQLDataFetchers {
@@ -27,45 +22,33 @@ public class GraphQLDataFetchers {
     public DataFetcher getApplicationById() {
         return dataFetchingEnvironment -> {
             Long applicationId = Long.parseLong(dataFetchingEnvironment.getArgument("id"));
-            Optional<Application> application = this.applicationRepository.findById(applicationId);
-            return application;
+            return this.applicationRepository.findById(applicationId);
         };
     }
 
     public DataFetcher getAllApplications() {
-        return dataFetchingEnvironment -> {
-            Iterable<Application> applications = this.applicationRepository.findAll();
-            return applications;
-        };
+        return dataFetchingEnvironment -> this.applicationRepository.findAll();
     }
 
     public DataFetcher getLayerById() {
         return dataFetchingEnvironment -> {
             Long layerId = Long.parseLong(dataFetchingEnvironment.getArgument("id"));
-            Optional<Layer> layer = this.layerRepository.findById(layerId);
-            return layer;
+            return this.layerRepository.findById(layerId);
         };
     }
 
     public DataFetcher getAllLayers() {
-        return dataFetchingEnvironment -> {
-            Iterable<Layer> layers = this.layerRepository.findAll();
-            return layers;
-        };
+        return dataFetchingEnvironment -> this.layerRepository.findAll();
     }
 
     public DataFetcher getUserById() {
         return dataFetchingEnvironment -> {
             Long userId = Long.parseLong(dataFetchingEnvironment.getArgument("id"));
-            Optional<User> user = this.userRepository.findById(userId);
-            return user;
+            return this.userRepository.findById(userId);
         };
     }
 
     public DataFetcher getAllUsers() {
-        return dataFetchingEnvironment -> {
-            Iterable<User> users = this.userRepository.findAll();
-            return users;
-        };
+        return dataFetchingEnvironment -> this.userRepository.findAll();
     }
 }
