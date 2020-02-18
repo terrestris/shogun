@@ -47,6 +47,8 @@
   <modules>
     <module>shogun-lib</module>
     <module>shogun-boot</module>
+    <module>shogun-gs-interceptor</module>
+    <module>shogun-config</module>
   </modules>
 
   <properties>
