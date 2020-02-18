@@ -73,6 +73,8 @@
     <spring-boot.version>2.2.4.RELEASE</spring-boot.version>
     <spring-data.version>2.2.4.RELEASE</spring-data.version>
 
+    <keycloak.version>9.0.0</keycloak.version>
+
     <!-- Database -->
     <hibernate.version>5.4.10.Final</hibernate.version>
     <hibernate-extra-types.version>2.9.3</hibernate-extra-types.version>
@@ -492,6 +494,20 @@
         <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter</artifactId>
         <version>${junit.jupiter.version}</version>
+      </dependency>
+
+      <!-- Keycloak -->
+      <dependency>
+        <groupId>org.keycloak</groupId>
+        <artifactId>keycloak-spring-boot-starter</artifactId>
+        <version>${keycloak.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.keycloak.bom</groupId>
+        <artifactId>keycloak-adapter-bom</artifactId>
+        <version>${keycloak.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
 
       <dependency>
