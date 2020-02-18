@@ -112,10 +112,6 @@
       <groupId>org.keycloak</groupId>
       <artifactId>keycloak-spring-boot-starter</artifactId>
     </dependency>
-<!--    <dependency>-->
-<!--      <groupId>org.keycloak.bom</groupId>-->
-<!--      <artifactId>keycloak-adapter-bom</artifactId>-->
-<!--    </dependency>-->
 
     <!-- SHOGun Lib -->
     <dependency>
