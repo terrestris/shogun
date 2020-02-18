@@ -1,4 +1,4 @@
-package de.terrestris.shogunboot.dto;
+package de.terrestris.shogun.boot.dto;
 
 import de.terrestris.shoguncore.model.User;
 import lombok.AllArgsConstructor;

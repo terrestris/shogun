@@ -1949,6 +1949,7 @@ public class HttpUtil {
             // cleanup
             httpRequest.reset();
 
+            // TODO Replace with try-with-resources statement
             IOUtils.closeQuietly(httpResponse);
             IOUtils.closeQuietly(httpClient);
         }

@@ -1,4 +1,4 @@
-package de.terrestris.shogunboot.controller;
+package de.terrestris.shogun.boot.controller;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

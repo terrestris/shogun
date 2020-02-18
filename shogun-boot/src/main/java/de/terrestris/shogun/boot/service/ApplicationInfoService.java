@@ -1,6 +1,6 @@
-package de.terrestris.shogunboot.service;
+package de.terrestris.shogun.boot.service;
 
-import de.terrestris.shogunboot.dto.ApplicationInfo;
+import de.terrestris.shogun.boot.dto.ApplicationInfo;
 import de.terrestris.shoguncore.model.User;
 import de.terrestris.shoguncore.security.SecurityContextUtil;
 import de.terrestris.shoguncore.service.security.IdentityService;

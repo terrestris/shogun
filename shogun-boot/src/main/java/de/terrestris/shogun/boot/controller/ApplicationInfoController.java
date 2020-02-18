@@ -1,7 +1,7 @@
-package de.terrestris.shogunboot.controller;
+package de.terrestris.shogun.boot.controller;
 
-import de.terrestris.shogunboot.dto.ApplicationInfo;
-import de.terrestris.shogunboot.service.ApplicationInfoService;
+import de.terrestris.shogun.boot.dto.ApplicationInfo;
+import de.terrestris.shogun.boot.service.ApplicationInfoService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

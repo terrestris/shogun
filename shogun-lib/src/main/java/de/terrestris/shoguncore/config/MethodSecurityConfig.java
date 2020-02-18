@@ -18,7 +18,6 @@ import java.util.Map;
 // TODO Move to shogun-boot?!
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-//@ComponentScan(basePackages = { "de.terrestris.shogunboot", "de.terrestris.shoguncore" })
 public class MethodSecurityConfig extends GlobalMethodSecurityConfiguration {
 
     @Autowired

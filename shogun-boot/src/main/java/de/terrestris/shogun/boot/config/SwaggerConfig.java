@@ -1,4 +1,4 @@
-package de.terrestris.shogunboot.config;
+package de.terrestris.shogun.boot.config;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;

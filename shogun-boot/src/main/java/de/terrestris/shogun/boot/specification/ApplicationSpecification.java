@@ -1,4 +1,4 @@
-package de.terrestris.shogunboot.specification;
+package de.terrestris.shogun.boot.specification;
 
 import de.terrestris.shoguncore.model.Application;
 import org.springframework.data.jpa.domain.Specification;
