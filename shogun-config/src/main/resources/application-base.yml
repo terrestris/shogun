@@ -14,12 +14,11 @@ spring:
     banner-mode: off
     allow-bean-definition-overriding: true
   jpa:
-    properties:
-      hibernate:
-        jdbc:
-          lob:
-            non_contextual_creation: true
-        ddl-auto: none
+    hibernate:
+      jdbc:
+        lob:
+          non_contextual_creation: true
+      ddl-auto: none
   flyway:
     enabled: true
     schemas: interceptor,public
@@ -27,7 +26,7 @@ spring:
     locations: classpath:db/migration
   datasource:
     platform: postgres
-    url: jdbc:postgresql://localhost:5555/shogun?currentSchema=interceptor
+    url: jdbc:postgresql://localhost:5555/shogun
     username: shogun
     password: shogun
   session:
