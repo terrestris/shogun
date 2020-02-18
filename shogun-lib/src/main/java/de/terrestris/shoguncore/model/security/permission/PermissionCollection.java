@@ -5,6 +5,7 @@ import de.terrestris.shoguncore.enumeration.PermissionType;
 import de.terrestris.shoguncore.model.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -17,6 +18,7 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class PermissionCollection extends BaseEntity {
 
     @ElementCollection()

@@ -15,7 +15,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 public abstract class VerificationToken extends BaseEntity {
 
     private static final int DEFAULT_EXPIRATION = 60 * 24;

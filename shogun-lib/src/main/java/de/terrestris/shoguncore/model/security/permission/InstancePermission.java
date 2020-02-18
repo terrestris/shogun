@@ -14,7 +14,7 @@ import javax.persistence.OneToOne;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 public abstract class InstancePermission extends BaseEntity {
 
     @ManyToOne(optional = false)

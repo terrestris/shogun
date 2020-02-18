@@ -14,7 +14,7 @@ import javax.persistence.OneToOne;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 public abstract class ClassPermission extends BaseEntity {
 
     @Column
