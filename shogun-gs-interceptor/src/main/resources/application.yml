@@ -20,7 +20,3 @@ interceptor:
   namespaces:
     - namespace: SHOGUN
       url: http://localhost:1234/geoserver/SHOGUN
-
-
-
-
