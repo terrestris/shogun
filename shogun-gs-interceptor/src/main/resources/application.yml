@@ -7,17 +7,6 @@ spring:
 spring:
   profiles: interceptor
   datasource:
-    username: peter
-
-server:
-  port: 8082
-  servlet:
-    context-path: /shogun-gs-interceptor
-
----
-spring:
-  profiles: interceptor-dev
-  datasource:
     url: jdbc:postgresql://localhost:5555/shogun?currentSchema=interceptor
 
 server:
