@@ -7,7 +7,7 @@ import de.terrestris.shogun.interceptor.response.WfsResponseInterceptorInterface
 import de.terrestris.shogun.interceptor.response.WmsResponseInterceptorInterface;
 import de.terrestris.shogun.interceptor.response.WpsResponseInterceptorInterface;
 import de.terrestris.shogun.interceptor.servlet.MutableHttpServletRequest;
-import de.terrestris.shoguncore.dto.HttpResponse;
+import de.terrestris.shogun.lib.dto.HttpResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

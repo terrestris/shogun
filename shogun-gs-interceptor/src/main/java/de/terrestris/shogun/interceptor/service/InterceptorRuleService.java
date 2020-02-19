@@ -5,10 +5,7 @@ import de.terrestris.shogun.interceptor.enumeration.OgcEnum;
 import de.terrestris.shogun.interceptor.model.InterceptorRule;
 import de.terrestris.shogun.interceptor.repository.InterceptorRuleRepository;
 import de.terrestris.shogun.interceptor.specification.InterceptorRuleSpecification;
-import de.terrestris.shoguncore.service.BaseService;
-import org.keycloak.authorization.client.util.Http;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import de.terrestris.shogun.lib.service.BaseService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

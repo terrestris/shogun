@@ -1,6 +1,6 @@
 package de.terrestris.shogun.boot.specification;
 
-import de.terrestris.shoguncore.model.Application;
+import de.terrestris.shogun.lib.model.Application;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.CriteriaBuilder;

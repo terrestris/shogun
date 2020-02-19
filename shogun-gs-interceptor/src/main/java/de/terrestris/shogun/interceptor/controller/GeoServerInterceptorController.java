@@ -2,7 +2,7 @@ package de.terrestris.shogun.interceptor.controller;
 
 import de.terrestris.shogun.interceptor.exception.InterceptorException;
 import de.terrestris.shogun.interceptor.service.GeoServerInterceptorService;
-import de.terrestris.shoguncore.dto.HttpResponse;
+import de.terrestris.shogun.lib.dto.HttpResponse;
 import org.apache.http.HttpException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,7 +16,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.Optional;
 

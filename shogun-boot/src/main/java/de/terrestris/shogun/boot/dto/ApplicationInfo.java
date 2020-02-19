@@ -1,6 +1,6 @@
 package de.terrestris.shogun.boot.dto;
 
-import de.terrestris.shoguncore.model.User;
+import de.terrestris.shogun.lib.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

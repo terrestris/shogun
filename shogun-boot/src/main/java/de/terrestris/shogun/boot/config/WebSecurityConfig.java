@@ -1,7 +1,7 @@
 package de.terrestris.shogun.boot.config;
 
-import de.terrestris.shoguncore.security.ShogunUserDetailsService;
-import de.terrestris.shoguncore.security.authentication.ShogunAuthenticationProvider;
+import de.terrestris.shogun.lib.security.ShogunUserDetailsService;
+import de.terrestris.shogun.lib.security.authentication.ShogunAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +13,7 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 @EnableWebSecurity
-@ComponentScan(basePackages = { "de.terrestris.shogun.boot", "de.terrestris.shoguncore" })
+@ComponentScan(basePackages = { "de.terrestris.shogun.boot", "de.terrestris.shogun.lib" })
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired

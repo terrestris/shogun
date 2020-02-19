@@ -1,7 +1,7 @@
 package de.terrestris.shogun.interceptor.response;
 
 import de.terrestris.shogun.interceptor.servlet.MutableHttpServletRequest;
-import de.terrestris.shoguncore.dto.HttpResponse;
+import de.terrestris.shogun.lib.dto.HttpResponse;
 import org.springframework.stereotype.Component;
 
 @Component

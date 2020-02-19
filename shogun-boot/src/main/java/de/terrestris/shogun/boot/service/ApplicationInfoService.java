@@ -1,9 +1,9 @@
 package de.terrestris.shogun.boot.service;
 
 import de.terrestris.shogun.boot.dto.ApplicationInfo;
-import de.terrestris.shoguncore.model.User;
-import de.terrestris.shoguncore.security.SecurityContextUtil;
-import de.terrestris.shoguncore.service.security.IdentityService;
+import de.terrestris.shogun.lib.model.User;
+import de.terrestris.shogun.lib.security.SecurityContextUtil;
+import de.terrestris.shogun.lib.service.security.IdentityService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

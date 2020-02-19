@@ -36,7 +36,7 @@ INSERT INTO userclasspermissions VALUES (
     nextval('hibernate_sequence'),
     NOW()::timestamp,
     NOW()::timestamp,
-    'de.terrestris.shoguncore.model.Application',
+    'de.terrestris.shogun.lib.model.Application',
     (SELECT id FROM permissions WHERE name = 'ADMIN'),
     (SELECT id FROM users WHERE username = 'admin')
 ) ON CONFLICT DO NOTHING;
@@ -45,7 +45,7 @@ INSERT INTO userclasspermissions VALUES (
     nextval('hibernate_sequence'),
     NOW()::timestamp,
     NOW()::timestamp,
-    'de.terrestris.shoguncore.model.User',
+    'de.terrestris.shogun.lib.model.User',
     (SELECT id FROM permissions WHERE name = 'ADMIN'),
     (SELECT id FROM users WHERE username = 'admin')
 );
@@ -54,7 +54,7 @@ INSERT INTO userclasspermissions VALUES (
     nextval('hibernate_sequence'),
     NOW()::timestamp,
     NOW()::timestamp,
-    'de.terrestris.shoguncore.model.Identity',
+    'de.terrestris.shogun.lib.model.Identity',
     (SELECT id FROM permissions WHERE name = 'ADMIN'),
     (SELECT id FROM users WHERE username = 'admin')
 );
@@ -63,7 +63,7 @@ INSERT INTO userclasspermissions VALUES (
     nextval('hibernate_sequence'),
     NOW()::timestamp,
     NOW()::timestamp,
-    'de.terrestris.shoguncore.model.Group',
+    'de.terrestris.shogun.lib.model.Group',
     (SELECT id FROM permissions WHERE name = 'ADMIN'),
     (SELECT id FROM users WHERE username = 'admin')
 );
