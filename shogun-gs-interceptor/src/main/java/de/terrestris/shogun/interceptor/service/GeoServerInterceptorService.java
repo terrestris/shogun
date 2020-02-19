@@ -58,7 +58,6 @@ public class GeoServerInterceptorService {
         "geowebcache-miss-reason"
     };
 
-    private static final Pattern WMTS_PATTERN = Pattern.compile("/[^/]+/wmts.action/\\d+/(.*)");
     private static final String WMS_REFLECT_ENDPOINT = "/reflect";
     private static final String USE_REFLECT_PARAM = "useReflect";
 
@@ -67,10 +66,6 @@ public class GeoServerInterceptorService {
 
     @Autowired
     InterceptorRuleService interceptorRuleService;
-
-//    @Autowired
-//    @Qualifier("layerDataSourceDao")
-//    private LayerDataSourceDao<WmtsLayerDataSource> wmtsLayerDataSourceDao;
 
     @Autowired
     private InterceptorProperties interceptorProperties;
@@ -304,24 +299,6 @@ public class GeoServerInterceptorService {
 
         return responseHeaders;
     }
-
-//    @Transactional
-//    public HttpResponse interceptWmtsRequest(HttpServletRequest request, String serviceId) throws UnsupportedEncodingException, InterceptorException, HttpException, URISyntaxException {
-//        Matcher matcher = WMTS_PATTERN.matcher(request.getRequestURI());
-//        int id = Integer.parseInt(serviceId);
-//        if (!matcher.matches()) {
-//            throw new InterceptorException("No WMTS request path found!");
-//        }
-//        String path = matcher.group(1);
-//        WmtsLayerDataSource dataSource = wmtsLayerDataSourceDao.findById(id);
-//        String baseUrl = dataSource.getUrl();
-//        HttpResponse response = HttpUtil.get(baseUrl + "/" + path);
-//
-//        HttpHeaders forwardingHeaders = getResponseHeadersToForward(response.getHeaders());
-//        response.setHeaders(forwardingHeaders);
-//
-//        return response;
-//    }
 
     /**
      * @param request
