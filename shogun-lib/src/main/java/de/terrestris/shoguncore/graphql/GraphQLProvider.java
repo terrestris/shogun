@@ -36,34 +36,39 @@ public class GraphQLProvider {
         return graphQL;
     }
 
-    @PostConstruct
-    public void init() throws IOException {
-        LOG.info("Initializing Graph QL for SHOGun");
-        URL url = Resources.getResource("graphql/shogun.graphqls");
-        String sdl = Resources.toString(url, Charsets.UTF_8);
-        buildSchema(sdl);
-        this.graphQL = GraphQL.newGraphQL(graphQLSchema).build();
-    }
-
     @Bean
     public GraphQLSchema getSchema() {
         return this.graphQLSchema;
     }
 
-    private void buildSchema(String sdl) {
+    @PostConstruct
+    public void init() throws IOException {
+        LOG.info("Initializing Graph QL");
+        buildSchema();
+        this.graphQL = GraphQL.newGraphQL(graphQLSchema).build();
+    }
+
+    protected void buildSchema() throws IOException {
+        String sdl = this.gatherResources();
         TypeDefinitionRegistry typeRegistry = new SchemaParser().parse(sdl);
         RuntimeWiring runtimeWiring = buildWiring();
         SchemaGenerator schemaGenerator = new SchemaGenerator();
         this.graphQLSchema = schemaGenerator.makeExecutableSchema(typeRegistry, runtimeWiring);
     }
 
-    public List<GraphQLScalarType> gatherScalars() {
+    protected String gatherResources() throws IOException {
+        URL url = Resources.getResource("graphql/shogun.graphqls");
+        String sdl = Resources.toString(url, Charsets.UTF_8);
+        return sdl;
+    }
+
+    protected List<GraphQLScalarType> gatherScalars() {
         List<GraphQLScalarType> scalars = new ArrayList<>();
         scalars.add(ExtendedScalars.Json);
         return scalars;
     }
 
-    public List<TypeRuntimeWiring.Builder> gatherTypes() {
+    protected List<TypeRuntimeWiring.Builder> gatherTypes() {
         List<TypeRuntimeWiring.Builder> typeBuilders = new ArrayList<>();
 
         typeBuilders.add(
