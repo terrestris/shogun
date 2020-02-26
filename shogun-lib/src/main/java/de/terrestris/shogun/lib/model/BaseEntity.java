@@ -26,6 +26,7 @@ public abstract class BaseEntity implements Serializable {
 
     // TODO Don't create setter for ID?!
     @Id
+    // TODO Replace with @GeneratedValue(strategy = GenerationType.IDENTITY) and remove hibernate_sequence from flyway migrations
     @GeneratedValue(strategy= GenerationType.SEQUENCE)
     @Column(unique = true, nullable = false)
     private Long id;
