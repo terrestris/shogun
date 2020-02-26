@@ -14,7 +14,7 @@ public class InterceptorSwaggerConfig extends SwaggerConfig {
     @Override
     protected ApiInfo apiInfo() {
         ApiInfo apiInfo = new ApiInfo(
-            "SHOGun GeoServer Interceptor API",
+            "SHOGun GeoServer Interceptor REST-API",
             description,
             version,
             termsOfServiceUrl,
