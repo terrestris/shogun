@@ -16,7 +16,7 @@ import java.util.Collections;
 @Configuration
 @EnableSwagger2
 @EnableAutoConfiguration
-public class SwaggerConfig {
+public class BootSwaggerConfig extends SwaggerConfig {
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
