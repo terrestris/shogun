@@ -1,6 +1,6 @@
 CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public;
 
-SET search_path TO shogun, public;
+SET search_path TO shogun;
 
 CREATE SEQUENCE hibernate_sequence
     INCREMENT 1

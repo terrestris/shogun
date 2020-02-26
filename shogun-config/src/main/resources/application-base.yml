@@ -21,7 +21,6 @@ spring:
       ddl-auto: none
   flyway:
     enabled: true
-    schemas: interceptor,public
     baselineOnMigrate: true
     locations: classpath:db/migration
   datasource:

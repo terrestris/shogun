@@ -8,6 +8,8 @@ spring:
   profiles: interceptor
   datasource:
     url: jdbc:postgresql://localhost:5555/shogun?currentSchema=interceptor
+  flyway:
+    schemas: interceptor, public
 
 server:
   port: 8082
