@@ -5,6 +5,7 @@ import de.terrestris.shogun.lib.specification.UserSpecification;
 import de.terrestris.shogun.lib.model.Role;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.service.security.IdentityService;
+import org.keycloak.KeycloakPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -34,6 +35,10 @@ public class SecurityContextUtil {
             userMail = (String) principal;
         } else if (principal instanceof org.springframework.security.core.userdetails.User) {
             userMail = ((org.springframework.security.core.userdetails.User) principal).getUsername();
+        } else if (principal instanceof KeycloakPrincipal) {
+            KeycloakPrincipal p = (KeycloakPrincipal) principal;
+            p.getKeycloakSecurityContext();
+            userMail = (String) principal;
         } else {
             return Optional.empty();
         }

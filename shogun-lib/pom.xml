@@ -121,10 +121,15 @@
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
     </dependency>
-
     <dependency>
       <groupId>com.graphhopper.external</groupId>
       <artifactId>jackson-datatype-jts</artifactId>
+    </dependency>
+
+    <!-- Keycloak -->
+    <dependency>
+      <groupId>org.keycloak</groupId>
+      <artifactId>keycloak-spring-boot-starter</artifactId>
     </dependency>
 
     <!-- Logging -->
