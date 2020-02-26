@@ -1,0 +1,36 @@
+spring:
+  profiles:
+    include: base
+    active: base, boot
+
+---
+spring:
+  profiles: boot
+  datasource:
+    url: jdbc:postgresql://localhost:5555/shogun?currentSchema=shogun
+  flyway:
+    schemas: shogun, public
+  mail:
+    host: mail.terrestris.de
+    port: 587
+    protocol: smtp
+    username: noreply
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        transport:
+          protocol: smtp
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          timeout: 8000
+
+server:
+  port: 8080
+  servlet:
+    context-path: /shogun-boot
+
+support:
+  email: noreply@terrestris.de
+
