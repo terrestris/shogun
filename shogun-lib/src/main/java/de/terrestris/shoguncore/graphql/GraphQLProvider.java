@@ -10,6 +10,7 @@ import org.apache.commons.codec.Charsets;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
@@ -24,19 +25,29 @@ public class GraphQLProvider {
 
     protected final Logger LOG = LogManager.getLogger(getClass());
 
-    private GraphQL graphQL;
+    protected GraphQL graphQL;
 
-    private GraphQLSchema graphQLSchema;
+    protected GraphQLSchema graphQLSchema;
 
     @Autowired
     GraphQLDataFetchers graphQLDataFetchers;
 
     @Bean
+    @ConditionalOnProperty(
+        value="shogun.graphql.skipBean",
+        havingValue = "false",
+        matchIfMissing = true
+    )
     public GraphQL graphQL() {
         return graphQL;
     }
 
     @Bean
+    @ConditionalOnProperty(
+        value="shogun.graphql.skipBean",
+        havingValue = "false",
+        matchIfMissing = true
+    )
     public GraphQLSchema getSchema() {
         return this.graphQLSchema;
     }
@@ -44,7 +55,7 @@ public class GraphQLProvider {
     @PostConstruct
     public void init() throws IOException {
         LOG.info("Initializing Graph QL");
-        buildSchema();
+        this.buildSchema();
         this.graphQL = GraphQL.newGraphQL(graphQLSchema).build();
     }
 
