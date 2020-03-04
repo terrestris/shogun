@@ -35,7 +35,7 @@ SCRIPTDIR=$(dirname "$0")
 pushd "$SCRIPTDIR"/..
 
 mvn release:clean
-mvn release:prepare --batch-mode -DreleaseVersion="$RELEASE_VERSION" -DdevelopmentVersion="$DEVELOPMENT_VERSION" -Darguments="-DskipTests"
+mvn release:prepare --batch-mode -DreleaseVersion="$RELEASE_VERSION" -DdevelopmentVersion="$DEVELOPMENT_VERSION" -DtagNameFormat=v@{project.version} -Darguments="-DskipTests"
 # Deployment will be handled by GitHub actions
 mvn release:perform --batch-mode -Darguments="-Dmaven.deploy.skip=true"
 
