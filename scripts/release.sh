@@ -24,6 +24,12 @@ if [[ ! $DEVELOPMENT_VERSION =~ ^([0-9]+\.[0-9]+\.[0-9])(\-SNAPSHOT)$ ]]; then
     exit 1
 fi
 
+# Check if JAVA_HOME is set
+if [[ -z $JAVA_HOME ]]; then
+    echo "Error: JAVA_HOME is not set"
+    exit 1
+fi
+
 SCRIPTDIR=$(dirname "$0")
 
 pushd "$SCRIPTDIR"/..
