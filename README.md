@@ -147,6 +147,7 @@ Just have a look at `/target/site/index.html` afterwards.
 * Checkout the latest master
 * Run the release script, e.g.
 ```
+#./scripts/release.sh RELEASE_VERSION DEVELOPMENT_VERSION
 ./scripts/release.sh "3.0.0" "3.0.1-SNAPSHOT"
 ```
 * Go to `Releases` page and publish the newly created release.
