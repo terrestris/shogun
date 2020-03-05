@@ -26,7 +26,7 @@ public class GeometryScalar {
 
         @Override
         public Object parseValue(Object input) {
-            return parseGeoemtryFromVariable(input);
+            return parseGeometryFromVariable(input);
         }
 
         @Override
@@ -47,14 +47,14 @@ public class GeometryScalar {
             } catch (JsonProcessingException e) {
                 LOG.error("JSON Processing error while writing geometry for GraphQL");
                 LOG.trace("Full stack trace: ", e);
+                throw new CoercingSerializeException(e.getMessage());
             }
         } else {
             throw new CoercingSerializeException("Unable to serialize " + dataFetcherResult + " as a geometry");
         }
-        return null;
     }
 
-    private static Object parseGeoemtryFromVariable(Object input) {
+    private static Object parseGeometryFromVariable(Object input) {
         if (input instanceof String) {
             String geometryString = (String)input;
             try {
