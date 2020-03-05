@@ -1,6 +1,7 @@
 package de.terrestris.shoguncore.graphql;
 
 import com.google.common.io.Resources;
+import de.terrestris.shoguncore.graphql.scalar.GeometryScalar;
 import graphql.GraphQL;
 import graphql.scalars.ExtendedScalars;
 import graphql.schema.GraphQLScalarType;
@@ -76,6 +77,7 @@ public class GraphQLProvider {
     protected List<GraphQLScalarType> gatherScalars() {
         List<GraphQLScalarType> scalars = new ArrayList<>();
         scalars.add(ExtendedScalars.Json);
+        scalars.add(GeometryScalar.GEOMETRY);
         return scalars;
     }
 
