@@ -1,7 +1,7 @@
 package de.terrestris.shogun.lib.graphql;
 
 import com.google.common.io.Resources;
-import de.terrestris.shoguncore.graphql.scalar.GeometryScalar;
+import de.terrestris.shogun.lib.graphql.scalar.GeometryScalar;
 import graphql.GraphQL;
 import graphql.scalars.ExtendedScalars;
 import graphql.schema.GraphQLScalarType;

@@ -1,4 +1,4 @@
-package de.terrestris.shoguncore.graphql.scalar;
+package de.terrestris.shogun.lib.graphql.scalar;
 
 import com.bedatadriven.jackson.datatype.jts.JtsModule;
 import com.fasterxml.jackson.core.JsonProcessingException;
