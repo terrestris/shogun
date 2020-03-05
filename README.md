@@ -134,10 +134,19 @@ curl \
   http://localhost:8080/shogun-boot/applications/1
 ``` 
 
-## Dev-Notes
+## MVN Report
 
 If you want to create a report with detailed information about the projects dependencies etc, you can use this command:
 
 `mvn site -Preporting`
 
 Just have a look at `/target/site/index.html` afterwards.
+
+## Release
+
+* Checkout the latest master
+* Run the release script, e.g.
+```
+./scripts/release.sh "3.0.0" "3.0.1-SNAPSHOT"
+```
+* Go to `Releases` page and publish the newly created release.
