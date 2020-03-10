@@ -12,6 +12,8 @@ type Query {
 
 type Application {
     id: ID
+    created: String
+    modified: String
     name: String
     i18n: JSON
     stateOnly: Boolean
@@ -23,6 +25,8 @@ type Application {
 
 type Layer {
     id: ID
+    created: String
+    modified: String
     name: String
     clientConfig: JSON
     sourceConfig: JSON
@@ -32,9 +36,18 @@ type Layer {
 
 type User {
     id: ID
+    created: String
+    modified: String
     username: String
     email: String
     enabled: Boolean
     details: JSON
     clientConfig: JSON
+}
+
+type UserGroup {
+    id: ID
+    created: String
+    modified: String
+    name: String
 }
