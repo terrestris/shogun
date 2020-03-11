@@ -4,7 +4,6 @@ import de.terrestris.shogun.lib.enumeration.PermissionType;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
-import de.terrestris.shogun.lib.service.security.IdentityService;
 import de.terrestris.shogun.lib.service.security.permission.GroupClassPermissionService;
 import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionService;
 import de.terrestris.shogun.lib.service.security.permission.UserClassPermissionService;
@@ -20,9 +19,6 @@ import java.util.Set;
 public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implements EntityPermissionEvaluator<E> {
 
     protected final Logger LOG = LogManager.getLogger(getClass());
-
-    @Autowired
-    private IdentityService identityService;
 
     @Autowired
     private UserInstancePermissionService userInstancePermissionService;

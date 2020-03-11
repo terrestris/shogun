@@ -15,13 +15,6 @@ import javax.persistence.Entity;
 public class Group extends BaseEntity {
 
     @Column(unique = true, nullable = false)
-    private String name;
+    private String keycloakId;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }

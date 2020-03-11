@@ -28,7 +28,7 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
 
     public Optional<UserInstancePermission> findFor(BaseEntity entity, User user) {
 
-        LOG.trace("Getting all user permissions for user {} and entity {}", user.getUsername(), entity);
+        LOG.trace("Getting all user permissions for user {} and entity {}", user.getKeycloakId(), entity);
 
         return repository.findOne(Specification.where(
                 UserInstancePermissionSpecifications.hasEntity(entity)).and(

@@ -3,7 +3,6 @@ package de.terrestris.shogun.boot.service;
 import de.terrestris.shogun.boot.dto.ApplicationInfo;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.security.SecurityContextUtil;
-import de.terrestris.shogun.lib.service.security.IdentityService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +26,6 @@ public class ApplicationInfoService {
 
     @Autowired
     private SecurityContextUtil securityContextUtil;
-
-    @Autowired
-    private IdentityService identityService;
 
     /**
      * Returns general application information such as the version.

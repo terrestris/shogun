@@ -1,28 +1,24 @@
 package de.terrestris.shogun.lib.security;
 
+import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.UserRepository;
 import de.terrestris.shogun.lib.specification.UserSpecification;
-import de.terrestris.shogun.lib.model.Role;
-import de.terrestris.shogun.lib.model.User;
-import de.terrestris.shogun.lib.service.security.IdentityService;
 import org.keycloak.KeycloakPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Component
 public class SecurityContextUtil {
 
     @Autowired
     UserRepository userRepository;
-
-    @Autowired
-    private IdentityService identityService;
 
     @Transactional(readOnly = true)
     public Optional<User> getUserBySession() {
@@ -46,28 +42,12 @@ public class SecurityContextUtil {
         return userRepository.findOne(UserSpecification.findByMail(userMail));
     }
 
-    @Transactional(readOnly = true)
-    public Set<Role> getAllUserRoles(User user) {
-        Set<Role> allUserRoles = new HashSet<>();
-
-        // Get the roles of the user.
-        // TODO Take appropriate group into account here?
-        if (user != null) {
-            allUserRoles.addAll(identityService.findAllRolesFrom(user));
-        }
-
-        return allUserRoles;
-    }
 
     public List<GrantedAuthority> getGrantedAuthorities(User user) {
-        Set<Role> allUserRoles = getAllUserRoles(user);
 
-        List<GrantedAuthority> grantedAuthorities = new ArrayList();
+        // TODO fetch from keycloak/auth context
 
-        for (Role role : allUserRoles) {
-            grantedAuthorities.add(new SimpleGrantedAuthority(role.getName()));
-        }
-
+        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         return grantedAuthorities;
     }
 }

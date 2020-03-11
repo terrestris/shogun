@@ -1,13 +1,13 @@
 package de.terrestris.shogun.lib.service.security.permission;
 
 import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
-import de.terrestris.shogun.lib.repository.security.permission.PermissionCollectionRepository;
-import de.terrestris.shogun.lib.repository.security.permission.UserClassPermissionRepository;
-import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
 import de.terrestris.shogun.lib.model.security.permission.UserClassPermission;
+import de.terrestris.shogun.lib.repository.security.permission.PermissionCollectionRepository;
+import de.terrestris.shogun.lib.repository.security.permission.UserClassPermissionRepository;
+import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.service.BaseService;
 import de.terrestris.shogun.lib.specification.security.permission.PermissionCollectionSpecification;
 import de.terrestris.shogun.lib.specification.security.permission.UserClassPermissionSpecifications;
@@ -29,7 +29,7 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
     public Optional<UserClassPermission> findFor(BaseEntity entity, User user) {
 
         LOG.trace("Getting all user class permissions for user {} and entity class {}",
-                user.getUsername(), entity.getClass().getCanonicalName());
+                user.getKeycloakId(), entity.getClass().getCanonicalName());
 
         return repository.findOne(Specification.where(
                 UserClassPermissionSpecifications.hasEntity(entity)).and(
@@ -40,7 +40,7 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
     public Optional<UserClassPermission> findFor(Class<? extends BaseEntity> clazz, User user) {
 
         LOG.trace("Getting all user class permissions for user {} and entity class {}",
-            user.getUsername(), clazz.getCanonicalName());
+            user.getKeycloakId(), clazz.getCanonicalName());
 
         return repository.findOne(Specification.where(
             UserClassPermissionSpecifications.hasEntity(clazz)).and(
