@@ -7,9 +7,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-@EnableJpaRepositories(basePackages = { "de.terrestris.shogun.lib", "de.terrestris.shogun.boot" })
-@ComponentScan(basePackages = { "de.terrestris.shogun.lib", "de.terrestris.shogun.boot" })
-@EntityScan(basePackages = { "de.terrestris.shogun.lib", "de.terrestris.shogun.boot" })
+@EnableJpaRepositories(basePackages = { "de.terrestris.shogun" })
+@ComponentScan(basePackages = { "de.terrestris.shogun" })
+@EntityScan(basePackages = { "de.terrestris.shogun" })
 public class ApplicationConfig {
 
     public static void main(String[] args) {

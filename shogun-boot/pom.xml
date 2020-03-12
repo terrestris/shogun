@@ -113,13 +113,6 @@
       <version>${project.version}</version>
     </dependency>
 
-    <!-- SHOGun Config -->
-    <dependency>
-      <groupId>de.terrestris</groupId>
-      <artifactId>shogun-config</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
     <dependency>
       <groupId>org.keycloak</groupId>
       <artifactId>keycloak-spring-boot-starter</artifactId>

@@ -5,9 +5,11 @@ import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.GroupRepository;
 import de.terrestris.shogun.lib.repository.UserRepository;
 import de.terrestris.shogun.lib.specification.UserSpecification;
+import de.terrestris.shogun.properties.KeycloakAuthProperties;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.keycloak.KeycloakPrincipal;
+import org.keycloak.adapters.springboot.KeycloakSpringBootProperties;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.RealmResource;
@@ -28,31 +30,20 @@ import java.util.stream.Collectors;
 @Component
 public class SecurityContextUtil {
 
-    private RealmResource realm;
-
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private GroupRepository groupRepository;
 
-    public SecurityContextUtil() {
-        // TODO: create beans for this
-        ResteasyClient restClient = new ResteasyClientBuilder()
-            .hostnameVerification(ResteasyClientBuilder.HostnameVerificationPolicy.ANY)
-            .build();
+    @Autowired
+    private KeycloakSpringBootProperties keycloakSpringBootProperties;
 
-        Keycloak keycloak = KeycloakBuilder.builder()
-            .serverUrl("http://localhost:8000/auth")
-            .realm("master")
-            .username("admin")
-            .password("shogun")
-            .clientId("admin-cli")
-            .resteasyClient(restClient)
-            .build();
+    @Autowired
+    private KeycloakAuthProperties keycloakAuthProperties;
 
-        this.realm = keycloak.realm("SpringBootKeycloak");
-    }
+    @Autowired
+    private RealmResource keycloakRealm;
 
     @Transactional(readOnly = true)
     public Optional<User> getUserBySession() {
@@ -125,7 +116,7 @@ public class SecurityContextUtil {
      * @return
      */
     public List<GroupRepresentation> getKeycloakGroupsForUser(User user) {
-        UserResource kcUser = this.realm.users().get(user.getKeycloakId());
+        UserResource kcUser = this.keycloakRealm.users().get(user.getKeycloakId());
         return kcUser != null ? kcUser.groups() : null;
     }
 }
