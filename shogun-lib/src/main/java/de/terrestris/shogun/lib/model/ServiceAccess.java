@@ -35,36 +35,4 @@ public class ServiceAccess extends BaseEntity {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private RuleType rule;
-
-    public EventType getEvent() {
-        return event;
-    }
-
-    public void setEvent(EventType event) {
-        this.event = event;
-    }
-
-    public OperationType getOperation() {
-        return operation;
-    }
-
-    public void setOperation(OperationType operation) {
-        this.operation = operation;
-    }
-
-    public ServiceType getService() {
-        return service;
-    }
-
-    public void setService(ServiceType service) {
-        this.service = service;
-    }
-
-    public RuleType getRule() {
-        return rule;
-    }
-
-    public void setRule(RuleType rule) {
-        this.rule = rule;
-    }
 }

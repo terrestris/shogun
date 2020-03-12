@@ -37,12 +37,4 @@ public class Layer extends BaseEntity {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private LayerType type;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }
