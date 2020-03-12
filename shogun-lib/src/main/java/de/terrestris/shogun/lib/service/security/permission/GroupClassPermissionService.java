@@ -8,6 +8,7 @@ import de.terrestris.shogun.lib.model.security.permission.GroupClassPermission;
 import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
 import de.terrestris.shogun.lib.repository.security.permission.GroupClassPermissionRepository;
 import de.terrestris.shogun.lib.repository.security.permission.PermissionCollectionRepository;
+import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.service.BaseService;
 import de.terrestris.shogun.lib.specification.security.permission.GroupClassPermissionSpecifications;
 import de.terrestris.shogun.lib.specification.security.permission.PermissionCollectionSpecification;
@@ -22,38 +23,33 @@ import java.util.Optional;
 public class GroupClassPermissionService extends BaseService<GroupClassPermissionRepository, GroupClassPermission> {
 
     @Autowired
-    protected PermissionCollectionRepository permissionCollectionRepository;
+    protected SecurityContextUtil securityContextUtil;
 
     @Autowired
-    protected GroupClassPermissionRepository groupClassPermissionRepository;
-
-    public Optional<GroupClassPermission> findFor(BaseEntity entity, Group group) {
-
-        LOG.trace("Getting all group class permissions for group {} and entity class {}",
-                group.getKeycloakId(), entity.getClass().getCanonicalName());
-
-        return repository.findOne(Specification.where(
-                GroupClassPermissionSpecifications.hasEntity(entity)).and(
-                GroupClassPermissionSpecifications.hasGroup(group)
-        ));
-    }
+    protected PermissionCollectionRepository permissionCollectionRepository;
 
     public Optional<GroupClassPermission> findFor(BaseEntity entity, User user) {
-
         LOG.trace("Getting all group class permissions for user {} and entity {}", user.getKeycloakId(), entity);
 
-        // Get all groups of the user
-        List<Group> groups = null; //identityService.findAllGroupsFrom(user);
-        // TODO get groups from keycloak
-
+        // Get all groups of the user from Keycloak
+        List<Group> groups = securityContextUtil.getGroupsForUser(user);
         return repository.findOne(Specification.where(
             GroupClassPermissionSpecifications.hasEntity(entity)).and(
             GroupClassPermissionSpecifications.hasGroups(groups)
         ));
     }
 
-    public Optional<GroupClassPermission> findFor(Class<? extends BaseEntity> clazz, Group group) {
+    public Optional<GroupClassPermission> findFor(BaseEntity entity, Group group) {
+        LOG.trace("Getting all group class permissions for group {} and entity class {}",
+            group.getKeycloakId(), entity.getClass().getCanonicalName());
 
+        return repository.findOne(Specification.where(
+            GroupClassPermissionSpecifications.hasEntity(entity)).and(
+            GroupClassPermissionSpecifications.hasGroup(group)
+        ));
+    }
+
+    public Optional<GroupClassPermission> findFor(Class<? extends BaseEntity> clazz, Group group) {
         LOG.trace("Getting all group class permissions for group {} and entity class {}",
             group.getKeycloakId(), clazz.getCanonicalName());
 
@@ -64,29 +60,26 @@ public class GroupClassPermissionService extends BaseService<GroupClassPermissio
     }
 
     public Optional<GroupClassPermission> findFor(Class<? extends BaseEntity> clazz, User user) {
-
         LOG.trace("Getting all group class permissions for user {} and entity class {}",
             user.getKeycloakId(), clazz.getCanonicalName());
 
-        // Get all groups of the user
-        List<Group> groups = null; //identityService.findAllGroupsFrom(user);
-        // TODO get groups from keycloak
-
+        // Get all groups of the user from Keycloak
+        List<Group> groups = securityContextUtil.getGroupsForUser(user);
         return repository.findOne(Specification.where(
             GroupClassPermissionSpecifications.hasEntity(clazz)).and(
             GroupClassPermissionSpecifications.hasGroups(groups)
         ));
     }
 
-    public PermissionCollection findPermissionCollectionFor(BaseEntity entity, Group group) {
-        Optional<GroupClassPermission> groupClassPermission = this.findFor(entity, group);
-
-        if (groupClassPermission.isPresent()) {
-            return groupClassPermission.get().getPermissions();
-        }
-
-        return new PermissionCollection();
-    }
+//    public PermissionCollection findPermissionCollectionFor(BaseEntity entity, Group group) {
+//        Optional<GroupClassPermission> groupClassPermission = this.findFor(entity, group);
+//
+//        if (groupClassPermission.isPresent()) {
+//            return groupClassPermission.get().getPermissions();
+//        }
+//
+//        return new PermissionCollection();
+//    }
 
     public PermissionCollection findPermissionCollectionFor(BaseEntity entity, User user) {
         Optional<GroupClassPermission> groupClassPermission = this.findFor(entity, user);
@@ -98,6 +91,12 @@ public class GroupClassPermissionService extends BaseService<GroupClassPermissio
         return new PermissionCollection();
     }
 
+    /**
+     * Set Permission for SHOGun group
+     * @param clazz The class to set permission for
+     * @param group The SHOGun group
+     * @param permissionCollectionType The permission collection type (e.g. READ, READ_WRITE)
+     */
     public void setPermission(Class<? extends BaseEntity> clazz, Group group, PermissionCollectionType permissionCollectionType) {
         Optional<PermissionCollection> permissionCollection = permissionCollectionRepository.findOne(
             PermissionCollectionSpecification.findByName(permissionCollectionType));

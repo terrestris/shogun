@@ -1,12 +1,11 @@
 package de.terrestris.shogun.lib.security.access;
 
 import de.terrestris.shogun.lib.enumeration.PermissionType;
-import de.terrestris.shogun.lib.repository.UserRepository;
-import de.terrestris.shogun.lib.security.access.entity.BaseEntityPermissionEvaluator;
-import de.terrestris.shogun.lib.security.access.entity.DefaultPermissionEvaluator;
-import de.terrestris.shogun.lib.specification.UserSpecification;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.User;
+import de.terrestris.shogun.lib.security.SecurityContextUtil;
+import de.terrestris.shogun.lib.security.access.entity.BaseEntityPermissionEvaluator;
+import de.terrestris.shogun.lib.security.access.entity.DefaultPermissionEvaluator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +23,13 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
     protected final Logger LOG = LogManager.getLogger(getClass());
 
     @Autowired
-    protected UserRepository userRepository;
+    protected List<BaseEntityPermissionEvaluator<?>> permissionEvaluators;
 
     @Autowired
-    private List<BaseEntityPermissionEvaluator> permissionEvaluators;
+    protected DefaultPermissionEvaluator defaultPermissionEvaluator;
 
     @Autowired
-    private DefaultPermissionEvaluator defaultPermissionEvaluator;
+    protected SecurityContextUtil securityContextUtil;
 
     private static final String ANONYMOUS_USERNAME = "ANONYMOUS";
 
@@ -45,7 +44,8 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
             return false;
         }
 
-        User user = this.getUserFromAuthentication(authentication);
+        // fetch user from securityUtil
+        User user = securityContextUtil.getUserFromAuthentication(authentication);
 
         String accountName = user != null ? user.getKeycloakId() : ANONYMOUS_USERNAME;
 
@@ -114,8 +114,6 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
      */
     private BaseEntityPermissionEvaluator getPermissionEvaluatorForClass(BaseEntity persistentObject) {
 
-//        String persistentObjectSimpleName = persistentObject.getClass().getSimpleName();
-
         BaseEntityPermissionEvaluator entityPermissionEvaluator = permissionEvaluators.stream()
                 .filter(permissionEvaluator -> persistentObject.getClass().equals(
                         permissionEvaluator.getEntityClassName()))
@@ -123,28 +121,5 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
                 .orElse(defaultPermissionEvaluator);
 
         return entityPermissionEvaluator;
-    }
-
-    /**
-     * Returns the current user object from the database.
-     *
-     * @param authentication
-     * @return
-     */
-    private User getUserFromAuthentication(Authentication authentication) {
-        final Object principal = authentication.getPrincipal();
-
-        String userMail;
-
-        if (principal instanceof String) {
-            userMail = (String) principal;
-        } else if (principal instanceof org.springframework.security.core.userdetails.User) {
-            userMail = ((org.springframework.security.core.userdetails.User) principal).getUsername();
-        } else {
-            LOG.error("Could not detect user from authentication, evaluation of permissions will fail.");
-            return null;
-        }
-
-        return userRepository.findOne(UserSpecification.findByMail(userMail)).orElse(null);
     }
 }

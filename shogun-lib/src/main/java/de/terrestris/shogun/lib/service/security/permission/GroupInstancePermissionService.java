@@ -8,6 +8,7 @@ import de.terrestris.shogun.lib.model.security.permission.GroupInstancePermissio
 import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
 import de.terrestris.shogun.lib.repository.security.permission.GroupInstancePermissionRepository;
 import de.terrestris.shogun.lib.repository.security.permission.PermissionCollectionRepository;
+import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.service.BaseService;
 import de.terrestris.shogun.lib.specification.security.permission.GroupInstancePermissionSpecifications;
 import de.terrestris.shogun.lib.specification.security.permission.PermissionCollectionSpecification;
@@ -22,41 +23,51 @@ import java.util.Optional;
 public class GroupInstancePermissionService extends BaseService<GroupInstancePermissionRepository, GroupInstancePermission> {
 
     @Autowired
+    protected SecurityContextUtil securityContextUtil;
+
+    @Autowired
     protected PermissionCollectionRepository permissionCollectionRepository;
 
+    /**
+     * Get permission for SHOGun group
+     * @param entity entity to get group permissions for
+     * @param group The SHOGun group
+     * @return
+     */
     public Optional<GroupInstancePermission> findFor(BaseEntity entity, Group group) {
-
         LOG.trace("Getting all group permissions for group {} and entity {}", group.getKeycloakId(), entity);
-
         return repository.findOne(Specification.where(
                 GroupInstancePermissionSpecifications.hasEntity(entity)).and(
                 GroupInstancePermissionSpecifications.hasGroup(group)
         ));
     }
 
+    /**
+     * Get groups of user from Keycloak and return resulting permissions
+     * @param entity entity to get group permissions for
+     * @param user The SHOGun user
+     * @return
+     */
     public Optional<GroupInstancePermission> findFor(BaseEntity entity, User user) {
-
         LOG.trace("Getting all group permissions for user {} and entity {}", user.getKeycloakId(), entity);
-
-        // Get all groups of the user
-        List<Group> groups = null;//identityService.findAllGroupsFrom(user);
-        // TODO get groups from keycloak
-
+        // Get all groups of the user from Keycloak
+        List<Group> groups = securityContextUtil.getGroupsForUser(user);
         return repository.findOne(Specification.where(
                 GroupInstancePermissionSpecifications.hasEntity(entity)).and(
                 GroupInstancePermissionSpecifications.hasGroups(groups)
         ));
     }
 
-    public PermissionCollection findPermissionCollectionFor(BaseEntity entity, Group group) {
-        Optional<GroupInstancePermission> groupInstancePermission = this.findFor(entity, group);
-
-        if (groupInstancePermission.isPresent()) {
-            return groupInstancePermission.get().getPermissions();
-        }
-
-        return new PermissionCollection();
-    }
+    // really needed? permission check starts always with an user
+//    public PermissionCollection findPermissionCollectionFor(BaseEntity entity, Group group) {
+//        Optional<GroupInstancePermission> groupInstancePermission = this.findFor(entity, group);
+//
+//        if (groupInstancePermission.isPresent()) {
+//            return groupInstancePermission.get().getPermissions();
+//        }
+//
+//        return new PermissionCollection();
+//    }
 
     public PermissionCollection findPermissionCollectionFor(BaseEntity entity, User user) {
         Optional<GroupInstancePermission> groupInstancePermission = this.findFor(entity, user);
@@ -68,6 +79,12 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
         return new PermissionCollection();
     }
 
+    /**
+     * Set Permission for SHOGun group
+     * @param persistedEntity The entity to set permission for
+     * @param group The SHOGun group
+     * @param permissionCollectionType The permission collection type (e.g. READ, READ_WRITE)
+     */
     public void setPermission(BaseEntity persistedEntity, Group group, PermissionCollectionType permissionCollectionType) {
         Optional<PermissionCollection> permissionCollection = permissionCollectionRepository.findOne(
             PermissionCollectionSpecification.findByName(permissionCollectionType));

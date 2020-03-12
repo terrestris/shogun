@@ -39,11 +39,10 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
 
     @Override
     public boolean hasPermission(User user, E entity, PermissionType permission) {
-
         final String simpleClassName = entity.getClass().getSimpleName();
 
         // CHECK USER INSTANCE PERMISSIONS
-        PermissionCollection userPermissionCol = null;
+        PermissionCollection userPermissionCol;
         if (permission.equals(PermissionType.CREATE) && entity.getId() == null) {
             userPermissionCol = new PermissionCollection();
         } else {
