@@ -53,41 +53,24 @@ CREATE TABLE files (
     CONSTRAINT files_unique_id UNIQUE (id)
 );
 
-CREATE TABLE roles (
-    id bigint NOT NULL,
-    created timestamp without time zone,
-    modified timestamp without time zone,
-    description text,
-    name text NOT NULL,
-    CONSTRAINT roles_pkey PRIMARY KEY (id),
-    CONSTRAINT roles_unique_id UNIQUE (id),
-    CONSTRAINT roles_unique_name UNIQUE (name)
-);
-
 CREATE TABLE users (
     id bigint NOT NULL,
     created timestamp without time zone,
     modified timestamp without time zone,
+    keycloak_id text NOT NULL,
     client_config jsonb,
     details jsonb,
-    email text NOT NULL,
-    enabled boolean,
-    password text,
-    username text NOT NULL,
     CONSTRAINT users_pkey PRIMARY KEY (id),
-    CONSTRAINT users_unique_email UNIQUE (email),
-    CONSTRAINT users_unique_id UNIQUE (id),
-    CONSTRAINT users_unique_username UNIQUE (username)
+    CONSTRAINT users_unique_id UNIQUE (id)
 );
 
 CREATE TABLE groups (
     id bigint NOT NULL,
     created timestamp without time zone,
     modified timestamp without time zone,
-    name text NOT NULL,
+    keycloak_id text NOT NULL,
     CONSTRAINT groups_pkey PRIMARY KEY (id),
-    CONSTRAINT groups_unique_id UNIQUE (id),
-    CONSTRAINT groups_unique_name UNIQUE (name)
+    CONSTRAINT groups_unique_id UNIQUE (id)
 );
 
 CREATE TABLE permissions (
@@ -144,31 +127,6 @@ CREATE TABLE groupinstancepermissions (
         NOT VALID
 );
 
-CREATE TABLE identities (
-    id bigint NOT NULL,
-    created timestamp without time zone,
-    modified timestamp without time zone,
-    group_id bigint,
-    role_id bigint,
-    user_id bigint,
-    CONSTRAINT identities_pkey PRIMARY KEY (id),
-    CONSTRAINT identities_unique_id UNIQUE (id),
-    CONSTRAINT identities_fkey_user_id FOREIGN KEY (user_id)
-        REFERENCES users (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-        NOT VALID,
-    CONSTRAINT identities_fkey_group_id FOREIGN KEY (group_id)
-        REFERENCES groups (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-        NOT VALID,
-    CONSTRAINT identities_fkey_role_id FOREIGN KEY (role_id)
-        REFERENCES roles (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-        NOT VALID
-);
 
 CREATE TABLE imagefiles (
     id bigint NOT NULL,

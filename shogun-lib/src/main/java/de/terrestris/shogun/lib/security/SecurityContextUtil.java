@@ -60,6 +60,7 @@ public class SecurityContextUtil {
                 .getAuthentication().getPrincipal();
 
         String userMail;
+        Optional<User> user;
 
         if (principal instanceof String) {
             userMail = (String) principal;
@@ -68,12 +69,15 @@ public class SecurityContextUtil {
         } else if (principal instanceof KeycloakPrincipal) {
             KeycloakPrincipal p = (KeycloakPrincipal) principal;
             p.getKeycloakSecurityContext();
-            userMail = (String) principal;
+            User byKeycloakId = userRepository.findByKeycloakId(p.getKeycloakSecurityContext().getIdToken().getSubject());
+            Optional<User> b = Optional.of(byKeycloakId);
+            return b;
         } else {
             return Optional.empty();
         }
 
-        return userRepository.findOne(UserSpecification.findByMail(userMail));
+        user = userRepository.findOne(UserSpecification.findByMail(userMail));
+        return user;
     }
 
 
