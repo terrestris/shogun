@@ -11,7 +11,6 @@ import de.terrestris.shogun.lib.repository.security.permission.PermissionCollect
 import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.service.BaseService;
 import de.terrestris.shogun.lib.specification.security.permission.GroupInstancePermissionSpecifications;
-import de.terrestris.shogun.lib.specification.security.permission.PermissionCollectionSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -86,8 +85,7 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
      * @param permissionCollectionType The permission collection type (e.g. READ, READ_WRITE)
      */
     public void setPermission(BaseEntity persistedEntity, Group group, PermissionCollectionType permissionCollectionType) {
-        Optional<PermissionCollection> permissionCollection = permissionCollectionRepository.findOne(
-            PermissionCollectionSpecification.findByName(permissionCollectionType));
+        Optional<PermissionCollection> permissionCollection = permissionCollectionRepository.findByName(permissionCollectionType);
 
         if (permissionCollection.isEmpty()) {
             throw new RuntimeException("Could not find requested permission collection");

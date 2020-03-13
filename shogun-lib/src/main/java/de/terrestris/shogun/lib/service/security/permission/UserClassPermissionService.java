@@ -9,7 +9,6 @@ import de.terrestris.shogun.lib.repository.security.permission.PermissionCollect
 import de.terrestris.shogun.lib.repository.security.permission.UserClassPermissionRepository;
 import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.service.BaseService;
-import de.terrestris.shogun.lib.specification.security.permission.PermissionCollectionSpecification;
 import de.terrestris.shogun.lib.specification.security.permission.UserClassPermissionSpecifications;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -69,8 +68,7 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
     }
 
     public void setPermission(Class<? extends BaseEntity> clazz, User user, PermissionCollectionType permissionCollectionType) {
-        Optional<PermissionCollection> permissionCollection = permissionCollectionRepository.findOne(
-            PermissionCollectionSpecification.findByName(permissionCollectionType));
+        Optional<PermissionCollection> permissionCollection = permissionCollectionRepository.findByName(permissionCollectionType);
 
         if (permissionCollection.isEmpty()) {
             throw new RuntimeException("Could not find requested permission collection");

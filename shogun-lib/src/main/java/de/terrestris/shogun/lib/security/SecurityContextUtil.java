@@ -107,7 +107,7 @@ public class SecurityContextUtil {
         // return list of Groups that are in SHOGun DB
         return userGroups.stream().
             map(GroupRepresentation::getId).
-            map(keycloakGroupId -> groupRepository.findByKeycloakId(keycloakGroupId)).
+            map(keycloakGroupId -> groupRepository.findByKeycloakId(keycloakGroupId).get()).
             collect(Collectors.toList());
     }
 

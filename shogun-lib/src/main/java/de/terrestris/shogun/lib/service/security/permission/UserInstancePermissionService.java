@@ -1,15 +1,14 @@
 package de.terrestris.shogun.lib.service.security.permission;
 
 import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
-import de.terrestris.shogun.lib.repository.security.permission.PermissionCollectionRepository;
-import de.terrestris.shogun.lib.repository.security.permission.UserInstancePermissionRepository;
-import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
 import de.terrestris.shogun.lib.model.security.permission.UserInstancePermission;
+import de.terrestris.shogun.lib.repository.security.permission.PermissionCollectionRepository;
+import de.terrestris.shogun.lib.repository.security.permission.UserInstancePermissionRepository;
+import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.service.BaseService;
-import de.terrestris.shogun.lib.specification.security.permission.PermissionCollectionSpecification;
 import de.terrestris.shogun.lib.specification.security.permission.UserInstancePermissionSpecifications;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -57,8 +56,7 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
     }
 
     public void setPermission(BaseEntity persistedEntity, User user, PermissionCollectionType permissionCollectionType) {
-        Optional<PermissionCollection> permissionCollection = permissionCollectionRepository.findOne(
-            PermissionCollectionSpecification.findByName(permissionCollectionType));
+        Optional<PermissionCollection> permissionCollection = permissionCollectionRepository.findByName(permissionCollectionType);
 
         if (permissionCollection.isEmpty()) {
             throw new RuntimeException("Could not find requested permission collection");
