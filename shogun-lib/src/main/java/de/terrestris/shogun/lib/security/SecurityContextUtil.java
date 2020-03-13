@@ -14,6 +14,7 @@ import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UserResource;
+import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -116,7 +117,9 @@ public class SecurityContextUtil {
      * @return
      */
     public List<GroupRepresentation> getKeycloakGroupsForUser(User user) {
-        UserResource kcUser = this.keycloakRealm.users().get(user.getKeycloakId());
-        return kcUser != null ? kcUser.groups() : null;
+        UsersResource users = this.keycloakRealm.users();
+        UserResource kcUser = users.get(user.getKeycloakId());
+        List<GroupRepresentation> kcGroups = kcUser.groups();
+        return kcUser != null ? kcGroups : null;
     }
 }
