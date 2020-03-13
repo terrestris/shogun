@@ -28,8 +28,7 @@ public class LoginListener implements ApplicationListener<InteractiveAuthenticat
     protected GroupRepository groupRepository;
 
     @Override
-    public void onApplicationEvent(InteractiveAuthenticationSuccessEvent event)
-    {
+    public void onApplicationEvent(InteractiveAuthenticationSuccessEvent event) {
         Authentication authentication = event.getAuthentication();
         Object principal = authentication.getPrincipal();
 
@@ -47,6 +46,7 @@ public class LoginListener implements ApplicationListener<InteractiveAuthenticat
         if (user == null) {
             User newUser = new User(keycloakUserId, null, null);
             userRepository.save(newUser);
+            user = newUser;
         }
 
         List<GroupRepresentation> userGroups = securityContextUtil.getKeycloakGroupsForUser(user);
