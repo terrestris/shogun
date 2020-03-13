@@ -5,14 +5,7 @@ import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.GroupRepository;
 import de.terrestris.shogun.lib.repository.UserRepository;
 import de.terrestris.shogun.lib.security.SecurityContextUtil;
-import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.keycloak.KeycloakPrincipal;
-import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.KeycloakBuilder;
-import org.keycloak.admin.client.resource.RealmResource;
-import org.keycloak.admin.client.resource.UserResource;
-import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -24,6 +17,7 @@ import java.util.List;
 
 @Component
 public class LoginListener implements ApplicationListener<InteractiveAuthenticationSuccessEvent> {
+
     @Autowired
     protected SecurityContextUtil securityContextUtil;
 
@@ -56,6 +50,7 @@ public class LoginListener implements ApplicationListener<InteractiveAuthenticat
         }
 
         List<GroupRepresentation> userGroups = securityContextUtil.getKeycloakGroupsForUser(user);
+
         // add missing groups to shogun db
         userGroups.stream().map(GroupRepresentation::getId).forEach(keycloakGroupId -> {
             Group group = groupRepository.findByKeycloakId(keycloakGroupId);

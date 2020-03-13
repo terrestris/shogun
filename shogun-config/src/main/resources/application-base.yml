@@ -49,3 +49,8 @@ keycloak:
 #      - pattern:
 #        - /customers/*
 
+keycloakauth:
+  username: admin
+  password: shogun
+  master-realm: master
+  admin-client: admin-cli
