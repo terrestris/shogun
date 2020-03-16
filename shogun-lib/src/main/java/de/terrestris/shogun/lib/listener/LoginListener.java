@@ -55,7 +55,7 @@ public class LoginListener implements ApplicationListener<InteractiveAuthenticat
         // add missing groups to shogun db
         userGroups.stream().map(GroupRepresentation::getId).forEach(keycloakGroupId -> {
             Optional<Group> group = groupRepository.findByKeycloakId(keycloakGroupId);
-            if (! group.isPresent()) {
+            if (!group.isPresent()) {
                 Group newGroup = new Group(keycloakGroupId);
                 groupRepository.save(newGroup);
             }
