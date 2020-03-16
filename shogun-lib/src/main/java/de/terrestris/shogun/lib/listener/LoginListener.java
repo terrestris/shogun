@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class LoginListener implements ApplicationListener<InteractiveAuthenticationSuccessEvent> {
@@ -53,8 +54,8 @@ public class LoginListener implements ApplicationListener<InteractiveAuthenticat
 
         // add missing groups to shogun db
         userGroups.stream().map(GroupRepresentation::getId).forEach(keycloakGroupId -> {
-            Group group = groupRepository.findByKeycloakId(keycloakGroupId);
-            if (group == null) {
+            Optional<Group> group = groupRepository.findByKeycloakId(keycloakGroupId);
+            if (!group.isPresent()) {
                 Group newGroup = new Group(keycloakGroupId);
                 groupRepository.save(newGroup);
             }
