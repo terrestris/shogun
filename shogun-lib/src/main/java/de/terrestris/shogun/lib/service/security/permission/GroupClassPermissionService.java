@@ -10,9 +10,7 @@ import de.terrestris.shogun.lib.repository.security.permission.GroupClassPermiss
 import de.terrestris.shogun.lib.repository.security.permission.PermissionCollectionRepository;
 import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.service.BaseService;
-import de.terrestris.shogun.lib.specification.security.permission.GroupClassPermissionSpecifications;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,61 +25,71 @@ public class GroupClassPermissionService extends BaseService<GroupClassPermissio
     @Autowired
     protected PermissionCollectionRepository permissionCollectionRepository;
 
-    public Optional<GroupClassPermission> findFor(BaseEntity entity, User user) {
-        LOG.trace("Getting all group class permissions for user {} and entity {}", user.getKeycloakId(), entity);
-
-        // Get all groups of the user from Keycloak
-        List<Group> groups = securityContextUtil.getGroupsForUser(user);
-        return repository.findOne(Specification.where(
-            GroupClassPermissionSpecifications.hasEntity(entity)).and(
-            GroupClassPermissionSpecifications.hasGroups(groups)
-        ));
-    }
-
+    /**
+     * Find group class permission for class of entity and given group
+     *
+     * @param entity The entity whose class should be checked
+     * @param group The group
+     * @return An Optional containing the GroupClassPermission
+     */
     public Optional<GroupClassPermission> findFor(BaseEntity entity, Group group) {
+        String className = entity.getClass().getCanonicalName();
         LOG.trace("Getting all group class permissions for group {} and entity class {}",
-            group.getKeycloakId(), entity.getClass().getCanonicalName());
-
-        return repository.findOne(Specification.where(
-            GroupClassPermissionSpecifications.hasEntity(entity)).and(
-            GroupClassPermissionSpecifications.hasGroup(group)
-        ));
+            group.getKeycloakId(), className);
+        return repository.findByGroupIdAndClassName(group.getId(), className);
     }
 
+    /**
+     * Find group class permission for class and given group
+     *
+     * @param clazz The class that should be checked
+     * @param group The group
+     * @return An Optional containing the GroupClassPermission
+     */
     public Optional<GroupClassPermission> findFor(Class<? extends BaseEntity> clazz, Group group) {
+        String className = clazz.getCanonicalName();
         LOG.trace("Getting all group class permissions for group {} and entity class {}",
-            group.getKeycloakId(), clazz.getCanonicalName());
-
-        return repository.findOne(Specification.where(
-            GroupClassPermissionSpecifications.hasEntity(clazz)).and(
-            GroupClassPermissionSpecifications.hasGroup(group)
-        ));
+            group.getKeycloakId(), className);
+        return repository.findByGroupIdAndClassName(group.getId(), className);
     }
 
+    /**
+     * Find first group class permission for class and given user.
+     * Iterates over all group the user is member of
+     *
+     * @param clazz The class that should be checked
+     * @param user The user to check for
+     * @return An Optional containing the GroupClassPermission
+     */
     public Optional<GroupClassPermission> findFor(Class<? extends BaseEntity> clazz, User user) {
+        String className = clazz.getCanonicalName();
         LOG.trace("Getting all group class permissions for user {} and entity class {}",
-            user.getKeycloakId(), clazz.getCanonicalName());
+            user.getKeycloakId(), className);
 
         // Get all groups of the user from Keycloak
         List<Group> groups = securityContextUtil.getGroupsForUser(user);
-        return repository.findOne(Specification.where(
-            GroupClassPermissionSpecifications.hasEntity(clazz)).and(
-            GroupClassPermissionSpecifications.hasGroups(groups)
-        ));
+        Optional<GroupClassPermission> gcp = Optional.empty();
+        for (Group g : groups) {
+            Optional<GroupClassPermission> permissionsForGroup = repository.findByGroupIdAndClassName(g.getId(), className);
+            if (permissionsForGroup.isPresent()) {
+                gcp = permissionsForGroup;
+                break;
+            }
+        }
+
+        return gcp;
     }
 
-//    public PermissionCollection findPermissionCollectionFor(BaseEntity entity, Group group) {
-//        Optional<GroupClassPermission> groupClassPermission = this.findFor(entity, group);
-//
-//        if (groupClassPermission.isPresent()) {
-//            return groupClassPermission.get().getPermissions();
-//        }
-//
-//        return new PermissionCollection();
-//    }
-
+    /**
+     * Return permission collection for base entity and user based on class type and user groups
+     *
+     * @param entity The entity whose class should be checked
+     * @param user The user to get groups from
+     * @return A permission collection
+     */
     public PermissionCollection findPermissionCollectionFor(BaseEntity entity, User user) {
-        Optional<GroupClassPermission> groupClassPermission = this.findFor(entity, user);
+        Class<? extends BaseEntity> clazz = entity.getClass();
+        Optional<GroupClassPermission> groupClassPermission = this.findFor(clazz, user);
 
         if (groupClassPermission.isPresent()) {
             return groupClassPermission.get().getPermissions();
@@ -111,6 +119,7 @@ public class GroupClassPermissionService extends BaseService<GroupClassPermissio
                 group, permissionCollection.get());
 
             // Remove the existing one
+            // TODO: deletion really needed ???
             repository.delete(existingPermissions.get());
 
             LOG.debug("Removed the permission");

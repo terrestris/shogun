@@ -9,9 +9,7 @@ import de.terrestris.shogun.lib.repository.security.permission.PermissionCollect
 import de.terrestris.shogun.lib.repository.security.permission.UserInstancePermissionRepository;
 import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.service.BaseService;
-import de.terrestris.shogun.lib.specification.security.permission.UserInstancePermissionSpecifications;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -25,16 +23,23 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
     @Autowired
     protected PermissionCollectionRepository permissionCollectionRepository;
 
+    /**
+     * Get {@link UserInstancePermission} for SHOGun user
+     * @param entity entity to get group permissions for
+     * @param user The SHOGun user
+     * @return
+     */
     public Optional<UserInstancePermission> findFor(BaseEntity entity, User user) {
-
         LOG.trace("Getting all user permissions for user {} and entity {}", user.getKeycloakId(), entity);
-
-        return repository.findOne(Specification.where(
-                UserInstancePermissionSpecifications.hasEntity(entity)).and(
-                UserInstancePermissionSpecifications.hasUser(user)
-        ));
+        return repository.findByUserIdAndEntityId(user.getId(), entity.getId());
     }
 
+    /**
+     * Return {@link PermissionCollection} for {@link BaseEntity} and {@link User}
+     * @param entity The entity to use in filter
+     * @param user The user to use in filter
+     * @return {@link PermissionCollection} for {@link BaseEntity} and {@link User}
+     */
     public PermissionCollection findPermissionCollectionFor(BaseEntity entity, User user) {
         Optional<UserInstancePermission> userInstancePermission = this.findFor(entity, user);
 
@@ -77,7 +82,7 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
 
         UserInstancePermission userInstancePermission = new UserInstancePermission();
         userInstancePermission.setUser(user);
-        userInstancePermission.setEntity(persistedEntity);
+        userInstancePermission.setEntityId(persistedEntity.getId());
         userInstancePermission.setPermissions(permissionCollection.get());
 
         repository.save(userInstancePermission);
