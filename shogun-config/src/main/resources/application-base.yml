@@ -14,7 +14,7 @@ spring:
     banner-mode: off
     allow-bean-definition-overriding: true
   jpa:
-    database-platform: org.hibernate.spatial.dialect.postgis.PostgisDialect
+    database-platform: org.hibernate.spatial.dialect.postgis.PostgisPG95Dialect
     hibernate:
       jdbc:
         lob:
