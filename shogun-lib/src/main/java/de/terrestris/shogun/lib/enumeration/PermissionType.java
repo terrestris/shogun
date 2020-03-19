@@ -9,7 +9,7 @@ public enum PermissionType {
 
     private final String type;
 
-    private PermissionType(String type) {
+    PermissionType(String type) {
         this.type = type;
     }
 }
