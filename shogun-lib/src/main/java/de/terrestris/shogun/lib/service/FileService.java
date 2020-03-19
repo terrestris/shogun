@@ -1,7 +1,6 @@
 package de.terrestris.shogun.lib.service;
 
 import de.terrestris.shogun.lib.repository.FileRepository;
-import de.terrestris.shogun.lib.specification.FileSpecification;
 import de.terrestris.shogun.lib.model.File;
 import javassist.NotFoundException;
 import org.apache.commons.io.IOUtils;
@@ -46,7 +45,7 @@ public class FileService extends BaseService<FileRepository, File> {
 
     @PreAuthorize("isAuthenticated()")
     public File getFile (UUID fileUuid) throws NotFoundException {
-        Optional<File> file = this.repository.findOne(FileSpecification.findByUuid(fileUuid));
+        Optional<File> file = this.repository.findByFileUuid(fileUuid);
 
         if (file.isPresent()) {
             return file.get();

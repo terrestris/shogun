@@ -45,8 +45,8 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
         }
 
         // fetch user from securityUtil
-        User user = securityContextUtil.getUserFromAuthentication(authentication);
-
+        Optional<User> userOpt = securityContextUtil.getUserFromAuthentication(authentication);
+        User user = userOpt.orElse(null);
         String accountName = user != null ? user.getKeycloakId() : ANONYMOUS_USERNAME;
 
         final BaseEntity persistentObject;

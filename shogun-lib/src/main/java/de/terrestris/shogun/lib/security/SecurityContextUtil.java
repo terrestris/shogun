@@ -4,7 +4,6 @@ import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.GroupRepository;
 import de.terrestris.shogun.lib.repository.UserRepository;
-import de.terrestris.shogun.lib.specification.UserSpecification;
 import de.terrestris.shogun.properties.KeycloakAuthProperties;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.adapters.springboot.KeycloakSpringBootProperties;
@@ -57,24 +56,17 @@ public class SecurityContextUtil {
         } else if (principal instanceof KeycloakPrincipal) {
             KeycloakPrincipal p = (KeycloakPrincipal) principal;
             p.getKeycloakSecurityContext();
-            User byKeycloakId = userRepository.findByKeycloakId(p.getKeycloakSecurityContext().getIdToken().getSubject());
-            Optional<User> b = Optional.of(byKeycloakId);
-            return b;
-        } else {
-            return Optional.empty();
+            return userRepository.findByKeycloakId(p.getKeycloakSecurityContext().getIdToken().getSubject());
         }
 
-        user = userRepository.findOne(UserSpecification.findByMail(userMail));
-        return user;
+        return Optional.empty();
     }
 
 
     public List<GrantedAuthority> getGrantedAuthorities(User user) {
 
         // TODO fetch from keycloak/auth context
-
-        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        return grantedAuthorities;
+        return new ArrayList<>();
     }
 
     /**
@@ -83,10 +75,10 @@ public class SecurityContextUtil {
      * @param authentication
      * @return
      */
-    public User getUserFromAuthentication(Authentication authentication) {
+    public Optional<User> getUserFromAuthentication(Authentication authentication) {
         final Object principal = authentication.getPrincipal();
         if (!(principal instanceof KeycloakPrincipal)) {
-            return null;
+            return Optional.empty();
         }
         KeycloakPrincipal<?> keycloakPrincipal = (KeycloakPrincipal<?>) principal;
         String keycloakId = keycloakPrincipal.getKeycloakSecurityContext().getIdToken().getSubject();
