@@ -2,12 +2,13 @@ package de.terrestris.shogun.lib.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import java.util.UUID;
 
 @Entity(name = "files")
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,7 +16,8 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 public class File extends BaseEntity {
 
-    @Column(updatable = false, nullable = false, columnDefinition = "uuid")
+    @Column(updatable = false, nullable = false)
+    @Type(type="pg-uuid")
     private UUID fileUuid = UUID.randomUUID();
 
     @Column

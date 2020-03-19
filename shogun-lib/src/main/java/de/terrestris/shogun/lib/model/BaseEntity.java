@@ -11,33 +11,33 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
-//@MappedSuperclass
-@Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@MappedSuperclass
 @TypeDefs({
     @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 })
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode
 public abstract class BaseEntity implements Serializable {
 
-    // TODO Don't create setter for ID?!
-    @Id
     // TODO Replace with @GeneratedValue(strategy = GenerationType.IDENTITY) and remove hibernate_sequence from flyway migrations
+    @Id
     @GeneratedValue(strategy= GenerationType.SEQUENCE)
     @Column(unique = true, nullable = false)
+    @Getter
     private Long id;
 
     @CreationTimestamp
     @Column(updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
+    @Getter @Setter
     private Date created;
 
     @UpdateTimestamp
     @Column
     @Temporal(TemporalType.TIMESTAMP)
+    @Getter @Setter
     private Date modified;
+
 }
