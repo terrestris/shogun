@@ -9,9 +9,7 @@ import de.terrestris.shogun.lib.repository.security.permission.PermissionCollect
 import de.terrestris.shogun.lib.repository.security.permission.UserClassPermissionRepository;
 import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.service.BaseService;
-import de.terrestris.shogun.lib.specification.security.permission.UserClassPermissionSpecifications;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -25,30 +23,29 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
     @Autowired
     protected PermissionCollectionRepository permissionCollectionRepository;
 
-    public Optional<UserClassPermission> findFor(BaseEntity entity, User user) {
-
-        LOG.trace("Getting all user class permissions for user {} and entity class {}",
-                user.getKeycloakId(), entity.getClass().getCanonicalName());
-
-        return repository.findOne(Specification.where(
-                UserClassPermissionSpecifications.hasEntity(entity)).and(
-                UserClassPermissionSpecifications.hasUser(user)
-        ));
-    }
-
+    /**
+     * Return {@link Optional} containing {@link UserClassPermission}
+     * @param clazz The class that should be checked
+     * @param user The user to check for
+     * @return {@link Optional} containing {@link UserClassPermission}
+     */
     public Optional<UserClassPermission> findFor(Class<? extends BaseEntity> clazz, User user) {
-
+        String className = clazz.getCanonicalName();
         LOG.trace("Getting all user class permissions for user {} and entity class {}",
-            user.getKeycloakId(), clazz.getCanonicalName());
+            user.getKeycloakId(), className);
 
-        return repository.findOne(Specification.where(
-            UserClassPermissionSpecifications.hasEntity(clazz)).and(
-            UserClassPermissionSpecifications.hasUser(user)
-        ));
+        return repository.findByUserIdAndClassName(user.getId(), className);
     }
 
+    /**
+     * Return {@link Optional} containing {@link UserClassPermission}
+     * @param entity The entity whose class should be checked
+     * @param user The user to check for
+     * @return {@link Optional} containing {@link UserClassPermission}
+     */
     public PermissionCollection findPermissionCollectionFor(BaseEntity entity, User user) {
-        Optional<UserClassPermission> userClassPermission = this.findFor(entity, user);
+        Class<? extends BaseEntity> clazz = entity.getClass();
+        Optional<UserClassPermission> userClassPermission = this.findFor(clazz, user);
 
         if (userClassPermission.isPresent()) {
             return userClassPermission.get().getPermissions();
@@ -57,6 +54,11 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
         return new PermissionCollection();
     }
 
+    /**
+     * Return {@link Optional} containing {@link UserClassPermission}
+     * @param clazz The class that should be checked
+     * @param permissionCollectionType The permissionCollectionType to set
+     */
     public void setPermission(Class<? extends BaseEntity> clazz, PermissionCollectionType permissionCollectionType) {
         Optional<User> activeUser = securityContextUtil.getUserBySession();
 
@@ -67,6 +69,12 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
         setPermission(clazz, activeUser.get(), permissionCollectionType);
     }
 
+    /**
+     * Return {@link Optional} containing {@link UserClassPermission}
+     * @param clazz The class that should be set
+     * @param user The user to set permissions for
+     * @param permissionCollectionType The permissionCollectionType to set
+     */
     public void setPermission(Class<? extends BaseEntity> clazz, User user, PermissionCollectionType permissionCollectionType) {
         Optional<PermissionCollection> permissionCollection = permissionCollectionRepository.findByName(permissionCollectionType);
 

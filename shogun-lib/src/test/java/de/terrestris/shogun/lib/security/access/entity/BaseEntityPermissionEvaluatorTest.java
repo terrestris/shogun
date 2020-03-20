@@ -4,6 +4,7 @@ import de.terrestris.shogun.lib.enumeration.PermissionType;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
+import de.terrestris.shogun.lib.util.IdHelper;
 import org.junit.Test;
 
 import java.util.*;
@@ -20,21 +21,19 @@ public abstract class BaseEntityPermissionEvaluatorTest<E extends BaseEntity> {
 
     private E entityToCheck;
 
-    protected BaseEntityPermissionEvaluatorTest(Class<E> entityClass,
-            BaseEntityPermissionEvaluator<E> baseEntityPermissionEvaluator,
-            E entityToCheck) {
+    protected BaseEntityPermissionEvaluatorTest(Class<E> entityClass, BaseEntityPermissionEvaluator<E> baseEntityPermissionEvaluator, E entityToCheck) throws NoSuchFieldException {
         this.entityClass = entityClass;
         this.baseEntityPermissionEvaluator = baseEntityPermissionEvaluator;
         this.entityToCheck = entityToCheck;
 
-        this.entityToCheck.setId(123L);
+        IdHelper.setIdForEntity(this.entityToCheck, 123L);
     }
 
     @Test
-    public void hasPermission_shouldNeverGrantAnythingWithoutPermissions() {
+    public void hasPermission_shouldNeverGrantAnythingWithoutPermissions() throws NoSuchFieldException {
         final User user = new User();
         user.setKeycloakId("Test user");
-        user.setId(1909L);
+        IdHelper.setIdForEntity(user, 1909L);
 
         Set<PermissionType> allPermissions = new HashSet<>(Arrays.asList(PermissionType.values()));
 
@@ -49,7 +48,7 @@ public abstract class BaseEntityPermissionEvaluatorTest<E extends BaseEntity> {
     public void hasPermission_shouldGrantPermissionOnSecuredObjectWithCorrectUserPermission() throws NoSuchFieldException, IllegalAccessException {
         final User user = new User();
         user.setKeycloakId("Test user");
-        user.setId(1909L);
+        IdHelper.setIdForEntity(user, 1909L);
 
         Map<User, PermissionCollection> userPermissionsMap = new HashMap<>();
 
@@ -68,7 +67,7 @@ public abstract class BaseEntityPermissionEvaluatorTest<E extends BaseEntity> {
     public void hasPermission_shouldGrantAnyPermissionOnSecuredObjectWithUserAdminPermission() throws NoSuchFieldException, IllegalAccessException {
         final User user = new User();
         user.setKeycloakId("Test user");
-        user.setId(1909L);
+        IdHelper.setIdForEntity(user, 1909L);
 
         Map<User, PermissionCollection> userPermissionsMap = new HashMap<>();
 

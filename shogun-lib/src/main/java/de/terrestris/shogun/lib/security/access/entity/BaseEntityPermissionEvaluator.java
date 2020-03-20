@@ -15,22 +15,21 @@ import org.springframework.core.GenericTypeResolver;
 
 import java.util.Set;
 
-//@Component
 public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implements EntityPermissionEvaluator<E> {
 
     protected final Logger LOG = LogManager.getLogger(getClass());
 
     @Autowired
-    private UserInstancePermissionService userInstancePermissionService;
+    protected UserInstancePermissionService userInstancePermissionService;
 
     @Autowired
-    private GroupInstancePermissionService groupInstancePermissionService;
+    protected GroupInstancePermissionService groupInstancePermissionService;
 
     @Autowired
-    private UserClassPermissionService userClassPermissionService;
+    protected UserClassPermissionService userClassPermissionService;
 
     @Autowired
-    private GroupClassPermissionService groupClassPermissionService;
+    protected GroupClassPermissionService groupClassPermissionService;
 
     @Override
     public Class<E> getEntityClassName() {

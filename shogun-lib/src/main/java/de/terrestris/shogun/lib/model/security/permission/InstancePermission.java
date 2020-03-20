@@ -5,7 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-import javax.persistence.ManyToOne;
+import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToOne;
 
@@ -17,8 +17,8 @@ import javax.persistence.OneToOne;
 @EqualsAndHashCode(callSuper = true)
 public abstract class InstancePermission extends BaseEntity {
 
-    @ManyToOne(optional = false)
-    private BaseEntity entity;
+    @Column
+    private Long entityId;
 
     @OneToOne(optional = false)
     @Fetch(FetchMode.JOIN)

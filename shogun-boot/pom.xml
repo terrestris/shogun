@@ -8,7 +8,6 @@
     <version>4.0.0-BETA-SNAPSHOT</version>
   </parent>
 
-  <groupId>de.terrestris</groupId>
   <artifactId>shogun-boot</artifactId>
   <name>SHOGun Boot</name>
   <packaging>jar</packaging>

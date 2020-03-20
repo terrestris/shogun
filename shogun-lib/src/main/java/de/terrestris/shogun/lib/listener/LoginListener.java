@@ -43,11 +43,11 @@ public class LoginListener implements ApplicationListener<InteractiveAuthenticat
         String keycloakUserId = keycloakPrincipal.getKeycloakSecurityContext().getIdToken().getSubject();
 
         // add missing user to shogun db
-        User user = userRepository.findByKeycloakId(keycloakUserId);
+        Optional<User> userOptional = userRepository.findByKeycloakId(keycloakUserId);
+        User user = userOptional.orElse(null);
         if (user == null) {
-            User newUser = new User(keycloakUserId, null, null);
-            userRepository.save(newUser);
-            user = newUser;
+            user = new User(keycloakUserId, null, null);
+            userRepository.save(user);
         }
 
         List<GroupRepresentation> userGroups = securityContextUtil.getKeycloakGroupsForUser(user);
@@ -55,7 +55,7 @@ public class LoginListener implements ApplicationListener<InteractiveAuthenticat
         // add missing groups to shogun db
         userGroups.stream().map(GroupRepresentation::getId).forEach(keycloakGroupId -> {
             Optional<Group> group = groupRepository.findByKeycloakId(keycloakGroupId);
-            if (!group.isPresent()) {
+            if (group.isEmpty()) {
                 Group newGroup = new Group(keycloakGroupId);
                 groupRepository.save(newGroup);
             }

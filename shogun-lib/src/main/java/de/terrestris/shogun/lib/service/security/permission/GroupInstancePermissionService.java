@@ -10,9 +10,7 @@ import de.terrestris.shogun.lib.repository.security.permission.GroupInstancePerm
 import de.terrestris.shogun.lib.repository.security.permission.PermissionCollectionRepository;
 import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.service.BaseService;
-import de.terrestris.shogun.lib.specification.security.permission.GroupInstancePermissionSpecifications;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,11 +32,18 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
      * @return
      */
     public Optional<GroupInstancePermission> findFor(BaseEntity entity, Group group) {
+        if (entity == null || group == null) {
+            LOG.trace("Either entity or group is null");
+            return Optional.empty();
+        }
+
+        if (entity.getId() == null || group.getId() == null) {
+            LOG.trace("Either entity or group is not persisted yet.");
+            return Optional.empty();
+        }
+
         LOG.trace("Getting all group permissions for group {} and entity {}", group.getKeycloakId(), entity);
-        return repository.findOne(Specification.where(
-                GroupInstancePermissionSpecifications.hasEntity(entity)).and(
-                GroupInstancePermissionSpecifications.hasGroup(group)
-        ));
+        return repository.findByGroupIdAndEntityId(group.getId(), entity.getId()); // TODO: !
     }
 
     /**
@@ -51,23 +56,24 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
         LOG.trace("Getting all group permissions for user {} and entity {}", user.getKeycloakId(), entity);
         // Get all groups of the user from Keycloak
         List<Group> groups = securityContextUtil.getGroupsForUser(user);
-        return repository.findOne(Specification.where(
-                GroupInstancePermissionSpecifications.hasEntity(entity)).and(
-                GroupInstancePermissionSpecifications.hasGroups(groups)
-        ));
+        Optional<GroupInstancePermission> gip = Optional.empty();
+        for (Group g : groups) {
+            Optional<GroupInstancePermission> permissionsForGroup = repository.findByGroupIdAndEntityId(g.getId(), entity.getId());
+            if (permissionsForGroup.isPresent()) {
+                gip = permissionsForGroup;
+                break;
+            }
+        }
+
+        return gip;
     }
 
-    // really needed? permission check starts always with an user
-//    public PermissionCollection findPermissionCollectionFor(BaseEntity entity, Group group) {
-//        Optional<GroupInstancePermission> groupInstancePermission = this.findFor(entity, group);
-//
-//        if (groupInstancePermission.isPresent()) {
-//            return groupInstancePermission.get().getPermissions();
-//        }
-//
-//        return new PermissionCollection();
-//    }
-
+    /**
+     * Return permission collection for base entity and group
+     * @param entity The entity to fetch permission collection for
+     * @param user The user
+     * @return The first permission collection of the user that can be found for this entity
+     */
     public PermissionCollection findPermissionCollectionFor(BaseEntity entity, User user) {
         Optional<GroupInstancePermission> groupInstancePermission = this.findFor(entity, user);
 
@@ -99,6 +105,7 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
                 group, permissionCollection.get());
 
             // Remove the existing one
+            // TODO: deletion really needed ???
             repository.delete(existingPermissions.get());
 
             LOG.debug("Removed the permission");
@@ -106,7 +113,7 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
 
         GroupInstancePermission groupInstancePermission = new GroupInstancePermission();
         groupInstancePermission.setGroup(group);
-        groupInstancePermission.setEntity(persistedEntity);
+        groupInstancePermission.setEntityId(persistedEntity.getId());
         groupInstancePermission.setPermissions(permissionCollection.get());
 
         repository.save(groupInstancePermission);

@@ -9,13 +9,6 @@ CREATE SEQUENCE hibernate_sequence
     MAXVALUE 9223372036854775807
     CACHE 1;
 
-CREATE SEQUENCE verification_token_id_seq
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 9223372036854775807
-    CACHE 1;
-
 CREATE TABLE applications (
     id bigint NOT NULL,
     created timestamp without time zone,
@@ -29,15 +22,6 @@ CREATE TABLE applications (
     tool_config jsonb,
     CONSTRAINT applications_pkey PRIMARY KEY (id),
     CONSTRAINT applications_unique_id UNIQUE (id)
-);
-
-CREATE TABLE entityoperation (
-    id bigint NOT NULL,
-    created timestamp without time zone,
-    modified timestamp without time zone,
-    name text NOT NULL,
-    CONSTRAINT entityoperation_pkey PRIMARY KEY (id),
-    CONSTRAINT entityoperation_unique_id UNIQUE (id)
 );
 
 CREATE TABLE files (
@@ -168,18 +152,6 @@ CREATE TABLE permission (
         NOT VALID
 );
 
-CREATE TABLE serviceaccess (
-    id bigint NOT NULL,
-    created timestamp without time zone,
-    modified timestamp without time zone,
-    event text NOT NULL,
-    operation text NOT NULL,
-    rule text NOT NULL,
-    service text NOT NULL,
-    CONSTRAINT serviceaccess_pkey PRIMARY KEY (id),
-    CONSTRAINT serviceaccess_unique_id UNIQUE (id)
-);
-
 CREATE TABLE userclasspermissions (
     id bigint NOT NULL,
     created timestamp without time zone,
@@ -223,19 +195,3 @@ CREATE TABLE userinstancepermissions (
         ON DELETE NO ACTION
         NOT VALID
 );
-
-CREATE TABLE userverificationtokens (
-    id bigint NOT NULL,
-    created timestamp without time zone,
-    modified timestamp without time zone,
-    expiry_date timestamp without time zone NOT NULL,
-    token text NOT NULL,
-    user_id bigint NOT NULL,
-    CONSTRAINT userverificationtokens_pkey PRIMARY KEY (id),
-    CONSTRAINT userverificationtokens_fkey_user_id FOREIGN KEY (user_id)
-        REFERENCES users (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-        NOT VALID
-);
-
