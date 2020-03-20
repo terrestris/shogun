@@ -4,9 +4,10 @@ import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity(name = "groups")
-//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Table(schema = "shogun")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

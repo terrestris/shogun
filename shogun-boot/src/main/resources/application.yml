@@ -10,6 +10,7 @@ spring:
     url: jdbc:postgresql://localhost:5555/shogun?currentSchema=shogun
   flyway:
     schemas: shogun, public
+    defaultSchema: shogun
   mail:
     host: mail.terrestris.de
     port: 587

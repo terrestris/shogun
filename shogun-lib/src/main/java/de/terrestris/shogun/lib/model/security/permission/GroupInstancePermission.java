@@ -5,8 +5,10 @@ import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Entity(name = "groupinstancepermissions")
+@Table(schema = "shogun")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

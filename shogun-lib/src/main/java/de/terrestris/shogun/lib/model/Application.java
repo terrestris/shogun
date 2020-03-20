@@ -5,13 +5,11 @@ import de.terrestris.shogun.lib.model.jsonb.Locale;
 import lombok.*;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
+import javax.persistence.*;
 import java.util.Map;
 
 @Entity(name = "applications")
+@Table(schema = "shogun")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

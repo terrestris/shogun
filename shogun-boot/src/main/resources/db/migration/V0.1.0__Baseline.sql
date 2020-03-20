@@ -1,15 +1,15 @@
 CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public;
 
-SET search_path TO shogun;
+CREATE SCHEMA IF NOT EXISTS shogun;
 
-CREATE SEQUENCE hibernate_sequence
+CREATE SEQUENCE IF NOT EXISTS hibernate_sequence
     INCREMENT 1
     START 1
     MINVALUE 1
     MAXVALUE 9223372036854775807
     CACHE 1;
 
-CREATE TABLE applications (
+CREATE TABLE shogun.applications (
     id bigint NOT NULL,
     created timestamp without time zone,
     modified timestamp without time zone,
@@ -24,7 +24,7 @@ CREATE TABLE applications (
     CONSTRAINT applications_unique_id UNIQUE (id)
 );
 
-CREATE TABLE files (
+CREATE TABLE shogun.files (
     id bigint NOT NULL,
     created timestamp without time zone,
     modified timestamp without time zone,
@@ -37,7 +37,7 @@ CREATE TABLE files (
     CONSTRAINT files_unique_id UNIQUE (id)
 );
 
-CREATE TABLE users (
+CREATE TABLE shogun.users (
     id bigint NOT NULL,
     created timestamp without time zone,
     modified timestamp without time zone,
@@ -48,7 +48,7 @@ CREATE TABLE users (
     CONSTRAINT users_unique_id UNIQUE (id)
 );
 
-CREATE TABLE groups (
+CREATE TABLE shogun.groups (
     id bigint NOT NULL,
     created timestamp without time zone,
     modified timestamp without time zone,
@@ -57,7 +57,7 @@ CREATE TABLE groups (
     CONSTRAINT groups_unique_id UNIQUE (id)
 );
 
-CREATE TABLE permissions (
+CREATE TABLE shogun.permissions (
     id bigint NOT NULL,
     created timestamp without time zone,
     modified timestamp without time zone,
@@ -67,7 +67,7 @@ CREATE TABLE permissions (
     CONSTRAINT permissions_unique_name UNIQUE (name)
 );
 
-CREATE TABLE groupclasspermissions (
+CREATE TABLE shogun.groupclasspermissions (
     id bigint NOT NULL,
     created timestamp without time zone,
     modified timestamp without time zone,
@@ -75,21 +75,20 @@ CREATE TABLE groupclasspermissions (
     permissions_id bigint NOT NULL,
     group_id bigint NOT NULL,
     CONSTRAINT groupclasspermissions_pkey PRIMARY KEY (id),
-    -- CONSTRAINT groupclasspermissions_unique_permissions_id UNIQUE (permissions_id),
     CONSTRAINT groupclasspermissions_unique_id UNIQUE (id),
     CONSTRAINT groupclasspermissions_fkey_group_id FOREIGN KEY (group_id)
-        REFERENCES groups (id) MATCH SIMPLE
+        REFERENCES shogun.groups (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
         NOT VALID,
     CONSTRAINT groupclasspermissions_fkey_permissions_id FOREIGN KEY (permissions_id)
-        REFERENCES permissions (id) MATCH SIMPLE
+        REFERENCES shogun.permissions (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
         NOT VALID
 );
 
-CREATE TABLE groupinstancepermissions (
+CREATE TABLE shogun.groupinstancepermissions (
     id bigint NOT NULL,
     created timestamp without time zone,
     modified timestamp without time zone,
@@ -98,21 +97,19 @@ CREATE TABLE groupinstancepermissions (
     group_id bigint NOT NULL,
     CONSTRAINT groupinstancepermissions_pkey PRIMARY KEY (id),
     CONSTRAINT groupinstancepermissions_unique_id UNIQUE (id),
-    -- CONSTRAINT groupinstancepermissions_unique_permissions_id UNIQUE (permissions_id),
     CONSTRAINT groupinstancepermissions_fkey_group_id FOREIGN KEY (group_id)
-        REFERENCES groups (id) MATCH SIMPLE
+        REFERENCES shogun.groups (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
         NOT VALID,
     CONSTRAINT groupinstancepermissions_fkey_permissions_id FOREIGN KEY (permissions_id)
-        REFERENCES permissions (id) MATCH SIMPLE
+        REFERENCES shogun.permissions (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
         NOT VALID
 );
 
-
-CREATE TABLE imagefiles (
+CREATE TABLE shogun.imagefiles (
     id bigint NOT NULL,
     created timestamp without time zone,
     modified timestamp without time zone,
@@ -128,7 +125,7 @@ CREATE TABLE imagefiles (
     CONSTRAINT imagefiles_unique_id UNIQUE (id)
 );
 
-CREATE TABLE layers (
+CREATE TABLE shogun.layers (
     id bigint NOT NULL,
     created timestamp without time zone,
     modified timestamp without time zone,
@@ -142,17 +139,17 @@ CREATE TABLE layers (
     CONSTRAINT layers_unique_name UNIQUE (name)
 );
 
-CREATE TABLE permission (
+CREATE TABLE shogun.permission (
     permissions_id bigint NOT NULL,
     permissions text,
     CONSTRAINT permission_fkey_permissions_id FOREIGN KEY (permissions_id)
-        REFERENCES permissions (id) MATCH SIMPLE
+        REFERENCES shogun.permissions (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
         NOT VALID
 );
 
-CREATE TABLE userclasspermissions (
+CREATE TABLE shogun.userclasspermissions (
     id bigint NOT NULL,
     created timestamp without time zone,
     modified timestamp without time zone,
@@ -160,21 +157,20 @@ CREATE TABLE userclasspermissions (
     permissions_id bigint NOT NULL,
     user_id bigint NOT NULL,
     CONSTRAINT userclasspermissions_pkey PRIMARY KEY (id),
-    -- CONSTRAINT userclasspermissions_unique_permissions_id UNIQUE (permissions_id),
     CONSTRAINT userclasspermissions_unique_id UNIQUE (id),
     CONSTRAINT userclasspermissions_fkey_user_id FOREIGN KEY (user_id)
-        REFERENCES users (id) MATCH SIMPLE
+        REFERENCES shogun.users (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
         NOT VALID,
     CONSTRAINT userclasspermissions_fkey_permissions_id FOREIGN KEY (permissions_id)
-        REFERENCES permissions (id) MATCH SIMPLE
+        REFERENCES shogun.permissions (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
         NOT VALID
 );
 
-CREATE TABLE userinstancepermissions (
+CREATE TABLE shogun.userinstancepermissions (
     id bigint NOT NULL,
     created timestamp without time zone,
     modified timestamp without time zone,
@@ -182,15 +178,14 @@ CREATE TABLE userinstancepermissions (
     permissions_id bigint NOT NULL,
     user_id bigint NOT NULL,
     CONSTRAINT userinstancepermissions_pkey PRIMARY KEY (id),
-    -- CONSTRAINT userinstancepermissions_unique_permissions_id UNIQUE (permissions_id),
     CONSTRAINT userinstancepermissions_unique_id UNIQUE (id),
     CONSTRAINT userinstancepermissions_fkey_user_id FOREIGN KEY (user_id)
-        REFERENCES users (id) MATCH SIMPLE
+        REFERENCES shogun.users (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
         NOT VALID,
     CONSTRAINT userinstancepermissions_fkey_permissions_id FOREIGN KEY (permissions_id)
-        REFERENCES permissions (id) MATCH SIMPLE
+        REFERENCES shogun.permissions (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
         NOT VALID

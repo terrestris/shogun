@@ -5,8 +5,10 @@ import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity(name = "imagefiles")
+@Table(schema = "shogun")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

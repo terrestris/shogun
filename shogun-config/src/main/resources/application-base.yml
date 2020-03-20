@@ -24,9 +24,10 @@ spring:
     enabled: true
     baselineOnMigrate: true
     locations: classpath:db/migration
+    defaultSchema: shogun
   datasource:
     platform: postgres
-    url: jdbc:postgresql://localhost:5555/shogun
+    url: jdbc:postgresql://localhost:5555/shogun?currentSchema=shogun
     username: shogun
     password: shogun
   session:

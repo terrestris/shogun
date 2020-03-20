@@ -1,17 +1,14 @@
 package de.terrestris.shogun.lib.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
+import javax.persistence.*;
 import java.util.HashMap;
 import java.util.Map;
 
 @Entity(name = "users")
+@Table(schema = "shogun")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
