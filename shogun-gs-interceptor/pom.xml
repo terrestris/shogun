@@ -10,7 +10,6 @@
     <version>4.0.0-BETA-SNAPSHOT</version>
   </parent>
 
-  <groupId>de.terrestris</groupId>
   <artifactId>shogun-gs-interceptor</artifactId>
   <name>SHOGun GeoServer Interceptor</name>
   <packaging>jar</packaging>
@@ -52,11 +51,6 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-redis</artifactId>
     </dependency>
-<!--    <dependency>-->
-<!--      <groupId>org.springframework.boot</groupId>-->
-<!--      <artifactId>spring-boot-devtools</artifactId>-->
-<!--      <optional>true</optional>-->
-<!--    </dependency>-->
 
     <!-- Spring -->
     <dependency>

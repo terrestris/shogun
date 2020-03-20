@@ -24,7 +24,6 @@ import java.util.Optional;
 
 @RestController
 public class GeoServerInterceptorController {
-
     public static final String ERROR_MESSAGE = "Error while requesting a GeoServer resource: ";
 
     protected final Logger LOG = LogManager.getLogger(getClass());

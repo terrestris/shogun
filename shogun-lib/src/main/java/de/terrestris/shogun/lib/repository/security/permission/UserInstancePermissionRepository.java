@@ -13,4 +13,5 @@ public interface UserInstancePermissionRepository extends BaseCrudRepository<Use
 
     @Query("Select uip from userinstancepermissions uip where uip.user.id = ?1 and uip.entityId = ?2")
     Optional<UserInstancePermission> findByUserIdAndEntityId(Long userId, Long entityId);
+
 }
