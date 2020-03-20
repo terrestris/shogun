@@ -12,15 +12,14 @@
 
   <artifactId>shogun-gs-interceptor</artifactId>
   <name>SHOGun GeoServer Interceptor</name>
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
 
-  <properties>
-    <!-- https://stackoverflow.com/questions/53609881/maven-multi-module-project-packaging-error -->
-    <spring-boot.repackage.skip>true</spring-boot.repackage.skip>
-  </properties>
+  <modules>
+    <module>shogun-gs-interceptor-lib</module>
+    <module>shogun-gs-interceptor-boot</module>
+  </modules>
 
   <dependencies>
-
     <!-- Spring Boot -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -121,41 +120,5 @@
       <version>${project.version}</version>
     </dependency>
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-site-plugin</artifactId>
-        <version>3.8.2</version>
-        <extensions>true</extensions>
-      </plugin>
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>repackage</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.hibernate.orm.tooling</groupId>
-        <artifactId>hibernate-enhance-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <configuration>
-              <failOnError>true</failOnError>
-              <enableLazyInitialization>true</enableLazyInitialization>
-            </configuration>
-            <goals>
-              <goal>enhance</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>
