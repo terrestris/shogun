@@ -33,10 +33,10 @@ public class InterceptorRuleService extends BaseService<InterceptorRuleRepositor
     }
 
     /**
-     *
-     * @param endpoint
-     * @param rule
-     * @param service
+     * Add request {@link InterceptorRule} for endpoint (e.g. qualified layer name), rule (e.g. MODIFY) and service (e.g. WMS)
+     * @param endpoint The qualified layer name
+     * @param rule The {@link de.terrestris.shogun.interceptor.enumeration.InterceptorEnum.RuleType}
+     * @param service The {@link de.terrestris.shogun.interceptor.enumeration.OgcEnum.ServiceType}
      */
     public void addRequestRuleForServiceAndEndpoint(String endpoint, InterceptorEnum.RuleType rule, OgcEnum.ServiceType service) {
         HttpEnum.EventType eventType = HttpEnum.EventType.REQUEST;
@@ -45,10 +45,10 @@ public class InterceptorRuleService extends BaseService<InterceptorRuleRepositor
     }
 
     /**
-     *
-     * @param endpoint
-     * @param rule
-     * @param service
+     * Add response {@link InterceptorRule} for endpoint (e.g. qualified layer name), rule (e.g. MODIFY) and service (e.g. WMS)
+     * @param endpoint The qualified layer name
+     * @param rule The {@link de.terrestris.shogun.interceptor.enumeration.InterceptorEnum.RuleType}
+     * @param service The {@link de.terrestris.shogun.interceptor.enumeration.OgcEnum.ServiceType}
      */
     public void addResponseRuleForEndpoint(String endpoint, InterceptorEnum.RuleType rule, OgcEnum.ServiceType service) {
         HttpEnum.EventType eventType = HttpEnum.EventType.RESPONSE;
@@ -57,8 +57,10 @@ public class InterceptorRuleService extends BaseService<InterceptorRuleRepositor
     }
 
     /**
-     * adds all …
-     * @param endpoint
+     * Add request and response {@link InterceptorRule}s for endpoint (e.g. qualified layer name), rule (e.g. MODIFY) and service (e.g. WMS)
+     * @param endpoint The qualified layer name
+     * @param rule The {@link de.terrestris.shogun.interceptor.enumeration.InterceptorEnum.RuleType}
+     * @param service The {@link de.terrestris.shogun.interceptor.enumeration.OgcEnum.ServiceType}
      */
     public void addRuleForEndpoint(String endpoint, InterceptorEnum.RuleType rule, OgcEnum.ServiceType service) {
         addRequestRuleForServiceAndEndpoint(endpoint, rule, service);
@@ -66,8 +68,8 @@ public class InterceptorRuleService extends BaseService<InterceptorRuleRepositor
     }
 
     /**
-     *
-     * @param endpoint
+     * Adds WMS request and response modify rules for endpoint (e.g. qualified layer name)
+     * @param endpoint The qualified layer name
      */
     public void setModifyForAllWmsActions(String endpoint) {
         OgcEnum.ServiceType serviceType = OgcEnum.ServiceType.WMS;
@@ -76,8 +78,8 @@ public class InterceptorRuleService extends BaseService<InterceptorRuleRepositor
     }
 
     /**
-     *
-     * @param endpoint
+     * Adds WFS request and response modify rules for endpoint (e.g. qualified layer name)
+     * @param endpoint The qualified layer name
      */
     public void setModifyForAllWfsActions(String endpoint) {
         OgcEnum.ServiceType serviceType = OgcEnum.ServiceType.WFS;
@@ -86,8 +88,8 @@ public class InterceptorRuleService extends BaseService<InterceptorRuleRepositor
     }
 
     /**
-     *
-     * @param endpoint
+     * Adds Wms request modify rules for endpoint (e.g. qualified layer name)
+     * @param endpoint The qualified layer name
      */
     public void setModifyForAllWmsRequests(String endpoint) {
         OgcEnum.ServiceType serviceType = OgcEnum.ServiceType.WMS;
@@ -96,8 +98,8 @@ public class InterceptorRuleService extends BaseService<InterceptorRuleRepositor
     }
 
     /**
-     *
-     * @param endpoint
+     * Adds Wfs request modify rules for endpoint (e.g. qualified layer name)
+     * @param endpoint The qualified layer name
      */
     public void setModifyForAllWfsRequests(String endpoint) {
         OgcEnum.ServiceType serviceType = OgcEnum.ServiceType.WFS;
@@ -106,12 +108,13 @@ public class InterceptorRuleService extends BaseService<InterceptorRuleRepositor
     }
 
     /**
+     * Add {@link InterceptorRule} to database if not exists, otherwise update
      *
-     * @param event
-     * @param rule
-     * @param service
-     * @param operation
-     * @param endPoint
+     * @param event The {@link de.terrestris.shogun.interceptor.enumeration.HttpEnum.EventType}, e.g. request
+     * @param rule The {@link de.terrestris.shogun.interceptor.enumeration.InterceptorEnum.RuleType}, e.g. MODIFY
+     * @param service The {@link de.terrestris.shogun.interceptor.enumeration.OgcEnum.ServiceType}, e.g. WMS
+     * @param operation The {@link de.terrestris.shogun.interceptor.enumeration.OgcEnum.OperationType}, e.g. getMap
+     * @param endPoint The endpoint, e.g. the qualified layer name
      */
     public void addRule(HttpEnum.EventType event, InterceptorEnum.RuleType rule, OgcEnum.ServiceType service, OgcEnum.OperationType operation, String endPoint) {
         Optional<InterceptorRule> existingRule = repository.findByEventAndRuleAndServiceAndOperationAndEndPoint(event, rule, service, operation, endPoint);

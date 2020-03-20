@@ -19,4 +19,5 @@ public interface InterceptorRuleRepository extends BaseCrudRepository<Intercepto
     List<InterceptorRule> findByEndPoint(String endpoint);
 
     Optional<InterceptorRule> findByEventAndRuleAndServiceAndOperationAndEndPoint(HttpEnum.EventType event, InterceptorEnum.RuleType rule, OgcEnum.ServiceType service, OgcEnum.OperationType operation, String endPoint);
+
 }
