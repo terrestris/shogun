@@ -20,8 +20,9 @@ public class InterceptorWebSecurityConfig extends WebSecurityConfig {
                 "/csrf/**"
             )
             .permitAll()
+            .antMatchers("/interceptorrules/**")
+                .hasRole("interceptor-admin")
             .anyRequest()
-            // .authenticated()
-            .hasRole("user");
+                .authenticated();
     }
 }

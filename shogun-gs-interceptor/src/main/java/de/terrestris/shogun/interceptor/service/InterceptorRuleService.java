@@ -37,8 +37,8 @@ public class InterceptorRuleService extends BaseService<InterceptorRuleRepositor
      * Add request {@link InterceptorRule} for endpoint (e.g. qualified layer name), rule (e.g. MODIFY) and service (e.g. WMS)
      *
      * @param endpoint The qualified layer name
-     * @param rule     The {@link de.terrestris.shogun.interceptor.enumeration.InterceptorEnum.RuleType}
-     * @param service  The {@link de.terrestris.shogun.interceptor.enumeration.OgcEnum.ServiceType}
+     * @param rule     The {@link InterceptorEnum.RuleType}
+     * @param service  The {@link OgcEnum.ServiceType}
      */
     public void addRequestRuleForServiceAndEndpoint(String endpoint, InterceptorEnum.RuleType rule, OgcEnum.ServiceType service) {
         HttpEnum.EventType eventType = HttpEnum.EventType.REQUEST;
@@ -50,10 +50,10 @@ public class InterceptorRuleService extends BaseService<InterceptorRuleRepositor
      * Add response {@link InterceptorRule} for endpoint (e.g. qualified layer name), rule (e.g. MODIFY) and service (e.g. WMS)
      *
      * @param endpoint The qualified layer name
-     * @param rule     The {@link de.terrestris.shogun.interceptor.enumeration.InterceptorEnum.RuleType}
-     * @param service  The {@link de.terrestris.shogun.interceptor.enumeration.OgcEnum.ServiceType}
+     * @param rule     The {@link InterceptorEnum.RuleType}
+     * @param service  The {@link OgcEnum.ServiceType}
      */
-    public void addResponseRuleForEndpoint(String endpoint, InterceptorEnum.RuleType rule, OgcEnum.ServiceType service) {
+    public void addResponseRuleForServiceAndEndpoint(String endpoint, InterceptorEnum.RuleType rule, OgcEnum.ServiceType service) {
         HttpEnum.EventType eventType = HttpEnum.EventType.RESPONSE;
         Set<OgcEnum.OperationType> allOperationsForService = OgcEnum.OPERATIONS_BY_SERVICETYPE.get(service);
         allOperationsForService.forEach(operationType -> addRule(eventType, rule, service, operationType, endpoint));
@@ -63,12 +63,12 @@ public class InterceptorRuleService extends BaseService<InterceptorRuleRepositor
      * Add request and response {@link InterceptorRule}s for endpoint (e.g. qualified layer name), rule (e.g. MODIFY) and service (e.g. WMS)
      *
      * @param endpoint The qualified layer name
-     * @param rule     The {@link de.terrestris.shogun.interceptor.enumeration.InterceptorEnum.RuleType}
-     * @param service  The {@link de.terrestris.shogun.interceptor.enumeration.OgcEnum.ServiceType}
+     * @param rule     The {@link InterceptorEnum.RuleType}
+     * @param service  The {@link OgcEnum.ServiceType}
      */
     public void addRuleForEndpoint(String endpoint, InterceptorEnum.RuleType rule, OgcEnum.ServiceType service) {
         addRequestRuleForServiceAndEndpoint(endpoint, rule, service);
-        addResponseRuleForEndpoint(endpoint, rule, service);
+        addResponseRuleForServiceAndEndpoint(endpoint, rule, service);
     }
 
     /**
@@ -118,10 +118,10 @@ public class InterceptorRuleService extends BaseService<InterceptorRuleRepositor
     /**
      * Add {@link InterceptorRule} to database if not exists, otherwise update
      *
-     * @param event     The {@link de.terrestris.shogun.interceptor.enumeration.HttpEnum.EventType}, e.g. request
-     * @param rule      The {@link de.terrestris.shogun.interceptor.enumeration.InterceptorEnum.RuleType}, e.g. MODIFY
-     * @param service   The {@link de.terrestris.shogun.interceptor.enumeration.OgcEnum.ServiceType}, e.g. WMS
-     * @param operation The {@link de.terrestris.shogun.interceptor.enumeration.OgcEnum.OperationType}, e.g. getMap
+     * @param event     The {@link HttpEnum.EventType}, e.g. request
+     * @param rule      The {@link InterceptorEnum.RuleType}, e.g. MODIFY
+     * @param service   The {@link OgcEnum.ServiceType}, e.g. WMS
+     * @param operation The {@link OgcEnum.OperationType}, e.g. getMap
      * @param endPoint  The endpoint, e.g. the qualified layer name
      */
     public void addRule(HttpEnum.EventType event, InterceptorEnum.RuleType rule, OgcEnum.ServiceType service, OgcEnum.OperationType operation, String endPoint) {
