@@ -1,5 +1,3 @@
-CREATE SCHEMA IF NOT EXISTS interceptor;
-
 CREATE SEQUENCE IF NOT EXISTS hibernate_sequence
     INCREMENT 1
     START 1
@@ -7,7 +5,7 @@ CREATE SEQUENCE IF NOT EXISTS hibernate_sequence
     MAXVALUE 9223372036854775807
     CACHE 1;
 
-CREATE TABLE interceptor.interceptor_rule (
+CREATE TABLE interceptor_rule (
     id bigint NOT NULL PRIMARY KEY,
     created timestamp without time zone,
     modified timestamp without time zone,
@@ -18,7 +16,7 @@ CREATE TABLE interceptor.interceptor_rule (
     service text NOT NULL
 );
 
-INSERT INTO interceptor.interceptor_rule VALUES (
+INSERT INTO interceptor_rule VALUES (
     nextval('hibernate_sequence'),
     NOW()::timestamp,
     NOW()::timestamp,
@@ -29,7 +27,7 @@ INSERT INTO interceptor.interceptor_rule VALUES (
     'WMS'
 );
 
-INSERT INTO interceptor.interceptor_rule VALUES (
+INSERT INTO interceptor_rule VALUES (
     nextval('hibernate_sequence'),
     NOW()::timestamp,
     NOW()::timestamp,
@@ -40,7 +38,7 @@ INSERT INTO interceptor.interceptor_rule VALUES (
     'WFS'
 );
 
-INSERT INTO interceptor.interceptor_rule VALUES (
+INSERT INTO interceptor_rule VALUES (
     nextval('hibernate_sequence'),
     NOW()::timestamp,
     NOW()::timestamp,
@@ -51,7 +49,7 @@ INSERT INTO interceptor.interceptor_rule VALUES (
     'WCS'
 );
 
-INSERT INTO interceptor.interceptor_rule VALUES (
+INSERT INTO interceptor_rule VALUES (
     nextval('hibernate_sequence'),
     NOW()::timestamp,
     NOW()::timestamp,
@@ -62,7 +60,7 @@ INSERT INTO interceptor.interceptor_rule VALUES (
     'WMS'
 );
 
-INSERT INTO interceptor.interceptor_rule VALUES (
+INSERT INTO interceptor_rule VALUES (
     nextval('hibernate_sequence'),
     NOW()::timestamp,
     NOW()::timestamp,
@@ -73,7 +71,7 @@ INSERT INTO interceptor.interceptor_rule VALUES (
     'WFS'
 );
 
-INSERT INTO interceptor.interceptor_rule VALUES (
+INSERT INTO interceptor_rule VALUES (
     nextval('hibernate_sequence'),
     NOW()::timestamp,
     NOW()::timestamp,
