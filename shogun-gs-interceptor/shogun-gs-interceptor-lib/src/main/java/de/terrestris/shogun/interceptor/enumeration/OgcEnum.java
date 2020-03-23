@@ -58,9 +58,9 @@ public class OgcEnum {
         w3dsOps.add(OperationType.GET_TILE);
 
         Set<OperationType> wmtsOps = new HashSet<>();
-        w3dsOps.add(OperationType.GET_CAPABILITIES);
-        w3dsOps.add(OperationType.GET_TILE);
-        w3dsOps.add(OperationType.GET_FEATURE_INFO);
+        wmtsOps.add(OperationType.GET_CAPABILITIES);
+        wmtsOps.add(OperationType.GET_TILE);
+        wmtsOps.add(OperationType.GET_FEATURE_INFO);
 
         map.put(ServiceType.WMS, Collections.unmodifiableSet(wmsOps));
         map.put(ServiceType.WFS, Collections.unmodifiableSet(wfsOps));
