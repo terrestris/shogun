@@ -11,9 +11,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-@EnableJpaRepositories(basePackages = { "de.terrestris.shogun.interceptor" })
-@ComponentScan(basePackages = { "de.terrestris.shogun.interceptor" })
-@EntityScan(basePackages = { "de.terrestris.shogun.interceptor" })
+@EnableJpaRepositories(basePackages = {"de.terrestris.shogun.interceptor"})
+@ComponentScan(basePackages = {"de.terrestris.shogun.interceptor"})
+@EntityScan(basePackages = {"de.terrestris.shogun.interceptor"})
 @EnableConfigurationProperties({
     InterceptorProperties.class,
     NamespaceProperties.class,

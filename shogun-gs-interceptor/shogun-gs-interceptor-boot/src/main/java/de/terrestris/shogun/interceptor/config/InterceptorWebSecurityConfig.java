@@ -11,17 +11,17 @@ public class InterceptorWebSecurityConfig extends WebSecurityConfig {
     protected void customHttpConfiguration(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
-                .antMatchers(
-                    // Allow access to swagger interface
-                    "/swagger-ui.html",
-                    "/swagger-resources/**",
-                    "/webjars/**",
-                    "/v2/**",
-                    "/csrf/**"
-                )
-                    .permitAll()
-                .anyRequest()
-                    // .authenticated()
-                    .hasRole("user");
+            .antMatchers(
+                // Allow access to swagger interface
+                "/swagger-ui.html",
+                "/swagger-resources/**",
+                "/webjars/**",
+                "/v2/**",
+                "/csrf/**"
+            )
+            .permitAll()
+            .anyRequest()
+            // .authenticated()
+            .hasRole("user");
     }
 }

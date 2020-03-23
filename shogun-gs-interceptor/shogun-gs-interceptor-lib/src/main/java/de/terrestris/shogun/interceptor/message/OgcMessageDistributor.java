@@ -1,10 +1,16 @@
 package de.terrestris.shogun.interceptor.message;
 
-import de.terrestris.shogun.interceptor.request.*;
-import de.terrestris.shogun.interceptor.response.*;
+import de.terrestris.shogun.interceptor.exception.InterceptorException;
+import de.terrestris.shogun.interceptor.request.WcsRequestInterceptorInterface;
+import de.terrestris.shogun.interceptor.request.WfsRequestInterceptorInterface;
+import de.terrestris.shogun.interceptor.request.WmsRequestInterceptorInterface;
+import de.terrestris.shogun.interceptor.request.WpsRequestInterceptorInterface;
+import de.terrestris.shogun.interceptor.response.WcsResponseInterceptorInterface;
+import de.terrestris.shogun.interceptor.response.WfsResponseInterceptorInterface;
+import de.terrestris.shogun.interceptor.response.WmsResponseInterceptorInterface;
+import de.terrestris.shogun.interceptor.response.WpsResponseInterceptorInterface;
 import de.terrestris.shogun.interceptor.servlet.MutableHttpServletRequest;
 import de.terrestris.shogun.lib.dto.HttpResponse;
-import de.terrestris.shogun.interceptor.exception.InterceptorException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,26 +22,19 @@ import java.text.MessageFormat;
 @Component
 public class OgcMessageDistributor {
 
-    protected final Logger logger = LogManager.getLogger(getClass());
-
     private static final String MODIFYING_REQUEST_MSG = "Modifying a {0} {1} request";
-
     private static final String MODIFYING_RESPONSE_MSG = "Modifying a {0} {1} response";
-
     private static final String REQUEST_IMPLEMENTATION_NOT_FOUND_MSG =
         "No interceptor class implementation for request {0} {1} found. " +
             "Forwarding the original request.";
-
     private static final String RESPONSE_IMPLEMENTATION_NOT_FOUND_MSG =
         "No interceptor class implementation for response {0} {1} found. " +
             "Returning the original response.";
-
     private static final String REQUEST_NOT_SUPPORTED_MSG = "The request type " +
         "{0} is not supported";
-
     private static final String RESPONSE_NOT_SUPPORTED_MSG = "The response type " +
         "{0} is not supported";
-
+    protected final Logger logger = LogManager.getLogger(getClass());
     @Autowired(required = false)
     @Qualifier("wmsRequestInterceptor")
     private WmsRequestInterceptorInterface wmsRequestInterceptor;

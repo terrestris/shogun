@@ -1,9 +1,9 @@
 package de.terrestris.shogun.interceptor.model;
 
-import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.interceptor.enumeration.HttpEnum;
 import de.terrestris.shogun.interceptor.enumeration.InterceptorEnum;
 import de.terrestris.shogun.interceptor.enumeration.OgcEnum;
+import de.terrestris.shogun.lib.model.BaseEntity;
 import lombok.*;
 
 import javax.persistence.*;

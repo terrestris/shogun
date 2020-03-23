@@ -1,6 +1,5 @@
 package de.terrestris.shogun.interceptor.exception;
 
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor

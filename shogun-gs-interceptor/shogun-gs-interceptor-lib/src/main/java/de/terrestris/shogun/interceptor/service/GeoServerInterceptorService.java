@@ -2,16 +2,16 @@ package de.terrestris.shogun.interceptor.service;
 
 import de.terrestris.shogun.interceptor.config.properties.InterceptorProperties;
 import de.terrestris.shogun.interceptor.config.properties.NamespaceProperties;
-import de.terrestris.shogun.interceptor.servlet.MutableHttpServletRequest;
-import de.terrestris.shogun.interceptor.util.OgcXmlUtil;
-import de.terrestris.shogun.lib.dto.HttpResponse;
-import de.terrestris.shogun.lib.util.HttpUtil;
 import de.terrestris.shogun.interceptor.enumeration.HttpEnum;
 import de.terrestris.shogun.interceptor.enumeration.OgcEnum;
 import de.terrestris.shogun.interceptor.exception.InterceptorException;
 import de.terrestris.shogun.interceptor.message.OgcMessage;
 import de.terrestris.shogun.interceptor.message.OgcMessageDistributor;
 import de.terrestris.shogun.interceptor.model.InterceptorRule;
+import de.terrestris.shogun.interceptor.servlet.MutableHttpServletRequest;
+import de.terrestris.shogun.interceptor.util.OgcXmlUtil;
+import de.terrestris.shogun.lib.dto.HttpResponse;
+import de.terrestris.shogun.lib.util.HttpUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpException;
@@ -554,7 +554,7 @@ public class GeoServerInterceptorService {
             }
         } else {
             geoServerUrl = interceptorProperties.getDefaultOwsUrl();
-            LOG.debug("Using GeoServer OWS URL without namespace: {}" , geoServerUrl);
+            LOG.debug("Using GeoServer OWS URL without namespace: {}", geoServerUrl);
         }
 
         if (StringUtils.isEmpty(geoServerUrl)) {
@@ -577,7 +577,7 @@ public class GeoServerInterceptorService {
         }
 
         URIBuilder builder = new URIBuilder(geoServerUrl);
-        return  builder.build();
+        return builder.build();
     }
 
     /**

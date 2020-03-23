@@ -116,7 +116,7 @@ public class MutableHttpServletRequest extends HttpServletRequestWrapper {
                         value = value.split(":")[1];
                     }
                 } else if (Arrays.asList(OgcEnum.EndPoint.getAllValues()).contains(parameter)) {
-                    value = OgcXmlUtil.getPathInDocument(document,"//TypeName/text() | //TypeNames/text() | //GetCoverage/Identifier/text()");
+                    value = OgcXmlUtil.getPathInDocument(document, "//TypeName/text() | //TypeNames/text() | //GetCoverage/Identifier/text()");
                     if (StringUtils.isEmpty(value)) {
                         value = OgcXmlUtil.getPathInDocument(document, "//@typeName | //@typeNames");
                     }
