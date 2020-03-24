@@ -20,6 +20,8 @@ public abstract class WebSecurityConfig extends KeycloakWebSecurityConfigurerAda
         SimpleAuthorityMapper grantedAuthorityMapper = new SimpleAuthorityMapper();
         grantedAuthorityMapper.setPrefix("ROLE_");
 
+        grantedAuthorityMapper.setConvertToUpperCase(true);
+
         KeycloakAuthenticationProvider keycloakAuthenticationProvider = keycloakAuthenticationProvider();
         keycloakAuthenticationProvider.setGrantedAuthoritiesMapper(grantedAuthorityMapper);
         auth.authenticationProvider(keycloakAuthenticationProvider);
