@@ -9,7 +9,6 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Table(schema = "interceptor")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
