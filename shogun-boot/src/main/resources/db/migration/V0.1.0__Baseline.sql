@@ -1,8 +1,9 @@
 CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public;
 
-SET search_path TO shogun;
+CREATE SCHEMA IF NOT EXISTS shogun;
+SET search_path TO shogun, public;
 
-CREATE SEQUENCE hibernate_sequence
+CREATE SEQUENCE IF NOT EXISTS hibernate_sequence
     INCREMENT 1
     START 1
     MINVALUE 1
@@ -75,7 +76,6 @@ CREATE TABLE groupclasspermissions (
     permissions_id bigint NOT NULL,
     group_id bigint NOT NULL,
     CONSTRAINT groupclasspermissions_pkey PRIMARY KEY (id),
-    -- CONSTRAINT groupclasspermissions_unique_permissions_id UNIQUE (permissions_id),
     CONSTRAINT groupclasspermissions_unique_id UNIQUE (id),
     CONSTRAINT groupclasspermissions_fkey_group_id FOREIGN KEY (group_id)
         REFERENCES groups (id) MATCH SIMPLE
@@ -98,7 +98,6 @@ CREATE TABLE groupinstancepermissions (
     group_id bigint NOT NULL,
     CONSTRAINT groupinstancepermissions_pkey PRIMARY KEY (id),
     CONSTRAINT groupinstancepermissions_unique_id UNIQUE (id),
-    -- CONSTRAINT groupinstancepermissions_unique_permissions_id UNIQUE (permissions_id),
     CONSTRAINT groupinstancepermissions_fkey_group_id FOREIGN KEY (group_id)
         REFERENCES groups (id) MATCH SIMPLE
         ON UPDATE NO ACTION
@@ -110,7 +109,6 @@ CREATE TABLE groupinstancepermissions (
         ON DELETE NO ACTION
         NOT VALID
 );
-
 
 CREATE TABLE imagefiles (
     id bigint NOT NULL,
@@ -160,7 +158,6 @@ CREATE TABLE userclasspermissions (
     permissions_id bigint NOT NULL,
     user_id bigint NOT NULL,
     CONSTRAINT userclasspermissions_pkey PRIMARY KEY (id),
-    -- CONSTRAINT userclasspermissions_unique_permissions_id UNIQUE (permissions_id),
     CONSTRAINT userclasspermissions_unique_id UNIQUE (id),
     CONSTRAINT userclasspermissions_fkey_user_id FOREIGN KEY (user_id)
         REFERENCES users (id) MATCH SIMPLE
@@ -182,7 +179,6 @@ CREATE TABLE userinstancepermissions (
     permissions_id bigint NOT NULL,
     user_id bigint NOT NULL,
     CONSTRAINT userinstancepermissions_pkey PRIMARY KEY (id),
-    -- CONSTRAINT userinstancepermissions_unique_permissions_id UNIQUE (permissions_id),
     CONSTRAINT userinstancepermissions_unique_id UNIQUE (id),
     CONSTRAINT userinstancepermissions_fkey_user_id FOREIGN KEY (user_id)
         REFERENCES users (id) MATCH SIMPLE

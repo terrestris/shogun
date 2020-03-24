@@ -1,7 +1,10 @@
 package de.terrestris.shogun.interceptor.message;
 
 import de.terrestris.shogun.interceptor.exception.InterceptorException;
-import de.terrestris.shogun.interceptor.request.*;
+import de.terrestris.shogun.interceptor.request.WcsRequestInterceptorInterface;
+import de.terrestris.shogun.interceptor.request.WfsRequestInterceptorInterface;
+import de.terrestris.shogun.interceptor.request.WmsRequestInterceptorInterface;
+import de.terrestris.shogun.interceptor.request.WpsRequestInterceptorInterface;
 import de.terrestris.shogun.interceptor.response.WcsResponseInterceptorInterface;
 import de.terrestris.shogun.interceptor.response.WfsResponseInterceptorInterface;
 import de.terrestris.shogun.interceptor.response.WmsResponseInterceptorInterface;
@@ -19,26 +22,19 @@ import java.text.MessageFormat;
 @Component
 public class OgcMessageDistributor {
 
-    protected final Logger LOG = LogManager.getLogger(getClass());
-
     private static final String MODIFYING_REQUEST_MSG = "Modifying a {0} {1} request";
-
     private static final String MODIFYING_RESPONSE_MSG = "Modifying a {0} {1} response";
-
     private static final String REQUEST_IMPLEMENTATION_NOT_FOUND_MSG =
         "No interceptor class implementation for request {0} {1} found. " +
             "Forwarding the original request.";
-
     private static final String RESPONSE_IMPLEMENTATION_NOT_FOUND_MSG =
         "No interceptor class implementation for response {0} {1} found. " +
             "Returning the original response.";
-
     private static final String REQUEST_NOT_SUPPORTED_MSG = "The request type " +
         "{0} is not supported";
-
     private static final String RESPONSE_NOT_SUPPORTED_MSG = "The response type " +
         "{0} is not supported";
-
+    protected final Logger logger = LogManager.getLogger(getClass());
     @Autowired(required = false)
     @Qualifier("wmsRequestInterceptor")
     private WmsRequestInterceptorInterface wmsRequestInterceptor;
@@ -71,23 +67,153 @@ public class OgcMessageDistributor {
     @Qualifier("wpsResponseInterceptor")
     private WpsResponseInterceptorInterface wpsResponseInterceptor;
 
+    public OgcMessageDistributor() {
+    }
+
+    /**
+     * @param mutableRequest
+     * @param response
+     * @param message
+     * @return
+     * @throws InterceptorException
+     */
+    public HttpResponse distributeToResponseInterceptor(MutableHttpServletRequest mutableRequest, HttpResponse response, OgcMessage message) throws InterceptorException {
+        if (message.isResponseAllowed()) {
+            logger.debug("Response is ALLOWED, not intercepting the response.");
+            return response;
+        } else if (message.isResponseDenied()) {
+            throw new InterceptorException("Response is DENIED, blocking the response.");
+        } else if (message.isResponseModified()) {
+            logger.debug("Response is to be MODIFIED, intercepting the response.");
+        }
+
+        String implErrMsg = MessageFormat.format(RESPONSE_IMPLEMENTATION_NOT_FOUND_MSG,
+            message.getService(), message.getOperation());
+        String infoMsg = MessageFormat.format(MODIFYING_RESPONSE_MSG,
+            message.getService(), message.getOperation());
+        String serviceErrMsg = MessageFormat.format(RESPONSE_NOT_SUPPORTED_MSG,
+            message.getService());
+        String operationErrMsg = MessageFormat.format(RESPONSE_NOT_SUPPORTED_MSG,
+            message.getOperation());
+
+        if (message.isWms()) {
+
+            // check if the wmsResponseInterceptor is available
+            if (this.wmsResponseInterceptor == null) {
+                logger.debug(implErrMsg);
+                return response;
+            }
+
+            logger.debug(infoMsg);
+
+            if (message.isWmsGetCapabilities()) {
+                response = this.wmsResponseInterceptor.interceptGetCapabilities(mutableRequest, response);
+            } else if (message.isWmsGetMap()) {
+                response = this.wmsResponseInterceptor.interceptGetMap(mutableRequest, response);
+            } else if (message.isWmsGetFeatureInfo()) {
+                response = this.wmsResponseInterceptor.interceptGetFeatureInfo(mutableRequest, response);
+            } else if (message.isWmsGetLegendGraphic()) {
+                response = this.wmsResponseInterceptor.interceptGetLegendGraphic(mutableRequest, response);
+            } else if (message.isWmsGetStyles()) {
+                response = this.wmsResponseInterceptor.interceptGetStyles(mutableRequest, response);
+            } else if (message.isWmsDescribeLayer()) {
+                response = this.wmsResponseInterceptor.interceptDescribeLayer(mutableRequest, response);
+            } else {
+                throw new InterceptorException(operationErrMsg);
+            }
+
+        } else if (message.isWfs()) {
+
+            // check if the wfsResponseInterceptor is available
+            if (this.wfsResponseInterceptor == null) {
+                logger.debug(implErrMsg);
+                return response;
+            }
+
+            logger.debug(infoMsg);
+
+            // Note: WFS 2.0.0 operations are not supported yet!
+            if (message.isWfsGetCapabilities()) {
+                response = this.wfsResponseInterceptor.interceptGetCapabilities(mutableRequest, response);
+            } else if (message.isWfsGetFeature()) {
+                response = this.wfsResponseInterceptor.interceptGetFeature(mutableRequest, response);
+            } else if (message.isWfsDescribeFeatureType()) {
+                response = this.wfsResponseInterceptor.interceptDescribeFeatureType(mutableRequest, response);
+            } else if (message.isWfsTransaction()) {
+                response = this.wfsResponseInterceptor.interceptTransaction(mutableRequest, response);
+            } else if (message.isWfsLockFeature()) {
+                response = this.wfsResponseInterceptor.interceptLockFeature(mutableRequest, response);
+            } else {
+                throw new InterceptorException(operationErrMsg);
+            }
+
+        } else if (message.isWcs()) {
+
+            // check if the wcsResponseInterceptor is available
+            if (this.wcsResponseInterceptor == null) {
+                logger.debug(implErrMsg);
+                return response;
+            }
+
+            logger.debug(infoMsg);
+
+            if (message.isWcsGetCapabilities()) {
+                response = this.wcsResponseInterceptor.interceptGetCapabilities(mutableRequest, response);
+            } else if (message.isWcsDescribeCoverage()) {
+                response = this.wcsResponseInterceptor.interceptDescribeCoverage(mutableRequest, response);
+            } else if (message.isWcsGetCoverage()) {
+                response = this.wcsResponseInterceptor.interceptGetCoverage(mutableRequest, response);
+            } else {
+                throw new InterceptorException(operationErrMsg);
+            }
+
+        } else if (message.isWps()) {
+
+            // check if the wpsResponseInterceptor is available
+            if (this.wpsResponseInterceptor == null) {
+                logger.debug(implErrMsg);
+                return response;
+            }
+
+            logger.debug(infoMsg);
+
+            if (message.isWpsGetCapabilities()) {
+                response = this.wpsResponseInterceptor.interceptGetCapabilities(mutableRequest, response);
+            } else if (message.isWpsDescribeProcess()) {
+                response = this.wpsResponseInterceptor.interceptDescribeProcess(mutableRequest, response);
+            } else if (message.isWpsExecute()) {
+                response = this.wpsResponseInterceptor.interceptExecute(mutableRequest, response);
+            } else {
+                throw new InterceptorException(operationErrMsg);
+            }
+
+        } else {
+            throw new InterceptorException(serviceErrMsg);
+        }
+
+        if (response == null) {
+            throw new InterceptorException("The response object is null. " +
+                "Please check your ResponseInterceptor implementation.");
+        }
+
+        return response;
+    }
+
     /**
      * @param request
      * @param message
      * @return
      * @throws InterceptorException
      */
-    public MutableHttpServletRequest distributeToRequestInterceptor(
-        MutableHttpServletRequest request, OgcMessage message)
-        throws InterceptorException {
+    public MutableHttpServletRequest distributeToRequestInterceptor(MutableHttpServletRequest request, OgcMessage message) throws InterceptorException {
 
         if (message.isRequestAllowed()) {
-            LOG.debug("Request is ALLOWED, not intercepting the request.");
+            logger.debug("Request is ALLOWED, not intercepting the request.");
             return request;
         } else if (message.isRequestDenied()) {
             throw new InterceptorException("Request is DENIED, blocking the request.");
         } else if (message.isRequestModified()) {
-            LOG.debug("Request is to be MODIFIED, intercepting the request.");
+            logger.debug("Request is to be MODIFIED, intercepting the request.");
         }
 
         String implErrMsg = MessageFormat.format(REQUEST_IMPLEMENTATION_NOT_FOUND_MSG,
@@ -103,11 +229,11 @@ public class OgcMessageDistributor {
 
             // check if the wmsRequestInterceptor is available
             if (this.wmsRequestInterceptor == null) {
-                LOG.debug(implErrMsg);
+                logger.debug(implErrMsg);
                 return request;
             }
 
-            LOG.debug(infoMsg);
+            logger.debug(infoMsg);
 
             if (message.isWmsGetCapabilities()) {
                 request = this.wmsRequestInterceptor.interceptGetCapabilities(request);
@@ -129,11 +255,11 @@ public class OgcMessageDistributor {
 
             // check if the wfsRequestInterceptor is available
             if (this.wfsRequestInterceptor == null) {
-                LOG.debug(implErrMsg);
+                logger.debug(implErrMsg);
                 return request;
             }
 
-            LOG.debug(infoMsg);
+            logger.debug(infoMsg);
 
             // Note: WFS 2.0.0 operations are not supported yet!
             if (message.isWfsGetCapabilities()) {
@@ -154,11 +280,11 @@ public class OgcMessageDistributor {
 
             // check if the wcsRequestInterceptor is available
             if (this.wcsRequestInterceptor == null) {
-                LOG.debug(implErrMsg);
+                logger.debug(implErrMsg);
                 return request;
             }
 
-            LOG.debug(infoMsg);
+            logger.debug(infoMsg);
 
             if (message.isWcsGetCapabilities()) {
                 request = this.wcsRequestInterceptor.interceptGetCapabilities(request);
@@ -174,7 +300,7 @@ public class OgcMessageDistributor {
 
             // check if the wpsRequestInterceptor is available
             if (this.wpsRequestInterceptor == null) {
-                LOG.debug(implErrMsg);
+                logger.debug(implErrMsg);
                 return request;
             }
 
@@ -201,136 +327,5 @@ public class OgcMessageDistributor {
 
         return request;
 
-    }
-
-    /**
-     * @param mutableRequest
-     * @param response
-     * @param message
-     * @return
-     * @throws InterceptorException
-     */
-    public HttpResponse distributeToResponseInterceptor(MutableHttpServletRequest mutableRequest, HttpResponse response,
-                                                                 OgcMessage message) throws InterceptorException {
-
-        if (message.isResponseAllowed()) {
-            LOG.debug("Response is ALLOWED, not intercepting the response.");
-            return response;
-        } else if (message.isResponseDenied()) {
-            throw new InterceptorException("Response is DENIED, blocking the response.");
-        } else if (message.isResponseModified()) {
-            LOG.debug("Response is to be MODIFIED, intercepting the response.");
-        }
-
-        String implErrMsg = MessageFormat.format(RESPONSE_IMPLEMENTATION_NOT_FOUND_MSG,
-            message.getService(), message.getOperation());
-        String infoMsg = MessageFormat.format(MODIFYING_RESPONSE_MSG,
-            message.getService(), message.getOperation());
-        String serviceErrMsg = MessageFormat.format(RESPONSE_NOT_SUPPORTED_MSG,
-            message.getService());
-        String operationErrMsg = MessageFormat.format(RESPONSE_NOT_SUPPORTED_MSG,
-            message.getOperation());
-
-        if (message.isWms()) {
-
-            // check if the wmsResponseInterceptor is available
-            if (this.wmsResponseInterceptor == null) {
-                LOG.debug(implErrMsg);
-                return response;
-            }
-
-            LOG.debug(infoMsg);
-
-            if (message.isWmsGetCapabilities()) {
-                response = this.wmsResponseInterceptor.interceptGetCapabilities(mutableRequest, response);
-            } else if (message.isWmsGetMap()) {
-                response = this.wmsResponseInterceptor.interceptGetMap(mutableRequest, response);
-            } else if (message.isWmsGetFeatureInfo()) {
-                response = this.wmsResponseInterceptor.interceptGetFeatureInfo(mutableRequest, response);
-            } else if (message.isWmsGetLegendGraphic()) {
-                response = this.wmsResponseInterceptor.interceptGetLegendGraphic(mutableRequest, response);
-            } else if (message.isWmsGetStyles()) {
-                response = this.wmsResponseInterceptor.interceptGetStyles(mutableRequest, response);
-            } else if (message.isWmsDescribeLayer()) {
-                response = this.wmsResponseInterceptor.interceptDescribeLayer(mutableRequest, response);
-            } else {
-                throw new InterceptorException(operationErrMsg);
-            }
-
-        } else if (message.isWfs()) {
-
-            // check if the wfsResponseInterceptor is available
-            if (this.wfsResponseInterceptor == null) {
-                LOG.debug(implErrMsg);
-                return response;
-            }
-
-            LOG.debug(infoMsg);
-
-            // Note: WFS 2.0.0 operations are not supported yet!
-            if (message.isWfsGetCapabilities()) {
-                response = this.wfsResponseInterceptor.interceptGetCapabilities(mutableRequest, response);
-            } else if (message.isWfsGetFeature()) {
-                response = this.wfsResponseInterceptor.interceptGetFeature(mutableRequest, response);
-            } else if (message.isWfsDescribeFeatureType()) {
-                response = this.wfsResponseInterceptor.interceptDescribeFeatureType(mutableRequest, response);
-            } else if (message.isWfsTransaction()) {
-                response = this.wfsResponseInterceptor.interceptTransaction(mutableRequest, response);
-            } else if (message.isWfsLockFeature()) {
-                response = this.wfsResponseInterceptor.interceptLockFeature(mutableRequest, response);
-            } else {
-                throw new InterceptorException(operationErrMsg);
-            }
-
-        } else if (message.isWcs()) {
-
-            // check if the wcsResponseInterceptor is available
-            if (this.wcsResponseInterceptor == null) {
-                LOG.debug(implErrMsg);
-                return response;
-            }
-
-            LOG.debug(infoMsg);
-
-            if (message.isWcsGetCapabilities()) {
-                response = this.wcsResponseInterceptor.interceptGetCapabilities(mutableRequest, response);
-            } else if (message.isWcsDescribeCoverage()) {
-                response = this.wcsResponseInterceptor.interceptDescribeCoverage(mutableRequest, response);
-            } else if (message.isWcsGetCoverage()) {
-                response = this.wcsResponseInterceptor.interceptGetCoverage(mutableRequest, response);
-            } else {
-                throw new InterceptorException(operationErrMsg);
-            }
-
-        } else if (message.isWps()) {
-
-            // check if the wpsResponseInterceptor is available
-            if (this.wpsResponseInterceptor == null) {
-                LOG.debug(implErrMsg);
-                return response;
-            }
-
-            LOG.debug(infoMsg);
-
-            if (message.isWpsGetCapabilities()) {
-                response = this.wpsResponseInterceptor.interceptGetCapabilities(mutableRequest, response);
-            } else if (message.isWpsDescribeProcess()) {
-                response = this.wpsResponseInterceptor.interceptDescribeProcess(mutableRequest, response);
-            } else if (message.isWpsExecute()) {
-                response = this.wpsResponseInterceptor.interceptExecute(mutableRequest, response);
-            } else {
-                throw new InterceptorException(operationErrMsg);
-            }
-
-        } else {
-            throw new InterceptorException(serviceErrMsg);
-        }
-
-        if (response == null) {
-            throw new InterceptorException("The response object is null. " +
-                "Please check your ResponseInterceptor implementation.");
-        }
-
-        return response;
     }
 }

@@ -6,10 +6,7 @@ import de.terrestris.shogun.interceptor.enumeration.OgcEnum;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
 
 @Entity
 @Data

@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.util.Map;
 
 @Entity(name = "layers")
-//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Table(schema = "shogun")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

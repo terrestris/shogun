@@ -1,11 +1,9 @@
 package de.terrestris.shogun.interceptor.exception;
 
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 public class InterceptorException extends Exception {
-
-    private static final long serialVersionUID = 1L;
-
-    public InterceptorException() {
-    }
 
     public InterceptorException(String message) {
         super(message);

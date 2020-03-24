@@ -8,13 +8,11 @@
     <version>4.0.0-BETA-SNAPSHOT</version>
   </parent>
 
-  <groupId>de.terrestris</groupId>
   <artifactId>shogun-lib</artifactId>
   <name>SHOGun Core Library</name>
   <packaging>jar</packaging>
 
   <url>http://maven.apache.org</url>
-
   <build>
     <plugins>
       <plugin>

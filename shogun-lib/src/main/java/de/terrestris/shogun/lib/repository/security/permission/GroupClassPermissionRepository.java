@@ -14,4 +14,5 @@ public interface GroupClassPermissionRepository extends BaseCrudRepository<Group
 
     @Query("Select gcp from groupclasspermissions gcp where gcp.group.id = ?1 and gcp.className = ?2")
     Optional<GroupClassPermission> findByGroupIdAndClassName(Long groupId, String className);
+
 }

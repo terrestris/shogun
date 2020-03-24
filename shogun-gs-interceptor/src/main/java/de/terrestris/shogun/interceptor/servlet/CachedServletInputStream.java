@@ -4,7 +4,6 @@ import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 /**
  * An inputstream which reads the cached request body and has mutable
@@ -12,7 +11,7 @@ import java.io.IOException;
  *
  * @author Daniel Koch
  * @author terrestris GmbH & Co. KG
- * @see http://stackoverflow.com/questions/10210645/http-servlet-request-lose-params-from-post-body-after-read-it-once
+ * http://stackoverflow.com/questions/10210645/http-servlet-request-lose-params-from-post-body-after-read-it-once
  */
 public class CachedServletInputStream extends ServletInputStream {
 
@@ -26,7 +25,7 @@ public class CachedServletInputStream extends ServletInputStream {
     }
 
     @Override
-    public int read() throws IOException {
+    public int read() {
         return input.read();
     }
 

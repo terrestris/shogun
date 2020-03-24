@@ -1,6 +1,4 @@
-SET search_path TO interceptor;
-
-CREATE SEQUENCE hibernate_sequence
+CREATE SEQUENCE IF NOT EXISTS hibernate_sequence
     INCREMENT 1
     START 1
     MINVALUE 1

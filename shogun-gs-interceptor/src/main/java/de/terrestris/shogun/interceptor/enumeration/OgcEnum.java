@@ -23,9 +23,9 @@ public class OgcEnum {
     public static final Map<OperationType, Set<ServiceType>> SERVICETYPES_BY_OPERATION;
 
     static {
-        Map<ServiceType, Set<OperationType>> map = new HashMap<ServiceType, Set<OperationType>>();
+        Map<ServiceType, Set<OperationType>> map = new HashMap<>();
 
-        Set<OperationType> wmsOps = new HashSet<OperationType>();
+        Set<OperationType> wmsOps = new HashSet<>();
         wmsOps.add(OperationType.GET_CAPABILITIES);
         wmsOps.add(OperationType.GET_MAP);
         wmsOps.add(OperationType.GET_FEATURE_INFO);
@@ -33,71 +33,65 @@ public class OgcEnum {
         wmsOps.add(OperationType.GET_LEGEND_GRAPHIC);
         wmsOps.add(OperationType.GET_STYLES);
 
-        Set<OperationType> wfsOps = new HashSet<OperationType>();
+        Set<OperationType> wfsOps = new HashSet<>();
         wfsOps.add(OperationType.GET_CAPABILITIES);
         wfsOps.add(OperationType.DESCRIBE_FEATURE_TYPE);
         wfsOps.add(OperationType.GET_FEATURE);
         wfsOps.add(OperationType.LOCK_FEATURE);
         wfsOps.add(OperationType.TRANSACTION);
 
-        Set<OperationType> wcsOps = new HashSet<OperationType>();
+        Set<OperationType> wcsOps = new HashSet<>();
         wcsOps.add(OperationType.GET_CAPABILITIES);
         wcsOps.add(OperationType.DESCRIBE_COVERAGE);
         wcsOps.add(OperationType.GET_COVERAGE);
 
-        Set<OperationType> wpsOps = new HashSet<OperationType>();
+        Set<OperationType> wpsOps = new HashSet<>();
         wpsOps.add(OperationType.GET_CAPABILITIES);
         wpsOps.add(OperationType.EXECUTE);
         wpsOps.add(OperationType.DESCRIBE_PROCESS);
 
-        Set<OperationType> w3dsOps = new HashSet<OperationType>();
+        Set<OperationType> w3dsOps = new HashSet<>();
         w3dsOps.add(OperationType.GET_CAPABILITIES);
         w3dsOps.add(OperationType.GET_SCENE);
         w3dsOps.add(OperationType.GET_FEATURE_INFO);
         w3dsOps.add(OperationType.GET_LAYER_INFO);
         w3dsOps.add(OperationType.GET_TILE);
 
+        Set<OperationType> wmtsOps = new HashSet<>();
+        wmtsOps.add(OperationType.GET_CAPABILITIES);
+        wmtsOps.add(OperationType.GET_TILE);
+        wmtsOps.add(OperationType.GET_FEATURE_INFO);
 
         map.put(ServiceType.WMS, Collections.unmodifiableSet(wmsOps));
         map.put(ServiceType.WFS, Collections.unmodifiableSet(wfsOps));
         map.put(ServiceType.WCS, Collections.unmodifiableSet(wcsOps));
         map.put(ServiceType.WPS, Collections.unmodifiableSet(wpsOps));
         map.put(ServiceType.W3DS, Collections.unmodifiableSet(w3dsOps));
+        map.put(ServiceType.WMTS, Collections.unmodifiableSet(wmtsOps));
 
         // store it in the lookup
         OPERATIONS_BY_SERVICETYPE = Collections.unmodifiableMap(map);
     }
 
     static {
-        Map<OperationType, Set<ServiceType>> map = new HashMap<OperationType, Set<ServiceType>>();
-
+        Map<OperationType, Set<ServiceType>> map = new HashMap<>();
         // A set containing only the WMS ServiceType
-        Set<ServiceType> wmsSet = new HashSet<ServiceType>();
-        wmsSet.add(ServiceType.WMS);
-        wmsSet = Collections.unmodifiableSet(wmsSet);
+        Set<ServiceType> wmsSet = Set.of(ServiceType.WMS);
 
         // A set containing only the WFS ServiceType
-        Set<ServiceType> wfsSet = new HashSet<ServiceType>();
-        wfsSet.add(ServiceType.WFS);
-        wfsSet = Collections.unmodifiableSet(wfsSet);
+        Set<ServiceType> wfsSet = Set.of(ServiceType.WFS);
 
         // A set containing only the WCS ServiceType
-        Set<ServiceType> wcsSet = new HashSet<ServiceType>();
-        wcsSet.add(ServiceType.WCS);
-        wcsSet = Collections.unmodifiableSet(wcsSet);
+        Set<ServiceType> wcsSet = Set.of(ServiceType.WCS);
 
         // A set containing only the WPS ServiceType
-        Set<ServiceType> wpsSet = new HashSet<ServiceType>();
-        wpsSet.add(ServiceType.WPS);
-        wpsSet = Collections.unmodifiableSet(wpsSet);
+        Set<ServiceType> wpsSet = Set.of(ServiceType.WPS);
+
+        // A set containing only the WMTS ServiceType
+        Set<ServiceType> wmtsSet = Set.of(ServiceType.WMTS);
 
         // A set containing the WMS, WFS, WCS and WPS ServiceTypes
-        Set<ServiceType> getCapSet = new HashSet<ServiceType>();
-        getCapSet.add(ServiceType.WMS);
-        getCapSet.add(ServiceType.WFS);
-        getCapSet.add(ServiceType.WCS);
-        getCapSet.add(ServiceType.WPS);
-        getCapSet = Collections.unmodifiableSet(getCapSet);
+        Set<ServiceType> getCapSet = Set.of(ServiceType.WMS, ServiceType.WFS, ServiceType.WCS, ServiceType.WPS, ServiceType.WMTS);
 
         // look up all WMS operations from the previously created map
         Set<OperationType> wmsOperations = OPERATIONS_BY_SERVICETYPE.get(ServiceType.WMS);
@@ -107,6 +101,8 @@ public class OgcEnum {
         Set<OperationType> wcsOperations = OPERATIONS_BY_SERVICETYPE.get(ServiceType.WCS);
         // look up all WPS operations from the previously created map
         Set<OperationType> wpsOperations = OPERATIONS_BY_SERVICETYPE.get(ServiceType.WPS);
+        // look up all WMTS operations from the previously created map
+        Set<OperationType> wmtsOperations = OPERATIONS_BY_SERVICETYPE.get(ServiceType.WMTS);
 
         // put all ServiceTypes for the GetCapability operation
         map.put(OperationType.GET_CAPABILITIES, getCapSet);
@@ -132,6 +128,12 @@ public class OgcEnum {
         for (OperationType wpsOperation : wpsOperations) {
             if (!OperationType.GET_CAPABILITIES.equals(wpsOperation)) {
                 map.put(wpsOperation, wpsSet);
+            }
+        }
+        // for WMTS operations, put the WMTS set, unless it's the GetCapability op
+        for (OperationType wmtsOperation : wmtsOperations) {
+            if (!OperationType.GET_CAPABILITIES.equals(wmtsOperation)) {
+                map.put(wmtsOperation, wmtsSet);
             }
         }
         // store it in the lookup
@@ -316,6 +318,7 @@ public class OgcEnum {
      */
     public enum ServiceType {
         WMS("WMS"),
+        WMTS("WMTS"),
         WFS("WFS"),
         WCS("WCS"),
         WPS("WPS"),

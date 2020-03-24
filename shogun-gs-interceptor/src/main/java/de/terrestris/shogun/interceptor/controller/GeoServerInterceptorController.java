@@ -24,48 +24,34 @@ import java.util.Optional;
 
 @RestController
 public class GeoServerInterceptorController {
-
     public static final String ERROR_MESSAGE = "Error while requesting a GeoServer resource: ";
 
-    protected final Logger LOG = LogManager.getLogger(getClass());
+    protected final Logger logger = LogManager.getLogger(getClass());
 
     @Autowired
     protected GeoServerInterceptorService service;
 
-    @RequestMapping(value = {"/geoserver.action", "/geoserver.action/{endpoint}"}, method = {
-        RequestMethod.GET, RequestMethod.POST})
-    public ResponseEntity<?> interceptGeoServerRequest(HttpServletRequest request, @PathVariable(value = "endpoint", required = false) Optional<String> endpoint) {
+    @RequestMapping(value = {"/geoserver.action", "/geoserver.action/{endpoint}"}, method = {RequestMethod.GET, RequestMethod.POST})
+    public ResponseEntity<?> interceptGeoServerRequest(HttpServletRequest request,Optional<String> endpoint) {
         HttpHeaders responseHeaders = new HttpHeaders();
-        HttpStatus responseStatus = HttpStatus.OK;
+        HttpStatus responseStatus;
         byte[] responseBody;
         HttpResponse httpResponse;
 
         try {
-            LOG.trace("Trying to intercept a GeoServer resource.");
-
+            logger.trace("Trying to intercept a GeoServer resource.");
             httpResponse = this.service.interceptGeoServerRequest(request, endpoint);
-
             responseStatus = httpResponse.getStatusCode();
             responseBody = httpResponse.getBody();
             responseHeaders = httpResponse.getHeaders();
 
-            LOG.trace("Successfully intercepted a GeoServer resource.");
-
-            return new ResponseEntity<>(responseBody,
-                responseHeaders, responseStatus);
-
+            logger.trace("Successfully intercepted a GeoServer resource.");
+            return new ResponseEntity<>(responseBody, responseHeaders, responseStatus);
         } catch (NullPointerException | IOException | InterceptorException | HttpException | URISyntaxException e) {
-            LOG.error(ERROR_MESSAGE + e.getMessage());
-            LOG.trace("Full stack trace: ", e);
-
+            logger.error(ERROR_MESSAGE + e.getMessage());
+            logger.trace("Full stack trace: ", e);
             responseHeaders.setContentType(MediaType.APPLICATION_JSON);
-
-            throw new ResponseStatusException(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                ERROR_MESSAGE + e.getMessage(),
-                e
-            );
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ERROR_MESSAGE + e.getMessage(), e);
         }
-
     }
 }

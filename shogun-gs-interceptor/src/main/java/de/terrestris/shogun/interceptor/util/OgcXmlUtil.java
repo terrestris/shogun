@@ -1,7 +1,6 @@
 package de.terrestris.shogun.interceptor.util;
 
 import de.terrestris.shogun.interceptor.exception.InterceptorException;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Logger;
 import org.springframework.util.StreamUtils;
@@ -40,13 +39,9 @@ public class OgcXmlUtil {
      * @return
      */
     public static String getRequestBody(HttpServletRequest request) {
-
-        ServletInputStream in = null;
-        String body = null;
-
-        try {
-            in = request.getInputStream();
-
+        try (
+            ServletInputStream in = request.getInputStream();
+        ) {
             String encoding = request.getCharacterEncoding();
             Charset charset;
             if (!StringUtils.isEmpty(encoding)) {
@@ -54,16 +49,12 @@ public class OgcXmlUtil {
             } else {
                 charset = Charset.forName(DEFAULT_CHARSET);
             }
-            body = StreamUtils.copyToString(in, charset);
+            return StreamUtils.copyToString(in, charset);
         } catch (IOException e) {
             LOG.error("Could not read the InputStream as String: " +
                 e.getMessage());
-        } finally {
-            IOUtils.closeQuietly(in);
         }
-
-        return body;
-
+        return null;
     }
 
     /**
@@ -127,9 +118,7 @@ public class OgcXmlUtil {
      * @return
      * @throws InterceptorException
      */
-    public static NodeList getPathInDocumentAsNodeList(Document document, String path)
-        throws InterceptorException {
-
+    public static NodeList getPathInDocumentAsNodeList(Document document, String path) throws InterceptorException {
         if (document == null) {
             throw new InterceptorException("Document may not be null");
         }

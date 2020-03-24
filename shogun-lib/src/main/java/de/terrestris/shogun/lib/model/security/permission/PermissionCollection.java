@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "permissions")
+@Table(schema = "shogun")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,7 +23,7 @@ import java.util.Set;
 public class PermissionCollection extends BaseEntity {
 
     @ElementCollection()
-    @CollectionTable(name="permission")
+    @CollectionTable(name="permission", schema = "shogun")
     @Enumerated(EnumType.STRING)
     @Fetch(FetchMode.JOIN)
     private Set<PermissionType> permissions = new HashSet<>();

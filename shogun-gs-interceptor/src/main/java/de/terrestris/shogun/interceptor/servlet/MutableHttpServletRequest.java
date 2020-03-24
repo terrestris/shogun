@@ -57,9 +57,8 @@ public class MutableHttpServletRequest extends HttpServletRequestWrapper {
     public MutableHttpServletRequest(HttpServletRequest request) {
         super(request);
         this.customRequestURI = request.getRequestURI();
-        this.customParameters = new HashMap<String, String[]>(
-            request.getParameterMap());
-        this.customHeaders = new HashMap<String, String>();
+        this.customParameters = new HashMap<>(request.getParameterMap());
+        this.customHeaders = new HashMap<>();
     }
 
     /**
@@ -69,9 +68,7 @@ public class MutableHttpServletRequest extends HttpServletRequestWrapper {
      * @throws InterceptorException
      * @throws IOException
      */
-    public static String getRequestParameterValue(HttpServletRequest httpServletRequest,
-                                                  String[] keys) throws InterceptorException, IOException {
-
+    public static String getRequestParameterValue(HttpServletRequest httpServletRequest, String[] keys) throws InterceptorException, IOException {
         String value = StringUtils.EMPTY;
 
         for (String key : keys) {
@@ -88,23 +85,16 @@ public class MutableHttpServletRequest extends HttpServletRequestWrapper {
      * @param httpServletRequest
      * @param parameter
      * @return
-     * @throws InterceptorException
-     * @throws IOException
      */
-    public static String getRequestParameterValue(HttpServletRequest httpServletRequest,
-                                                  String parameter) throws InterceptorException, IOException {
-
+    public static String getRequestParameterValue(HttpServletRequest httpServletRequest, String parameter) throws IOException, InterceptorException {
         LOG.trace("Finding the request parameter [" + parameter + "]");
 
         String value = StringUtils.EMPTY;
-
         Map<String, String[]> queryParams = httpServletRequest.getParameterMap();
-
         if (!queryParams.isEmpty()) {
-
             LOG.trace("The request contains query parameters (GET or POST).");
 
-            Map<String, String[]> params = new TreeMap<String, String[]>(
+            Map<String, String[]> params = new TreeMap<>(
                 String.CASE_INSENSITIVE_ORDER);
 
             params.putAll(queryParams);
@@ -112,44 +102,31 @@ public class MutableHttpServletRequest extends HttpServletRequestWrapper {
             if (params.containsKey(parameter)) {
                 value = StringUtils.join(params.get(parameter), ",");
             }
-
         } else {
-
             String xml = OgcXmlUtil.getRequestBody(httpServletRequest);
-
             if (!StringUtils.isEmpty(xml)) {
-
                 LOG.trace("The request contains a POST body.");
-
                 Document document = OgcXmlUtil.getDocumentFromString(xml);
 
                 if (parameter.equalsIgnoreCase(OgcEnum.Service.SERVICE.toString())) {
-                    value = OgcXmlUtil.getPathInDocument(
-                        document, "/*/@service");
+                    value = OgcXmlUtil.getPathInDocument(document, "/*/@service");
                 } else if (parameter.equalsIgnoreCase(OgcEnum.Operation.OPERATION.toString())) {
-                    value = OgcXmlUtil.getPathInDocument(
-                        document, "name(/*)");
-
+                    value = OgcXmlUtil.getPathInDocument(document, "name(/*)");
                     if (value.contains(":")) {
                         value = value.split(":")[1];
                     }
-
                 } else if (Arrays.asList(OgcEnum.EndPoint.getAllValues()).contains(parameter)) {
-                    value = OgcXmlUtil.getPathInDocument(document,
-                        "//TypeName/text() | //TypeNames/text() | //GetCoverage/Identifier/text()");
+                    value = OgcXmlUtil.getPathInDocument(document, "//TypeName/text() | //TypeNames/text() | //GetCoverage/Identifier/text()");
                     if (StringUtils.isEmpty(value)) {
-                        value = OgcXmlUtil.getPathInDocument(document,
-                            "//@typeName | //@typeNames");
+                        value = OgcXmlUtil.getPathInDocument(document, "//@typeName | //@typeNames");
                     }
                 }
-
             } else {
                 LOG.error("No body found in the request.");
             }
         }
 
         LOG.trace("Found the request parameter value: " + value);
-
         return value;
     }
 

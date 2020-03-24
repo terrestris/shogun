@@ -46,14 +46,7 @@ public class SecurityContextUtil {
         final Object principal = SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
 
-        String userMail;
-        Optional<User> user;
-
-        if (principal instanceof String) {
-            userMail = (String) principal;
-        } else if (principal instanceof org.springframework.security.core.userdetails.User) {
-            userMail = ((org.springframework.security.core.userdetails.User) principal).getUsername();
-        } else if (principal instanceof KeycloakPrincipal) {
+        if (principal instanceof KeycloakPrincipal) {
             KeycloakPrincipal p = (KeycloakPrincipal) principal;
             p.getKeycloakSecurityContext();
             return userRepository.findByKeycloakId(p.getKeycloakSecurityContext().getIdToken().getSubject());

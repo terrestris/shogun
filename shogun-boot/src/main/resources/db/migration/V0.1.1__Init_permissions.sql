@@ -1,4 +1,4 @@
-SET search_path TO shogun;
+SET search_path TO shogun, public;
 
 INSERT INTO permissions VALUES (
     nextval('hibernate_sequence'),
