@@ -64,25 +64,25 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
 //        return apps;
 //    }
 
-    @PostFilter("hasPermission(filterObject, 'READ')")
+    @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
     @Transactional(readOnly = true)
     public List<S> findAll() {
         return (List<S>) repository.findAll();
     }
 
-    @PostAuthorize("hasPermission(returnObject.orElse(null), 'READ')")
+    @PostAuthorize("hasRole('ROLE_ADMIN') or hasPermission(returnObject.orElse(null), 'READ')")
     @Transactional(readOnly = true)
     public Optional<S> findOne(Long id) {
         return repository.findById(id);
     }
 
-    @PreAuthorize("hasPermission(#entity, 'CREATE')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'CREATE')")
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public S create(S entity) {
         return repository.save(entity);
     }
 
-    @PreAuthorize("hasPermission(#entity, 'UPDATE')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'UPDATE')")
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public S update(Long id, S entity) throws IOException {
         Optional<S> persistedEntity = repository.findById(id);
@@ -93,7 +93,7 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
         return repository.save(updatedEntity);
     }
 
-    @PreAuthorize("hasPermission(#entity, 'DELETE')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'DELETE')")
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void delete(S entity) {
         repository.delete(entity);
