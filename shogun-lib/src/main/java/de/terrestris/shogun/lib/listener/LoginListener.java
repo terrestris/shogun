@@ -41,17 +41,7 @@ public class LoginListener implements ApplicationListener<InteractiveAuthenticat
             return;
         }
 
-        // get user info from authentication object
-        KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) authentication.getPrincipal();
-        KeycloakSecurityContext keycloakSecurityContext = keycloakPrincipal.getKeycloakSecurityContext();
-        IDToken idToken = keycloakSecurityContext.getIdToken();
-        String keycloakUserId;
-        if (idToken != null) {
-            keycloakUserId = idToken.getSubject();
-        } else {
-            AccessToken accessToken = keycloakSecurityContext.getToken();
-            keycloakUserId = accessToken.getSubject();
-        }
+        String keycloakUserId = SecurityContextUtil.getKeycloakUserIdFromAuthentication(authentication);
 
         // add missing user to shogun db
         Optional<User> userOptional = userRepository.findByKeycloakId(keycloakUserId);

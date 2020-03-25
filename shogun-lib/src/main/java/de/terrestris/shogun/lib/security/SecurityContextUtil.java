@@ -77,6 +77,18 @@ public class SecurityContextUtil {
             return Optional.empty();
         }
         // get user info from authentication object
+        String keycloakUserId = getKeycloakUserIdFromAuthentication(authentication);
+        return userRepository.findByKeycloakId(keycloakUserId);
+    }
+
+    /**
+     * Return keycloak user id from {@link Authentication} object
+     *   - from {@link IDToken}
+     *   - from {@link org.keycloak.Token}
+     * @param authentication The Spring security authentication
+     * @return The keycloak user id token
+     */
+    public static String getKeycloakUserIdFromAuthentication(Authentication authentication) {
         KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) authentication.getPrincipal();
         KeycloakSecurityContext keycloakSecurityContext = keycloakPrincipal.getKeycloakSecurityContext();
         IDToken idToken = keycloakSecurityContext.getIdToken();
@@ -87,7 +99,7 @@ public class SecurityContextUtil {
             AccessToken accessToken = keycloakSecurityContext.getToken();
             keycloakUserId = accessToken.getSubject();
         }
-        return userRepository.findByKeycloakId(keycloakUserId);
+        return keycloakUserId;
     }
 
     /**
