@@ -51,6 +51,10 @@ public class MutableHttpServletRequest extends HttpServletRequestWrapper {
 
     private ByteArrayOutputStream cachedInputStream;
 
+    private String method;
+
+    private String queryString;
+
     /**
      * @param request
      */
@@ -79,6 +83,38 @@ public class MutableHttpServletRequest extends HttpServletRequestWrapper {
         }
 
         return value;
+    }
+
+    @Override
+    public String getMethod() {
+        if (method != null) {
+            return method;
+        }
+        return super.getMethod();
+    }
+
+    /**
+     * Override the method. Can be used to convert a GET request to a POST request eg. when a GetMap-Request gets too
+     * large.
+     *
+     * @param method the new method (GET, POST)
+     */
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
+    /**
+     * Override what is returned by getQueryString.
+     *
+     * @param queryString the new query string
+     */
+    public void setQueryString(String queryString) {
+        this.queryString = queryString;
+    }
+
+    @Override
+    public String getQueryString() {
+        return queryString;
     }
 
     /**
