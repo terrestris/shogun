@@ -4,16 +4,16 @@ import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.GroupRepository;
 import de.terrestris.shogun.lib.repository.UserRepository;
-import de.terrestris.shogun.properties.KeycloakAuthProperties;
+import org.apache.commons.lang3.StringUtils;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
-import org.keycloak.adapters.springboot.KeycloakSpringBootProperties;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.AccessToken;
 import org.keycloak.representations.IDToken;
 import org.keycloak.representations.idm.GroupRepresentation;
+import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -30,39 +30,28 @@ import java.util.stream.Collectors;
 public class SecurityContextUtil {
 
     @Autowired
-    private UserRepository userRepository;
+    protected UserRepository userRepository;
 
     @Autowired
-    private GroupRepository groupRepository;
+    protected GroupRepository groupRepository;
 
     @Autowired
-    private KeycloakSpringBootProperties keycloakSpringBootProperties;
-
-    @Autowired
-    private KeycloakAuthProperties keycloakAuthProperties;
-
-    @Autowired
-    private RealmResource keycloakRealm;
+    protected RealmResource keycloakRealm;
 
     @Transactional(readOnly = true)
     public Optional<User> getUserBySession() {
-        final Object principal = SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
-
-        if (principal instanceof KeycloakPrincipal) {
-            KeycloakPrincipal p = (KeycloakPrincipal) principal;
-            p.getKeycloakSecurityContext();
-            return userRepository.findByKeycloakId(p.getKeycloakSecurityContext().getIdToken().getSubject());
-        }
-
-        return Optional.empty();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String keycloakUserId = SecurityContextUtil.getKeycloakUserIdFromAuthentication(authentication);
+        return StringUtils.isEmpty(keycloakUserId) ? Optional.empty() : userRepository.findByKeycloakId(keycloakUserId);
     }
 
-
-    public List<GrantedAuthority> getGrantedAuthorities(User user) {
-
-        // TODO fetch from keycloak/auth context
-        return new ArrayList<>();
+    /**
+     *
+     * @return
+     */
+    public List<GrantedAuthority> getGrantedAuthorities() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return new ArrayList<>(authentication.getAuthorities());
     }
 
     /**
@@ -128,7 +117,18 @@ public class SecurityContextUtil {
     public List<GroupRepresentation> getKeycloakGroupsForUser(User user) {
         UsersResource users = this.keycloakRealm.users();
         UserResource kcUser = users.get(user.getKeycloakId());
-        List<GroupRepresentation> kcGroups = kcUser.groups();
-        return kcUser != null ? kcGroups : null;
+        return kcUser.groups();
+    }
+
+    /**
+     * Fetch user name of user from keycloak
+     * @param user
+     * @return
+     */
+    public String getUserNameFromKeycloak(User user) {
+        UsersResource users = this.keycloakRealm.users();
+        UserResource kcUser = users.get(user.getKeycloakId());
+        UserRepresentation kcUserRepresentation = kcUser.toRepresentation();
+        return String.format("%s %s", kcUserRepresentation.getFirstName(), kcUserRepresentation.getLastName());
     }
 }

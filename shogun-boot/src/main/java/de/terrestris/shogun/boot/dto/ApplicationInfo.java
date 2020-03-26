@@ -1,6 +1,5 @@
 package de.terrestris.shogun.boot.dto;
 
-import de.terrestris.shogun.lib.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,7 +17,7 @@ public class ApplicationInfo {
 
     private String buildTime;
 
-    private User user;
+    private String userName;
 
     private List<String> authorities;
 }
