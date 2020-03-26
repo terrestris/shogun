@@ -46,15 +46,13 @@ public class ApplicationInfoService {
             LOG.trace("Full stack trace: ", e);
         }
 
-        Optional<User> user = securityContextUtil.getUserBySession();
-
+        Optional<User> userOpt = securityContextUtil.getUserBySession();
         ApplicationInfo applicationInfo = new ApplicationInfo();
 
-        if (user.isPresent()) {
-            applicationInfo.setUser(user.get());
-
-            List<GrantedAuthority> grantedAuthorities = securityContextUtil
-                .getGrantedAuthorities(user.get());
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            applicationInfo.setUserName(securityContextUtil.getUserNameFromKeycloak(user));
+            List<GrantedAuthority> grantedAuthorities = securityContextUtil.getGrantedAuthorities();
 
             if (!grantedAuthorities.isEmpty()) {
                 List<String> simpleAuthList = new ArrayList<>();
