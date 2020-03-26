@@ -6,6 +6,9 @@ import de.terrestris.shogun.lib.repository.GroupRepository;
 import de.terrestris.shogun.lib.repository.UserRepository;
 import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import org.keycloak.KeycloakPrincipal;
+import org.keycloak.KeycloakSecurityContext;
+import org.keycloak.representations.AccessToken;
+import org.keycloak.representations.IDToken;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -38,9 +41,7 @@ public class LoginListener implements ApplicationListener<InteractiveAuthenticat
             return;
         }
 
-        // get user info from authentication object
-        KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) authentication.getPrincipal();
-        String keycloakUserId = keycloakPrincipal.getKeycloakSecurityContext().getIdToken().getSubject();
+        String keycloakUserId = SecurityContextUtil.getKeycloakUserIdFromAuthentication(authentication);
 
         // add missing user to shogun db
         Optional<User> userOptional = userRepository.findByKeycloakId(keycloakUserId);

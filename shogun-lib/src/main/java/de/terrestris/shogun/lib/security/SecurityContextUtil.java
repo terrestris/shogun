@@ -6,10 +6,13 @@ import de.terrestris.shogun.lib.repository.GroupRepository;
 import de.terrestris.shogun.lib.repository.UserRepository;
 import de.terrestris.shogun.properties.KeycloakAuthProperties;
 import org.keycloak.KeycloakPrincipal;
+import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.adapters.springboot.KeycloakSpringBootProperties;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
+import org.keycloak.representations.AccessToken;
+import org.keycloak.representations.IDToken;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -73,9 +76,30 @@ public class SecurityContextUtil {
         if (!(principal instanceof KeycloakPrincipal)) {
             return Optional.empty();
         }
-        KeycloakPrincipal<?> keycloakPrincipal = (KeycloakPrincipal<?>) principal;
-        String keycloakId = keycloakPrincipal.getKeycloakSecurityContext().getIdToken().getSubject();
-        return userRepository.findByKeycloakId(keycloakId);
+        // get user info from authentication object
+        String keycloakUserId = getKeycloakUserIdFromAuthentication(authentication);
+        return userRepository.findByKeycloakId(keycloakUserId);
+    }
+
+    /**
+     * Return keycloak user id from {@link Authentication} object
+     *   - from {@link IDToken}
+     *   - from {@link org.keycloak.Token}
+     * @param authentication The Spring security authentication
+     * @return The keycloak user id token
+     */
+    public static String getKeycloakUserIdFromAuthentication(Authentication authentication) {
+        KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) authentication.getPrincipal();
+        KeycloakSecurityContext keycloakSecurityContext = keycloakPrincipal.getKeycloakSecurityContext();
+        IDToken idToken = keycloakSecurityContext.getIdToken();
+        String keycloakUserId;
+        if (idToken != null) {
+            keycloakUserId = idToken.getSubject();
+        } else {
+            AccessToken accessToken = keycloakSecurityContext.getToken();
+            keycloakUserId = accessToken.getSubject();
+        }
+        return keycloakUserId;
     }
 
     /**
