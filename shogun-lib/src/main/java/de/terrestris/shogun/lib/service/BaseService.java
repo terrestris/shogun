@@ -7,6 +7,7 @@ import de.terrestris.shogun.lib.model.BaseEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
@@ -68,6 +69,12 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
     @Transactional(readOnly = true)
     public List<S> findAll() {
         return (List<S>) repository.findAll();
+    }
+
+    @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
+    @Transactional(readOnly = true)
+    public List<S> findAll(Specification specification) {
+        return (List<S>) repository.findAll(specification);
     }
 
     @PostAuthorize("hasRole('ROLE_ADMIN') or hasPermission(returnObject.orElse(null), 'READ')")
