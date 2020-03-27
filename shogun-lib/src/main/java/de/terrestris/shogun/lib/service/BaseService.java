@@ -29,42 +29,6 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
     @Autowired
     ObjectMapper objectMapper;
 
-//    public List<S> findByFilter(String column, String filter) {
-////        List<S> apps = repository.findByFilter(column, filter);
-//        List<S> apps = repository.findByFilter(filter);
-//
-//        return apps;
-//    }
-//
-//    public List<S> findBy(String attribute, String path, String value) {
-//        List<S> apps = repository.findAll((Root<S> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
-////            return cb.lessThan(root.get("id"), 2);
-//
-//            Expression<?> lit = cb.literal(path);
-//            ArrayList<Expression> list = new ArrayList<Expression>();
-//            list.add(lit);
-//
-//            //Expression[] ar = list.stream().toArray(Expression[]::new);
-//
-//            Expression<Object>[] arr = list.toArray(new Expression[list.size()]);
-//
-//            Expression<?>[] myArray = { cb.literal(path) };
-//
-//            // select * from applications where jsonb_extract_path_text(client_config, 'peter', 'p') = 'hans';
-//            return cb.equal(
-//                    cb.function(
-//                            "jsonb_extract_path_text",
-//                            String.class,
-//                            root.<String>get(attribute),
-//                            lit
-//                    ),
-//                    value
-//            );
-//        });
-//
-//        return apps;
-//    }
-
     @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
     @Transactional(readOnly = true)
     public List<S> findAll() {
@@ -73,7 +37,7 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
 
     @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
     @Transactional(readOnly = true)
-    public List<S> findAll(Specification specification) {
+    public List<S> findAllBy(Specification specification) {
         return (List<S>) repository.findAll(specification);
     }
 
