@@ -134,6 +134,10 @@ curl \
   http://localhost:8080/shogun-boot/applications/1
 ``` 
 
+## GeoServer interceptor:
+To use REST API of GeoServer interceptor its necessary to create a role `interceptor_admin` in Keycloak.
+Users having this role are allowed to use them.
+
 ## MVN Report
 
 If you want to create a report with detailed information about the projects dependencies etc, you can use this command:

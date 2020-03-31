@@ -5,10 +5,9 @@
   <parent>
     <groupId>de.terrestris</groupId>
     <artifactId>shogun</artifactId>
-    <version>3.1.1-SNAPSHOT</version>
+    <version>4.0.0-BETA-SNAPSHOT</version>
   </parent>
 
-  <groupId>de.terrestris</groupId>
   <artifactId>shogun-boot</artifactId>
   <name>SHOGun Boot</name>
   <packaging>jar</packaging>
@@ -111,6 +110,11 @@
       <groupId>de.terrestris</groupId>
       <artifactId>shogun-lib</artifactId>
       <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.keycloak</groupId>
+      <artifactId>keycloak-spring-boot-starter</artifactId>
     </dependency>
   </dependencies>
 
