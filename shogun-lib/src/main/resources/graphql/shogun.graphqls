@@ -38,3 +38,8 @@ type User {
     details: JSON
     clientConfig: JSON
 }
+
+type Group {
+    id: ID
+    name: String
+}

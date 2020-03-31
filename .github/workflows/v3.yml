@@ -1,0 +1,38 @@
+name: Build and publish SHOGun
+
+on:
+  push:
+    branches:
+      - v3
+
+jobs:
+  build:
+
+    runs-on: ubuntu-18.04
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2.0.0
+
+      - name: Set up Java 11
+        uses: actions/setup-java@v1.3.0
+        with:
+          java-version: 11.0.6
+          java-package: jdk
+          architecture: x64
+
+      - name: Handle caching of maven repository
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - name: Create maven settings.xml with credentials
+        uses: whelk-io/maven-settings-xml-action@v2
+        with:
+          servers: '[{ "id": "terrestris-nexus", "username": "${{ secrets.NEXUS_USER }}", "password": "${{ secrets.NEXUS_PASSWORD }}" },
+                   { "id": "terrestris-nexus-snapshots", "username": "${{ secrets.NEXUS_USER }}", "password": "${{ secrets.NEXUS_PASSWORD }}" }]'
+
+      - name: Build SHOGun with Maven and publish artifacts to nexus
+        run: mvn -B deploy
