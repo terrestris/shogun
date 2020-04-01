@@ -13,7 +13,6 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 @EnableWebSecurity
-@ComponentScan(basePackages = { "de.terrestris.shogunboot", "de.terrestris.shoguncore" })
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
