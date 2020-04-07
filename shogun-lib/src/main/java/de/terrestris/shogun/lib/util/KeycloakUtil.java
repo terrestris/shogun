@@ -2,8 +2,6 @@ package de.terrestris.shogun.lib.util;
 
 import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.model.User;
-import de.terrestris.shogun.lib.repository.GroupRepository;
-import de.terrestris.shogun.lib.repository.UserRepository;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.keycloak.admin.client.resource.*;

@@ -51,7 +51,7 @@ public class ApplicationInfoService {
 
         if (userOpt.isPresent()) {
             User user = userOpt.get();
-            applicationInfo.setUserName(securityContextUtil.getUserNameFromKeycloak(user));
+            applicationInfo.setUserId(user.getId());
             List<GrantedAuthority> grantedAuthorities = securityContextUtil.getGrantedAuthorities();
 
             if (!grantedAuthorities.isEmpty()) {
