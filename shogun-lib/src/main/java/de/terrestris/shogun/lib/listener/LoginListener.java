@@ -47,7 +47,7 @@ public class LoginListener implements ApplicationListener<InteractiveAuthenticat
         Optional<User> userOptional = userRepository.findByKeycloakId(keycloakUserId);
         User user = userOptional.orElse(null);
         if (user == null) {
-            user = new User(keycloakUserId, null, null);
+            user = new User(keycloakUserId, null, null, null);
             userRepository.save(user);
         }
 

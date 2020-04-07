@@ -1,38 +1,75 @@
 package de.terrestris.shogun.lib.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.UserRepository;
+import de.terrestris.shogun.lib.util.KeycloakUtil;
+import org.keycloak.admin.client.resource.UserResource;
+import org.keycloak.representations.idm.UserRepresentation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 @Service
 public class UserService extends BaseService<UserRepository, User> {
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Transactional(isolation = Isolation.SERIALIZABLE)
-    public void deleteUser(User user) {
-        repository.delete(user);
+    @Autowired
+    KeycloakUtil keycloakUtil;
+
+    @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
+    @Transactional(readOnly = true)
+    @Override
+    public List<User> findAll() {
+        List<User> users = (List<User>) repository.findAll();
+
+        for (User user : users) {
+            UserResource userResource = keycloakUtil.getUserResource(user);
+            UserRepresentation userRepresentation = userResource.toRepresentation();
+            user.setKeycloakRepresentation(userRepresentation);
+        }
+
+        return users;
     }
 
-//    @Transactional(readOnly = true)
-//    public Optional<User> getUserBySession() {
-//
-//        final Object principal = SecurityContextHolder.getContext()
-//                .getAuthentication().getPrincipal();
-//
-//        if (!(principal instanceof User)) {
-//            return Optional.empty();
-//        }
-//
-//        User loggedInUser = (User) principal;
-//
-//        // The SecurityContextHolder holds a static copy of the user from
-//        // the moment he logged in. So we need to get the current instance from
-//        // the persistence level.
-//        Long id = loggedInUser.getId();
-//
-//        return repository.findById(id);
-//    }
+    @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
+    @Transactional(readOnly = true)
+    @Override
+    public List<User> findAllBy(Specification specification) {
+        List<User> users = (List<User>) repository.findAll(specification);
+
+        for (User user : users) {
+            UserResource userResource = keycloakUtil.getUserResource(user);
+            UserRepresentation userRepresentation = userResource.toRepresentation();
+            user.setKeycloakRepresentation(userRepresentation);
+        }
+
+        return users;
+    }
+
+    @PostAuthorize("hasRole('ROLE_ADMIN') or hasPermission(returnObject.orElse(null), 'READ')")
+    @Transactional(readOnly = true)
+    @Override
+    public Optional<User> findOne(Long id) {
+        Optional<User> user = repository.findById(id);
+
+        if (user.isPresent()) {
+            UserResource userResource = keycloakUtil.getUserResource(user.get());
+            UserRepresentation userRepresentation = userResource.toRepresentation();
+            user.get().setKeycloakRepresentation(userRepresentation);
+        }
+
+        return user;
+    }
+
 }
