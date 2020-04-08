@@ -76,17 +76,25 @@ public class SecurityContextUtil {
      * @return The keycloak user id token
      */
     public static String getKeycloakUserIdFromAuthentication(Authentication authentication) {
-        KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) authentication.getPrincipal();
-        KeycloakSecurityContext keycloakSecurityContext = keycloakPrincipal.getKeycloakSecurityContext();
-        IDToken idToken = keycloakSecurityContext.getIdToken();
-        String keycloakUserId;
-        if (idToken != null) {
-            keycloakUserId = idToken.getSubject();
+        if (authentication.getPrincipal() instanceof KeycloakPrincipal) {
+            KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) authentication.getPrincipal();
+            KeycloakSecurityContext keycloakSecurityContext = keycloakPrincipal.getKeycloakSecurityContext();
+            IDToken idToken = keycloakSecurityContext.getIdToken();
+            String keycloakUserId;
+
+            if (idToken != null) {
+                keycloakUserId = idToken.getSubject();
+            } else {
+                AccessToken accessToken = keycloakSecurityContext.getToken();
+                keycloakUserId = accessToken.getSubject();
+            }
+
+            return keycloakUserId;
+        } else if (authentication.getPrincipal() instanceof String) {
+            return null;
         } else {
-            AccessToken accessToken = keycloakSecurityContext.getToken();
-            keycloakUserId = accessToken.getSubject();
+            return null;
         }
-        return keycloakUserId;
     }
 
     /**
