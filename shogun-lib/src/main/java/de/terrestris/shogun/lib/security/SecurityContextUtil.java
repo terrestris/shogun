@@ -90,8 +90,6 @@ public class SecurityContextUtil {
             }
 
             return keycloakUserId;
-        } else if (authentication.getPrincipal() instanceof String) {
-            return null;
         } else {
             return null;
         }
