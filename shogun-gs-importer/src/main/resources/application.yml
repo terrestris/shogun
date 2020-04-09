@@ -1,0 +1,57 @@
+spring:
+  profiles:
+    include: base
+    active: base, importer
+
+---
+spring:
+  profiles: importer
+
+server:
+  port: 8083
+  servlet:
+    context-path: /shogun-gs-importer
+
+importer:
+  geoserver:
+    baseUrl: http://localhost:8080/geoserver
+    username: admin
+    password: geoserver
+  shogun:
+    baseUrl: http://localhost:8080/shogun-boot
+    username: admin
+    password: shogun
+  raster:
+    performGdalAddo: true
+    gdalAddoLevels:
+      - 2
+      - 4
+      - 8
+      - 16
+    performGdalWarp: true
+  vector:
+    targetDatastore: IMPORT
+    targetDatastoreConnectionParams:
+      host: shogun-postgis
+      passwd: shogun
+      create spatial index: true
+      create index: true
+      Expose primary keys: false
+  targetWorkspace: SHOGUN
+  targetEPSG: EPSG:3857
+  interceptorEndpoint: geoserver.action
+  httpTimeout: 60000
+
+keycloak:
+  auth-server-url: http://localhost:8000/auth
+  realm: SpringBootKeycloak
+  resource: shogun-app
+  public-client: true
+  principal-attribute: preferred_username
+
+## TODO: use auth! / Token!
+keycloakauth:
+  username: admin
+  password: shogun
+  master-realm: master
+  admin-client: admin-cli
