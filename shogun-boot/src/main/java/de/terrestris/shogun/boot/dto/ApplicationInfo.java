@@ -17,7 +17,7 @@ public class ApplicationInfo {
 
     private String buildTime;
 
-    private String userName;
+    private Long userId;
 
     private List<String> authorities;
 }

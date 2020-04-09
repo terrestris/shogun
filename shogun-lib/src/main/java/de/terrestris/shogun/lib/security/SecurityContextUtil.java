@@ -7,9 +7,7 @@ import de.terrestris.shogun.lib.repository.UserRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
-import org.keycloak.admin.client.resource.RealmResource;
-import org.keycloak.admin.client.resource.UserResource;
-import org.keycloak.admin.client.resource.UsersResource;
+import org.keycloak.admin.client.resource.*;
 import org.keycloak.representations.AccessToken;
 import org.keycloak.representations.IDToken;
 import org.keycloak.representations.idm.GroupRepresentation;
@@ -78,17 +76,23 @@ public class SecurityContextUtil {
      * @return The keycloak user id token
      */
     public static String getKeycloakUserIdFromAuthentication(Authentication authentication) {
-        KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) authentication.getPrincipal();
-        KeycloakSecurityContext keycloakSecurityContext = keycloakPrincipal.getKeycloakSecurityContext();
-        IDToken idToken = keycloakSecurityContext.getIdToken();
-        String keycloakUserId;
-        if (idToken != null) {
-            keycloakUserId = idToken.getSubject();
+        if (authentication.getPrincipal() instanceof KeycloakPrincipal) {
+            KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) authentication.getPrincipal();
+            KeycloakSecurityContext keycloakSecurityContext = keycloakPrincipal.getKeycloakSecurityContext();
+            IDToken idToken = keycloakSecurityContext.getIdToken();
+            String keycloakUserId;
+
+            if (idToken != null) {
+                keycloakUserId = idToken.getSubject();
+            } else {
+                AccessToken accessToken = keycloakSecurityContext.getToken();
+                keycloakUserId = accessToken.getSubject();
+            }
+
+            return keycloakUserId;
         } else {
-            AccessToken accessToken = keycloakSecurityContext.getToken();
-            keycloakUserId = accessToken.getSubject();
+            return null;
         }
-        return keycloakUserId;
     }
 
     /**

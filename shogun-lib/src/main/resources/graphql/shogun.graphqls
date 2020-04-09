@@ -34,6 +34,14 @@ type Layer {
     type: String
 }
 
+type UserRepresentation {
+    id: String
+    userName: String
+    firstName: String
+    lastName: String
+    email: String
+}
+
 type User {
     id: ID
     created: String
@@ -43,6 +51,7 @@ type User {
     enabled: Boolean
     details: JSON
     clientConfig: JSON
+    keycloakRepresentation: UserRepresentation
 }
 
 type UserGroup {
