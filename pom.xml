@@ -95,8 +95,11 @@
     <okhttp.version>4.3.1</okhttp.version>
     <commons.io.version>2.6</commons.io.version>
     <commons.lang3.version>3.9</commons.lang3.version>
+    <commons.fileupload.version>1.4</commons.fileupload.version>
     <threetenbp.version>1.4.1</threetenbp.version>
     <com.sun.mail.version>1.6.2</com.sun.mail.version>
+    <zip4j.version>2.5.1</zip4j.version>
+    <opencsv.version>4.6</opencsv.version>
 
     <!-- Testing -->
     <junit.version>4.13</junit.version>
@@ -125,6 +128,7 @@
 
     <!-- GeoServer/Geodata -->
     <geoserver-manager.version>1.7.0</geoserver-manager.version>
+    <geotools.version>22.3</geotools.version>
     <jts.version>1.16.1</jts.version>
 
   </properties>
@@ -434,6 +438,11 @@
         <artifactId>commons-lang3</artifactId>
         <version>${commons.lang3.version}</version>
       </dependency>
+      <dependency>
+        <groupId>commons-fileupload</groupId>
+        <artifactId>commons-fileupload</artifactId>
+        <version>${commons.fileupload.version}</version>
+      </dependency>
 
       <!-- Testing -->
       <dependency>
@@ -552,6 +561,11 @@
         <artifactId>threetenbp</artifactId>
         <version>${threetenbp.version}</version>
       </dependency>
+      <dependency>
+        <groupId>net.lingala.zip4j</groupId>
+        <artifactId>zip4j</artifactId>
+        <version>${zip4j.version}</version>
+      </dependency>
 
       <dependency>
         <groupId>javax.annotation</groupId>
@@ -592,6 +606,34 @@
         <groupId>it.geosolutions</groupId>
         <artifactId>geoserver-manager</artifactId>
         <version>${geoserver-manager.version}</version>
+      </dependency>
+
+      <!-- GeoTools -->
+      <dependency>
+        <groupId>org.geotools</groupId>
+        <artifactId>gt-main</artifactId>
+        <version>${geotools.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.geotools</groupId>
+        <artifactId>gt-shapefile</artifactId>
+        <version>${geotools.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.geotools</groupId>
+        <artifactId>gt-wfs-ng</artifactId>
+        <version>${geotools.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.geotools</groupId>
+        <artifactId>gt-jdbc</artifactId>
+        <version>${geotools.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.opencsv</groupId>
+        <artifactId>opencsv</artifactId>
+        <version>${opencsv.version}</version>
       </dependency>
 
       <dependency>
