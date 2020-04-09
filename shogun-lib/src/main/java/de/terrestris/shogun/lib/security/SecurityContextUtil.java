@@ -7,10 +7,9 @@ import de.terrestris.shogun.lib.repository.UserRepository;
 import de.terrestris.shogun.lib.util.KeycloakUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.keycloak.KeycloakPrincipal;
-import org.keycloak.KeycloakSecurityContext;
-import org.keycloak.admin.client.resource.*;
-import org.keycloak.representations.AccessToken;
-import org.keycloak.representations.IDToken;
+import org.keycloak.admin.client.resource.RealmResource;
+import org.keycloak.admin.client.resource.UserResource;
+import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,12 +37,12 @@ public class SecurityContextUtil {
     protected RealmResource keycloakRealm;
 
     @Autowired
-    KeycloakUtil keycloakUtil;
+    protected KeycloakUtil keycloakUtil;
 
     @Transactional(readOnly = true)
     public Optional<User> getUserBySession() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String keycloakUserId = SecurityContextUtil.getKeycloakUserIdFromAuthentication(authentication);
+        String keycloakUserId = keycloakUtil.getKeycloakUserIdFromAuthentication(authentication);
 
         if (StringUtils.isEmpty(keycloakUserId)) {
             return Optional.empty();
@@ -81,35 +80,8 @@ public class SecurityContextUtil {
             return Optional.empty();
         }
         // get user info from authentication object
-        String keycloakUserId = getKeycloakUserIdFromAuthentication(authentication);
+        String keycloakUserId = keycloakUtil.getKeycloakUserIdFromAuthentication(authentication);
         return userRepository.findByKeycloakId(keycloakUserId);
-    }
-
-    /**
-     * Return keycloak user id from {@link Authentication} object
-     *   - from {@link IDToken}
-     *   - from {@link org.keycloak.Token}
-     * @param authentication The Spring security authentication
-     * @return The keycloak user id token
-     */
-    public static String getKeycloakUserIdFromAuthentication(Authentication authentication) {
-        if (authentication.getPrincipal() instanceof KeycloakPrincipal) {
-            KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) authentication.getPrincipal();
-            KeycloakSecurityContext keycloakSecurityContext = keycloakPrincipal.getKeycloakSecurityContext();
-            IDToken idToken = keycloakSecurityContext.getIdToken();
-            String keycloakUserId;
-
-            if (idToken != null) {
-                keycloakUserId = idToken.getSubject();
-            } else {
-                AccessToken accessToken = keycloakSecurityContext.getToken();
-                keycloakUserId = accessToken.getSubject();
-            }
-
-            return keycloakUserId;
-        } else {
-            return null;
-        }
     }
 
     /**
