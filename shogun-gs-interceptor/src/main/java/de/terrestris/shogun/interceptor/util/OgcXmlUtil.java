@@ -183,7 +183,8 @@ public class OgcXmlUtil {
             }
             return request;
         } catch (TransformerException | IOException e) {
-            LOG.error("Error on trying to parse an xml body.", e);
+            LOG.error("Error on trying to parse an xml body.");
+            LOG.trace("Stack trace:", e);
         }
         return null;
     }
