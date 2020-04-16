@@ -1,6 +1,7 @@
 package de.terrestris.shogun.interceptor.util;
 
 import de.terrestris.shogun.interceptor.exception.InterceptorException;
+import de.terrestris.shogun.interceptor.servlet.MutableHttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Logger;
 import org.springframework.util.StreamUtils;
@@ -15,9 +16,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.*;
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.*;
 import java.nio.charset.Charset;
 
 import static org.apache.logging.log4j.LogManager.getLogger;
@@ -63,9 +69,7 @@ public class OgcXmlUtil {
      * @throws IOException
      */
     public static Document getDocumentFromString(String xml) throws IOException {
-
-        Document document = null;
-
+        Document document;
         try {
             InputSource source = new InputSource(new StringReader(xml));
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -75,9 +79,7 @@ public class OgcXmlUtil {
             throw new IOException("Could not parse input body " +
                 "as XML: " + e.getMessage());
         }
-
         return document;
-
     }
 
     /**
@@ -159,6 +161,31 @@ public class OgcXmlUtil {
             }
         }
         return docElement;
+    }
+
+    /**
+     * Method overrides the {@link InputStream} of an request with the given doc
+     *
+     * @param doc The document to copy from
+     *
+     * @return MutableHttpServletRequest
+     */
+    public static MutableHttpServletRequest setRequestInputStreamWithDoc(Document doc, MutableHttpServletRequest request) {
+        Source xmlSource = new DOMSource(doc);
+        try (
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ) {
+            Result outputTarget = new StreamResult(outputStream);
+            TransformerFactory.newInstance().newTransformer().transform(xmlSource, outputTarget);
+
+            try (InputStream is = new ByteArrayInputStream(outputStream.toByteArray())) {
+                request.setInputStream(is);
+            }
+            return request;
+        } catch (TransformerException | IOException e) {
+            LOG.error("Error on trying to parse an xml body.", e);
+        }
+        return null;
     }
 
 }
