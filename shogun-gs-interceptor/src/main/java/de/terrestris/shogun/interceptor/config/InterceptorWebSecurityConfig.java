@@ -3,6 +3,7 @@ package de.terrestris.shogun.interceptor.config;
 import de.terrestris.shogun.config.WebSecurityConfig;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 public class InterceptorWebSecurityConfig extends WebSecurityConfig {
@@ -19,10 +20,13 @@ public class InterceptorWebSecurityConfig extends WebSecurityConfig {
                 "/v2/**",
                 "/csrf/**"
             )
-            .permitAll()
+                .permitAll()
             .antMatchers("/interceptorrules/**")
                 .hasRole("interceptor-admin")
             .anyRequest()
-                .authenticated();
+                .authenticated()
+            .and()
+                .csrf()
+                .ignoringAntMatchers("/geoserver.action/**");
     }
 }
