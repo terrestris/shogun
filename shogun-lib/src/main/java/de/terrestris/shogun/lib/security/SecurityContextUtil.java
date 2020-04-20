@@ -4,6 +4,7 @@ import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.GroupRepository;
 import de.terrestris.shogun.lib.repository.UserRepository;
+import de.terrestris.shogun.lib.util.KeycloakUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
@@ -36,11 +37,27 @@ public class SecurityContextUtil {
     @Autowired
     protected RealmResource keycloakRealm;
 
+    @Autowired
+    KeycloakUtil keycloakUtil;
+
     @Transactional(readOnly = true)
     public Optional<User> getUserBySession() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String keycloakUserId = SecurityContextUtil.getKeycloakUserIdFromAuthentication(authentication);
-        return StringUtils.isEmpty(keycloakUserId) ? Optional.empty() : userRepository.findByKeycloakId(keycloakUserId);
+
+        if (StringUtils.isEmpty(keycloakUserId)) {
+            return Optional.empty();
+        }
+
+        Optional<User> user = userRepository.findByKeycloakId(keycloakUserId);
+
+        if (user.isPresent()) {
+            UserResource userResource = keycloakUtil.getUserResource(user.get());
+            UserRepresentation userRepresentation = userResource.toRepresentation();
+            user.get().setKeycloakRepresentation(userRepresentation);
+        }
+
+        return user;
     }
 
     /**
