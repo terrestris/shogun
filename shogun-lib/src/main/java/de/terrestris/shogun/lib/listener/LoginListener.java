@@ -5,6 +5,7 @@ import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.GroupRepository;
 import de.terrestris.shogun.lib.repository.UserRepository;
 import de.terrestris.shogun.lib.security.SecurityContextUtil;
+import lombok.extern.log4j.Log4j2;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.representations.AccessToken;
@@ -15,11 +16,13 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Component
+@Log4j2
 public class LoginListener implements ApplicationListener<InteractiveAuthenticationSuccessEvent> {
 
     @Autowired
@@ -32,12 +35,13 @@ public class LoginListener implements ApplicationListener<InteractiveAuthenticat
     protected GroupRepository groupRepository;
 
     @Override
-    public void onApplicationEvent(InteractiveAuthenticationSuccessEvent event) {
+    @Transactional
+    public synchronized void onApplicationEvent(InteractiveAuthenticationSuccessEvent event) {
         Authentication authentication = event.getAuthentication();
         Object principal = authentication.getPrincipal();
 
         if (!(principal instanceof KeycloakPrincipal)) {
-            // TODO Error handling
+            log.error("No KeycloakPrincipal found, can not create the user.");
             return;
         }
 
