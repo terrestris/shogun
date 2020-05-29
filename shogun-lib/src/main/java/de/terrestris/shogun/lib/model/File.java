@@ -18,7 +18,7 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 public class File extends BaseEntity {
 
-    @Column(updatable = false, nullable = false)
+    @Column(columnDefinition = "uuid", updatable = false, nullable = false)
     @Type(type="pg-uuid")
     private UUID fileUuid = UUID.randomUUID();
 
