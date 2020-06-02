@@ -43,6 +43,7 @@ keycloak:
   public-client: true
   ssl-required: external
   principal-attribute: preferred_username
+  enable-basic-auth: true
 #  security-constraints:
 #    - authRoles:
 #      - user

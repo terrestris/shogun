@@ -1,27 +1,29 @@
 package de.terrestris.shogun.boot.config;
 
 import de.terrestris.shogun.config.WebSecurityConfig;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Configuration
 @EnableWebSecurity
 public class BootWebSecurityConfig extends WebSecurityConfig {
 
-//    @Autowired
-//    private ShogunAuthenticationProvider authProvider;
-//
-//    @Autowired
-//    public ShogunUserDetailsService userDetailsService;
-//
-//    @Override
-//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.userDetailsService(userDetailsService);
-//        auth.authenticationProvider(authProvider);
-//    }
+    RequestMatcher csrfRequestMatcher = new RequestMatcher() {
+        public boolean matches(HttpServletRequest httpServletRequest) {
+            String refererHeader = httpServletRequest.getHeader("Referer");
+
+            if (refererHeader != null && refererHeader.endsWith("swagger-ui.html")) {
+                return true;
+            }
+
+            return false;
+        }
+    };
 
     @Override
     protected void customHttpConfiguration(HttpSecurity http) throws Exception {
@@ -50,6 +52,7 @@ public class BootWebSecurityConfig extends WebSecurityConfig {
             .and()
                 .csrf()
                     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                    .ignoringRequestMatchers(csrfRequestMatcher)
                     .ignoringAntMatchers("/graphql");
     }
 
