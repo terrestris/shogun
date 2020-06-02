@@ -10,7 +10,7 @@ CREATE SEQUENCE IF NOT EXISTS hibernate_sequence
     MAXVALUE 9223372036854775807
     CACHE 1;
 
-CREATE TABLE applications (
+CREATE TABLE IF NOT EXISTS applications (
     id bigint NOT NULL,
     created timestamp without time zone,
     modified timestamp without time zone,
@@ -25,7 +25,7 @@ CREATE TABLE applications (
     CONSTRAINT applications_unique_id UNIQUE (id)
 );
 
-CREATE TABLE files (
+CREATE TABLE IF NOT EXISTS files (
     id bigint NOT NULL,
     created timestamp without time zone,
     modified timestamp without time zone,
@@ -38,7 +38,7 @@ CREATE TABLE files (
     CONSTRAINT files_unique_id UNIQUE (id)
 );
 
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id bigint NOT NULL,
     created timestamp without time zone,
     modified timestamp without time zone,
@@ -49,7 +49,7 @@ CREATE TABLE users (
     CONSTRAINT users_unique_id UNIQUE (id)
 );
 
-CREATE TABLE groups (
+CREATE TABLE IF NOT EXISTS groups (
     id bigint NOT NULL,
     created timestamp without time zone,
     modified timestamp without time zone,
@@ -58,7 +58,7 @@ CREATE TABLE groups (
     CONSTRAINT groups_unique_id UNIQUE (id)
 );
 
-CREATE TABLE permissions (
+CREATE TABLE IF NOT EXISTS permissions (
     id bigint NOT NULL,
     created timestamp without time zone,
     modified timestamp without time zone,
@@ -68,7 +68,7 @@ CREATE TABLE permissions (
     CONSTRAINT permissions_unique_name UNIQUE (name)
 );
 
-CREATE TABLE groupclasspermissions (
+CREATE TABLE IF NOT EXISTS groupclasspermissions (
     id bigint NOT NULL,
     created timestamp without time zone,
     modified timestamp without time zone,
@@ -89,7 +89,7 @@ CREATE TABLE groupclasspermissions (
         NOT VALID
 );
 
-CREATE TABLE groupinstancepermissions (
+CREATE TABLE IF NOT EXISTS groupinstancepermissions (
     id bigint NOT NULL,
     created timestamp without time zone,
     modified timestamp without time zone,
@@ -110,7 +110,7 @@ CREATE TABLE groupinstancepermissions (
         NOT VALID
 );
 
-CREATE TABLE imagefiles (
+CREATE TABLE IF NOT EXISTS imagefiles (
     id bigint NOT NULL,
     created timestamp without time zone,
     modified timestamp without time zone,
@@ -126,7 +126,7 @@ CREATE TABLE imagefiles (
     CONSTRAINT imagefiles_unique_id UNIQUE (id)
 );
 
-CREATE TABLE layers (
+CREATE TABLE IF NOT EXISTS layers (
     id bigint NOT NULL,
     created timestamp without time zone,
     modified timestamp without time zone,
@@ -140,7 +140,7 @@ CREATE TABLE layers (
     CONSTRAINT layers_unique_name UNIQUE (name)
 );
 
-CREATE TABLE permission (
+CREATE TABLE IF NOT EXISTS permission (
     permissions_id bigint NOT NULL,
     permissions text,
     CONSTRAINT permission_fkey_permissions_id FOREIGN KEY (permissions_id)
@@ -150,7 +150,7 @@ CREATE TABLE permission (
         NOT VALID
 );
 
-CREATE TABLE userclasspermissions (
+CREATE TABLE IF NOT EXISTS userclasspermissions (
     id bigint NOT NULL,
     created timestamp without time zone,
     modified timestamp without time zone,
@@ -171,7 +171,7 @@ CREATE TABLE userclasspermissions (
         NOT VALID
 );
 
-CREATE TABLE userinstancepermissions (
+CREATE TABLE IF NOT EXISTS userinstancepermissions (
     id bigint NOT NULL,
     created timestamp without time zone,
     modified timestamp without time zone,
