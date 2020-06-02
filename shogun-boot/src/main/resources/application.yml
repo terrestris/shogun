@@ -11,6 +11,8 @@ spring:
   flyway:
     schemas: shogun, public
     defaultSchema: shogun
+  messages:
+    basename: org/springframework/security/messages, de/terrestris/shogun/lib/messages
   mail:
     host: mail.terrestris.de
     port: 587
