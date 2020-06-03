@@ -12,7 +12,7 @@ Configuration:
 
     logger:
       - name: de.terrestris
-        level: info
+        level: trace
       - name: org.flywaydb
         level: info
       - name: com.zaxxer.hikari
@@ -36,4 +36,4 @@ Configuration:
       - name: org.springframework
         level: info
       - name: org.keycloak
-        level: trace
+        level: info
