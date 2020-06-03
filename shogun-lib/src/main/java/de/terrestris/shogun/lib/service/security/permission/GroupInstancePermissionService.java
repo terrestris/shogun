@@ -43,7 +43,21 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
         }
 
         LOG.trace("Getting all group permissions for group {} and entity {}", group.getKeycloakId(), entity);
+
         return repository.findByGroupIdAndEntityId(group.getId(), entity.getId()); // TODO: !
+    }
+
+
+    /**
+     * Get all {@link GroupInstancePermission} for the given entity.
+     *
+     * @param entity entity to get group permissions for
+     * @return
+     */
+    public List<GroupInstancePermission> findFor(BaseEntity entity) {
+        LOG.trace("Getting all group permissions for entity {}", entity);
+
+        return repository.findByEntityId(entity.getId());
     }
 
     /**
@@ -117,5 +131,13 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
         groupInstancePermission.setPermissions(permissionCollection.get());
 
         repository.save(groupInstancePermission);
+    }
+
+    public void deleteAllForEntity(BaseEntity persistedEntity) {
+        List<GroupInstancePermission> groupInstancePermissions = this.findFor(persistedEntity);
+
+        repository.deleteAll(groupInstancePermissions);
+
+        LOG.info("Successfully deleted all group instance permissions for entity {}", persistedEntity);
     }
 }

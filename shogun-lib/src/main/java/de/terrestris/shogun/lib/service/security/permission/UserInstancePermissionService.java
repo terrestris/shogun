@@ -12,6 +12,7 @@ import de.terrestris.shogun.lib.service.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,6 +26,7 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
 
     /**
      * Get {@link UserInstancePermission} for SHOGun user
+     *
      * @param entity entity to get group permissions for
      * @param user The SHOGun user
      * @return
@@ -32,6 +34,18 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
     public Optional<UserInstancePermission> findFor(BaseEntity entity, User user) {
         LOG.trace("Getting all user permissions for user {} and entity {}", user.getKeycloakId(), entity);
         return repository.findByUserIdAndEntityId(user.getId(), entity.getId());
+    }
+
+    /**
+     * Get all {@link UserInstancePermission} for the given entity.
+     *
+     * @param entity entity to get user permissions for
+     * @return
+     */
+    public List<UserInstancePermission> findFor(BaseEntity entity) {
+        LOG.trace("Getting all user permissions for entity {}", entity);
+
+        return repository.findByEntityId(entity.getId());
     }
 
     /**
@@ -86,5 +100,13 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
         userInstancePermission.setPermissions(permissionCollection.get());
 
         repository.save(userInstancePermission);
+    }
+
+    public void deleteAllForEntity(BaseEntity persistedEntity) {
+        List<UserInstancePermission> userInstancePermissions = this.findFor(persistedEntity);
+
+        repository.deleteAll(userInstancePermissions);
+
+        LOG.info("Successfully deleted all user instance permissions for entity {}", persistedEntity);
     }
 }
