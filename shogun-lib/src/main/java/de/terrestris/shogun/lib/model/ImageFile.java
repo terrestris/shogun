@@ -16,10 +16,10 @@ import javax.persistence.Table;
 @EqualsAndHashCode(callSuper = true)
 public class ImageFile extends File {
 
-    @Column(nullable = false)
+    @Column
     private Integer width;
 
-    @Column(nullable = false)
+    @Column
     private Integer height;
 
     @JsonIgnore
