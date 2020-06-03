@@ -23,6 +23,7 @@ public class ImageFile extends File {
     private Integer height;
 
     @JsonIgnore
+    @ToString.Exclude
     @Column(length = Integer.MAX_VALUE)
     private byte[] thumbnail;
 }
