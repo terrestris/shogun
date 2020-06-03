@@ -1,9 +1,7 @@
 package de.terrestris.shogun.lib.controller;
 
-import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.service.BaseService;
-import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,24 +26,6 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
 
     @Autowired
     protected MessageSource messageSource;
-
-    @Autowired
-    protected UserInstancePermissionService userInstancePermissionService;
-
-//    @GetMapping("/filterjsonb")
-//    @ResponseStatus(HttpStatus.OK)
-//    public List<S> findAllBy(@RequestParam String column, @RequestParam String filter) {
-//        return service.findByFilter(column, filter);
-//    }
-//
-//    @GetMapping("/filter/{attribute}")
-//    @ResponseStatus(HttpStatus.OK)
-//    public List<S> findAllBy(
-//            @PathVariable("attribute") String attribute,
-//            @RequestParam String path,
-//            @RequestParam String value) {
-//        return service.findBy(attribute, path, value);
-//    }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -141,8 +121,6 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
     public S add(@RequestBody S entity) {
         try {
             S persistedEntity = service.create(entity);
-
-            userInstancePermissionService.setPermission(persistedEntity, PermissionCollectionType.ADMIN);
 
             return persistedEntity;
         } catch (AccessDeniedException ade) {
@@ -272,7 +250,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
         } catch (ResponseStatusException rse) {
             throw rse;
         } catch (Exception e) {
-            LOG.error("Error while creating entity of type {} with ID {}: \n {}",
+            LOG.error("Error while deleting entity of type {} with ID {}: \n {}",
                     getGenericClassName(), entityId, e.getMessage());
             LOG.trace("Full stack trace: ", e);
 
@@ -288,7 +266,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
         }
     }
 
-    private String getGenericClassName() {
+    protected String getGenericClassName() {
         Class<?>[] resolvedTypeArguments = GenericTypeResolver.resolveTypeArguments(getClass(),
                 BaseController.class);
 

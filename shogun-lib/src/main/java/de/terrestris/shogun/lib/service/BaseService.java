@@ -2,8 +2,11 @@ package de.terrestris.shogun.lib.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.terrestris.shogun.lib.repository.BaseCrudRepository;
+import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
 import de.terrestris.shogun.lib.model.BaseEntity;
+import de.terrestris.shogun.lib.repository.BaseCrudRepository;
+import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionService;
+import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +32,12 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
     @Autowired
     ObjectMapper objectMapper;
 
+    @Autowired
+    protected UserInstancePermissionService userInstancePermissionService;
+
+    @Autowired
+    protected GroupInstancePermissionService groupInstancePermissionService;
+
     @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
     @Transactional(readOnly = true)
     public List<S> findAll() {
@@ -50,7 +59,11 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'CREATE')")
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public S create(S entity) {
-        return repository.save(entity);
+        S persistedEntity = repository.save(entity);
+
+        userInstancePermissionService.setPermission(persistedEntity, PermissionCollectionType.ADMIN);
+
+        return persistedEntity;
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'UPDATE')")
@@ -67,6 +80,10 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'DELETE')")
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void delete(S entity) {
+        userInstancePermissionService.deleteAllForEntity(entity);
+
+        groupInstancePermissionService.deleteAllForEntity(entity);
+
         repository.delete(entity);
     }
 }
