@@ -1,8 +1,10 @@
 package de.terrestris.shogun.importer.config;
 
+import com.google.common.base.Predicate;
 import de.terrestris.shogun.config.SwaggerConfig;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
+import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.service.ApiInfo;
 
 import java.util.Collections;
@@ -25,5 +27,10 @@ public class ImporterSwaggerConfig extends SwaggerConfig {
         );
 
         return apiInfo;
+    }
+
+    @Override
+    protected Predicate<String> setSecurityContextPaths() {
+        return PathSelectors.any();
     }
 }
