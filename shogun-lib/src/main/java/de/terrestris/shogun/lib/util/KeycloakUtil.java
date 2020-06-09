@@ -94,6 +94,15 @@ public class KeycloakUtil {
     }
 
     public GroupRepresentation addGroup(String groupName) throws WebApplicationException {
+
+        List<GroupRepresentation> availableGroups = this.getGroupByName(groupName);
+
+        if (!availableGroups.isEmpty()) {
+            log.debug("Group {} already exists.", groupName);
+
+            return availableGroups.get(0);
+        }
+
         GroupRepresentation group = new GroupRepresentation();
         group.setName(groupName);
 
