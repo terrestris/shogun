@@ -32,15 +32,22 @@ public class KeycloakUtil {
         return kcGroups.group(group.getKeycloakId());
     }
 
-    public boolean addUserToGroup(User user, Group group) {
-        UserResource kcUser = this.getUserResource(user);
-        GroupResource kcGroup = this.getGroupResource(group);
-        return kcUser.groups().add(kcGroup.toRepresentation());
+    public GroupResource getGroupResource(String id) {
+        GroupsResource kcGroups = this.keycloakRealm.groups();
+        return kcGroups.group(id);
     }
 
-    public boolean addUserToGroup(User user, GroupRepresentation kcGroup) {
+    public void addUserToGroup(User user, Group group) {
         UserResource kcUser = this.getUserResource(user);
-        return kcUser.groups().add(kcGroup);
+        GroupResource kcGroup = this.getGroupResource(group);
+
+        kcUser.joinGroup(kcGroup.toRepresentation().getId());
+    }
+
+    public void addUserToGroup(User user, GroupRepresentation kcGroup) {
+        UserResource kcUser = this.getUserResource(user);
+
+        kcUser.joinGroup(kcGroup.getId());
     }
 
     public GroupResource getResourceFromRepresentation(GroupRepresentation representation) {
