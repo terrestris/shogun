@@ -2,16 +2,16 @@ scalar JSON
 scalar Geometry
 
 type Query {
-    applicationById(id: ID): Application
+    applicationById(id: Int): Application
     allApplications: [Application]
-    layerById(id: ID): Layer
+    layerById(id: Int): Layer
     allLayers: [Layer]
-    userById(id: ID): User
+    userById(id: Int): User
     allUsers: [User]
 }
 
 type Application {
-    id: ID
+    id: Int
     created: String
     modified: String
     name: String
@@ -24,7 +24,7 @@ type Application {
 }
 
 type Layer {
-    id: ID
+    id: Int
     created: String
     modified: String
     name: String
@@ -43,7 +43,7 @@ type UserRepresentation {
 }
 
 type User {
-    id: ID
+    id: Int
     created: String
     modified: String
     username: String
@@ -55,7 +55,7 @@ type User {
 }
 
 type UserGroup {
-    id: ID
+    id: Int
     created: String
     modified: String
     name: String
