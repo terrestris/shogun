@@ -118,6 +118,9 @@ public class KeycloakUtil {
 
                 throw new WebApplicationException(message, response);
             }
+
+            group.setId(CreatedResponseUtil.getCreatedId(response));
+
             return group;
         }
     }
