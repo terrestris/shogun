@@ -4,10 +4,16 @@ import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.model.User;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
+import org.keycloak.KeycloakPrincipal;
+import org.keycloak.KeycloakSecurityContext;
+import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.resource.*;
+import org.keycloak.representations.AccessToken;
+import org.keycloak.representations.IDToken;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.WebApplicationException;
@@ -62,12 +68,13 @@ public class KeycloakUtil {
         String subGroupName = subGroup.getName();
         String groupName = parentGroup.getName();
         GroupResource parentGroupResource = this.getResourceFromRepresentation(parentGroup);
-        try (Response response = parentGroupResource.subGroup(subGroup)){
-            if (response.getStatusInfo().equals(Response.Status.OK)) {
-                log.info("Added group " + subGroupName + " as SubGroup to " + groupName );
+        try (Response response = parentGroupResource.subGroup(subGroup)) {
+            if (response.getStatusInfo().equals(Response.Status.NO_CONTENT)) {
+                log.info("Added group " + subGroupName + " as SubGroup to " + groupName);
                 return true;
             } else {
-                String message = "Error adding group " + subGroupName + " as SubGroup to " + groupName + ", Error Message : " + response;
+                String message = "Error adding group " + subGroupName + " as SubGroup to " + groupName +
+                    ", Error Message : " + response;
                 log.error(message);
                 throw new WebApplicationException(message, response);
             }
@@ -80,17 +87,26 @@ public class KeycloakUtil {
             .filter(groupRepresentation -> StringUtils.equalsIgnoreCase(groupName, groupRepresentation.getName())).collect(Collectors.toList());
     }
 
+    public Boolean existsGroup(String groupName) {
+        List<GroupRepresentation> availableGroups = this.getGroupByName(groupName);
+
+        return !availableGroups.isEmpty();
+    }
+
     public GroupRepresentation addGroup(String groupName) throws WebApplicationException {
         GroupRepresentation group = new GroupRepresentation();
         group.setName(groupName);
+
         try (Response response = this.keycloakRealm.groups().add(group)) {
             if (!response.getStatusInfo().equals(Response.Status.CREATED)) {
                 Response.StatusType statusInfo = response.getStatusInfo();
                 response.bufferEntity();
                 String body = response.readEntity(String.class);
                 String message = "Create method returned status "
-                    + statusInfo.getReasonPhrase() + " (Code: " + statusInfo.getStatusCode() + "); expected status: Created (201). Response body: " + body;
+                    + statusInfo.getReasonPhrase() + " (Code: " + statusInfo.getStatusCode() +
+                    "); expected status: Created (201). Response body: " + body;
                 log.error(message);
+
                 throw new WebApplicationException(message, response);
             }
             return group;
