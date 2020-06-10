@@ -5,5 +5,4 @@ import de.terrestris.shogun.lib.repository.TopicRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-public class TopicService extends BaseService<TopicRepository, Topic> {
-}
+public class TopicService extends BaseService<TopicRepository, Topic> { }

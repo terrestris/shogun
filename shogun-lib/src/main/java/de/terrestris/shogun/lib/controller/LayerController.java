@@ -7,5 +7,4 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/layers")
-public class LayerController extends BaseController<LayerService, Layer> {
-}
+public class LayerController extends BaseController<LayerService, Layer> { }

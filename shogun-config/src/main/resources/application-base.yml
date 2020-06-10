@@ -56,3 +56,23 @@ keycloakauth:
   password: shogun
   master-realm: master
   admin-client: admin-cli
+
+upload:
+  file:
+    supportedContentTypes:
+      - application/json
+      - application/pdf
+      - application/xml
+      - application/zip
+      - text/comma-separated-values
+      - text/plain
+      - text/xml
+  image:
+    thumbnailSize: 100
+    supportedContentTypes:
+      - image/bmp
+      - image/gif
+      - image/jpeg
+      - image/png
+      - image/svg+xml
+      - image/tiff
