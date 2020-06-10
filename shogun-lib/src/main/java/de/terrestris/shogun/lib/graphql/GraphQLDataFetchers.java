@@ -1,8 +1,5 @@
 package de.terrestris.shogun.lib.graphql;
 
-import de.terrestris.shogun.lib.repository.ApplicationRepository;
-import de.terrestris.shogun.lib.repository.LayerRepository;
-import de.terrestris.shogun.lib.repository.UserRepository;
 import de.terrestris.shogun.lib.service.ApplicationService;
 import de.terrestris.shogun.lib.service.LayerService;
 import de.terrestris.shogun.lib.service.UserService;
@@ -24,7 +21,7 @@ public class GraphQLDataFetchers {
 
     public DataFetcher getApplicationById() {
         return dataFetchingEnvironment -> {
-            Long applicationId = Long.parseLong(dataFetchingEnvironment.getArgument("id"));
+            Long applicationId = ((Integer) dataFetchingEnvironment.getArgument("id")).longValue();
             return this.applicationService.findOne(applicationId);
         };
     }
@@ -35,7 +32,7 @@ public class GraphQLDataFetchers {
 
     public DataFetcher getLayerById() {
         return dataFetchingEnvironment -> {
-            Long layerId = Long.parseLong(dataFetchingEnvironment.getArgument("id"));
+            Long layerId = ((Integer) dataFetchingEnvironment.getArgument("id")).longValue();
             return this.layerService.findOne(layerId);
         };
     }
@@ -46,7 +43,7 @@ public class GraphQLDataFetchers {
 
     public DataFetcher getUserById() {
         return dataFetchingEnvironment -> {
-            Long userId = Long.parseLong(dataFetchingEnvironment.getArgument("id"));
+            Long userId = ((Integer) dataFetchingEnvironment.getArgument("id")).longValue();
             return this.userService.findOne(userId);
         };
     }
