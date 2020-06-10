@@ -61,7 +61,7 @@ public class GroupService extends BaseService<GroupRepository, Group> {
         Optional<Group> group = repository.findById(id);
 
         if (group.isPresent()) {
-            group = Optional.of(this.setTransientKeycloakRepresentations(group.get()));
+            this.setTransientKeycloakRepresentations(group.get());
         }
 
         return group;
@@ -109,9 +109,15 @@ public class GroupService extends BaseService<GroupRepository, Group> {
 
     private Group setTransientKeycloakRepresentations(Group group) {
         GroupResource groupResource = keycloakUtil.getGroupResource(group);
-        GroupRepresentation groupRepresentation = groupResource.toRepresentation();
 
-        group.setKeycloakRepresentation(groupRepresentation);
+        try {
+            GroupRepresentation groupRepresentation = groupResource.toRepresentation();
+            group.setKeycloakRepresentation(groupRepresentation);
+        } catch (Exception e) {
+            LOG.warn("Could not get the GroupRepresentation for group with SHOGun ID {} and " +
+                    "Keycloak ID {}. This may happen if the group is not available in Keycloak.",
+                    group.getId(), group.getKeycloakId());
+        }
 
         return group;
     }
