@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -163,7 +164,17 @@ public class KeycloakUtil {
     }
 
     public List<GroupRepresentation> getUserGroups(User user) {
-        List<GroupRepresentation> groups = this.keycloakRealm.users().get(user.getKeycloakId()).groups();
+        UserResource userResource = this.getUserResource(user);
+        List<GroupRepresentation> groups = new ArrayList<>();
+
+        try {
+            groups = userResource.groups();
+        } catch (Exception e) {
+            log.warn("Could not get the GroupRepresentations for the groups of user with SHOGun ID {} and " +
+                    "Keycloak ID {}. This may happen if the user is not available in Keycloak.",
+                     user.getId(), user.getKeycloakId());
+            log.trace("Full stack trace: ", e);
+        }
 
         return groups;
     }

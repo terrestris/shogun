@@ -28,9 +28,7 @@ public class UserService extends BaseService<UserRepository, User> {
         List<User> users = (List<User>) repository.findAll();
 
         for (User user : users) {
-            UserResource userResource = keycloakUtil.getUserResource(user);
-            UserRepresentation userRepresentation = userResource.toRepresentation();
-            user.setKeycloakRepresentation(userRepresentation);
+            this.setTransientKeycloakRepresentations(user);
         }
 
         return users;
@@ -43,9 +41,7 @@ public class UserService extends BaseService<UserRepository, User> {
         List<User> users = (List<User>) repository.findAll(specification);
 
         for (User user : users) {
-            UserResource userResource = keycloakUtil.getUserResource(user);
-            UserRepresentation userRepresentation = userResource.toRepresentation();
-            user.setKeycloakRepresentation(userRepresentation);
+            this.setTransientKeycloakRepresentations(user);
         }
 
         return users;
@@ -58,9 +54,23 @@ public class UserService extends BaseService<UserRepository, User> {
         Optional<User> user = repository.findById(id);
 
         if (user.isPresent()) {
-            UserResource userResource = keycloakUtil.getUserResource(user.get());
+            this.setTransientKeycloakRepresentations(user.get());
+        }
+
+        return user;
+    }
+
+    private User setTransientKeycloakRepresentations(User user) {
+        UserResource userResource = keycloakUtil.getUserResource(user);
+
+        try {
             UserRepresentation userRepresentation = userResource.toRepresentation();
-            user.get().setKeycloakRepresentation(userRepresentation);
+            user.setKeycloakRepresentation(userRepresentation);
+        } catch (Exception e) {
+            LOG.warn("Could not get the UserRepresentation for user with SHOGun ID {} and " +
+                    "Keycloak ID {}. This may happen if the user is not available in Keycloak.",
+                    user.getId(), user.getKeycloakId());
+            LOG.trace("Full stack trace: ", e);
         }
 
         return user;
