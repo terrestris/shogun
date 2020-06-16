@@ -117,6 +117,7 @@ public class GroupService extends BaseService<GroupRepository, Group> {
             LOG.warn("Could not get the GroupRepresentation for group with SHOGun ID {} and " +
                     "Keycloak ID {}. This may happen if the group is not available in Keycloak.",
                     group.getId(), group.getKeycloakId());
+            LOG.trace("Full stack trace: ", e);
         }
 
         return group;

@@ -173,6 +173,7 @@ public class KeycloakUtil {
             log.warn("Could not get the GroupRepresentations for the groups of user with SHOGun ID {} and " +
                     "Keycloak ID {}. This may happen if the user is not available in Keycloak.",
                      user.getId(), user.getKeycloakId());
+            log.trace("Full stack trace: ", e);
         }
 
         return groups;

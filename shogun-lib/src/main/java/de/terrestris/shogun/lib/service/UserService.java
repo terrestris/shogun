@@ -70,6 +70,7 @@ public class UserService extends BaseService<UserRepository, User> {
             LOG.warn("Could not get the UserRepresentation for user with SHOGun ID {} and " +
                     "Keycloak ID {}. This may happen if the user is not available in Keycloak.",
                     user.getId(), user.getKeycloakId());
+            LOG.trace("Full stack trace: ", e);
         }
 
         return user;
