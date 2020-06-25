@@ -37,7 +37,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
         try {
             List<S> persistedEntities = service.findAll();
 
-            LOG.trace("Successfully got all entities type {} (count: {})",
+            LOG.trace("Successfully got all entities of type {} (count: {})",
                 getGenericClassName(), persistedEntities.size());
 
             return persistedEntities;
