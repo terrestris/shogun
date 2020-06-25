@@ -3,7 +3,7 @@ Configuration:
     Console:
       name: STDOUT
       PatternLayout:
-        Pattern: '%highlight{%d{HH:mm:ss.SSS} %-5level %logger{36}.%M() @%L -%msg%n}{FATAL=red blink, ERROR=red, WARN=yellow bold, INFO=white, DEBUG=green bold, TRACE=blue}'
+        Pattern: '%highlight{%d{HH:mm:ss.SSS} %-5level %logger{36}.%M() @%L - %msg%n}{FATAL=red blink, ERROR=red, WARN=yellow bold, INFO=white, DEBUG=green bold, TRACE=blue}'
   Loggers:
     Root:
       level: info
