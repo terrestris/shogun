@@ -20,6 +20,18 @@ spring:
         lob:
           non_contextual_creation: true
       ddl-auto: none
+    properties:
+      org:
+        hibernate:
+          # See https://docs.jboss.org/envers/docs/#configuration
+          envers:
+            default_schema: shogun_rev
+            audit_table_prefix: _rev
+      hibernate:
+        integration:
+          envers:
+            # Set this to false to disable auditing entity changes
+            enabled: true
   flyway:
     enabled: true
     baselineOnMigrate: true
