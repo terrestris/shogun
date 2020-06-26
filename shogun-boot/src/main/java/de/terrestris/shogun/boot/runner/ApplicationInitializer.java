@@ -32,7 +32,7 @@ public class ApplicationInitializer implements ApplicationRunner {
 
         if (permissionsLength == 0) {
             log.fatal("Couldn't find any permissions in the database. This will most likely lead to errors. Please " +
-                "ensure flyway is enabled your application.yaml! Alternatively the permissions may be inserted " +
+                "ensure flyway is enabled in your application.yaml! Alternatively the permissions may be inserted " +
                 "manually - even if not recommended!");
         }
     }
