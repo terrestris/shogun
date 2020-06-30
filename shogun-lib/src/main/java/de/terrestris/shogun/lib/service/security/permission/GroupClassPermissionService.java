@@ -9,7 +9,6 @@ import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
 import de.terrestris.shogun.lib.repository.security.permission.GroupClassPermissionRepository;
 import de.terrestris.shogun.lib.repository.security.permission.PermissionCollectionRepository;
 import de.terrestris.shogun.lib.security.SecurityContextUtil;
-import de.terrestris.shogun.lib.service.BaseService;
 import de.terrestris.shogun.lib.util.KeycloakUtil;
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class GroupClassPermissionService extends BaseService<GroupClassPermissionRepository, GroupClassPermission> {
+public class GroupClassPermissionService extends BasePermissionService<GroupClassPermissionRepository, GroupClassPermission> {
 
     @Autowired
     protected SecurityContextUtil securityContextUtil;

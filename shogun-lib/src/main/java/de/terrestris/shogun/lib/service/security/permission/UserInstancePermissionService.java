@@ -8,7 +8,6 @@ import de.terrestris.shogun.lib.model.security.permission.UserInstancePermission
 import de.terrestris.shogun.lib.repository.security.permission.PermissionCollectionRepository;
 import de.terrestris.shogun.lib.repository.security.permission.UserInstancePermissionRepository;
 import de.terrestris.shogun.lib.security.SecurityContextUtil;
-import de.terrestris.shogun.lib.service.BaseService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserInstancePermissionService extends BaseService<UserInstancePermissionRepository, UserInstancePermission> {
+public class UserInstancePermissionService extends BasePermissionService<UserInstancePermissionRepository, UserInstancePermission> {
 
     @Autowired
     protected SecurityContextUtil securityContextUtil;
