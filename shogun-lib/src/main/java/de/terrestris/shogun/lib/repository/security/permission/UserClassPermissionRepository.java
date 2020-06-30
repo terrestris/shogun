@@ -2,7 +2,6 @@ package de.terrestris.shogun.lib.repository.security.permission;
 
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.model.security.permission.UserClassPermission;
-import de.terrestris.shogun.lib.repository.BaseCrudRepository;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.QueryHint;
@@ -14,7 +13,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserClassPermissionRepository extends BaseCrudRepository<UserClassPermission, Long>, JpaSpecificationExecutor<UserClassPermission> {
+public interface UserClassPermissionRepository extends BasePermissionRepository<UserClassPermission, Long>,
+    JpaSpecificationExecutor<UserClassPermission> {
 
     @Query("Select ucp from userclasspermissions ucp where ucp.user.id = ?1 and ucp.className = ?2")
     @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
