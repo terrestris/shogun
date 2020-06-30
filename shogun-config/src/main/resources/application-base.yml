@@ -61,6 +61,7 @@ spring:
     baselineOnMigrate: true
     locations: classpath:db/migration
     defaultSchema: shogun
+    outOfOrder: true
   datasource:
     platform: postgres
     url: jdbc:postgresql://localhost:5555/shogun?currentSchema=shogun
