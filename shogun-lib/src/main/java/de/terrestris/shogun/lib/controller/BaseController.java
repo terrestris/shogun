@@ -1,5 +1,6 @@
 package de.terrestris.shogun.lib.controller;
 
+import de.terrestris.shogun.lib.controller.security.permission.BasePermissionController;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.service.BaseService;
 import org.apache.logging.log4j.LogManager;
@@ -20,7 +21,7 @@ import java.util.Map;
 import java.util.Optional;
 
 // TODO Specify and type extension of BaseService
-public abstract class BaseController<T extends BaseService<?, S>, S extends BaseEntity> {
+public abstract class BaseController<T extends BaseService<?, S>, S extends BaseEntity> extends BasePermissionController<T, S> {
 
     protected final Logger LOG = LogManager.getLogger(getClass());
 

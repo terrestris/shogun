@@ -1,5 +1,6 @@
 package de.terrestris.shogun.lib.controller;
 
+import de.terrestris.shogun.lib.controller.security.permission.BasePermissionController;
 import de.terrestris.shogun.lib.model.File;
 import de.terrestris.shogun.lib.service.BaseFileService;
 import org.apache.logging.log4j.LogManager;
@@ -18,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public abstract class BaseFileController<T extends BaseFileService<?, S>, S extends File> {
+public abstract class BaseFileController<T extends BaseFileService<?, S>, S extends File> extends BasePermissionController<T, S> {
 
     protected final Logger LOG = LogManager.getLogger(getClass());
 
