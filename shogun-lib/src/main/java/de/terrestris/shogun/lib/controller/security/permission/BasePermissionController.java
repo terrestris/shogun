@@ -58,40 +58,6 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
     @Autowired
     protected GroupClassPermissionService groupClassPermissionService;
 
-    /**
-    @PutMapping("/{id}/permissions/class/group/{groupId}")
-    @PutMapping("/{id}/permissions/class/user/{userId}")
-    @PutMapping("/{id}/permissions/instance/group/{groupId}")
-    @PutMapping("/{id}/permissions/instance/user/{userId}")
-
-    @PostMapping("/{id}/permissions/class/group/{groupId}")
-    @PostMapping("/{id}/permissions/class/user/{userId}")
-    @PostMapping("/{id}/permissions/instance/group/{groupId}")
-    @PostMapping("/{id}/permissions/instance/user/{userId}")
-//    @PostMapping("/{id}/permissions/class/group")
-//    @PostMapping("/{id}/permissions/class/user")
-//    @PostMapping("/{id}/permissions/instance/group")
-//    @PostMapping("/{id}/permissions/instance/user")
-
-    @DeleteMapping("/{id}/permissions/class/group/{groupId}")
-    @DeleteMapping("/{id}/permissions/class/user/{userId}")
-    @DeleteMapping("/{id}/permissions/instance/group/{groupId}")
-    @DeleteMapping("/{id}/permissions/instance/user/{userId}")
-    @DeleteMapping("/{id}/permissions/class/group")
-    @DeleteMapping("/{id}/permissions/class/user")
-    @DeleteMapping("/{id}/permissions/instance/group")
-    @DeleteMapping("/{id}/permissions/instance/user")
-
-    @GetMapping("/{id}/permissions/class/group/{groupId}")
-    @GetMapping("/{id}/permissions/class/user/{userId}")
-    @GetMapping("/{id}/permissions/instance/group/{groupId}")
-    @GetMapping("/{id}/permissions/instance/user/{userId}")
-    @GetMapping("/{id}/permissions/class/group")
-    @GetMapping("/{id}/permissions/class/user")
-    @GetMapping("/{id}/permissions/instance/group")
-    @GetMapping("/{id}/permissions/instance/user")
-     */
-
     @GetMapping("/{id}/permissions/instance/user")
     @ResponseStatus(HttpStatus.OK)
     public List<UserInstancePermission> getUserInstancePermissions(@PathVariable("id") Long entityId) {
