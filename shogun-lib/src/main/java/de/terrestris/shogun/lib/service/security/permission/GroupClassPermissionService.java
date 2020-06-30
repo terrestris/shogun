@@ -25,7 +25,6 @@ import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
 import de.terrestris.shogun.lib.repository.security.permission.GroupClassPermissionRepository;
 import de.terrestris.shogun.lib.repository.security.permission.PermissionCollectionRepository;
 import de.terrestris.shogun.lib.security.SecurityContextUtil;
-import de.terrestris.shogun.lib.service.BaseService;
 import de.terrestris.shogun.lib.service.security.provider.GroupProviderService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +35,7 @@ import java.util.Optional;
 
 @Service
 @Log4j2
-public class GroupClassPermissionService extends BaseService<GroupClassPermissionRepository, GroupClassPermission> {
+public class GroupClassPermissionService extends BasePermissionService<GroupClassPermissionRepository, GroupClassPermission> {
 
     @Autowired
     protected SecurityContextUtil securityContextUtil;
@@ -46,6 +45,19 @@ public class GroupClassPermissionService extends BaseService<GroupClassPermissio
 
     @Autowired
     private GroupProviderService groupProviderService;
+
+    /**
+     * Returns all {@link GroupClassPermission} for the given query arguments.
+     *
+     * @param group The group to find the permissions for.
+     * @return The permissions.
+     */
+    public List<GroupClassPermission> findFor(BaseEntity entity) {
+
+        log.trace("Getting all group class permissions for entity with ID {}", entity.getId());
+
+        return repository.findByClassName(entity.getClass().getCanonicalName());
+    }
 
     /**
      * Returns all {@link GroupClassPermission} for the given query arguments.

@@ -23,10 +23,8 @@ import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
 import de.terrestris.shogun.lib.model.security.permission.UserInstancePermission;
 import de.terrestris.shogun.lib.repository.security.permission.PermissionCollectionRepository;
 import de.terrestris.shogun.lib.repository.security.permission.UserInstancePermissionRepository;
-import de.terrestris.shogun.lib.service.BaseService;
+import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +33,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Log4j2
-public class UserInstancePermissionService extends BaseService<UserInstancePermissionRepository, UserInstancePermission> {
+public class UserInstancePermissionService extends BasePermissionService<UserInstancePermissionRepository, UserInstancePermission> {
 
     @Autowired
     protected PermissionCollectionRepository permissionCollectionRepository;

@@ -37,7 +37,7 @@ import java.util.Optional;
 
 @Service
 @Log4j2
-public class GroupInstancePermissionService extends BaseService<GroupInstancePermissionRepository, GroupInstancePermission> {
+public class GroupInstancePermissionService extends BasePermissionService<GroupInstancePermissionRepository, GroupInstancePermission> {
 
     @Autowired
     protected SecurityContextUtil securityContextUtil;
