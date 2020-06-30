@@ -43,4 +43,6 @@ public interface UserClassPermissionRepository extends BasePermissionRepository<
     @Modifying
     @Query(value = "DELETE FROM {h-schema}userclasspermissions u WHERE u.user_id=:userId", nativeQuery = true)
     void deleteAllByUserId(@Param("userId") Long userId);
+
+    List<UserClassPermission> findByClassName(String className);
 }

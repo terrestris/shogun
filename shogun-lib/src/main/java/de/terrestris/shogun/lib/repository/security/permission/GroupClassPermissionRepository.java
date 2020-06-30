@@ -36,4 +36,6 @@ public interface GroupClassPermissionRepository extends BasePermissionRepository
 
     @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
     List<GroupClassPermission> findAllByGroup(Group group);
+
+    List<GroupClassPermission> findByClassName(String className);
 }
