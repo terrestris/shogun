@@ -161,9 +161,9 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'DELETE')")
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void delete(S entity) {
-        userInstancePermissionService.deleteAllForEntity(entity);
+        userInstancePermissionService.deleteAllFor(entity);
 
-        groupInstancePermissionService.deleteAllForEntity(entity);
+        groupInstancePermissionService.deleteAllFor(entity);
 
         repository.delete(entity);
     }
