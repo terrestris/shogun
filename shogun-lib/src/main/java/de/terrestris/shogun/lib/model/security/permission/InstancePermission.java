@@ -16,21 +16,13 @@
  */
 package de.terrestris.shogun.lib.model.security.permission;
 
-import de.terrestris.shogun.lib.model.BaseEntity;
 import lombok.*;
 import org.hibernate.Hibernate;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
-import javax.persistence.FetchType;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.OneToOne;
-
 import java.util.Objects;
-
-import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 
 @MappedSuperclass
 @Audited
@@ -39,23 +31,10 @@ import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public abstract class InstancePermission extends BaseEntity {
+public abstract class InstancePermission extends BasePermission {
 
     @Column
     private Long entityId;
-
-    /**
-     * Attention: Hibernate will create an unwanted UNIQUE constraint for the join column <i>permissions_id</i> if
-     *            in create mode. To prevent unique constraint violations the constraint has to be removed manually.
-     */
-    @OneToOne(
-        optional = false,
-        fetch = FetchType.LAZY
-    )
-    @Fetch(FetchMode.JOIN)
-    @Audited(targetAuditMode = NOT_AUDITED)
-    @ToString.Exclude
-    private PermissionCollection permissions;
 
     @Override
     public boolean equals(Object o) {
