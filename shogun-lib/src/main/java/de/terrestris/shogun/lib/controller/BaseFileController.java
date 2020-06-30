@@ -31,8 +31,15 @@ public abstract class BaseFileController<T extends BaseFileService<?, S>, S exte
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<S> findAll() {
+        LOG.trace("Requested to return all entities of type {}", getGenericClassName());
+
         try {
-            return service.findAll();
+            List<S> persistedEntities = service.findAll();
+
+            LOG.trace("Successfully got all entities of type {} (count: {})",
+                getGenericClassName(), persistedEntities.size());
+
+            return persistedEntities;
         } catch (AccessDeniedException ade) {
             LOG.info("Access to entity of type {} is denied", getGenericClassName());
 
@@ -128,12 +135,13 @@ public abstract class BaseFileController<T extends BaseFileService<?, S>, S exte
         }
     }
 
-    @PostMapping("/upload")
+    @PostMapping(value = "/upload", consumes = "multipart/form-data")
     @ResponseStatus(HttpStatus.CREATED)
     public S add(MultipartFile uploadedFile) {
         LOG.debug("Requested to upload a multipart-file");
 
         try {
+
             service.isValidType(uploadedFile.getContentType());
 
             S persistedFile = service.create(uploadedFile);
@@ -173,11 +181,17 @@ public abstract class BaseFileController<T extends BaseFileService<?, S>, S exte
     @DeleteMapping("/{fileUuid}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("fileUuid") UUID fileUuid) {
+        LOG.trace("Requested to delete entity of type {} with UUID {}",
+            getGenericClassName(), fileUuid);
+
         try {
             Optional<S> entity = service.findOne(fileUuid);
 
             if (entity.isPresent()) {
                 service.delete(entity.get());
+
+                LOG.trace("Successfully deleted entity of type {} with UUID {}",
+                    getGenericClassName(), fileUuid);
             } else {
                 LOG.error("Could not find entity of type {} with UUID {}",
                     getGenericClassName(), fileUuid);

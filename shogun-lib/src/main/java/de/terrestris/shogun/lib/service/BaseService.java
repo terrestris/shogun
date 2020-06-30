@@ -10,6 +10,8 @@ import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissi
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.history.Revision;
+import org.springframework.data.history.Revisions;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.security.access.prepost.PostAuthorize;
@@ -54,6 +56,24 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
     @Transactional(readOnly = true)
     public Optional<S> findOne(Long id) {
         return repository.findById(id);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'READ')")
+    @Transactional(readOnly = true)
+    public Revisions<Integer, S> findRevisions(S entity) {
+        return repository.findRevisions(entity.getId());
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'READ')")
+    @Transactional(readOnly = true)
+    public Optional<Revision<Integer, S>> findRevision(S entity, Integer rev) {
+        return repository.findRevision(entity.getId(), rev);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'READ')")
+    @Transactional(readOnly = true)
+    public Optional<Revision<Integer, S>> findLastChangeRevision(S entity) {
+        return repository.findLastChangeRevision(entity.getId());
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'CREATE')")

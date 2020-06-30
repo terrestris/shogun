@@ -1,6 +1,8 @@
 package de.terrestris.shogun.lib.model;
 
 import lombok.*;
+import org.hibernate.envers.AuditTable;
+import org.hibernate.envers.Audited;
 import org.keycloak.representations.idm.GroupRepresentation;
 
 import javax.persistence.Column;
@@ -10,6 +12,8 @@ import javax.persistence.Transient;
 
 @Entity(name = "groups")
 @Table(schema = "shogun")
+@Audited
+@AuditTable(value = "groups_rev", schema = "shogun_rev")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

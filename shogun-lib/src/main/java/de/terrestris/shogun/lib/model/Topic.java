@@ -4,6 +4,9 @@ import lombok.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
+import org.hibernate.envers.AuditTable;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 import javax.persistence.*;
 import java.awt.*;
@@ -18,6 +21,8 @@ import java.util.Set;
  */
 @Entity(name = "topics")
 @Table(schema = "shogun")
+@Audited
+@AuditTable(value = "topics_rev", schema = "shogun_rev")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -33,6 +38,7 @@ public class Topic extends BaseEntity {
 
     @OneToOne
     @Fetch(FetchMode.JOIN)
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private ImageFile imgSrc;
 
     @Type(type = "jsonb")

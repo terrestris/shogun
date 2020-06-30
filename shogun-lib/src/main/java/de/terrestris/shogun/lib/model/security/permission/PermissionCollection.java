@@ -22,7 +22,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 public class PermissionCollection extends BaseEntity {
 
-    @ElementCollection()
+    @ElementCollection
     @CollectionTable(name="permission", schema = "shogun")
     @Enumerated(EnumType.STRING)
     @Fetch(FetchMode.JOIN)
@@ -31,10 +31,5 @@ public class PermissionCollection extends BaseEntity {
     @Column(unique = true, nullable = false)
     @Enumerated(EnumType.STRING)
     private PermissionCollectionType name;
-
-    public PermissionCollection (Set<PermissionType> permissions) {
-        super();
-        this.permissions = permissions;
-    }
 
 }

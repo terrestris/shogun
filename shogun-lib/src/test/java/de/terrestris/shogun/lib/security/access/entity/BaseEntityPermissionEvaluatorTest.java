@@ -1,5 +1,6 @@
 package de.terrestris.shogun.lib.security.access.entity;
 
+import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
 import de.terrestris.shogun.lib.enumeration.PermissionType;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.User;
@@ -53,7 +54,7 @@ public abstract class BaseEntityPermissionEvaluatorTest<E extends BaseEntity> {
         Map<User, PermissionCollection> userPermissionsMap = new HashMap<>();
 
         PermissionType updatePermission = PermissionType.UPDATE;
-        PermissionCollection permissionCollection = buildPermissionCollection(updatePermission);
+        PermissionCollection permissionCollection = buildPermissionCollection(PermissionCollectionType.UPDATE, updatePermission);
         userPermissionsMap.put(user, permissionCollection);
         // TODO Use service!
 //        entityToCheck.setUserPermissions(userPermissionsMap);
@@ -72,7 +73,7 @@ public abstract class BaseEntityPermissionEvaluatorTest<E extends BaseEntity> {
         Map<User, PermissionCollection> userPermissionsMap = new HashMap<>();
 
         PermissionType adminPermission = PermissionType.ADMIN;
-        PermissionCollection permissionCollection = buildPermissionCollection(adminPermission);
+        PermissionCollection permissionCollection = buildPermissionCollection(PermissionCollectionType.ADMIN, adminPermission);
         userPermissionsMap.put(user, permissionCollection);
         // TODO Use service!
 //        entityToCheck.setUserPermissions(userPermissionsMap);
@@ -92,7 +93,7 @@ public abstract class BaseEntityPermissionEvaluatorTest<E extends BaseEntity> {
      * @param permissions
      * @return
      */
-    private PermissionCollection buildPermissionCollection(PermissionType... permissions) {
-        return new PermissionCollection(new HashSet<>(Arrays.asList(permissions)));
+    private PermissionCollection buildPermissionCollection(PermissionCollectionType permissionCollectionName, PermissionType... permissions) {
+        return new PermissionCollection(new HashSet<>(Arrays.asList(permissions)), permissionCollectionName);
     }
 }
