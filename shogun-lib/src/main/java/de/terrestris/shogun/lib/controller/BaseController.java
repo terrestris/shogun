@@ -16,6 +16,7 @@
  */
 package de.terrestris.shogun.lib.controller;
 
+import de.terrestris.shogun.lib.controller.security.permission.BasePermissionController;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.service.BaseService;
 import lombok.extern.log4j.Log4j2;
@@ -38,7 +39,7 @@ import java.util.Optional;
 
 // TODO Specify and type extension of BaseService
 @Log4j2
-public abstract class BaseController<T extends BaseService<?, S>, S extends BaseEntity> {
+public abstract class BaseController<T extends BaseService<?, S>, S extends BaseEntity> extends BasePermissionController<T, S> {
 
     @Autowired
     protected T service;

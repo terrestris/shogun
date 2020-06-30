@@ -16,6 +16,7 @@
  */
 package de.terrestris.shogun.lib.controller;
 
+import de.terrestris.shogun.lib.controller.security.permission.BasePermissionController;
 import de.terrestris.shogun.lib.model.File;
 import de.terrestris.shogun.lib.service.BaseFileService;
 import lombok.extern.log4j.Log4j2;
@@ -35,7 +36,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Log4j2
-public abstract class BaseFileController<T extends BaseFileService<?, S>, S extends File> {
+public abstract class BaseFileController<T extends BaseFileService<?, S>, S extends File> extends BasePermissionController<T, S> {
 
     @Value("${upload.basePath}")
     protected String uploadBasePath;
