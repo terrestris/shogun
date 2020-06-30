@@ -37,6 +37,20 @@ public class UserClassPermissionService extends BasePermissionService<UserClassP
     }
 
     /**
+     * Get all {@link UserClassPermission} for the given entity.
+     *
+     * @param entity entity to get user permissions for
+     * @return
+     */
+    public List<UserClassPermission> findFor(BaseEntity entity) {
+        String className = entity.getClass().getCanonicalName();
+
+        LOG.trace("Getting all user class permissions for entity class {}", className);
+
+        return repository.findByClassName(className);
+    }
+
+    /**
      * Return {@link Optional} containing {@link UserClassPermission}
      * @param clazz The class that should be checked
      * @param user The user to check for
@@ -159,5 +173,27 @@ public class UserClassPermissionService extends BasePermissionService<UserClassP
         }
 
         return new PermissionCollection();
+    }
+
+    public void deleteAllFor(BaseEntity persistedEntity) {
+        List<UserClassPermission> userClassPermissions = this.findFor(persistedEntity);
+
+        repository.deleteAll(userClassPermissions);
+
+        LOG.info("Successfully deleted all user class permissions for entity with ID {}",
+            persistedEntity.getId());
+    }
+
+    public void deleteFor(BaseEntity persistedEntity, User user) {
+        Optional<UserClassPermission> userClassPermission = this.findFor(persistedEntity.getClass(), user);
+
+        if (userClassPermission.isPresent()) {
+            repository.delete(userClassPermission.get());
+
+            LOG.info("Successfully deleted the user class permission for entity with ID {} and user {}.",
+                persistedEntity.getId(), user.getId());
+        } else {
+            LOG.warn("Could not delete the user class permission. The requested permission does not exist.");
+        }
     }
 }

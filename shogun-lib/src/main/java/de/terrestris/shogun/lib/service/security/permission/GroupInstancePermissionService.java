@@ -65,7 +65,6 @@ public class GroupInstancePermissionService extends BasePermissionService<GroupI
         return repository.findByGroupIdAndEntityId(group.getId(), entity.getId());
     }
 
-
     /**
      * Returns the {@link GroupInstancePermission} for the given query arguments.
      *
@@ -256,14 +255,27 @@ public class GroupInstancePermissionService extends BasePermissionService<GroupI
      *
      * @param persistedEntity The entity to clear the permissions for.
      */
-    public void deleteAllForEntity(BaseEntity persistedEntity) {
+    public void deleteAllFor(BaseEntity persistedEntity) {
         List<GroupInstancePermission> groupInstancePermissions = this.findFor(persistedEntity);
 
         repository.deleteAll(groupInstancePermissions);
 
-        LOG.info("Successfully deleted all group instance permissions for entity " +
-            "with ID {}", persistedEntity.getId());
+        LOG.info("Successfully deleted all group instance permissions for entity with ID {}",
+            persistedEntity.getId());
         LOG.trace("Deleted entity: {}", persistedEntity);
+    }
+
+    public void deleteFor(BaseEntity persistedEntity, Group group) {
+        Optional<GroupInstancePermission> groupInstancePermission = this.findFor(persistedEntity, group);
+
+        if (groupInstancePermission.isPresent()) {
+            repository.delete(groupInstancePermission.get());
+
+            LOG.info("Successfully deleted the group instance permission for entity with ID {} and group {}.",
+                persistedEntity.getId(), group.getId());
+        } else {
+            LOG.warn("Could not delete the group instance permission. The requested permission does not exist.");
+        }
     }
 
     /**
