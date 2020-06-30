@@ -271,4 +271,26 @@ public class GroupClassPermissionService extends BasePermissionService<GroupClas
 
         return new PermissionCollection();
     }
+
+    public void deleteAllFor(BaseEntity persistedEntity) {
+        List<GroupClassPermission> groupClassPermissions = this.findFor(persistedEntity);
+
+        repository.deleteAll(groupClassPermissions);
+
+        LOG.info("Successfully deleted all group class permissions for entity with ID {}",
+            persistedEntity.getId());
+    }
+
+    public void deleteFor(BaseEntity persistedEntity, Group group) {
+        Optional<GroupClassPermission> groupClassPermission = this.findFor(persistedEntity, group);
+
+        if (groupClassPermission.isPresent()) {
+            repository.delete(groupClassPermission.get());
+
+            LOG.info("Successfully deleted the group class permission for entity with ID {} and group {}.",
+                persistedEntity.getId(), group.getId());
+        } else {
+            LOG.warn("Could not delete the group class permission. The requested permission does not exist.");
+        }
+    }
 }

@@ -23,7 +23,6 @@ import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
 import de.terrestris.shogun.lib.model.security.permission.UserInstancePermission;
 import de.terrestris.shogun.lib.repository.security.permission.PermissionCollectionRepository;
 import de.terrestris.shogun.lib.repository.security.permission.UserInstancePermissionRepository;
-import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
@@ -66,7 +65,7 @@ public class UserInstancePermissionService extends BasePermissionService<UserIns
     }
 
     /**
-     * Returns all {@link UserInstancePermission} for the given entity.
+     * Get all {@link UserInstancePermission} for the given entity.
      *
      * @param entity entity to get user permissions for
      * @return
@@ -75,6 +74,19 @@ public class UserInstancePermissionService extends BasePermissionService<UserIns
         log.trace("Getting all user permissions for entity with ID {}", entity.getId());
 
         return repository.findByEntityId(entity.getId());
+    }
+
+    /**
+     * Get {@link UserInstancePermission} for SHOGun user
+     *
+     * @param entity entity to get group permissions for
+     * @param user The SHOGun user
+     * @return
+     */
+    public Optional<UserInstancePermission> findFor(BaseEntity entity, User user) {
+        LOG.trace("Getting all user permissions for user {} and entity {}", user.getKeycloakId(), entity);
+
+        return repository.findByUserIdAndEntityId(user.getId(), entity.getId());
     }
 
     /**
@@ -218,13 +230,13 @@ public class UserInstancePermissionService extends BasePermissionService<UserIns
      *
      * @param persistedEntity The entity to clear the permissions for.
      */
-    public void deleteAllForEntity(BaseEntity persistedEntity) {
+    public void deleteAllFor(BaseEntity persistedEntity) {
         List<UserInstancePermission> userInstancePermissions = this.findFor(persistedEntity);
 
         repository.deleteAll(userInstancePermissions);
 
-        log.info("Successfully deleted all user instance permissions for entity " +
-            "with ID {}", persistedEntity.getId());
+        log.info("Successfully deleted all user instance permissions for entity with ID {}",
+            persistedEntity.getId());
         log.trace("Deleted entity: {}", persistedEntity);
     }
 
@@ -243,4 +255,18 @@ public class UserInstancePermissionService extends BasePermissionService<UserIns
 
         return new PermissionCollection();
     }
+
+    public void deleteFor(BaseEntity persistedEntity, User user) {
+        Optional<UserInstancePermission> userInstancePermission = this.findFor(persistedEntity, user);
+
+        if (userInstancePermission.isPresent()) {
+            repository.delete(userInstancePermission.get());
+
+            log.info("Successfully deleted the user instance permission for entity with ID {} and user {}.",
+                persistedEntity.getId(), user.getId());
+        } else {
+            log.warn("Could not delete the user instance permission. The requested permission does not exist.");
+        }
+    }
+
 }
