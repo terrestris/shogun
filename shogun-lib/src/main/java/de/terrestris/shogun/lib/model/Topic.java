@@ -1,5 +1,9 @@
 package de.terrestris.shogun.lib.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import de.terrestris.shogun.lib.resolver.ImageFileIdResolver;
 import lombok.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -33,12 +37,18 @@ public class Topic extends BaseEntity {
     @Column(unique = true, nullable = false)
     private String title;
 
-    @Column(columnDefinition="text")
+    @Column(columnDefinition = "text")
     private String description;
 
     @OneToOne
     @Fetch(FetchMode.JOIN)
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id",
+        resolver = ImageFileIdResolver.class
+    )
+    @JsonIdentityReference(alwaysAsId = true)
     private ImageFile imgSrc;
 
     @Type(type = "jsonb")
