@@ -107,6 +107,7 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
 
         repository.deleteAll(userInstancePermissions);
 
-        LOG.info("Successfully deleted all user instance permissions for entity {}", persistedEntity);
+        LOG.info("Successfully deleted all user instance permissions for entity with id {}", persistedEntity.getId());
+        LOG.trace("Deleted entity: {}", persistedEntity);
     }
 }

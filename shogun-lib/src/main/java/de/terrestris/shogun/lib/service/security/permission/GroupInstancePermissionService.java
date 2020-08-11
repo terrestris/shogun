@@ -138,6 +138,7 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
 
         repository.deleteAll(groupInstancePermissions);
 
-        LOG.info("Successfully deleted all group instance permissions for entity {}", persistedEntity);
+        LOG.info("Successfully deleted all group instance permissions for entity with id {}", persistedEntity.getId());
+        LOG.trace("Deleted entity: {}", persistedEntity);
     }
 }
