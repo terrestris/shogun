@@ -272,7 +272,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
         } catch (ResponseStatusException rse) {
             throw rse;
         } catch (Exception e) {
-            LOG.error("Error while creating entity of type {} with ID {}: \n {}",
+            LOG.error("Error while deleting entity of type {} with ID {}: \n {}",
                     getGenericClassName(), entityId, e.getMessage());
             LOG.trace("Full stack trace: ", e);
 
