@@ -58,7 +58,8 @@ public class BootWebSecurityConfig extends WebSecurityConfig {
                 .csrf()
                     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                     .ignoringRequestMatchers(csrfRequestMatcher)
-                    .ignoringAntMatchers("/graphql");
+                    .ignoringAntMatchers("/graphql")
+                    .ignoringAntMatchers("/actuator/**");
     }
 
 }
