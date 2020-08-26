@@ -35,6 +35,11 @@ public class BootWebSecurityConfig extends WebSecurityConfig {
                     "/index.html"
                 )
                     .permitAll()
+                .antMatchers(
+                    "/swagger-ui.html",
+                    "/actuator/**"
+                )
+                    .hasRole("ADMIN")
                 .anyRequest()
                     .authenticated()
             .and()
