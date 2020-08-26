@@ -41,3 +41,8 @@ server:
 support:
   email: noreply@terrestris.de
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
