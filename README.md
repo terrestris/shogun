@@ -134,7 +134,8 @@ curl \
   http://localhost:8080/shogun-boot/applications/1
 ``` 
 
-## GeoServer interceptor:
+## GeoServer interceptor
+
 To use REST API of GeoServer interceptor its necessary to create a role `interceptor_admin` in Keycloak.
 Users having this role are allowed to use them.
 
@@ -145,6 +146,38 @@ If you want to create a report with detailed information about the projects depe
 `mvn site -Preporting`
 
 Just have a look at `/target/site/index.html` afterwards.
+
+## Actuator
+
+[Spring Boot Actuator](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html#production-ready) is
+enabled by default and is available via the `actuator/` endpoints. The following list demonstrates some usecases:
+
+* List current properties:
+  * `http://localhost:8080/shogun-boot/actuator/configprops`
+* List current status of flyway migrations:
+  * `http://localhost:8080/shogun-boot/actuator/flyway`
+* List current health information:
+  * `http://localhost:8080/shogun-boot/actuator/health`
+* List build and git informations:
+  * `http://localhost:8080/shogun-boot/actuator/info`
+* List current loglevels:
+  * `http://localhost:8080/shogun-boot/actuator/loggers`
+* List current log level of a specific module:
+  * `http://localhost:8080/shogun-boot/actuator/loggers/de.terrestris`
+* Set log level for a specific module to the desired level (e.g. `DEBUG` for `de.terrestris`):
+```
+curl \
+  -v \
+  -X POST \
+  -u shogun:shogun \
+  -H 'Content-Type: application/json' \
+  -d '{"configuredLevel": "DEBUG"}' \
+  'http://localhost:8080/shogun-boot/actuator/loggers/de.terrestris'
+```
+* List all available endpoint mappings:
+  * `http://localhost:8080/shogun-boot/actuator/mappings`
+
+Note: All endpoints are accessible by users with the `ADMIN` role only.
 
 ## Release
 
