@@ -57,7 +57,7 @@
     <java.version>11</java.version>
 
     <!-- Plugins -->
-    <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+    <maven-compiler-plugin.version>3.8.1-jboss-1</maven-compiler-plugin.version>
     <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
     <surefire-plugin.version>3.0.0-M4</surefire-plugin.version>
     <jacoco-plugin.version>0.8.5</jacoco-plugin.version>
