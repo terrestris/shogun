@@ -30,7 +30,13 @@
     </repository>
   </repositories>
 
-  <!-- TODO pluginRepository -->
+  <pluginRepositories>
+    <pluginRepository>
+      <id>nexus.terrestris.de</id>
+      <url>https://nexus.terrestris.de/repository/public/</url>
+    </pluginRepository>
+  </pluginRepositories>
+
   <distributionManagement>
     <repository>
       <id>terrestris-nexus</id>
