@@ -92,7 +92,7 @@
     <!-- Utils -->
     <lombok.version>1.18.10</lombok.version>
     <apache-httpclient.version>4.5.12</apache-httpclient.version>
-    <okhttp.version>4.3.1</okhttp.version>
+    <okhttp.version>4.8.1</okhttp.version>
     <commons.io.version>2.7</commons.io.version>
     <commons.lang3.version>3.9</commons.lang3.version>
     <threetenbp.version>1.4.1</threetenbp.version>
