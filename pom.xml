@@ -80,7 +80,7 @@
     <!-- Database -->
     <hibernate.version>5.4.20.Final</hibernate.version>
     <hibernate-extra-types.version>2.9.13</hibernate-extra-types.version>
-    <postgres.version>42.2.9</postgres.version>
+    <postgres.version>42.2.16</postgres.version>
     <flyway.version>6.5.5</flyway.version>
 
     <!-- GraphQL -->
