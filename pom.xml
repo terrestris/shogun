@@ -125,7 +125,7 @@
 
     <!-- GeoServer/Geodata -->
     <geoserver-manager.version>1.7.0</geoserver-manager.version>
-    <jts.version>1.16.1</jts.version>
+    <jts.version>1.17.0</jts.version>
 
   </properties>
 
