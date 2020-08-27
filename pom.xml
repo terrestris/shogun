@@ -90,7 +90,7 @@
     <graphql-java-extended-scalars.version>1.0.1</graphql-java-extended-scalars.version>
 
     <!-- Utils -->
-    <lombok.version>1.18.10</lombok.version>
+    <lombok.version>1.18.12</lombok.version>
     <apache-httpclient.version>4.5.12</apache-httpclient.version>
     <okhttp.version>4.3.1</okhttp.version>
     <commons.io.version>2.7</commons.io.version>
