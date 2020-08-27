@@ -1950,8 +1950,12 @@ public class HttpUtil {
             httpRequest.reset();
 
             try {
-                httpResponse.close();
-                httpClient.close();
+                if (httpResponse != null) {
+                    httpResponse.close();
+                }
+                if (httpClient != null) {
+                    httpClient.close();
+                }
             } catch (IOException e) {
                 LOG.error("Error while closing resources: {}", e.getMessage());
                 LOG.trace("Full stack trace: {}", e);
