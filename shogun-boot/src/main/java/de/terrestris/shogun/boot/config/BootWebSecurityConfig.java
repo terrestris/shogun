@@ -7,22 +7,14 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
-import javax.servlet.http.HttpServletRequest;
-
 @Configuration
 @EnableWebSecurity
 public class BootWebSecurityConfig extends WebSecurityConfig {
 
-    RequestMatcher csrfRequestMatcher = new RequestMatcher() {
-        public boolean matches(HttpServletRequest httpServletRequest) {
-            String refererHeader = httpServletRequest.getHeader("Referer");
+    RequestMatcher csrfRequestMatcher = httpServletRequest -> {
+        String refererHeader = httpServletRequest.getHeader("Referer");
 
-            if (refererHeader != null && refererHeader.endsWith("swagger-ui.html")) {
-                return true;
-            }
-
-            return false;
-        }
+        return refererHeader != null && refererHeader.endsWith("swagger-ui.html");
     };
 
     @Override
@@ -32,9 +24,18 @@ public class BootWebSecurityConfig extends WebSecurityConfig {
                 .antMatchers(
                     "/",
                     "/auth/**",
-                    "/index.html"
+                    "/index.html",
+                    // Enable anonymous access to swagger docs
+                    "/swagger-ui.html",
+                    "/webjars/springfox-swagger-ui/**",
+                    "/swagger-resources/**",
+                    "/v2/api-docs"
                 )
                     .permitAll()
+                .antMatchers(
+                    "/actuator/**"
+                )
+                    .hasRole("ADMIN")
                 .anyRequest()
                     .authenticated()
             .and()
@@ -53,7 +54,8 @@ public class BootWebSecurityConfig extends WebSecurityConfig {
                 .csrf()
                     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                     .ignoringRequestMatchers(csrfRequestMatcher)
-                    .ignoringAntMatchers("/graphql");
+                    .ignoringAntMatchers("/graphql")
+                    .ignoringAntMatchers("/actuator/**");
     }
 
 }
