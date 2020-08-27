@@ -1949,9 +1949,17 @@ public class HttpUtil {
             // cleanup
             httpRequest.reset();
 
-            // TODO Replace with try-with-resources statement
-            IOUtils.closeQuietly(httpResponse);
-            IOUtils.closeQuietly(httpClient);
+            try {
+                if (httpResponse != null) {
+                    httpResponse.close();
+                }
+                if (httpClient != null) {
+                    httpClient.close();
+                }
+            } catch (IOException e) {
+                LOG.error("Error while closing resources: {}", e.getMessage());
+                LOG.trace("Full stack trace: {}", e);
+            }
         }
 
         return response;
