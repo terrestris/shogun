@@ -107,7 +107,7 @@
     <jaxb.version>2.3.1</jaxb.version>
 
     <!-- Doc -->
-    <springfox.version>2.9.2</springfox.version>
+    <springfox.version>3.0.0</springfox.version>
 
     <!-- Swagger/REST -->
     <swagger.version>2.1.1</swagger.version>
