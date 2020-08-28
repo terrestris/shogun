@@ -162,6 +162,10 @@
       <plugin>
         <groupId>pl.project13.maven</groupId>
         <artifactId>git-commit-id-plugin</artifactId>
+        <configuration>
+          <offline>true</offline>
+          <abbrevLength>8</abbrevLength>
+        </configuration>
       </plugin>
     </plugins>
   </build>
