@@ -78,7 +78,7 @@
     <!-- Spring -->
     <spring.version>5.2.9.RELEASE</spring.version>
     <spring-security.version>5.4.0</spring-security.version>
-    <spring-boot.version>2.3.3.RELEASE</spring-boot.version>
+    <spring-boot.version>2.3.4.RELEASE</spring-boot.version>
     <spring-data.version>2.3.4.RELEASE</spring-data.version>
 
     <keycloak.version>9.0.0</keycloak.version>
