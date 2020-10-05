@@ -4,18 +4,28 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import de.terrestris.shogun.lib.resolver.ImageFileIdResolver;
-import lombok.*;
+import java.util.Map;
+import java.util.Set;
+import javax.persistence.Basic;
+import javax.persistence.Cacheable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.AuditTable;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
-
-import javax.persistence.*;
-import java.awt.*;
-import java.util.Map;
-import java.util.Set;
 
 /**
  Entity representing a topic configuration, in particular:
@@ -27,6 +37,8 @@ import java.util.Set;
 @Table(schema = "shogun")
 @Audited
 @AuditTable(value = "topics_rev", schema = "shogun_rev")
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -43,6 +55,7 @@ public class Topic extends BaseEntity {
     @OneToOne
     @Fetch(FetchMode.JOIN)
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id",
@@ -59,6 +72,7 @@ public class Topic extends BaseEntity {
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb", name = "searchlayerconfigs")
     @Basic(fetch = FetchType.LAZY)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Map<String, Object>> searchLayerConfigs;
 
 }
