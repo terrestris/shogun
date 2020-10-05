@@ -120,7 +120,7 @@
     <swagger-codegen-maven-plugin.version>2.4.16</swagger-codegen-maven-plugin.version>
 
     <!-- JSON/Dataformats -->
-    <jackson.version>2.11.2</jackson.version>
+    <jackson.version>2.11.3</jackson.version>
     <jackson-datatype-jts.version>0.12-2.5-1</jackson-datatype-jts.version>
 
     <!-- Logging -->
