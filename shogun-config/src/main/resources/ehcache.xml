@@ -40,11 +40,35 @@
       <heap unit="entries">1000</heap>
       <offheap unit="MB">10</offheap>
       <!-- Note: Data cached in the disk tier will persist even if the JVM stops! -->
-      <disk persistent="false" unit="MB">100</disk>
+<!--      <disk persistent="true" unit="MB">100</disk>-->
     </resources>
   </cache-template>
 
-  <cache alias="permissionCollectionCache" uses-template="default" />
-  <cache alias="applicationCache" uses-template="default" />
+  <cache alias="default-query-results-region" uses-template="default">
+    <expiry>
+      <tti unit="seconds">300</tti>
+    </expiry>
+    <heap>1024</heap>
+  </cache>
+
+  <cache alias="default-update-timestamps-region" uses-template="default">
+    <expiry>
+      <none />
+    </expiry>
+    <heap>4096</heap>
+  </cache>
+
+  <cache alias="groupclasspermissions" uses-template="default" />
+  <cache alias="groupinstancepermissions" uses-template="default" />
+  <cache alias="permissions" uses-template="default" />
+  <cache alias="permission" uses-template="default" />
+  <cache alias="userclasspermissions" uses-template="default" />
+  <cache alias="userinstancepermissions" uses-template="default" />
+  <cache alias="applications" uses-template="default" />
+  <cache alias="files" uses-template="default" />
+  <cache alias="groups" uses-template="default" />
+  <cache alias="layers" uses-template="default" />
+  <cache alias="topics" uses-template="default" />
+  <cache alias="users" uses-template="default" />
 
 </config>
