@@ -82,30 +82,6 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
         return false;
     }
 
-//    public boolean hasClassPermission(Authentication authentication, BaseEntity targetDomainObject, Object permissionObject) {
-//        LOG.trace("About to evaluate permission for authentication '{}' targetDomainObject '{}' " +
-//                "and permissionObject '{}'", authentication, targetDomainObject, permissionObject);
-//
-//        if ((authentication == null) || (targetDomainObject == null) || !(permissionObject instanceof String)) {
-//            LOG.trace("Restricting access since not all input requirements are met.");
-//            return false;
-//        }
-//
-//        User user = this.getUserFromAuthentication(authentication);
-//
-//        String accountName = user != null ? user.getUsername() : ANONYMOUS_USERNAME;
-//
-//        final PermissionType permission = PermissionType.valueOf((String) permissionObject);
-//
-//        LOG.trace("Evaluating whether user '{}' has permission '{}' on class '{}", accountName,
-//                permission, targetDomainObject.getClass().getSimpleName());
-//
-//        BaseEntityPermissionEvaluator entityPermissionEvaluator =
-//                this.getPermissionEvaluatorForClass(targetDomainObject);
-//
-//        return entityPermissionEvaluator.hasPermission(user, targetDomainObject.getClass(), permission);
-//    }
-
     /**
      * Returns the {@BaseEntityPermissionEvaluator} for the given {@BaseEntity}.
      *
