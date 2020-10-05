@@ -28,6 +28,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
@@ -50,7 +51,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Page<S> findAll(Pageable pageable) {
+    public Page<S> findAll(@PageableDefault(Integer.MAX_VALUE) Pageable pageable) {
         log.trace("Requested to return all entities of type {}", getGenericClassName());
 
         try {
