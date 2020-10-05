@@ -24,6 +24,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.GenericTypeResolver;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
@@ -48,14 +50,14 @@ public abstract class BaseFileController<T extends BaseFileService<?, S>, S exte
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<S> findAll() {
+    public Page<S> findAll(Pageable pageable) {
         log.trace("Requested to return all entities of type {}", getGenericClassName());
 
         try {
-            List<S> persistedEntities = service.findAll();
+            Page<S> persistedEntities = service.findAll(pageable);
 
             log.trace("Successfully got all entities of type {} (count: {})",
-                getGenericClassName(), persistedEntities.size());
+                getGenericClassName(), persistedEntities.getTotalElements());
 
             return persistedEntities;
         } catch (AccessDeniedException ade) {
