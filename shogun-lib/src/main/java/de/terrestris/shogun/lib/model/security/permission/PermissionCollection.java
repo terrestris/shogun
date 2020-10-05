@@ -25,7 +25,7 @@ import org.hibernate.annotations.FetchMode;
 @Entity(name = "permissions")
 @Table(schema = "shogun")
 @Cacheable
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "permissionCollectionCache")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "permissions")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -36,7 +36,7 @@ public class PermissionCollection extends BaseEntity {
     @CollectionTable(name="permission", schema = "shogun")
     @Enumerated(EnumType.STRING)
     @Fetch(FetchMode.JOIN)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "permission")
     private Set<PermissionType> permissions = new HashSet<>();
 
     @Column(unique = true, nullable = false)

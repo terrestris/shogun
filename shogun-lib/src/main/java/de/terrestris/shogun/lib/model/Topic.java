@@ -38,7 +38,7 @@ import org.hibernate.envers.RelationTargetAuditMode;
 @Audited
 @AuditTable(value = "topics_rev", schema = "shogun_rev")
 @Cacheable
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "topics")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

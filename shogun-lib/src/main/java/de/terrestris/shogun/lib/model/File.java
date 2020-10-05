@@ -21,7 +21,7 @@ import org.hibernate.annotations.Type;
 @Entity(name = "files")
 @Table(schema = "shogun")
 @Cacheable
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "files")
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(callSuper = true)

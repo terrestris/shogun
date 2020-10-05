@@ -20,7 +20,7 @@ import org.hibernate.envers.Audited;
 @Audited
 @AuditTable(value = "groupinstancepermissions_rev", schema = "shogun_rev")
 @Cacheable
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "groupinstancepermissions")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

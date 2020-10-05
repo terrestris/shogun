@@ -10,13 +10,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity(name = "imagefiles")
 @Table(schema = "shogun")
 @Cacheable
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

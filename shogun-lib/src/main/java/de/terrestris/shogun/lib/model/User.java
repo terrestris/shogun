@@ -26,7 +26,7 @@ import org.keycloak.representations.idm.UserRepresentation;
 @Audited
 @AuditTable(value = "users_rev", schema = "shogun_rev")
 @Cacheable
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "users")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

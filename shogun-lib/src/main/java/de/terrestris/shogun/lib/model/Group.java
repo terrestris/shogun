@@ -21,7 +21,7 @@ import org.keycloak.representations.idm.GroupRepresentation;
 @Audited
 @AuditTable(value = "groups_rev", schema = "shogun_rev")
 @Cacheable
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "groups")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

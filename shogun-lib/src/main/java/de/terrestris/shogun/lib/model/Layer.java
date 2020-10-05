@@ -26,7 +26,7 @@ import org.hibernate.envers.Audited;
 @Audited
 @AuditTable(value = "layers_rev", schema = "shogun_rev")
 @Cacheable
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "layers")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
