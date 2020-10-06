@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.repository.BaseCrudRepository;
+import de.terrestris.shogun.lib.security.access.BasePermissionEvaluator;
 import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionService;
 import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
 import org.apache.commons.lang3.ObjectUtils;
@@ -36,9 +37,11 @@ import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.prepost.PreFilter;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,6 +66,9 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
     protected UserInstancePermissionService userInstancePermissionService;
 
     @Autowired
+    protected BasePermissionEvaluator basePermissionEvaluator;
+
+    @Autowired
     protected GroupInstancePermissionService groupInstancePermissionService;
 
     @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
@@ -72,17 +78,23 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
     }
 
     // TODO: find a way to make postfilter work
-    // @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
     // @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Transactional(readOnly = true)
     public Page<S> findAll(Pageable pageable) {
-        return (Page<S>) repository.findAll(pageable);
+        return repository.findAll(pageable);
     }
 
     @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
     @Transactional(readOnly = true)
     public List<S> findAllBy(Specification specification) {
         return (List<S>) repository.findAll(specification);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Transactional(readOnly = true)
+    public Page<S> findAllBy(Specification specification, Pageable pageable) {
+        return (Page<S>) repository.findAll(specification, pageable);
     }
 
     @PostAuthorize("hasRole('ROLE_ADMIN') or hasPermission(returnObject.orElse(null), 'READ')")
