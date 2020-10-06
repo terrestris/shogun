@@ -1,18 +1,32 @@
 package de.terrestris.shogun.lib.model;
 
 import de.terrestris.shogun.lib.enumeration.LayerType;
-import lombok.*;
+import java.util.Map;
+import javax.persistence.Basic;
+import javax.persistence.Cacheable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.AuditTable;
 import org.hibernate.envers.Audited;
-
-import javax.persistence.*;
-import java.util.Map;
 
 @Entity(name = "layers")
 @Table(schema = "shogun")
 @Audited
 @AuditTable(value = "layers_rev", schema = "shogun_rev")
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "layers")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

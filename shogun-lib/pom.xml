@@ -106,6 +106,14 @@
       <groupId>com.vladmihalcea</groupId>
       <artifactId>hibernate-types-52</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-jcache</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.ehcache</groupId>
+      <artifactId>ehcache</artifactId>
+    </dependency>
 
     <!-- GraphQL -->
     <dependency>

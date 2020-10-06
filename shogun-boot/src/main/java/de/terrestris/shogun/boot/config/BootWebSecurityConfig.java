@@ -33,7 +33,8 @@ public class BootWebSecurityConfig extends WebSecurityConfig {
                 )
                     .permitAll()
                 .antMatchers(
-                    "/actuator/**"
+                    "/actuator/**",
+                    "/cache/**"
                 )
                     .hasRole("ADMIN")
                 .anyRequest()

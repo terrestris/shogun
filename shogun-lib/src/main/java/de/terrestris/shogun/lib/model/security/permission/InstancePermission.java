@@ -1,17 +1,21 @@
 package de.terrestris.shogun.lib.model.security.permission;
 
-import de.terrestris.shogun.lib.model.BaseEntity;
-import lombok.*;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.envers.Audited;
+import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 
+
+import de.terrestris.shogun.lib.model.BaseEntity;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToOne;
-
-import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.envers.Audited;
 
 @MappedSuperclass
 @Audited
