@@ -21,9 +21,18 @@ public class InterceptorRuleController {
     @Autowired
     protected InterceptorRuleService interceptorRuleService;
 
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public List<InterceptorRule> getAllInterceptorRules() {
+        return this.interceptorRuleService.findAll();
+    }
+
     @GetMapping(value = "/service/{service}/event/{event}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public List<InterceptorRule> findAllRulesForServiceAndEvent(@PathVariable(name = "service") String serviceStr, @PathVariable(name = "event") String eventStr) {
+    public List<InterceptorRule> findAllRulesForServiceAndEvent(
+        @PathVariable(name = "service") String serviceStr,
+        @PathVariable(name = "event") String eventStr
+    ) {
         HttpEnum.EventType event = HttpEnum.EventType.valueOf(eventStr.toUpperCase());
         OgcEnum.ServiceType service = OgcEnum.ServiceType.valueOf(serviceStr.toUpperCase());
         return this.interceptorRuleService.findAllRulesForServiceAndEvent(service, event);
@@ -37,7 +46,7 @@ public class InterceptorRuleController {
 
     @PostMapping(value = "/endpoint/{endpoint}/request/{service}/{rule}")
     @ResponseStatus(HttpStatus.CREATED)
-    public void addRequestRuleForServiceAndEndpoint(@PathVariable String endpoint, String serviceStr, String ruleStr) {
+    public void addRequestRuleForServiceAndEndpoint(@PathVariable String endpoint, @PathVariable(name = "service") String serviceStr, @PathVariable(name = "rule") String ruleStr) {
         InterceptorEnum.RuleType rule = InterceptorEnum.RuleType.valueOf(ruleStr.toUpperCase());
         OgcEnum.ServiceType service = OgcEnum.ServiceType.valueOf(serviceStr.toUpperCase());
         this.interceptorRuleService.addRequestRuleForServiceAndEndpoint(endpoint, rule, service);
@@ -45,7 +54,7 @@ public class InterceptorRuleController {
 
     @PostMapping(value = "/endpoint/{endpoint}/response/{service}/{rule}")
     @ResponseStatus(HttpStatus.CREATED)
-    public void addResponseRuleForServiceAndEndpoint(@PathVariable String endpoint, String serviceStr, String ruleStr) {
+    public void addResponseRuleForServiceAndEndpoint(@PathVariable String endpoint, @PathVariable(name = "service") String serviceStr, @PathVariable(name = "rule") String ruleStr) {
         InterceptorEnum.RuleType rule = InterceptorEnum.RuleType.valueOf(ruleStr.toUpperCase());
         OgcEnum.ServiceType service = OgcEnum.ServiceType.valueOf(serviceStr.toUpperCase());
         this.interceptorRuleService.addResponseRuleForServiceAndEndpoint(endpoint, rule, service);
@@ -53,7 +62,7 @@ public class InterceptorRuleController {
 
     @PostMapping(value = "/endpoint/{endpoint}/all/{service}/{rule}")
     @ResponseStatus(HttpStatus.CREATED)
-    public void addRuleForEndpoint(@PathVariable String endpoint, String serviceStr, String ruleStr) {
+    public void addRuleForEndpoint(@PathVariable String endpoint, @PathVariable(name = "service") String serviceStr, @PathVariable(name = "rule") String ruleStr) {
         InterceptorEnum.RuleType rule = InterceptorEnum.RuleType.valueOf(ruleStr.toUpperCase());
         OgcEnum.ServiceType service = OgcEnum.ServiceType.valueOf(serviceStr.toUpperCase());
         this.interceptorRuleService.addRuleForEndpoint(endpoint, rule, service);

@@ -1,0 +1,39 @@
+Configuration:
+  Appenders:
+    Console:
+      name: STDOUT
+      PatternLayout:
+        Pattern: '%highlight{%d{HH:mm:ss.SSS} %-5level %logger{36}.%M() @%L - %msg%n}{FATAL=red blink, ERROR=red, WARN=yellow bold, INFO=white, DEBUG=green bold, TRACE=blue}'
+  Loggers:
+    Root:
+      level: info
+      AppenderRef:
+        ref: STDOUT
+
+    logger:
+      - name: de.terrestris
+        level: trace
+      - name: org.flywaydb
+        level: info
+      - name: com.zaxxer.hikari
+        level: info
+      - name: io.lettuce
+        level: info
+      - name: io.netty
+        level: info
+      - name: springfox.documentation
+        level: info
+      - name: org.thymeleaf
+        level: info
+      - name: org.hibernate
+        level: info
+      - name: org.hibernate.SQL
+        level: info
+      - name: org.hibernate.type.descriptor.sql
+        level: info
+      - name: org.springframework.boot
+        level: info
+      - name: org.springframework
+        level: info
+      - name: org.keycloak
+        level: info
