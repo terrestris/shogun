@@ -2,146 +2,154 @@
 
 ## Requirements
 
-* maven >= 3.5
-* Java 11
-* docker / docker-compose
-* IntelliJ
-* [IntelliJ Lombok plugin](https://plugins.jetbrains.com/plugin/6317-lombok/)
+- maven >= 3.5
+- Java 11
+- docker / docker-compose
+- IntelliJ
+- [IntelliJ Lombok plugin](https://plugins.jetbrains.com/plugin/6317-lombok/)
 
 ## Steps for development setup (for the first checkout)
 
 1. Checkout this repository.
 
-```
-git clone git@github.com:terrestris/shogun.git
-```
+   ```bash
+   git clone git@github.com:terrestris/shogun.git
+   ```
 
-1. Checkout the `shogun-docker` repository.
+2. Checkout the `shogun-docker` repository.
 
-```
-git clone git@github.com:terrestris/shogun-docker.git
-```
+   ```bash
+   git clone git@github.com:terrestris/shogun-docker.git
+   ```
 
-1. Create a new project in IntelliJ by importing the first module:
-  * `File` -> `Project from Existing Sources…`
-  * Navigate to the checkout of `shogun`
-  * Select `Import project form external model` and from the list `Maven`
-  * `Import Maven projects automatically` (leave all others as preconfigured)
-  * Leave profiles as given
-  * Select `de.terretris:shogun:X.Y.Z<-SNAPSHOT>`
-  * Select Java 11
-  * Specify a name (or leave default) and `Finish`
+3. Create a new project in IntelliJ by importing the first module:
 
-1. **Note:** If you encounter a warning regarding the Java language level just reopen the 
-   module settings and set the language level to 11 for each module in the `Sources` tab.
-  
-1. Optional: You may also want to import the `shogun-docker` project. If so, just
-   follow the steps mentioned above, but select `Create module from existing sources`.
- 
-1. Startup the containers (`shogun-docker`)
+   - `File` -> `Project from Existing Sources…`
+   - Navigate to the checkout of `shogun`
+   - Select the Project Object Model file (`pom.xml`) of `shogun`
 
-```
-docker-compose up
-```
+4. Optional: You may also want to import the `shogun-docker` project.
+   If so, just follow the steps mentioned above.
 
-1. Navigate to the `ApplicationConfig` in the project tree for the `shogun-boot` module and run it (open context menu and select
-   `Run ApplicationConfig.main()`)
+5. Startup the containers (`shogun-docker`)
 
-1. The application is now available under [http://localhost:8080/shogun-boot](http://localhost:8080/shogun-boot)
+   ```bash
+   docker-compose up
+   ```
+
+6. Navigate to the `ApplicationConfig` in the project tree for the `shogun-boot`
+   module and run it (open context menu and select
+   `Run ApplicationConfig.main()`).  
+   You may save this `Run/Debug configuration` via the dialog box to restart the
+   application easily.
+
+7. If not already done, the annotation processing of the Lombok plugin must be
+   enabled.  
+   Check the settings for `Lombok` (Enable Lombok plugin for this project) and
+   `Annotation Processors` (Enable annotation processing).
+
+8. The application is now available at the base URL [http://localhost:8080/shogun-boot](http://localhost:8080/shogun-boot)
 
 ## Quick startup
 
 1. Startup the containers (`shogun-docker`)
 
-```
-docker-compose up
-```
+   ```bash
+   docker-compose up
+   ```
 
-1. Start the application by selecting the `ApplicationConfig` in the run configurations combo.
+2. Start the application by selecting the `ApplicationConfig` in the run
+   configurations combo.
 
-1. **Or:** Navigate to the `shogun-boot` directory and run
+3. **Or:** Navigate to the `shogun-boot` directory and run
 
-```
-mvn spring-boot:run
-```
+   ```bash
+   mvn spring-boot:run
+   ```
 
 ## Development notes
 
-* [Hot swapping](https://docs.spring.io/spring-boot/docs/current/reference/html/howto-hotswapping.html) is 
-  enabled, so you just need to rebuild the project to effectively restart the web server.
+- [Hot swapping](https://docs.spring.io/spring-boot/docs/current/reference/html/howto-hotswapping.html)
+  is enabled, so you just need to rebuild the project to effectively restart the
+  web server.
 
 ## Swagger
 
-The swagger generated API documentation is available after startup under
+The swagger generated API documentation is available after the startup at [http://localhost:8080/shogun-boot/swagger-ui.html](http://localhost:8080/shogun-boot/swagger-ui.html)
 
-```
-http://localhost:8080/shogun-boot/swagger-ui.html
-```
+## Keycloak
+
+The integrated Keycloak interface is available at [http://localhost:8000/auth/](http://localhost:8000/auth/).
+The default login credentials are `admin:shogun`.
 
 ## Curls for testing REST CRUD interfaces
 
-* `GET` (all applications):
+**Note:** All requests that do not use the `GET` method must be tagged with a
+valid CSRF token
 
-```
+- `GET` (all applications):
+
+```bash
 curl \
   -v \
-  -u admin:shogun \
+  -u shogun:shogun \
   -X GET \
   http://localhost:8080/shogun-boot/applications
-``` 
-
-* `GET` (application with ID 1):
-
 ```
+
+- `GET` (application with ID 1):
+
+```bash
 curl \
   -v \
-  -u admin:shogun \
+  -u shogun:shogun \
   -X GET \
   http://localhost:8080/shogun-boot/applications/1
-```  
-
-* `POST` (create a new application):
-
 ```
+
+- `POST` (create a new application):
+
+```bash
 curl \
   -v \
-  -u admin:shogun \
+  -u shogun:shogun \
   -X POST \
   -H 'Content-Type: application/json' \
   -d '@docs/applicationData.json' \
   http://localhost:8080/shogun-boot/applications
 ```
 
-* `PUT` (update application with ID 1):
+- `PUT` (update application with ID 1):
 
-```
+```bash
 curl \
   -v \
-  -u admin:shogun \
+  -u shogun:shogun \
   -X PUT \
   -H 'Content-Type: application/json' \
   -d '@docs/applicationDataPUT.json' \
   http://localhost:8080/shogun-boot/applications/1
 ```
 
-* `DELETE` (delete application with ID 1):
- 
-```
+- `DELETE` (delete application with ID 1):
+
+```bash
 curl \
   -v \
-  -u admin:shogun \
+  -u shogun:shogun \
   -X DELETE \
   http://localhost:8080/shogun-boot/applications/1
-``` 
+```
 
 ## GeoServer interceptor
 
-To use REST API of GeoServer interceptor its necessary to create a role `interceptor_admin` in Keycloak.
-Users having this role are allowed to use them.
+To use REST API of GeoServer interceptor its necessary to create a role
+`interceptor_admin` in Keycloak. Users having this role are allowed to use them.
 
 ## MVN Report
 
-If you want to create a report with detailed information about the projects dependencies etc, you can use this command:
+If you want to create a report with detailed information about the projects
+dependencies etc, you can use this command:
 
 `mvn site -Preporting`
 
@@ -149,23 +157,28 @@ Just have a look at `/target/site/index.html` afterwards.
 
 ## Actuator
 
-[Spring Boot Actuator](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html#production-ready) is
-enabled by default and is available via the `actuator/` endpoints. The following list demonstrates some usecases:
+[Spring Boot Actuator](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html#production-ready)
+is enabled by default and is available via the `actuator/` endpoints.
+The following list demonstrates some use cases:
 
-* List current properties:
-  * `http://localhost:8080/shogun-boot/actuator/configprops`
-* List current status of flyway migrations:
-  * `http://localhost:8080/shogun-boot/actuator/flyway`
-* List current health information:
-  * `http://localhost:8080/shogun-boot/actuator/health`
-* List build and git informations:
-  * `http://localhost:8080/shogun-boot/actuator/info`
-* List current loglevels:
-  * `http://localhost:8080/shogun-boot/actuator/loggers`
-* List current log level of a specific module:
-  * `http://localhost:8080/shogun-boot/actuator/loggers/de.terrestris`
-* Set log level for a specific module to the desired level (e.g. `DEBUG` for `de.terrestris`):
-```
+- List current properties:
+  - `http://localhost:8080/shogun-boot/actuator/configprops`
+- List current status of flyway migrations:
+  - `http://localhost:8080/shogun-boot/actuator/flyway`
+- List current health information:
+  - `http://localhost:8080/shogun-boot/actuator/health`
+- List build and git information:
+  - `http://localhost:8080/shogun-boot/actuator/info`
+- List current log levels:
+  - `http://localhost:8080/shogun-boot/actuator/loggers`
+- List current log level of a specific module:
+
+  - `http://localhost:8080/shogun-boot/actuator/loggers/de.terrestris`
+
+- Set log level for a specific module to the desired level (e.g. `DEBUG` for
+  `de.terrestris`):
+
+```bash
 curl \
   -v \
   -X POST \
@@ -174,17 +187,20 @@ curl \
   -d '{"configuredLevel": "DEBUG"}' \
   'http://localhost:8080/shogun-boot/actuator/loggers/de.terrestris'
 ```
-* List all available endpoint mappings:
-  * `http://localhost:8080/shogun-boot/actuator/mappings`
+
+- List all available endpoint mappings:
+  - `http://localhost:8080/shogun-boot/actuator/mappings`
 
 Note: All endpoints are accessible by users with the `ADMIN` role only.
 
 ## Release
 
-* Checkout the latest master
-* Run the release script, e.g.
-```
+- Checkout the latest master
+- Run the release script, e.g.
+
+```bash
 #./scripts/release.sh RELEASE_VERSION DEVELOPMENT_VERSION
 ./scripts/release.sh "3.0.0" "3.0.1-SNAPSHOT"
 ```
-* Go to `Releases` page and publish the newly created release.
+
+- Go to `Releases` page and publish the newly created release.
