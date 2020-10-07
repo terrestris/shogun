@@ -130,6 +130,7 @@
     <plugins>
       <plugin>
         <artifactId>maven-site-plugin</artifactId>
+        <!-- TODO Version -->
         <version>3.9.1</version>
         <extensions>true</extensions>
       </plugin>
@@ -166,6 +167,10 @@
           <offline>true</offline>
           <abbrevLength>8</abbrevLength>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>com.spotify</groupId>
+        <artifactId>dockerfile-maven-plugin</artifactId>
       </plugin>
     </plugins>
   </build>

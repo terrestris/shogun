@@ -69,6 +69,7 @@
     <jacoco-plugin.version>0.8.6</jacoco-plugin.version>
     <project-info-reports-plugin.version>3.1.1</project-info-reports-plugin.version>
     <maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
+    <dockerfile-maven-plugin.version>1.4.13</dockerfile-maven-plugin.version>
 
     <!-- Javax -->
     <javax.servlet.api.version>4.0.1</javax.servlet.api.version>
@@ -131,7 +132,6 @@
     <!-- GeoServer/Geodata -->
     <geoserver-manager.version>1.7.0</geoserver-manager.version>
     <jts.version>1.17.1</jts.version>
-
   </properties>
 
   <build>
@@ -186,6 +186,35 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-deploy-plugin</artifactId>
           <version>${maven-deploy-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>com.spotify</groupId>
+          <artifactId>dockerfile-maven-plugin</artifactId>
+          <version>${dockerfile-maven-plugin.version}</version>
+          <executions>
+            <execution>
+              <id>default</id>
+              <goals>
+                <goal>build</goal>
+                <goal>push</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>tag-latest</id>
+              <goals>
+                <goal>tag</goal>
+              </goals>
+              <configuration>
+                <tag>latest</tag>
+              </configuration>
+            </execution>
+          </executions>
+          <configuration>
+            <repository>nexus.terrestris.de/shogun/${project.artifactId}</repository>
+            <tag>${project.version}</tag>
+            <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
+            <skipDockerInfo>true</skipDockerInfo>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
