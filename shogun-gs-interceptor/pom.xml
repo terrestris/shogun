@@ -13,11 +13,6 @@
   <name>SHOGun GeoServer Interceptor</name>
   <packaging>jar</packaging>
 
-  <properties>
-    <!-- https://stackoverflow.com/questions/53609881/maven-multi-module-project-packaging-error -->
-    <spring-boot.repackage.skip>true</spring-boot.repackage.skip>
-  </properties>
-
   <dependencies>
     <!-- Spring Boot -->
     <dependency>
