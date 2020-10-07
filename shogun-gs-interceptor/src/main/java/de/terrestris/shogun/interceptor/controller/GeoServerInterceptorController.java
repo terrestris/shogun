@@ -32,7 +32,7 @@ public class GeoServerInterceptorController {
     protected GeoServerInterceptorService service;
 
     @RequestMapping(value = {"/geoserver.action", "/geoserver.action/{endpoint}"}, method = {RequestMethod.GET, RequestMethod.POST})
-    public ResponseEntity<?> interceptGeoServerRequest(HttpServletRequest request,Optional<String> endpoint) {
+    public ResponseEntity<?> interceptGeoServerRequest(HttpServletRequest request, Optional<String> endpoint) {
         HttpHeaders responseHeaders = new HttpHeaders();
         HttpStatus responseStatus;
         byte[] responseBody;
