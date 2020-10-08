@@ -69,7 +69,7 @@
     <jacoco-plugin.version>0.8.6</jacoco-plugin.version>
     <project-info-reports-plugin.version>3.1.1</project-info-reports-plugin.version>
     <maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
-    <dockerfile-maven-plugin.version>1.4.13</dockerfile-maven-plugin.version>
+    <jib-maven-pluign.version>2.6.0</jib-maven-pluign.version>
 
     <!-- Javax -->
     <javax.servlet.api.version>4.0.1</javax.servlet.api.version>
@@ -195,32 +195,42 @@
           <version>${maven-deploy-plugin.version}</version>
         </plugin>
         <plugin>
-          <groupId>com.spotify</groupId>
-          <artifactId>dockerfile-maven-plugin</artifactId>
-          <version>${dockerfile-maven-plugin.version}</version>
+          <groupId>com.google.cloud.tools</groupId>
+          <artifactId>jib-maven-plugin</artifactId>
+          <version>${jib-maven-pluign.version}</version>
           <executions>
             <execution>
-              <id>default</id>
+              <id>dockerBuild</id>
               <goals>
-                <goal>build</goal>
-                <goal>push</goal>
+                <goal>dockerBuild</goal>
               </goals>
+              <phase>package</phase>
             </execution>
             <execution>
-              <id>tag-latest</id>
+              <id>build</id>
               <goals>
-                <goal>tag</goal>
+                <goal>build</goal>
               </goals>
-              <configuration>
-                <tag>latest</tag>
-              </configuration>
+              <phase>deploy</phase>
             </execution>
           </executions>
           <configuration>
-            <repository>nexus.terrestris.de/shogun/${project.artifactId}</repository>
-            <tag>${project.version}</tag>
-            <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
-            <skipDockerInfo>true</skipDockerInfo>
+            <from>
+              <image>openjdk:11-slim</image>
+            </from>
+            <to>
+              <image>nexus.terrestris.de/shogun/${project.artifactId}:latest</image>
+              <tags>
+                <tag>${project.version}</tag>
+                <!--suppress UnresolvedMavenProperty -->
+                <tag>${project.version}-${git.commit.id.abbrev}</tag>
+              </tags>
+            </to>
+            <container>
+              <jvmFlags>-Djava.security.egd=file:/dev/./urandom</jvmFlags>
+              <jvmFlags>-Dspring.config.location=/config/application.yml</jvmFlags>
+              <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
+            </container>
           </configuration>
         </plugin>
       </plugins>
