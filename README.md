@@ -204,3 +204,65 @@ Note: All endpoints are accessible by users with the `ADMIN` role only.
 ```
 
 - Go to `Releases` page and publish the newly created release.
+
+## Create a new SHOGun app
+
+There is a SHOGun example app repository at [https://github.com/terrestris/shogun-example-app](https://github.com/terrestris/shogun-example-app)
+but for a manual setup please follow these steps:
+
+1. To manually set up a new project based on SHOgun you need to create a new
+maven project and check out the shogun-docker project. Replace the `artifactId`
+(`shogun-example-app`) with the specific project name:
+
+   ```bash
+   mvn -B archetype:generate -DgroupId=de.terrestris -DartifactId=shogun-example-app -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4
+   ```
+
+2. Use the current SHOGun project object model version as inheritance, e.g. in
+version 5.0.0:
+
+   ```xml
+   <parent>
+    <groupId>de.terrestris</groupId>
+    <artifactId>shogun</artifactId>
+    <version>5.0.0</version>
+   </parent>
+   ```
+
+3. Include `shogun-boot` for the `dependency` in the same version as used as in
+the parent block.
+
+   ```xml
+   <dependencies>
+    <dependency>
+     <groupId>de.terrestris</groupId>
+     <artifactId>shogun-boot</artifactId>
+     <version>5.0.0</version>
+    </dependency>
+   </dependencies>
+   ```
+
+4. Additionally define the repository for `shogun`:
+
+   ```xml
+   <repositories>
+    <repository>
+     <id>nexus.terrestris.de</id>
+     <url>https://nexus.terrestris.de/repository/public/</url>
+    </repository>
+   </repositories>
+   ```
+
+5. Remove the default App file and create a new `ApplicationConfig` in your
+project module (e.g. `shogun-example-app/src/main/java/de/terrestris/shogunexample/config/ShogunExampleAppConfig.java`)
+to run the main function.
+
+6. Create an `application.yml` file (in `shogun-example-app/src/main/resources/application.yml`)
+to specify the project settings. Adjust the `context-path` to the name of your
+app.
+
+7. Start the containers and the application as mentioned
+[above](#quick-startup).
+
+8. Integrate your app into the Keycloak clients list as new redirect URI for
+`shogun-app` (e.g. `http://localhost:8080/shogun-example-app/*`).
