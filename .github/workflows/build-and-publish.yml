@@ -34,8 +34,11 @@ jobs:
     - name: Create maven settings.xml with credentials
       uses: whelk-io/maven-settings-xml-action@v2
       with:
-        servers: '[{ "id": "terrestris-nexus", "username": "${{ secrets.NEXUS_USER }}", "password": "${{ secrets.NEXUS_PASSWORD }}" },
-                   { "id": "terrestris-nexus-snapshots", "username": "${{ secrets.NEXUS_USER }}", "password": "${{ secrets.NEXUS_PASSWORD }}" }]'
+        servers: '[
+                    { "id": "nexus.terrestris.de", "username": "${{ secrets.NEXUS_USER }}", "password": "${{ secrets.NEXUS_PASSWORD }}" },
+                    { "id": "terrestris-nexus", "username": "${{ secrets.NEXUS_USER }}", "password": "${{ secrets.NEXUS_PASSWORD }}" },
+                    { "id": "terrestris-nexus-snapshots", "username": "${{ secrets.NEXUS_USER }}", "password": "${{ secrets.NEXUS_PASSWORD }}" }
+                  ]'
 
     - name: Build SHOGun with Maven and publish artifacts to nexus
       run: mvn -B deploy
