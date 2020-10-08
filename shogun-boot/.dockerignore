@@ -1,6 +1,0 @@
-*.iml
-pom.xml
-src
-target
-!target/classes/*.yml
-!target/*.jar
