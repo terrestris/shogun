@@ -85,7 +85,7 @@
 
     <!-- Database -->
     <hibernate.version>5.4.22.Final</hibernate.version>
-    <hibernate-extra-types.version>2.9.13</hibernate-extra-types.version>
+    <hibernate-extra-types.version>2.10.0</hibernate-extra-types.version>
     <postgres.version>42.2.16</postgres.version>
     <flyway.version>6.5.6</flyway.version>
     <ehcache.version>3.8.0</ehcache.version>
