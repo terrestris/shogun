@@ -34,6 +34,8 @@ import org.hibernate.envers.AuditTable;
 import org.hibernate.envers.Audited;
 import org.keycloak.representations.idm.GroupRepresentation;
 
+import javax.persistence.*;
+
 @Entity(name = "groups")
 @Table(schema = "shogun")
 @Audited

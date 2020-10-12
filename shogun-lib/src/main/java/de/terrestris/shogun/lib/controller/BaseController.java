@@ -55,9 +55,9 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
         log.trace("Requested to return all entities of type {}", getGenericClassName());
 
         try {
-            Page<S> persistedEntities = service.findAll(pageable);
+             Page<S> persistedEntities = service.findAll(pageable);
 
-            log.trace("Successfully got all entities of type {} (count: {})",
+             log.trace("Successfully got all entities of type {} (count: {})",
                 getGenericClassName(), persistedEntities.getTotalElements());
 
             return persistedEntities;
