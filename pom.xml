@@ -107,7 +107,7 @@
     <com.sun.mail.version>1.6.2</com.sun.mail.version>
 
     <!-- Testing -->
-    <junit.version>4.13</junit.version>
+    <junit.version>4.13.1</junit.version>
     <hamcrest.version>2.2</hamcrest.version>
     <mockito.version>3.5.13</mockito.version>
     <testcontainers.version>1.14.3</testcontainers.version>
