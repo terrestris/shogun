@@ -88,7 +88,7 @@
     <hibernate.version>5.4.22.Final</hibernate.version>
     <hibernate-extra-types.version>2.10.0</hibernate-extra-types.version>
     <postgres.version>42.2.18</postgres.version>
-    <flyway.version>7.0.3</flyway.version>
+    <flyway.version>7.0.4</flyway.version>
     <ehcache.version>3.9.0</ehcache.version>
 
     <!-- GraphQL -->
