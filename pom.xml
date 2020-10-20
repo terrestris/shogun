@@ -55,6 +55,7 @@
     <module>shogun-boot</module>
     <module>shogun-gs-interceptor</module>
     <module>shogun-config</module>
+    <module>shogun-manager</module>
   </modules>
 
   <properties>

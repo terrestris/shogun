@@ -13,11 +13,11 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @EnableJpaRepositories(
-    basePackages = {"de.terrestris.shogun", "${scan.package}"},
+    basePackages = {"de.terrestris.shogun", "${scan.package:null}"},
     repositoryFactoryBeanClass = EnversRevisionRepositoryFactoryBean.class
 )
-@ComponentScan(basePackages = {"de.terrestris.shogun", "${scan.package}"})
-@EntityScan(basePackages = {"de.terrestris.shogun", "${scan.package}"})
+@ComponentScan(basePackages = {"de.terrestris.shogun", "${scan.package:null}"})
+@EntityScan(basePackages = {"de.terrestris.shogun", "${scan.package:null}"})
 @EnableConfigurationProperties({
     InterceptorProperties.class,
     NamespaceProperties.class,
