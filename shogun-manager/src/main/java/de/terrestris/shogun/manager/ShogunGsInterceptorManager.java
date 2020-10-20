@@ -66,14 +66,12 @@ public class ShogunGsInterceptorManager extends AbstractShogunManager {
      * @return true if successful, false otherwise
      * @throws Exception The exception
      */
-    public boolean removeAllRulesForEndpoint(String endpoint) throws Exception {
+    public void removeAllRulesForEndpoint(String endpoint) throws Exception {
         String urlString = String.format("%s%s/endpoint/%s", this.shogunServiceBaseUrl, basePathInterceptorRule, endpoint);
         HttpDelete httpDelete = new HttpDelete(new URI(urlString));
         byte[] resultBytes = performRequest(httpDelete);
-        if (resultBytes != null && resultBytes.length == 1 && resultBytes[0] == 0) {
-            return true;
-        } else {
-            throw new IOException(String.format("Could not set modified rule for all WMS actions of endpoint %s", endpoint));
+        if (resultBytes == null || resultBytes.length != 1 || resultBytes[0] != 0) {
+            throw new IOException(String.format("Could not remove all interceptor rules for all actions of endpoint %s", endpoint));
         }
     }
 
