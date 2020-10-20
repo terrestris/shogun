@@ -179,7 +179,7 @@ public abstract class AbstractShogunManager implements AutoCloseable {
             return byteArrayOutputStream.toByteArray();
         } catch (Exception e) {
             log.error("Could not parse result to resulting byte array: {}", e.getMessage());
-            log.trace(e);
+            log.trace("Full stack trace: ", e);
             return null;
         }
     }
