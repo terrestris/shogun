@@ -5,10 +5,13 @@ import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.GroupRepository;
 import de.terrestris.shogun.lib.repository.UserRepository;
 import de.terrestris.shogun.lib.util.KeycloakUtil;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
-import org.keycloak.admin.client.resource.*;
+import org.keycloak.admin.client.resource.RealmResource;
+import org.keycloak.admin.client.resource.UserResource;
+import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.AccessToken;
 import org.keycloak.representations.IDToken;
 import org.keycloak.representations.idm.GroupRepresentation;
@@ -26,6 +29,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
+@Log4j2
 public class SecurityContextUtil {
 
     @Autowired
@@ -151,5 +155,17 @@ public class SecurityContextUtil {
         UserResource kcUser = users.get(user.getKeycloakId());
         UserRepresentation kcUserRepresentation = kcUser.toRepresentation();
         return String.format("%s %s", kcUserRepresentation.getFirstName(), kcUserRepresentation.getLastName());
+    }
+
+    /**
+     * Return if user (in session) is an admin of SHOGun-GeoServer-Interceptor microservice
+     * @return true if so, false otherwise
+     */
+    public boolean isInterceptorAdmin() {
+        List<GrantedAuthority> authorities = getGrantedAuthorities();
+        return authorities.stream().anyMatch(
+            grantedAuthority -> StringUtils.endsWithIgnoreCase(grantedAuthority.getAuthority(), "INTERCEPTOR_ADMIN") ||
+                StringUtils.endsWithIgnoreCase(grantedAuthority.getAuthority(), "ADMIN")
+        );
     }
 }
