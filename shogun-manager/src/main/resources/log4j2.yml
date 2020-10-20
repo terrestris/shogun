@@ -12,7 +12,7 @@ Configuration:
 
     logger:
       - name: de.terrestris
-        level: trace
+        level: info
       - name: org.flywaydb
         level: info
       - name: com.zaxxer.hikari
