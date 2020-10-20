@@ -193,8 +193,8 @@ public abstract class AbstractShogunManager implements AutoCloseable {
         try {
             httpClient.close();
         } catch (IOException e) {
-            // TODO
-            e.printStackTrace();
+            log.error("SHOGun HTTP client could not be closed");
+            log.trace(e);
         }
     }
 
