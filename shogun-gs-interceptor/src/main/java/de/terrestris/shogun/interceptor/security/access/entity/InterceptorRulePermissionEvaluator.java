@@ -23,13 +23,9 @@ public class InterceptorRulePermissionEvaluator extends BaseEntityPermissionEval
 
     @Override
     public boolean hasPermission(User user, InterceptorRule entity, PermissionType permission) {
-        List<GrantedAuthority> authorities = securityContextUtil.getGrantedAuthorities();
-        boolean isInterceptorAdmin = authorities.stream().anyMatch(
-            grantedAuthority -> StringUtils.endsWithIgnoreCase(grantedAuthority.getAuthority(), "INTERCEPTOR_ADMIN") ||
-                StringUtils.endsWithIgnoreCase(grantedAuthority.getAuthority(), "ADMIN")
-        );
 
-        if (isInterceptorAdmin) {
+
+        if (securityContextUtil.isInterceptorAdmin()) {
             return true;
         }
 
