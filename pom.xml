@@ -223,14 +223,12 @@
               <image>nexus.terrestris.de/shogun/${project.artifactId}:latest</image>
               <tags>
                 <tag>${project.version}</tag>
-                <!--suppress UnresolvedMavenProperty -->
-                <tag>${project.version}-${git.commit.id.abbrev}</tag>
               </tags>
             </to>
             <container>
               <jvmFlags>-Djava.security.egd=file:/dev/./urandom</jvmFlags>
               <jvmFlags>-Dspring.config.location=/config/application.yml</jvmFlags>
-              <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
+              <creationTime>EPOCH</creationTime>
             </container>
           </configuration>
         </plugin>
