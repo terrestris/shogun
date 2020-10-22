@@ -217,7 +217,7 @@
           </executions>
           <configuration>
             <from>
-              <image>openjdk:11-slim</image>
+              <image>openjdk@sha256:2b6eb2c178908b6704d82258652806eca3c0cd9261df7f5edcc3486d63bc6e60</image>
             </from>
             <to>
               <image>nexus.terrestris.de/shogun/${project.artifactId}:latest</image>
