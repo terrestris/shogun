@@ -223,6 +223,8 @@
               <image>nexus.terrestris.de/shogun/${project.artifactId}:latest</image>
               <tags>
                 <tag>${project.version}</tag>
+                <!--suppress UnresolvedMavenProperty -->
+                <tag>${project.version}-${git.commit.id.abbrev}</tag>
               </tags>
             </to>
             <container>
