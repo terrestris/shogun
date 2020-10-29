@@ -13,11 +13,6 @@
   <name>SHOGun Config</name>
   <packaging>jar</packaging>
 
-  <properties>
-    <!-- https://stackoverflow.com/questions/53609881/maven-multi-module-project-packaging-error -->
-    <spring-boot.repackage.skip>true</spring-boot.repackage.skip>
-  </properties>
-
   <dependencies>
 
     <!-- Spring Boot -->
@@ -58,21 +53,5 @@
       <artifactId>keycloak-admin-client</artifactId>
     </dependency>
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>repackage</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>
