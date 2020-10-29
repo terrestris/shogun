@@ -78,10 +78,8 @@
     <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
 
     <!-- Spring -->
-    <spring.version>5.3.0</spring.version>
-    <spring-security.version>5.4.1</spring-security.version>
     <spring-boot.version>2.3.4.RELEASE</spring-boot.version>
-    <spring-data.version>2.4.0</spring-data.version>
+    <spring-data.version>2.3.4.RELEASE</spring-data.version>
 
     <keycloak.version>9.0.0</keycloak.version>
 
@@ -89,7 +87,6 @@
     <hibernate.version>5.4.22.Final</hibernate.version>
     <hibernate-extra-types.version>2.10.0</hibernate-extra-types.version>
     <postgres.version>42.2.18</postgres.version>
-    <flyway.version>7.1.0</flyway.version>
     <ehcache.version>3.9.0</ehcache.version>
 
     <!-- GraphQL -->
@@ -100,10 +97,8 @@
 
     <!-- Utils -->
     <lombok.version>1.18.16</lombok.version>
-    <apache-httpclient.version>4.5.13</apache-httpclient.version>
     <okhttp.version>4.3.1</okhttp.version>
     <commons.io.version>2.8.0</commons.io.version>
-    <commons.lang3.version>3.11</commons.lang3.version>
     <threetenbp.version>1.4.1</threetenbp.version>
     <com.sun.mail.version>1.6.2</com.sun.mail.version>
 
@@ -123,7 +118,6 @@
     <swagger-codegen-maven-plugin.version>2.4.16</swagger-codegen-maven-plugin.version>
 
     <!-- JSON/Dataformats -->
-    <jackson.version>2.11.3</jackson.version>
     <jackson-datatype-jts.version>0.12-2.5-1</jackson-datatype-jts.version>
 
     <!-- Logging -->
@@ -370,17 +364,17 @@
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-web</artifactId>
-        <version>${spring.version}</version>
+        <version>${spring-framework.version}</version>
       </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-webmvc</artifactId>
-        <version>${spring.version}</version>
+        <version>${spring-framework.version}</version>
       </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-context-support</artifactId>
-        <version>${spring.version}</version>
+        <version>${spring-framework.version}</version>
       </dependency>
       <dependency>
         <groupId>org.springframework.data</groupId>
@@ -492,12 +486,12 @@
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpclient</artifactId>
-        <version>${apache-httpclient.version}</version>
+        <version>${httpclient.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpmime</artifactId>
-        <version>${apache-httpclient.version}</version>
+        <version>${httpclient.version}</version>
       </dependency>
 
       <!-- Apache Commons -->
@@ -509,7 +503,7 @@
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
-        <version>${commons.lang3.version}</version>
+        <version>${commons-lang3.version}</version>
       </dependency>
 
       <!-- Testing -->
@@ -522,7 +516,7 @@
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-test</artifactId>
-        <version>${spring.version}</version>
+        <version>${spring-framework.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -568,7 +562,7 @@
         <version>${springfox.version}</version>
       </dependency>
 
-      <!-- Flyway -->
+      <!-- Jupiter -->
       <dependency>
         <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter</artifactId>
@@ -614,12 +608,12 @@
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
-        <version>${jackson.version}</version>
+        <version>${jackson-bom.version}</version>
       </dependency>
       <dependency>
         <groupId>com.fasterxml.jackson.dataformat</groupId>
         <artifactId>jackson-dataformat-yaml</artifactId>
-        <version>${jackson.version}</version>
+        <version>${jackson-bom.version}</version>
       </dependency>
 
       <dependency>
