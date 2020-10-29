@@ -23,7 +23,6 @@
   </build>
 
   <dependencies>
-
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
@@ -237,7 +236,6 @@
       <artifactId>HikariCP</artifactId>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
 
 </project>
