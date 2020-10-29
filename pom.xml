@@ -187,6 +187,10 @@
               <goals>
                 <goal>repackage</goal>
               </goals>
+              <!-- https://stackoverflow.com/questions/41740349/maven-multi-module-dependency-package-not-found -->
+              <configuration>
+                <classifier>exec</classifier>
+              </configuration>
             </execution>
           </executions>
         </plugin>
@@ -318,6 +322,12 @@
         <artifactId>spring-boot-starter-test</artifactId>
         <version>${spring-boot.version}</version>
         <scope>test</scope>
+        <exclusions>
+          <exclusion>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.springframework.boot</groupId>
