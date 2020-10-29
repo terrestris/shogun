@@ -178,9 +178,6 @@
             </execution>
             <execution>
               <id>repackage</id>
-              <goals>
-                <goal>repackage</goal>
-              </goals>
               <!-- https://stackoverflow.com/questions/41740349/maven-multi-module-dependency-package-not-found -->
               <configuration>
                 <classifier>exec</classifier>
