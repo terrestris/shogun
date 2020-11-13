@@ -8,4 +8,6 @@ public interface EntityPermissionEvaluator<E> {
     Class<E> getEntityClassName();
 
     boolean hasPermission(User user, E entity, PermissionType permission);
+
+    boolean hasPermission(User user, Long entityId, String targetDomainType, PermissionType permission);
 }

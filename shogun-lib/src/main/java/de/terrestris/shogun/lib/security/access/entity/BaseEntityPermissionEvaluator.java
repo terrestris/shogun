@@ -4,15 +4,20 @@ import de.terrestris.shogun.lib.enumeration.PermissionType;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
+import de.terrestris.shogun.lib.repository.BaseCrudRepository;
 import de.terrestris.shogun.lib.service.security.permission.GroupClassPermissionService;
 import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionService;
 import de.terrestris.shogun.lib.service.security.permission.UserClassPermissionService;
 import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implements EntityPermissionEvaluator<E> {
@@ -30,6 +35,9 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
 
     @Autowired
     protected GroupClassPermissionService groupClassPermissionService;
+
+    @Autowired
+    protected List<BaseCrudRepository> baseCrudRepositories;
 
     @Override
     public Class<E> getEntityClassName() {
@@ -98,5 +106,55 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
                 + simpleClassName + "' with ID " + entity.getId());
 
         return false;
+    }
+
+    @Override
+    public boolean hasPermission(User user, Long entityId, String targetDomainType, PermissionType permission) {
+        LOG.trace("About to find the appropriate repository for target domain {}.", targetDomainType);
+
+        if (baseCrudRepositories == null) {
+            LOG.trace("BaseCrudRepositories is null. Permission will be restricted.");
+            return false;
+        }
+
+        // Find the matching repository for entity with the provided target domain type
+        Optional<BaseCrudRepository> baseCrudRepository = baseCrudRepositories.stream()
+            .filter(repository -> {
+                // currently we are always proxied due to the usage of the envers revision repository implementation
+                // Todo: check if repository is proxied or not
+                Class<?>[] classes = AopProxyUtils.proxiedUserInterfaces(repository);
+                if (classes.length > 0) {
+                    return Arrays.stream(classes)
+                        .anyMatch(clazz -> {
+                            Class<?>[] typeArguments = GenericTypeResolver.resolveTypeArguments(
+                                clazz, BaseCrudRepository.class);
+                            if (typeArguments == null) {
+                                return false;
+                            } else {
+                                return typeArguments[0].getCanonicalName().equalsIgnoreCase(targetDomainType);
+                            }
+                        });
+                }
+                return false;
+            })
+            .findFirst();
+
+        if (baseCrudRepository.isEmpty()) {
+            LOG.warn("No repository for class {} could be found. Permission will " +
+                "be restricted", targetDomainType);
+            return false;
+        }
+
+        Optional<E> entity = baseCrudRepository.get().findById(entityId);
+
+        if (entity.isEmpty()) {
+            LOG.warn("No entity for id {} with class {} could be found. Permission will " +
+                "be restricted", entityId, targetDomainType);
+            return false;
+        }
+
+        LOG.trace("Found entity for id {}, permission will be evaluated now…", entityId);
+
+        return hasPermission(user, entity.get(), permission);
     }
 }

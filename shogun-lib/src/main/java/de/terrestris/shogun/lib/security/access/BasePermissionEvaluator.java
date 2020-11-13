@@ -6,15 +6,16 @@ import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.security.access.entity.BaseEntityPermissionEvaluator;
 import de.terrestris.shogun.lib.security.access.entity.DefaultPermissionEvaluator;
-import java.io.Serializable;
-import java.util.List;
-import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Optional;
 
 @Component
 public class BasePermissionEvaluator implements PermissionEvaluator {
@@ -66,7 +67,7 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
                 persistentObjectId);
 
         BaseEntityPermissionEvaluator entityPermissionEvaluator =
-                this.getPermissionEvaluatorForClass(persistentObject);
+                this.getPermissionEvaluatorForClass(persistentObject.getClass().getCanonicalName());
 
         if (entityPermissionEvaluator != null) {
             return entityPermissionEvaluator.hasPermission(user, persistentObject, permission);
@@ -81,9 +82,32 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
     @Override
     public boolean hasPermission(Authentication authentication, Serializable targetDomainId,
             String targetDomainType, Object permissionObject) {
+        LOG.trace("About to evaluate permission for user '{}' targetDomainId '{}' " +
+            "of class '{}' and permissionObject '{}'", authentication, targetDomainId, targetDomainType, permissionObject);
 
-        LOG.error("Evaluating the permission via targetDomainId and targetDomainType is not " +
-            "supported. Skipping evaluation.");
+        if ((authentication == null) || (targetDomainId == null) || (targetDomainType == null) ||
+            !(permissionObject instanceof String)) {
+            LOG.trace("Restricting access since not all input requirements are met.");
+            return false;
+        }
+
+        // fetch user from securityUtil
+        Optional<User> userOpt = securityContextUtil.getUserFromAuthentication(authentication);
+        User user = userOpt.orElse(null);
+        String accountName = user != null ? user.getKeycloakId() : ANONYMOUS_USERNAME;
+        final PermissionType permission = PermissionType.valueOf((String) permissionObject);
+
+        LOG.trace("Evaluating whether user '{}' has permission '{}' on entity of class '{}' with ID {}",
+            accountName, permission, targetDomainType, targetDomainId);
+
+        long targetEntityId = Long.parseLong(String.valueOf(targetDomainId));
+
+        BaseEntityPermissionEvaluator entityPermissionEvaluator =
+            this.getPermissionEvaluatorForClass(targetDomainType);
+
+        if (entityPermissionEvaluator != null) {
+            return entityPermissionEvaluator.hasPermission(user, targetEntityId, targetDomainType, permission);
+        }
 
         return false;
     }
@@ -91,14 +115,13 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
     /**
      * Returns the {@BaseEntityPermissionEvaluator} for the given {@BaseEntity}.
      *
-     * @param persistentObject
      * @return
      */
-    private BaseEntityPermissionEvaluator getPermissionEvaluatorForClass(BaseEntity persistentObject) {
+    private BaseEntityPermissionEvaluator getPermissionEvaluatorForClass(String persistentObjectClass) {
 
         BaseEntityPermissionEvaluator entityPermissionEvaluator = permissionEvaluators.stream()
-                .filter(permissionEvaluator -> persistentObject.getClass().equals(
-                        permissionEvaluator.getEntityClassName()))
+                .filter(permissionEvaluator -> persistentObjectClass.equals(
+                        permissionEvaluator.getEntityClassName().getCanonicalName()))
                 .findAny()
                 .orElse(defaultPermissionEvaluator);
 
