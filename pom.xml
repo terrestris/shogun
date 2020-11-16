@@ -118,7 +118,7 @@
     <swagger-codegen-maven-plugin.version>2.4.16</swagger-codegen-maven-plugin.version>
 
     <!-- JSON/Dataformats -->
-    <jackson-datatype-jts.version>0.12-2.5-1</jackson-datatype-jts.version>
+    <jackson-datatype-jts.version>1.0-2.7</jackson-datatype-jts.version>
 
     <!-- Logging -->
     <log4j.version>2.13.3</log4j.version>
