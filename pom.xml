@@ -126,7 +126,6 @@
 
     <!-- GeoServer/Geodata -->
     <geoserver-manager.version>1.7.0</geoserver-manager.version>
-    <jts.version>1.17.1</jts.version>
   </properties>
 
   <build>
@@ -617,12 +616,6 @@
         <groupId>com.graphhopper.external</groupId>
         <artifactId>jackson-datatype-jts</artifactId>
         <version>${jackson-datatype-jts.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.locationtech.jts</groupId>
-            <artifactId>jts</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
 
       <dependency>
@@ -641,12 +634,6 @@
         <groupId>com.sun.mail</groupId>
         <artifactId>javax.mail</artifactId>
         <version>${com.sun.mail.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.locationtech.jts</groupId>
-        <artifactId>jts-core</artifactId>
-        <version>${jts.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
