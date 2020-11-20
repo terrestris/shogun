@@ -39,6 +39,7 @@ public class Application extends BaseEntity {
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Locale i18n;
 
     @Column
@@ -47,21 +48,25 @@ public class Application extends BaseEntity {
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
+    @ToString.Exclude
     private ApplicationClientConfig clientConfig;
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Map<String, Object> layerTree;
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Map<String, Object> layerConfig;
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Map<String, Object> toolConfig;
 }
 
