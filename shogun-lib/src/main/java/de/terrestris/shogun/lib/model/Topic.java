@@ -67,12 +67,14 @@ public class Topic extends BaseEntity {
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb", name = "layertree")
     @Basic(fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Map<String, Object> layerTree;
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb", name = "searchlayerconfigs")
     @Basic(fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @ToString.Exclude
     private Set<Map<String, Object>> searchLayerConfigs;
 
 }

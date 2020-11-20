@@ -43,11 +43,13 @@ public class User extends BaseEntity {
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Map<String, Object> details = new HashMap<>();
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Map<String, Object> clientConfig = new HashMap<>();
 
 }

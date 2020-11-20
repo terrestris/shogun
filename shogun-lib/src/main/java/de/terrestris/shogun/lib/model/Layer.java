@@ -40,16 +40,19 @@ public class Layer extends BaseEntity {
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Map<String, Object> clientConfig;
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb", nullable = false)
     @Basic(fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Map<String, Object> sourceConfig;
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Map<String, Object> features;
 
     @Column(nullable = false)
