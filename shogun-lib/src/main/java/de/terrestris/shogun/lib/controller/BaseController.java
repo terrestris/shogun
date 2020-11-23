@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 // TODO Specify and type extension of BaseService
@@ -439,6 +440,77 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
             throw rse;
         } catch (Exception e) {
             LOG.error("Error while updating entity of type {} with ID {}: \n {}",
+                    getGenericClassName(), entityId, e.getMessage());
+            LOG.trace("Full stack trace: ", e);
+
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    messageSource.getMessage(
+                            "BaseController.INTERNAL_SERVER_ERROR",
+                            null,
+                            LocaleContextHolder.getLocale()
+                    ),
+                    e
+            );
+        }
+    }
+
+    @PatchMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public S updatePartial(@RequestBody Map<String, Object> values, @PathVariable("id") Long entityId) {
+        LOG.trace("Requested to partially update entity of type {} with ID {} ({})", getGenericClassName(), entityId, values);
+
+        try {
+            Object idFromValues = values.get("id");
+            if (idFromValues == null) {
+                LOG.error("Field 'id' is missing in the passed values.", entityId, values);
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            }
+            Long id = Long.valueOf((Integer) idFromValues);
+            if (!entityId.equals(id)) {
+                LOG.error("IDs of update candidate (ID: {}) and update data ({}) don't match.", entityId, values);
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            }
+
+            Optional<S> persistedEntity = service.findOne(entityId);
+
+            if (persistedEntity.isPresent()) {
+                S updatedEntity = service.updatePartial(entityId, values);
+
+                LOG.trace("Successfully updated values for entity of type {} with ID {}",
+                    getGenericClassName(), entityId);
+
+                return updatedEntity;
+            } else {
+                LOG.error("Could not find entity of type {} with ID {}",
+                    getGenericClassName(), entityId);
+
+                throw new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        messageSource.getMessage(
+                                "BaseController.NOT_FOUND",
+                                null,
+                                LocaleContextHolder.getLocale()
+                        )
+                );
+            }
+        } catch (AccessDeniedException ade) {
+            LOG.warn("Updating values of type {} with ID {} is denied",
+                getGenericClassName(), entityId);
+
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    messageSource.getMessage(
+                            "BaseController.NOT_FOUND",
+                            null,
+                            LocaleContextHolder.getLocale()
+                    ),
+                    ade
+            );
+        } catch (ResponseStatusException rse) {
+            throw rse;
+        } catch (Exception e) {
+            LOG.error("Error while updating values for entity of type {} with ID {}: \n {}",
                     getGenericClassName(), entityId, e.getMessage());
             LOG.trace("Full stack trace: ", e);
 

@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpecificationExecutor<S>, S extends BaseEntity> {
@@ -92,6 +93,17 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
         Optional<S> persistedEntity = repository.findById(id);
 
         JsonNode jsonObject = objectMapper.valueToTree(entity);
+        S updatedEntity = objectMapper.readerForUpdating(persistedEntity.get()).readValue(jsonObject);
+
+        return repository.save(updatedEntity);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'UPDATE')")
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public S updatePartial(Long id, Map<String, Object> values) throws IOException {
+        Optional<S> persistedEntity = repository.findById(id);
+
+        JsonNode jsonObject = objectMapper.valueToTree(values);
         S updatedEntity = objectMapper.readerForUpdating(persistedEntity.get()).readValue(jsonObject);
 
         return repository.save(updatedEntity);
