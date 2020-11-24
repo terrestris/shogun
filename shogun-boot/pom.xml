@@ -5,7 +5,7 @@
   <parent>
     <groupId>de.terrestris</groupId>
     <artifactId>shogun</artifactId>
-    <version>6.0.2-SNAPSHOT</version>
+    <version>6.1.0</version>
   </parent>
 
   <artifactId>shogun-boot</artifactId>
