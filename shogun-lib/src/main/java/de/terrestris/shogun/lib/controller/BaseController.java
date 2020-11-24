@@ -507,6 +507,10 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
                     ),
                     ade
             );
+        } catch (NumberFormatException nfe) {
+            LOG.error("Can't parse 'id' field ({}) from values ({}). It has to be an Integer.",
+                values, entityId, nfe.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         } catch (ResponseStatusException rse) {
             throw rse;
         } catch (Exception e) {
