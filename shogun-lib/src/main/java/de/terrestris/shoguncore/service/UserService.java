@@ -1,5 +1,6 @@
 package de.terrestris.shoguncore.service;
 
+import de.terrestris.shoguncore.dto.PasswordChange;
 import de.terrestris.shoguncore.dto.RegisterUserDto;
 import de.terrestris.shoguncore.enumeration.PermissionCollectionType;
 import de.terrestris.shoguncore.event.OnRegistrationConfirmedEvent;
@@ -14,13 +15,17 @@ import de.terrestris.shoguncore.specification.UserSpecification;
 import de.terrestris.shoguncore.specification.token.UserVerificationTokenSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Calendar;
+import java.util.*;
 
 @Service
 public class UserService extends BaseService<UserRepository, User> {
@@ -39,6 +44,9 @@ public class UserService extends BaseService<UserRepository, User> {
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
+
+    @Autowired
+    protected MessageSource messageSource;
 
     private static final String TOKEN_INVALID = "invalidToken";
     private static final String TOKEN_EXPIRED = "expired";
@@ -150,6 +158,45 @@ public class UserService extends BaseService<UserRepository, User> {
         repository.save(user);
     }
 
+    /**
+     * Changes user Password
+     * @param userId the ID of the user that is requesting a password change
+     * @param passwordChangeBody the request body, containing the old and new password
+     * @return
+     */
+    public void changeUserPassword(Long userId, PasswordChange passwordChangeBody) {
+        Optional<User> user = repository.findById(userId);
+
+        if (user.isPresent()) {
+            String currentPassword = user.get().getPassword();
+            String givenOldPassword = passwordChangeBody.getOldPassword();
+            if (passwordEncoder.matches(givenOldPassword, currentPassword)) {
+                String newPassword = passwordEncoder.encode(passwordChangeBody.getNewPassword());
+                user.get().setPassword(newPassword);
+                repository.save(user.get());
+            } else {
+                LOG.debug("Your current password does not match with the given old one. Aborting password change.");
+                throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    messageSource.getMessage(
+                        "password.change.OLD_PASSWORD_DOES_NOT_MATCH_ERROR",
+                        null,
+                        LocaleContextHolder.getLocale()
+                    )
+                );
+            }
+        } else {
+            LOG.debug("User not found. Aborting password change.");
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                messageSource.getMessage(
+                    "password.change.USER_NOT_FOUND_ERROR",
+                    null,
+                    LocaleContextHolder.getLocale()
+                )
+            );
+        }
+    }
 //    @Transactional(readOnly = true)
 //    public Optional<User> getUserBySession() {
 //
