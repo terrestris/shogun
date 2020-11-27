@@ -25,9 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
@@ -38,6 +36,14 @@ public class UserController extends BaseController<UserService, User> {
 
     @Autowired
     private Environment env;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.OK)
@@ -118,7 +124,34 @@ public class UserController extends BaseController<UserService, User> {
 
     @PostMapping(value = "/password/change/{userId}")
     public void changePassword(@PathVariable("userId") Long userId, @RequestBody PasswordChange passwordChangeBody) {
-            service.changeUserPassword(userId, passwordChangeBody);
-    }
+        Optional<User> user = userRepository.findById(userId);
 
+        if (user.isPresent()) {
+            String currentPassword = user.get().getPassword();
+            String givenOldPassword = passwordChangeBody.getOldPassword();
+            if (passwordEncoder.matches(givenOldPassword, currentPassword)) {
+                service.changeUserPassword(user.get(), passwordChangeBody);
+            } else {
+                LOG.debug("Your current password does not match with the given old one. Aborting password change.");
+                throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    messageSource.getMessage(
+                        "password.change.OLD_PASSWORD_DOES_NOT_MATCH_ERROR",
+                        null,
+                        LocaleContextHolder.getLocale()
+                    )
+                );
+            }
+        } else {
+            LOG.debug("User not found. Aborting password change.");
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                messageSource.getMessage(
+                    "password.change.USER_NOT_FOUND_ERROR",
+                    null,
+                    LocaleContextHolder.getLocale()
+                )
+            );
+        }
+    }
 }

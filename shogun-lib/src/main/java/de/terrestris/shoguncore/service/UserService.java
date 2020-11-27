@@ -16,14 +16,11 @@ import de.terrestris.shoguncore.specification.token.UserVerificationTokenSpecifi
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
@@ -160,42 +157,14 @@ public class UserService extends BaseService<UserRepository, User> {
 
     /**
      * Changes user Password
-     * @param userId the ID of the user that is requesting a password change
+     * @param user the user that is requesting a password change
      * @param passwordChangeBody the request body, containing the old and new password
      * @return
      */
-    public void changeUserPassword(Long userId, PasswordChange passwordChangeBody) {
-        Optional<User> user = repository.findById(userId);
-
-        if (user.isPresent()) {
-            String currentPassword = user.get().getPassword();
-            String givenOldPassword = passwordChangeBody.getOldPassword();
-            if (passwordEncoder.matches(givenOldPassword, currentPassword)) {
-                String newPassword = passwordEncoder.encode(passwordChangeBody.getNewPassword());
-                user.get().setPassword(newPassword);
-                repository.save(user.get());
-            } else {
-                LOG.debug("Your current password does not match with the given old one. Aborting password change.");
-                throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    messageSource.getMessage(
-                        "password.change.OLD_PASSWORD_DOES_NOT_MATCH_ERROR",
-                        null,
-                        LocaleContextHolder.getLocale()
-                    )
-                );
-            }
-        } else {
-            LOG.debug("User not found. Aborting password change.");
-            throw new ResponseStatusException(
-                HttpStatus.BAD_REQUEST,
-                messageSource.getMessage(
-                    "password.change.USER_NOT_FOUND_ERROR",
-                    null,
-                    LocaleContextHolder.getLocale()
-                )
-            );
-        }
+    public void changeUserPassword(User user, PasswordChange passwordChangeBody) {
+        String newPassword = passwordEncoder.encode(passwordChangeBody.getNewPassword());
+        user.setPassword(newPassword);
+        repository.save(user);
     }
 //    @Transactional(readOnly = true)
 //    public Optional<User> getUserBySession() {
