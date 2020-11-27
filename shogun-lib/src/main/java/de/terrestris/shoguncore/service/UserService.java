@@ -158,31 +158,22 @@ public class UserService extends BaseService<UserRepository, User> {
     /**
      * Changes user Password
      * @param user the user that is requesting a password change
-     * @param passwordChangeBody the request body, containing the old and new password
+     * @param passwordChange object containing the old and new password
      * @return
      */
-    public void changeUserPassword(User user, PasswordChange passwordChangeBody) {
-        String newPassword = passwordEncoder.encode(passwordChangeBody.getNewPassword());
-        user.setPassword(newPassword);
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#user, 'UPDATE')")
+    public void changeUserPassword(User user, PasswordChange passwordChange) throws SecurityException {
+        String currentPassword = user.getPassword();
+        String givenOldPassword = passwordChange.getOldPassword();
+        String newPassword = passwordChange.getNewPassword();
+        String encodedNewPassword = passwordEncoder.encode(newPassword);
+
+        if (!passwordEncoder.matches(givenOldPassword, currentPassword)) {
+            throw new SecurityException("Your current password does not match with the given old one. Aborting password change.");
+        }
+
+        user.setPassword(encodedNewPassword);
+
         repository.save(user);
     }
-//    @Transactional(readOnly = true)
-//    public Optional<User> getUserBySession() {
-//
-//        final Object principal = SecurityContextHolder.getContext()
-//                .getAuthentication().getPrincipal();
-//
-//        if (!(principal instanceof User)) {
-//            return Optional.empty();
-//        }
-//
-//        User loggedInUser = (User) principal;
-//
-//        // The SecurityContextHolder holds a static copy of the user from
-//        // the moment he logged in. So we need to get the current instance from
-//        // the persistence level.
-//        Long id = loggedInUser.getId();
-//
-//        return repository.findById(id);
-//    }
 }

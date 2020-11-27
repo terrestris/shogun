@@ -7,6 +7,7 @@ import de.terrestris.shoguncore.exception.EmailExistsException;
 import de.terrestris.shoguncore.exception.MailException;
 import de.terrestris.shoguncore.model.User;
 import de.terrestris.shoguncore.repository.UserRepository;
+import de.terrestris.shoguncore.security.SecurityContextUtil;
 import de.terrestris.shoguncore.service.UserService;
 import de.terrestris.shoguncore.util.HttpUtil;
 import de.terrestris.shoguncore.util.ValidationUtil;
@@ -16,6 +17,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -43,7 +45,8 @@ public class UserController extends BaseController<UserService, User> {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-
+    @Autowired
+    private SecurityContextUtil securityContextUtil;
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.OK)
@@ -122,17 +125,16 @@ public class UserController extends BaseController<UserService, User> {
         return redirectView;
     }
 
-    @PostMapping(value = "/password/change/{userId}")
-    public void changePassword(@PathVariable("userId") Long userId, @RequestBody PasswordChange passwordChangeBody) {
-        Optional<User> user = userRepository.findById(userId);
+    @PostMapping(value = "/password/change")
+    public void changePassword(@RequestBody PasswordChange passwordChangeBody) {
+        Optional<User> user = securityContextUtil.getUserBySession();
 
         if (user.isPresent()) {
-            String currentPassword = user.get().getPassword();
-            String givenOldPassword = passwordChangeBody.getOldPassword();
-            if (passwordEncoder.matches(givenOldPassword, currentPassword)) {
+            try {
                 service.changeUserPassword(user.get(), passwordChangeBody);
-            } else {
+            } catch(SecurityException exception) {
                 LOG.debug("Your current password does not match with the given old one. Aborting password change.");
+
                 throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     messageSource.getMessage(
@@ -141,9 +143,22 @@ public class UserController extends BaseController<UserService, User> {
                         LocaleContextHolder.getLocale()
                     )
                 );
+            } catch(Exception exception) {
+                LOG.debug("Some error occurred while updating the user password.");
+                LOG.trace("Full stack trace: ", exception);
+
+                throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    messageSource.getMessage(
+                        "password.change.INTERNAL_SERVER_ERROR",
+                        null,
+                        LocaleContextHolder.getLocale()
+                    )
+                );
             }
         } else {
-            LOG.debug("User not found. Aborting password change.");
+            LOG.debug("User is not logged in.");
+
             throw new ResponseStatusException(
                 HttpStatus.BAD_REQUEST,
                 messageSource.getMessage(
