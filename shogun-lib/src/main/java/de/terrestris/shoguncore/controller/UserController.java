@@ -6,11 +6,14 @@ import de.terrestris.shoguncore.event.OnRegistrationCompleteEvent;
 import de.terrestris.shoguncore.exception.EmailExistsException;
 import de.terrestris.shoguncore.exception.MailException;
 import de.terrestris.shoguncore.model.User;
-import de.terrestris.shoguncore.repository.UserRepository;
 import de.terrestris.shoguncore.security.SecurityContextUtil;
 import de.terrestris.shoguncore.service.UserService;
 import de.terrestris.shoguncore.util.HttpUtil;
 import de.terrestris.shoguncore.util.ValidationUtil;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Optional;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -18,15 +21,15 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.view.RedirectView;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
-import javax.servlet.http.HttpServletRequest;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -48,7 +51,7 @@ public class UserController extends BaseController<UserService, User> {
             return ValidationUtil.validateBindingResult(bindingResult);
         }
 
-        LOG.info("Registering user with input: {}", registerUserData);
+        LOG.info("Registering user {}", registerUserData.getEmail());
 
         User newUser = null;
         try {
