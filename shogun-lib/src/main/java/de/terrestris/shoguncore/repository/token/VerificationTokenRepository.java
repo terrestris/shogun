@@ -6,5 +6,4 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface VerificationTokenRepository extends BaseCrudRepository<VerificationToken, Long>, JpaSpecificationExecutor<VerificationToken> {
-}
+public interface VerificationTokenRepository extends BaseCrudRepository<VerificationToken, Long>, JpaSpecificationExecutor<VerificationToken> { }

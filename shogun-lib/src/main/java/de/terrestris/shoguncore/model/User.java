@@ -27,6 +27,7 @@ public class User extends BaseEntity {
 
     @Column
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @ToString.Exclude
     private String password;
 
     @Column

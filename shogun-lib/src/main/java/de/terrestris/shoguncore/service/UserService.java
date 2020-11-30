@@ -5,14 +5,23 @@ import de.terrestris.shoguncore.dto.RegisterUserDto;
 import de.terrestris.shoguncore.enumeration.PermissionCollectionType;
 import de.terrestris.shoguncore.event.OnRegistrationConfirmedEvent;
 import de.terrestris.shoguncore.exception.EmailExistsException;
+import de.terrestris.shoguncore.model.Group;
 import de.terrestris.shoguncore.model.User;
+import de.terrestris.shoguncore.model.security.Identity;
+import de.terrestris.shoguncore.model.security.permission.UserClassPermission;
+import de.terrestris.shoguncore.model.security.permission.UserInstancePermission;
 import de.terrestris.shoguncore.model.token.UserVerificationToken;
 import de.terrestris.shoguncore.repository.UserRepository;
+import de.terrestris.shoguncore.repository.security.IdentityRepository;
+import de.terrestris.shoguncore.repository.security.permission.UserClassPermissionRepository;
+import de.terrestris.shoguncore.repository.security.permission.UserInstancePermissionRepository;
 import de.terrestris.shoguncore.repository.token.UserVerificationTokenRepository;
 import de.terrestris.shoguncore.service.security.IdentityService;
 import de.terrestris.shoguncore.service.security.permission.UserInstancePermissionService;
 import de.terrestris.shoguncore.specification.UserSpecification;
 import de.terrestris.shoguncore.specification.token.UserVerificationTokenSpecification;
+import java.util.Calendar;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
@@ -21,8 +30,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
 
 @Service
 public class UserService extends BaseService<UserRepository, User> {
@@ -37,7 +44,16 @@ public class UserService extends BaseService<UserRepository, User> {
     private IdentityService identityService;
 
     @Autowired
+    private IdentityRepository identityRepository;
+
+    @Autowired
     private UserInstancePermissionService userInstancePermissionService;
+
+    @Autowired
+    private UserInstancePermissionRepository userInstancePermissionRepository;
+
+    @Autowired
+    private UserClassPermissionRepository userClassPermissionRepository;
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
@@ -50,8 +66,6 @@ public class UserService extends BaseService<UserRepository, User> {
     private static final String TOKEN_VALID = "valid";
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
-//    @PreAuthorize("hasAuthority('ROLE_USER_AUTH_COMPLETE') or (isAnonymous() and !#enabled)")
-//    @PreAuthorize("(isAnonymous() and !#enabled)")
     public User register(RegisterUserDto registerUserData) throws IllegalArgumentException, EmailExistsException {
         if (registerUserData == null) {
             throw new IllegalArgumentException("Invalid user data");
@@ -73,10 +87,123 @@ public class UserService extends BaseService<UserRepository, User> {
         return repository.save(user);
     }
 
-    @PreAuthorize("isAnonymous() or permitAll()")
+    /**
+     * Deletes a {@link de.terrestris.shoguncore.model.User} and all corresponding entities:
+     *   * All {@link de.terrestris.shoguncore.model.token.UserVerificationToken}
+     *   * All {@link de.terrestris.shoguncore.model.security.Identity}
+     *   * All {@link de.terrestris.shoguncore.model.security.permission.UserClassPermission}
+     *   * All {@link de.terrestris.shoguncore.model.security.permission.UserInstancePermission}
+     *   * Membership of all {@link de.terrestris.shoguncore.model.Group}
+     *
+     * Note: This method is without any pre-authorization check by intention since
+     *       it may be called from a context without a principal (e.g. during cleanup
+     *       after new user has been registered).
+     *
+     * @param user The user to delete.
+     */
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void deleteUser(User user) {
-        repository.delete(user);
+
+        LOG.info("Deleting user with ID {}", user.getId());
+
+        if (user.getUsername().equalsIgnoreCase("admin")) {
+            throw new RuntimeException("The admin user can't be deleted!");
+        }
+
+        try {
+            LOG.trace("Deleting all pending user verification tokens");
+
+            // Get all pending user verification tokens.
+            List<UserVerificationToken> userVerificationTokens =
+                userVerificationTokenRepository.findAllByUser(user);
+
+            LOG.trace("Found {} pending user verification tokens to delete",
+                userVerificationTokens.size());
+
+            // Delete the pending user verification tokens.
+            for (UserVerificationToken userVerificationToken : userVerificationTokens) {
+                userVerificationTokenRepository.delete(userVerificationToken);
+
+                LOG.trace("Successfully deleted user verification token with ID {}",
+                    userVerificationToken.getId());
+            }
+
+            LOG.trace("Deleting all user instance permissions");
+
+            // Get all user instance permissions.
+            List<UserInstancePermission> userInstancePermissions = userInstancePermissionRepository
+                .findAllByEntityId(user.getId());
+
+            LOG.trace("Found {} user instance permissions to delete",
+                userInstancePermissions.size());
+
+            // Delete the user instance permissions.
+            for (UserInstancePermission userInstancePermission : userInstancePermissions) {
+                userInstancePermissionRepository.delete(userInstancePermission);
+
+                LOG.trace("Successfully deleted user instance permission with ID {}",
+                    userInstancePermission.getId());
+            }
+
+            LOG.trace("Deleting all user class permissions");
+
+            // Get all user class permissions.
+            List<UserClassPermission> userClassPermissions = userClassPermissionRepository
+                .findAllByUser(user);
+
+            LOG.trace("Found {} user class permissions to delete", userClassPermissions.size());
+
+            // Delete the user class permissions.
+            for (UserClassPermission userClassPermission : userClassPermissions) {
+                userClassPermissionRepository.delete(userClassPermission);
+
+                LOG.trace("Successfully deleted user class permission with ID {}",
+                    userClassPermission.getId());
+            }
+
+            LOG.trace("Removing the user from all its groups");
+
+            // Get all groups the user is member in.
+            List<Group> groups = identityService.findAllGroupsFrom(user);
+
+            LOG.trace("Found {} groups to remove the user from", groups.size());
+
+            // Remove the user from all groups.
+            for (Group group : groups) {
+                identityService.removeUserFromGroup(user, group);
+
+                LOG.trace("Successfully removed user from group with ID {}",
+                    group);
+            }
+
+            LOG.trace("Deleting all identities");
+
+            // Get all identities of the user.
+            List<Identity> identities = identityService.findAllIdentitiesBy(user);
+
+            LOG.trace("Found {} identities to delete", identities.size());
+
+            // Delete the identities.
+            for (Identity identity : identities) {
+                identityRepository.delete(identity);
+
+                LOG.trace("Successfully deleted identity with ID {}",
+                    identity.getId());
+            }
+
+            LOG.trace("Deleting the user itself");
+
+            repository.delete(user);
+
+            LOG.trace("Successfully deleted the user");
+        } catch (Exception e) {
+            LOG.error("Error while deleting user with ID {}: {}. Any " +
+                "changes made will be rolled back.", user.getId(), e.getMessage());
+            LOG.trace("Stack trace:", e);
+
+            // Throw a runtime exception to trigger rollback on the DB.
+            throw new RuntimeException();
+        }
     }
 
     /**
@@ -145,6 +272,10 @@ public class UserService extends BaseService<UserRepository, User> {
         return TOKEN_VALID;
     }
 
+    /**
+     *
+     * @param user
+     */
     private void enableUser(User user) {
         user.setEnabled(true);
 
