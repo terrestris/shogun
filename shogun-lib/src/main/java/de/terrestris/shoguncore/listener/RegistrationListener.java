@@ -58,7 +58,6 @@ public class RegistrationListener {
         }
 
         LOG.info("Successfully sent registration mail to user " + user.getEmail());
-
     }
 
     /**
