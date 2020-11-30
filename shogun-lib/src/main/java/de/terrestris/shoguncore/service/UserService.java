@@ -1,5 +1,6 @@
 package de.terrestris.shoguncore.service;
 
+import de.terrestris.shoguncore.dto.PasswordChange;
 import de.terrestris.shoguncore.dto.RegisterUserDto;
 import de.terrestris.shoguncore.enumeration.PermissionCollectionType;
 import de.terrestris.shoguncore.event.OnRegistrationConfirmedEvent;
@@ -14,13 +15,14 @@ import de.terrestris.shoguncore.specification.UserSpecification;
 import de.terrestris.shoguncore.specification.token.UserVerificationTokenSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.MessageSource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Calendar;
+import java.util.*;
 
 @Service
 public class UserService extends BaseService<UserRepository, User> {
@@ -39,6 +41,9 @@ public class UserService extends BaseService<UserRepository, User> {
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
+
+    @Autowired
+    protected MessageSource messageSource;
 
     private static final String TOKEN_INVALID = "invalidToken";
     private static final String TOKEN_EXPIRED = "expired";
@@ -150,23 +155,25 @@ public class UserService extends BaseService<UserRepository, User> {
         repository.save(user);
     }
 
-//    @Transactional(readOnly = true)
-//    public Optional<User> getUserBySession() {
-//
-//        final Object principal = SecurityContextHolder.getContext()
-//                .getAuthentication().getPrincipal();
-//
-//        if (!(principal instanceof User)) {
-//            return Optional.empty();
-//        }
-//
-//        User loggedInUser = (User) principal;
-//
-//        // The SecurityContextHolder holds a static copy of the user from
-//        // the moment he logged in. So we need to get the current instance from
-//        // the persistence level.
-//        Long id = loggedInUser.getId();
-//
-//        return repository.findById(id);
-//    }
+    /**
+     * Changes user Password
+     * @param user the user that is requesting a password change
+     * @param passwordChange object containing the old and new password
+     * @return
+     */
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#user, 'UPDATE')")
+    public void changeUserPassword(User user, PasswordChange passwordChange) throws SecurityException {
+        String currentPassword = user.getPassword();
+        String givenOldPassword = passwordChange.getOldPassword();
+        String newPassword = passwordChange.getNewPassword();
+        String encodedNewPassword = passwordEncoder.encode(newPassword);
+
+        if (!passwordEncoder.matches(givenOldPassword, currentPassword)) {
+            throw new SecurityException("Your current password does not match with the given old one. Aborting password change.");
+        }
+
+        user.setPassword(encodedNewPassword);
+
+        repository.save(user);
+    }
 }
