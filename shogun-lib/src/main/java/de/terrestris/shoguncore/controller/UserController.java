@@ -56,7 +56,7 @@ public class UserController extends BaseController<UserService, User> {
         User newUser = null;
         try {
             newUser = this.service.register(registerUserData);
-            LOG.info("Successfully created user {}, enabled: {}", registerUserData.getEmail());
+            LOG.info("Successfully created user {}", registerUserData.getEmail());
         } catch (EmailExistsException ex) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                 messageSource.getMessage("registration.error.emailExists", null, request.getLocale())
