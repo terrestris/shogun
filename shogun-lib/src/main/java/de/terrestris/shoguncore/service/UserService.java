@@ -199,7 +199,7 @@ public class UserService extends BaseService<UserRepository, User> {
         } catch (Exception e) {
             LOG.error("Error while deleting user with ID {}: {}. Any " +
                 "changes made will be rolled back.", user.getId(), e.getMessage());
-            LOG.trace("Stack trace:", e);
+            LOG.trace("Full stack trace:", e);
 
             // Throw a runtime exception to trigger rollback on the DB.
             throw new RuntimeException();
@@ -211,7 +211,6 @@ public class UserService extends BaseService<UserRepository, User> {
      * @param username The username to be checked.
      * @return Whether the username already exists in the database or not.
      */
-    @PreAuthorize("isAnonymous() or permitAll()")
     private boolean usernameExists(final String username) {
         return this.repository.findOne(UserSpecification.findByUserName(username)).isPresent();
     }
@@ -221,7 +220,6 @@ public class UserService extends BaseService<UserRepository, User> {
      * @param email The email to be checked.
      * @return Whether the username already exists in the database or not.
      */
-    @PreAuthorize("isAnonymous() or permitAll()")
     private boolean emailExists(final String email) {
         return this.repository.findOne(UserSpecification.findByMail(email)).isPresent();
     }
@@ -231,7 +229,6 @@ public class UserService extends BaseService<UserRepository, User> {
      * @param user The user
      * @param token The token
      */
-    @PreAuthorize("isAnonymous() or permitAll()")
     public void createVerificationTokenForUser(final User user, final String token) {
         final UserVerificationToken myToken = new UserVerificationToken(token, user);
         userVerificationTokenRepository.save(myToken);
@@ -243,7 +240,6 @@ public class UserService extends BaseService<UserRepository, User> {
      * @return Returns `TOKEN_INVALID` if the token can't be found, returns `TOKEN_EXPIRED` if the token has expired and
      * `TOKEN_VALID` otherwise.
      */
-    @PreAuthorize("isAnonymous() or permitAll()")
     public String validateVerificationToken(String token) {
         final UserVerificationToken verificationToken =
             userVerificationTokenRepository.findOne(UserVerificationTokenSpecification.findByToken(token)).orElseThrow();
