@@ -7,6 +7,7 @@ import de.terrestris.shoguncore.service.UserService;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -35,6 +36,10 @@ public class UserTask {
 
             List<UserVerificationToken> userVerificationTokens =
                 userVerificationTokenRepository.findByExpiryDateBefore(date);
+
+            userVerificationTokens = userVerificationTokens.stream()
+                .filter(token -> token.getClass().isAssignableFrom(UserVerificationToken.class))
+                .collect(Collectors.toList());
 
             log.info("Found {} pending user registrations to delete.",
                 userVerificationTokens.size());
