@@ -1,12 +1,14 @@
 package de.terrestris.shoguncore.model;
 
-import lombok.*;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity(name = "groups")
-//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,11 +19,4 @@ public class Group extends BaseEntity {
     @Column(unique = true, nullable = false)
     private String name;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }

@@ -1,10 +1,9 @@
 package de.terrestris.shoguncore.model.jsonb;
 
+import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
 
 // TODO Find a way to localize and persist localized database
 // entries, e.g. the name of an application. The list of potential

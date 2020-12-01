@@ -1,11 +1,13 @@
 package de.terrestris.shoguncore.model.token;
 
 import de.terrestris.shoguncore.model.User;
-import lombok.*;
-
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity(name = "userverificationtokens")
 @Data

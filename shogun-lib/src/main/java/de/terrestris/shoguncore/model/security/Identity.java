@@ -4,10 +4,13 @@ import de.terrestris.shoguncore.model.BaseEntity;
 import de.terrestris.shoguncore.model.Group;
 import de.terrestris.shoguncore.model.Role;
 import de.terrestris.shoguncore.model.User;
-import lombok.*;
-
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity(name = "identities")
 @Data
@@ -26,27 +29,4 @@ public class Identity extends BaseEntity {
     @OneToOne
     private Role role;
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Group getGroup() {
-        return group;
-    }
-
-    public void setGroup(Group group) {
-        this.group = group;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
 }

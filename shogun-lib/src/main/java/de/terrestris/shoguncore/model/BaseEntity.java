@@ -1,17 +1,27 @@
 package de.terrestris.shoguncore.model;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
-import lombok.*;
+import java.io.Serializable;
+import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.*;
-import java.io.Serializable;
-import java.util.Date;
-
-//@MappedSuperclass
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @TypeDefs({
@@ -40,27 +50,4 @@ public abstract class BaseEntity implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date modified;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Date getCreated() {
-        return created;
-    }
-
-    public void setCreated(Date created) {
-        this.created = created;
-    }
-
-    public Date getModified() {
-        return modified;
-    }
-
-    public void setModified(Date modified) {
-        this.modified = modified;
-    }
 }
