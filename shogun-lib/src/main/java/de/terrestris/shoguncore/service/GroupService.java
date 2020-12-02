@@ -5,5 +5,4 @@ import de.terrestris.shoguncore.repository.GroupRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-public class GroupService extends BaseService<GroupRepository, Group> {
-}
+public class GroupService extends BaseService<GroupRepository, Group> { }

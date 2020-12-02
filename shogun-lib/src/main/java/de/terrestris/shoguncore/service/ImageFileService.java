@@ -5,5 +5,4 @@ import de.terrestris.shoguncore.repository.ImageFileRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ImageFileService extends BaseService<ImageFileRepository, ImageFile> {
-}
+public class ImageFileService extends BaseService<ImageFileRepository, ImageFile> { }

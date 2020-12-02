@@ -5,5 +5,4 @@ import de.terrestris.shoguncore.repository.RoleRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RoleService extends BaseService<RoleRepository, Role> {
-}
+public class RoleService extends BaseService<RoleRepository, Role> { }
