@@ -46,3 +46,25 @@ management:
     web:
       exposure:
         include: "*"
+
+controller:
+  applications:
+    enabled: true
+  auth:
+    enabled: true
+  cache:
+    enabled: true
+  files:
+    enabled: true
+  groups:
+    enabled: true
+  imagefiles:
+    enabled: true
+  info:
+    enabled: true
+  layers:
+    enabled: true
+  topics:
+    enabled: true
+  users:
+    enabled: true
