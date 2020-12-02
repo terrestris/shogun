@@ -15,6 +15,7 @@ import java.net.URISyntaxException;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.env.Environment;
@@ -33,6 +34,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 @RestController
 @RequestMapping("/users")
+@ConditionalOnExpression("${controller.users.enabled:true}")
 public class UserController extends BaseController<UserService, User> {
 
     @Autowired

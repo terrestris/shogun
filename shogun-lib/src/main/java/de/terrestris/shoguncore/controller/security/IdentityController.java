@@ -7,17 +7,21 @@ import de.terrestris.shoguncore.model.security.Identity;
 import de.terrestris.shoguncore.service.GroupService;
 import de.terrestris.shoguncore.service.UserService;
 import de.terrestris.shoguncore.service.security.IdentityService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/identities")
+@ConditionalOnExpression("${controller.identities.enabled:true}")
 public class IdentityController extends BaseController<IdentityService, Identity> {
 
     @Autowired
