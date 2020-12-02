@@ -9,14 +9,14 @@ import de.terrestris.shoguncore.repository.security.IdentityRepository;
 import de.terrestris.shoguncore.service.BaseService;
 import de.terrestris.shoguncore.specification.IdentitySpecifications;
 import de.terrestris.shoguncore.specification.RoleSpecification;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 // TODO add security annotations if needed
 @Service
@@ -26,65 +26,71 @@ public class IdentityService extends BaseService<IdentityRepository, Identity> {
     private RoleRepository roleRepository;
 
     public List<Role> findAllRolesFrom(User user) {
-        return this.findAllIdentitiesBy(user).stream().map(
-                identity -> identity.getRole()).collect(Collectors.toList());
+        return this.findAllIdentitiesBy(user).stream()
+            .filter(Objects::nonNull)
+            .map(identity -> identity.getRole())
+            .collect(Collectors.toList());
     }
 
     public List<Group> findAllGroupsFrom(User user) {
-        return this.findAllIdentitiesBy(user).stream().map(
-                identity -> identity.getGroup()).collect(Collectors.toList());
+        return this.findAllIdentitiesBy(user).stream()
+            .filter(Objects::nonNull)
+            .map(identity -> identity.getGroup())
+            .collect(Collectors.toList());
     }
 
     public List<User> findAllMembersOf(Group group) {
-        return this.findAllIdentitiesBy(group).stream().map(
-                identity -> identity.getUser()).collect(Collectors.toList());
+        return this.findAllIdentitiesBy(group).stream()
+            .filter(Objects::nonNull)
+            .map(identity -> identity.getUser())
+            .collect(Collectors.toList());
     }
 
     public List<Identity> findAllIdentitiesBy(User user) {
         return repository.findAll(
-                IdentitySpecifications.hasUser(user)
+            IdentitySpecifications.hasUser(user)
         );
     }
 
     public List<Identity> findAllIdentitiesBy(Group group) {
         return repository.findAll(
-                IdentitySpecifications.hasGroup(group)
+            IdentitySpecifications.hasGroup(group)
         );
     }
 
     public List<Identity> findAllIdentitiesBy(Role role) {
         return repository.findAll(
-                IdentitySpecifications.hasRole(role)
+            IdentitySpecifications.hasRole(role)
         );
     }
 
     public List<Identity> findAllIdentitiesBy(User user, Group group) {
         return repository.findAll(Specification.where(
-                IdentitySpecifications.hasUser(user)).and(
-                IdentitySpecifications.hasGroup(group)
+            IdentitySpecifications.hasUser(user)).and(
+            IdentitySpecifications.hasGroup(group)
         ));
     }
 
     public List<Identity> findAllIdentitiesBy(User user, Group group, Role role) {
         return repository.findAll(Specification.where(
-                IdentitySpecifications.hasUser(user)).and(
-                IdentitySpecifications.hasGroup(group)).and(
-                IdentitySpecifications.hasRole(role)
+            IdentitySpecifications.hasUser(user)).and(
+            IdentitySpecifications.hasGroup(group)).and(
+            IdentitySpecifications.hasRole(role)
         ));
     }
 
     public boolean isUserMemberInGroup(User user, Group group) {
         return repository.count(Specification.where(
-                IdentitySpecifications.hasUser(user)).and(
-                IdentitySpecifications.hasGroup(group)
+            IdentitySpecifications.hasUser(user)).and(
+            IdentitySpecifications.hasGroup(group)
         )) > 0;
     }
 
     public boolean hasUserRoleInGroup(User user, Group group, Role role) {
         return repository.count(Specification.where(
-                IdentitySpecifications.hasUser(user)).and(
-                IdentitySpecifications.hasGroup(group)).and(
-                IdentitySpecifications.hasRole(role)
+            IdentitySpecifications.hasUser(user)).and(
+            IdentitySpecifications.hasGroup(group)).and(
+            IdentitySpecifications.hasRole(role)
         )) > 0;
     }
 
