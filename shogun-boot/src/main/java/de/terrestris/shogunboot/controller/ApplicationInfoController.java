@@ -5,6 +5,7 @@ import de.terrestris.shogunboot.service.ApplicationInfoService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
  */
 @RestController
 @RequestMapping("/info")
+@ConditionalOnExpression("${controller.info.enabled:true}")
 public class ApplicationInfoController {
 
     protected final Logger LOG = LogManager.getLogger(getClass());
