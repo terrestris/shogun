@@ -3,6 +3,7 @@ package de.terrestris.shogun.lib.controller;
 import de.terrestris.shogun.lib.service.CacheService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Log4j2
 @RestController
 @RequestMapping("/cache")
+@ConditionalOnExpression("${controller.cache.enabled:true}")
 public class CacheController {
 
     @Autowired

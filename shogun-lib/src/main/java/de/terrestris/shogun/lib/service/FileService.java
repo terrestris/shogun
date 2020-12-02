@@ -4,13 +4,12 @@ import de.terrestris.shogun.lib.model.File;
 import de.terrestris.shogun.lib.repository.FileRepository;
 import de.terrestris.shogun.lib.util.FileUtil;
 import de.terrestris.shogun.properties.UploadProperties;
+import java.util.List;
 import org.apache.tomcat.util.http.fileupload.impl.InvalidContentTypeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Service
 public class FileService extends BaseFileService<FileRepository, File> {
