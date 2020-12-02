@@ -4,15 +4,17 @@ import de.terrestris.shoguncore.enumeration.EventType;
 import de.terrestris.shoguncore.enumeration.OperationType;
 import de.terrestris.shoguncore.enumeration.RuleType;
 import de.terrestris.shoguncore.enumeration.ServiceType;
-import lombok.*;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity(name = "serviceaccess")
-//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -36,35 +38,4 @@ public class ServiceAccess extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private RuleType rule;
 
-    public EventType getEvent() {
-        return event;
-    }
-
-    public void setEvent(EventType event) {
-        this.event = event;
-    }
-
-    public OperationType getOperation() {
-        return operation;
-    }
-
-    public void setOperation(OperationType operation) {
-        this.operation = operation;
-    }
-
-    public ServiceType getService() {
-        return service;
-    }
-
-    public void setService(ServiceType service) {
-        this.service = service;
-    }
-
-    public RuleType getRule() {
-        return rule;
-    }
-
-    public void setRule(RuleType rule) {
-        this.rule = rule;
-    }
 }

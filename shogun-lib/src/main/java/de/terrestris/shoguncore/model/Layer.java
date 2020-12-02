@@ -1,14 +1,21 @@
 package de.terrestris.shoguncore.model;
 
 import de.terrestris.shoguncore.enumeration.LayerType;
-import lombok.*;
+import java.util.Map;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
-import java.util.Map;
-
 @Entity(name = "layers")
-//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -38,11 +45,4 @@ public class Layer extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private LayerType type;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }
