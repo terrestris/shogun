@@ -27,22 +27,22 @@ public class IdentityService extends BaseService<IdentityRepository, Identity> {
 
     public List<Role> findAllRolesFrom(User user) {
         return this.findAllIdentitiesBy(user).stream()
-            .filter(Objects::nonNull)
             .map(identity -> identity.getRole())
+            .filter(Objects::nonNull)
             .collect(Collectors.toList());
     }
 
     public List<Group> findAllGroupsFrom(User user) {
         return this.findAllIdentitiesBy(user).stream()
-            .filter(Objects::nonNull)
             .map(identity -> identity.getGroup())
+            .filter(Objects::nonNull)
             .collect(Collectors.toList());
     }
 
     public List<User> findAllMembersOf(Group group) {
         return this.findAllIdentitiesBy(group).stream()
-            .filter(Objects::nonNull)
             .map(identity -> identity.getUser())
+            .filter(Objects::nonNull)
             .collect(Collectors.toList());
     }
 

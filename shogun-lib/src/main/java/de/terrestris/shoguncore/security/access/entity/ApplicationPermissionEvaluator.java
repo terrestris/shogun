@@ -5,5 +5,4 @@ import org.springframework.stereotype.Component;
 
 @Component
 //@Primary
-public class ApplicationPermissionEvaluator extends BaseEntityPermissionEvaluator<Application> {
-}
+public class ApplicationPermissionEvaluator extends BaseEntityPermissionEvaluator<Application> { }
