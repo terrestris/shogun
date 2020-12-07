@@ -172,6 +172,7 @@
                 <additionalProperties>
                   <encoding.source>${project.encoding}</encoding.source>
                   <encoding.reporting>${project.encoding}</encoding.reporting>
+                  <commithash>${git.commit.id.abbrev}</commithash>
                 </additionalProperties>
               </configuration>
             </execution>
