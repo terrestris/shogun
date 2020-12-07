@@ -65,6 +65,7 @@ public class ApplicationInfoService {
 
         applicationInfo.setBuildTime(props.getProperty("build.time"));
         applicationInfo.setVersion(props.getProperty("build.version"));
+        applicationInfo.setCommitHash(props.getProperty("build.commithash"));
 
         return applicationInfo;
     }

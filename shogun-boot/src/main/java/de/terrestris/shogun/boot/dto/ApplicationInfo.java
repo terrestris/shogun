@@ -17,6 +17,8 @@ public class ApplicationInfo {
 
     private String buildTime;
 
+    private String commitHash;
+
     private Long userId;
 
     private List<String> authorities;
