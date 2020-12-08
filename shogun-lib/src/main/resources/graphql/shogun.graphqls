@@ -1,12 +1,6 @@
 scalar JSON
 scalar Geometry
 
-interface BaseEntity {
-    id: Int
-    created: String
-    modified: String
-}
-
 type Query {
     applicationById(id: Int): Application
     allApplications: [Application]
@@ -16,7 +10,7 @@ type Query {
     allUsers: [User]
 }
 
-type Application implements BaseEntity {
+type Application {
     id: Int
     created: String
     modified: String
@@ -29,7 +23,7 @@ type Application implements BaseEntity {
     toolConfig: JSON
 }
 
-type Layer implements BaseEntity  {
+type Layer {
     id: Int
     created: String
     modified: String
@@ -40,7 +34,7 @@ type Layer implements BaseEntity  {
     type: String
 }
 
-type UserRepresentation implements BaseEntity  {
+type UserRepresentation  {
     id: Int
     created: String
     modified: String
@@ -50,7 +44,7 @@ type UserRepresentation implements BaseEntity  {
     email: String
 }
 
-type User implements BaseEntity  {
+type User  {
     id: Int
     created: String
     modified: String
@@ -62,14 +56,14 @@ type User implements BaseEntity  {
     keycloakRepresentation: UserRepresentation
 }
 
-type UserGroup implements BaseEntity  {
+type UserGroup  {
     id: Int
     created: String
     modified: String
     name: String
 }
 
-type File implements BaseEntity {
+type File {
     id: Int
     created: String
     modified: String
@@ -79,7 +73,7 @@ type File implements BaseEntity {
     fileType: String
 }
 
-type ImageFile implements BaseEntity {
+type ImageFile {
     id: Int
     created: String
     modified: String
