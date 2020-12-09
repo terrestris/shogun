@@ -117,6 +117,10 @@ public class GraphQLProvider {
         );
         typeBuilders.add(
             TypeRuntimeWiring.newTypeWiring("Query")
+                .dataFetcher("fileByUuid", graphQLDataFetchers.getFileByUuid())
+        );
+        typeBuilders.add(
+            TypeRuntimeWiring.newTypeWiring("Query")
                 .dataFetcher("allFiles", graphQLDataFetchers.getAllFiles())
         );
         typeBuilders.add(

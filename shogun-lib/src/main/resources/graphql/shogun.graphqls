@@ -8,6 +8,11 @@ type Query {
     allLayers: [Layer]
     userById(id: Int): User
     allUsers: [User]
+    fileById(id: Int): File
+    fileByUuid(uuid: String): File
+    allFiles: [File]
+    imageFileById(id: Int): ImageFile
+    allImageFiles: [ImageFile]
 }
 
 type Application {
