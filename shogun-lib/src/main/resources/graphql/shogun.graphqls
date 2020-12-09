@@ -8,6 +8,11 @@ type Query {
     allLayers: [Layer]
     userById(id: Int): User
     allUsers: [User]
+    fileById(id: Int): File
+    fileByUuid(uuid: String): File
+    allFiles: [File]
+    imageFileById(id: Int): ImageFile
+    allImageFiles: [ImageFile]
 }
 
 type Application {
@@ -34,15 +39,17 @@ type Layer {
     type: String
 }
 
-type UserRepresentation {
-    id: String
+type UserRepresentation  {
+    id: Int
+    created: String
+    modified: String
     username: String
     firstName: String
     lastName: String
     email: String
 }
 
-type User {
+type User  {
     id: Int
     created: String
     modified: String
@@ -54,9 +61,31 @@ type User {
     keycloakRepresentation: UserRepresentation
 }
 
-type UserGroup {
+type UserGroup  {
     id: Int
     created: String
     modified: String
     name: String
+}
+
+type File {
+    id: Int
+    created: String
+    modified: String
+    fileUuid: ID
+    active: Boolean
+    fileName: String
+    fileType: String
+}
+
+type ImageFile {
+    id: Int
+    created: String
+    modified: String
+    fileUuid: ID
+    active: Boolean
+    fileName: String
+    fileType: String
+    width: Int
+    height: Int
 }

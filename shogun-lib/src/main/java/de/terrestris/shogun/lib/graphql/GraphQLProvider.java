@@ -111,6 +111,30 @@ public class GraphQLProvider {
             TypeRuntimeWiring.newTypeWiring("Query")
                 .dataFetcher("allUsers", graphQLDataFetchers.getAllUsers())
         );
+        typeBuilders.add(
+            TypeRuntimeWiring.newTypeWiring("Query")
+                .dataFetcher("fileById", graphQLDataFetchers.getFileById())
+        );
+        typeBuilders.add(
+            TypeRuntimeWiring.newTypeWiring("Query")
+                .dataFetcher("fileByUuid", graphQLDataFetchers.getFileByUuid())
+        );
+        typeBuilders.add(
+            TypeRuntimeWiring.newTypeWiring("Query")
+                .dataFetcher("allFiles", graphQLDataFetchers.getAllFiles())
+        );
+        typeBuilders.add(
+            TypeRuntimeWiring.newTypeWiring("Query")
+                .dataFetcher("imageFileById", graphQLDataFetchers.getImageFileById())
+        );
+        typeBuilders.add(
+            TypeRuntimeWiring.newTypeWiring("Query")
+                .dataFetcher("imageFileByUuid", graphQLDataFetchers.getImageFileByUuid())
+        );
+        typeBuilders.add(
+            TypeRuntimeWiring.newTypeWiring("Query")
+                .dataFetcher("allImageFiles", graphQLDataFetchers.getAllImageFiles())
+        );
 
         return typeBuilders;
     }
