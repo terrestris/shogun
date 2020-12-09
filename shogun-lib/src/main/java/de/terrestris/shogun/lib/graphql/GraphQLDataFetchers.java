@@ -76,6 +76,12 @@ public class GraphQLDataFetchers {
     }
 
     // ImageFile
+    public DataFetcher getImageFileByUuid() {
+        return dataFetchingEnvironment -> {
+            UUID uuid = dataFetchingEnvironment.getArgument("uuid");
+            return this.imageFileService.findOne(uuid);
+        };
+    }
     public DataFetcher getImageFileById() {
         return dataFetchingEnvironment -> {
             Long id = ((Integer) dataFetchingEnvironment.getArgument("id")).longValue();

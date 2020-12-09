@@ -129,6 +129,10 @@ public class GraphQLProvider {
         );
         typeBuilders.add(
             TypeRuntimeWiring.newTypeWiring("Query")
+                .dataFetcher("imageFileByUuid", graphQLDataFetchers.getImageFileByUuid())
+        );
+        typeBuilders.add(
+            TypeRuntimeWiring.newTypeWiring("Query")
                 .dataFetcher("allImageFiles", graphQLDataFetchers.getAllImageFiles())
         );
 
