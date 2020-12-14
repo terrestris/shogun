@@ -5,18 +5,16 @@ import de.terrestris.shoguncore.model.BaseEntity;
 import de.terrestris.shoguncore.model.User;
 import de.terrestris.shoguncore.model.security.permission.PermissionCollection;
 import de.terrestris.shoguncore.model.security.permission.UserClassPermission;
-import de.terrestris.shoguncore.model.security.permission.UserInstancePermission;
 import de.terrestris.shoguncore.repository.security.permission.PermissionCollectionRepository;
 import de.terrestris.shoguncore.repository.security.permission.UserClassPermissionRepository;
 import de.terrestris.shoguncore.security.SecurityContextUtil;
 import de.terrestris.shoguncore.service.BaseService;
 import de.terrestris.shoguncore.specification.security.permission.PermissionCollectionSpecification;
 import de.terrestris.shoguncore.specification.security.permission.UserClassPermissionSpecifications;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class UserClassPermissionService extends BaseService<UserClassPermissionRepository, UserClassPermission> {
@@ -52,11 +50,7 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
     public PermissionCollection findPermissionCollectionFor(BaseEntity entity, User user) {
         Optional<UserClassPermission> userClassPermission = this.findFor(entity, user);
 
-        if (userClassPermission.isPresent()) {
-            return userClassPermission.get().getPermissions();
-        }
-
-        return new PermissionCollection();
+        return getPermissionCollection(userClassPermission);
     }
 
     public void setPermission(Class<? extends BaseEntity> clazz, PermissionCollectionType permissionCollectionType) {
@@ -96,5 +90,13 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
         userClassPermission.setPermissions(permissionCollection.get());
 
         repository.save(userClassPermission);
+    }
+
+    private PermissionCollection getPermissionCollection(Optional<UserClassPermission> classPermission) {
+        if (classPermission.isPresent()) {
+            return classPermission.get().getPermissions();
+        }
+
+        return new PermissionCollection();
     }
 }

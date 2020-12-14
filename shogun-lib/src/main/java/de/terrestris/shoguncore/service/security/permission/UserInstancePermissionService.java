@@ -3,7 +3,6 @@ package de.terrestris.shoguncore.service.security.permission;
 import de.terrestris.shoguncore.enumeration.PermissionCollectionType;
 import de.terrestris.shoguncore.model.BaseEntity;
 import de.terrestris.shoguncore.model.User;
-import de.terrestris.shoguncore.model.security.permission.GroupInstancePermission;
 import de.terrestris.shoguncore.model.security.permission.PermissionCollection;
 import de.terrestris.shoguncore.model.security.permission.UserInstancePermission;
 import de.terrestris.shoguncore.repository.security.permission.PermissionCollectionRepository;
@@ -12,12 +11,10 @@ import de.terrestris.shoguncore.security.SecurityContextUtil;
 import de.terrestris.shoguncore.service.BaseService;
 import de.terrestris.shoguncore.specification.security.permission.PermissionCollectionSpecification;
 import de.terrestris.shoguncore.specification.security.permission.UserInstancePermissionSpecifications;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserInstancePermissionService extends BaseService<UserInstancePermissionRepository, UserInstancePermission> {
@@ -41,11 +38,7 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
     public PermissionCollection findPermissionCollectionFor(BaseEntity entity, User user) {
         Optional<UserInstancePermission> userInstancePermission = this.findFor(entity, user);
 
-        if (userInstancePermission.isPresent()) {
-            return userInstancePermission.get().getPermissions();
-        }
-
-        return new PermissionCollection();
+        return getPermissionCollection(userInstancePermission);
     }
 
     public void setPermission(BaseEntity persistedEntity, PermissionCollectionType permissionCollectionType) {
@@ -85,5 +78,13 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
         userInstancePermission.setPermissions(permissionCollection.get());
 
         repository.save(userInstancePermission);
+    }
+
+    private PermissionCollection getPermissionCollection(Optional<UserInstancePermission> classPermission) {
+        if (classPermission.isPresent()) {
+            return classPermission.get().getPermissions();
+        }
+
+        return new PermissionCollection();
     }
 }

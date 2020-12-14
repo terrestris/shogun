@@ -12,14 +12,11 @@ import de.terrestris.shoguncore.service.BaseService;
 import de.terrestris.shoguncore.service.security.IdentityService;
 import de.terrestris.shoguncore.specification.security.permission.GroupInstancePermissionSpecifications;
 import de.terrestris.shoguncore.specification.security.permission.PermissionCollectionSpecification;
-import javassist.NotFoundException;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class GroupInstancePermissionService extends BaseService<GroupInstancePermissionRepository, GroupInstancePermission> {
@@ -53,24 +50,41 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
         ));
     }
 
+    public Optional<GroupInstancePermission> findFor(BaseEntity entity, Group group, User user) {
+
+        LOG.trace("Getting all group instance permissions for user {} and entity {} in the " +
+            "context of group {}", user.getUsername(), entity, group);
+
+        boolean isUserMemberInGroup = identityService.isUserMemberInGroup(user, group);
+
+        if (!isUserMemberInGroup) {
+            LOG.trace("The user is not a member of the given group, no permissions available.");
+
+            return Optional.empty();
+        }
+
+        return repository.findOne(Specification.where(
+            GroupInstancePermissionSpecifications.hasEntity(entity)).and(
+            GroupInstancePermissionSpecifications.hasGroup(group)
+        ));
+    }
+
     public PermissionCollection findPermissionCollectionFor(BaseEntity entity, Group group) {
         Optional<GroupInstancePermission> groupInstancePermission = this.findFor(entity, group);
 
-        if (groupInstancePermission.isPresent()) {
-            return groupInstancePermission.get().getPermissions();
-        }
-
-        return new PermissionCollection();
+        return getPermissionCollection(groupInstancePermission);
     }
 
     public PermissionCollection findPermissionCollectionFor(BaseEntity entity, User user) {
         Optional<GroupInstancePermission> groupInstancePermission = this.findFor(entity, user);
 
-        if (groupInstancePermission.isPresent()) {
-            return groupInstancePermission.get().getPermissions();
-        }
+        return getPermissionCollection(groupInstancePermission);
+    }
 
-        return new PermissionCollection();
+    public PermissionCollection findPermissionCollectionFor(BaseEntity entity, Group group, User user) {
+        Optional<GroupInstancePermission> groupInstancePermission = this.findFor(entity, group, user);
+
+        return getPermissionCollection(groupInstancePermission);
     }
 
     public void setPermission(BaseEntity persistedEntity, Group group, PermissionCollectionType permissionCollectionType) {
@@ -100,5 +114,13 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
         groupInstancePermission.setPermissions(permissionCollection.get());
 
         repository.save(groupInstancePermission);
+    }
+
+    private PermissionCollection getPermissionCollection(Optional<GroupInstancePermission> classPermission) {
+        if (classPermission.isPresent()) {
+            return classPermission.get().getPermissions();
+        }
+
+        return new PermissionCollection();
     }
 }
