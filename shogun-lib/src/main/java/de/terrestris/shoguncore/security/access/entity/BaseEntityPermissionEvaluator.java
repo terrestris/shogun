@@ -9,12 +9,11 @@ import de.terrestris.shoguncore.service.security.permission.GroupClassPermission
 import de.terrestris.shoguncore.service.security.permission.GroupInstancePermissionService;
 import de.terrestris.shoguncore.service.security.permission.UserClassPermissionService;
 import de.terrestris.shoguncore.service.security.permission.UserInstancePermissionService;
+import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
-
-import java.util.Set;
 
 //@Component
 public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implements EntityPermissionEvaluator<E> {
