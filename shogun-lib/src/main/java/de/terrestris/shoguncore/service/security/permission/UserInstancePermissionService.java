@@ -3,7 +3,6 @@ package de.terrestris.shoguncore.service.security.permission;
 import de.terrestris.shoguncore.enumeration.PermissionCollectionType;
 import de.terrestris.shoguncore.model.BaseEntity;
 import de.terrestris.shoguncore.model.User;
-import de.terrestris.shoguncore.model.security.permission.GroupInstancePermission;
 import de.terrestris.shoguncore.model.security.permission.PermissionCollection;
 import de.terrestris.shoguncore.model.security.permission.UserInstancePermission;
 import de.terrestris.shoguncore.repository.security.permission.PermissionCollectionRepository;
@@ -12,12 +11,10 @@ import de.terrestris.shoguncore.security.SecurityContextUtil;
 import de.terrestris.shoguncore.service.BaseService;
 import de.terrestris.shoguncore.specification.security.permission.PermissionCollectionSpecification;
 import de.terrestris.shoguncore.specification.security.permission.UserInstancePermissionSpecifications;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserInstancePermissionService extends BaseService<UserInstancePermissionRepository, UserInstancePermission> {
@@ -28,9 +25,17 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
     @Autowired
     protected PermissionCollectionRepository permissionCollectionRepository;
 
+    /**
+     * Returns the {@link UserInstancePermission} for the given query arguments.
+     *
+     * @param entity The entity to find the permission for.
+     * @param user The user to find the permission for.
+     * @return The (optional) permission.
+     */
     public Optional<UserInstancePermission> findFor(BaseEntity entity, User user) {
 
-        LOG.trace("Getting all user permissions for user {} and entity {}", user.getUsername(), entity);
+        LOG.trace("Getting all user permissions for user {} and entity {}",
+            user.getUsername(), entity);
 
         return repository.findOne(Specification.where(
                 UserInstancePermissionSpecifications.hasEntity(entity)).and(
@@ -38,16 +43,26 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
         ));
     }
 
+    /**
+     * Returns the {@link PermissionCollection} for the given query arguments.
+     *
+     * @param entity The entity to find the collection for.
+     * @param user The user to find the collection for.
+     * @return The collection (may be empty).
+     */
     public PermissionCollection findPermissionCollectionFor(BaseEntity entity, User user) {
         Optional<UserInstancePermission> userInstancePermission = this.findFor(entity, user);
 
-        if (userInstancePermission.isPresent()) {
-            return userInstancePermission.get().getPermissions();
-        }
-
-        return new PermissionCollection();
+        return getPermissionCollection(userInstancePermission);
     }
 
+    /**
+     * Sets the given {@link PermissionCollectionType} for the given entity and the currently
+     * logged in user.
+     *
+     * @param persistedEntity The entity to set the permission for.
+     * @param permissionCollectionType The permission to set.
+     */
     public void setPermission(BaseEntity persistedEntity, PermissionCollectionType permissionCollectionType) {
         Optional<User> activeUser = securityContextUtil.getUserBySession();
 
@@ -58,6 +73,13 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
         setPermission(persistedEntity, activeUser.get(), permissionCollectionType);
     }
 
+    /**
+     * Sets the given {@link PermissionCollectionType} for the given entity and user.
+     *
+     * @param persistedEntity The entity to set the permission for.
+     * @param user The user to set the permission for.
+     * @param permissionCollectionType The permission to set.
+     */
     public void setPermission(BaseEntity persistedEntity, User user, PermissionCollectionType permissionCollectionType) {
         Optional<PermissionCollection> permissionCollection = permissionCollectionRepository.findOne(
             PermissionCollectionSpecification.findByName(permissionCollectionType));
@@ -70,8 +92,8 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
 
         // Check if there is already an existing permission set on the entity
         if (existingPermissions.isPresent()) {
-            LOG.debug("Permission is already set for entity {} and user {}: {}", persistedEntity,
-                user, permissionCollection.get());
+            LOG.debug("Permission is already set for entity {} and user {}: {}",
+                persistedEntity, user, permissionCollection.get());
 
             // Remove the existing one
             repository.delete(existingPermissions.get());
@@ -85,5 +107,21 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
         userInstancePermission.setPermissions(permissionCollection.get());
 
         repository.save(userInstancePermission);
+    }
+
+    /**
+     * Helper function to get the {@link PermissionCollection} from a given
+     * class permission. If no collection is available, it returns an empty
+     * list.
+     *
+     * @param classPermission The classPermission to get the permissions from.
+     * @return The collection (may be empty).
+     */
+    private PermissionCollection getPermissionCollection(Optional<UserInstancePermission> classPermission) {
+        if (classPermission.isPresent()) {
+            return classPermission.get().getPermissions();
+        }
+
+        return new PermissionCollection();
     }
 }

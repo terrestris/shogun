@@ -32,21 +32,6 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
     @Autowired
     protected UserInstancePermissionService userInstancePermissionService;
 
-//    @GetMapping("/filterjsonb")
-//    @ResponseStatus(HttpStatus.OK)
-//    public List<S> findAllBy(@RequestParam String column, @RequestParam String filter) {
-//        return service.findByFilter(column, filter);
-//    }
-//
-//    @GetMapping("/filter/{attribute}")
-//    @ResponseStatus(HttpStatus.OK)
-//    public List<S> findAllBy(
-//            @PathVariable("attribute") String attribute,
-//            @RequestParam String path,
-//            @RequestParam String value) {
-//        return service.findBy(attribute, path, value);
-//    }
-
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<S> findAll() {

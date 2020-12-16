@@ -9,12 +9,11 @@ import de.terrestris.shoguncore.service.security.permission.GroupClassPermission
 import de.terrestris.shoguncore.service.security.permission.GroupInstancePermissionService;
 import de.terrestris.shoguncore.service.security.permission.UserClassPermissionService;
 import de.terrestris.shoguncore.service.security.permission.UserInstancePermissionService;
+import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
-
-import java.util.Set;
 
 //@Component
 public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implements EntityPermissionEvaluator<E> {
@@ -47,7 +46,41 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
         final String simpleClassName = entity.getClass().getSimpleName();
 
         // CHECK USER INSTANCE PERMISSIONS
-        PermissionCollection userPermissionCol = null;
+        if (this.hasPermissionByUserInstancePermission(user, entity, permission)) {
+            LOG.trace("Granting {} access by user instance permissions", permission);
+
+            return true;
+        }
+
+        // CHECK GROUP INSTANCE PERMISSIONS
+        if (this.hasPermissionByGroupInstancePermission(user, entity, permission)) {
+            LOG.trace("Granting {} access by group instance permissions", permission);
+
+            return true;
+        }
+
+        // CHECK USER CLASS PERMISSIONS
+        if (this.hasPermissionByUserClassPermission(user, entity, permission)) {
+            LOG.trace("Granting {} access by user class permissions", permission);
+
+            return true;
+        }
+
+        // CHECK GROUP CLASS PERMISSIONS
+        if (this.hasPermissionByGroupClassPermission(user, entity, permission)) {
+            LOG.trace("Granting {} access by group class permissions", permission);
+
+            return true;
+        }
+
+        LOG.trace("Restricting {} access on secured object '{}' with ID {}",
+            permission, simpleClassName, entity.getId());
+
+        return false;
+    }
+
+    public boolean hasPermissionByUserInstancePermission(User user, BaseEntity entity, PermissionType permission) {
+        PermissionCollection userPermissionCol;
         if (permission.equals(PermissionType.CREATE) && entity.getId() == null) {
             userPermissionCol = new PermissionCollection();
         } else {
@@ -57,13 +90,12 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
 
         // Grant access if user explicitly has the requested permission or
         // if the user has the ADMIN permission
-        if (userInstancePermissions.contains(permission) || userInstancePermissions.contains(PermissionType.ADMIN)) {
-            LOG.trace("Granting " + permission + " access by user instance permissions");
-            return true;
-        }
+        return userInstancePermissions.contains(permission) ||
+            userInstancePermissions.contains(PermissionType.ADMIN);
+    }
 
-        // CHECK GROUP INSTANCE PERMISSIONS
-        PermissionCollection groupPermissionsCol = null;
+    public boolean hasPermissionByGroupInstancePermission(User user, BaseEntity entity, PermissionType permission) {
+        PermissionCollection groupPermissionsCol;
         if (permission.equals(PermissionType.CREATE) && entity.getId() == null) {
             groupPermissionsCol = new PermissionCollection();
         } else {
@@ -73,36 +105,27 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
 
         // Grant access if group explicitly has the requested permission or
         // if the group has the ADMIN permission
-        if (groupInstancePermissions.contains(permission) || groupInstancePermissions.contains(PermissionType.ADMIN)) {
-            LOG.trace("Granting " + permission + " access by group instance permissions");
-            return true;
-        }
+        return groupInstancePermissions.contains(permission) ||
+            groupInstancePermissions.contains(PermissionType.ADMIN);
+    }
 
-        // CHECK USER CLASS PERMISSIONS
+    public boolean hasPermissionByUserClassPermission(User user, BaseEntity entity, PermissionType permission) {
         PermissionCollection userClassPermissionCol = userClassPermissionService.findPermissionCollectionFor(entity, user);
         final Set<PermissionType> userClassPermissions = userClassPermissionCol.getPermissions();
 
         // Grant access if user explicitly has the requested permission or
         // if the group has the ADMIN permission
-        if (userClassPermissions.contains(permission) || userClassPermissions.contains(PermissionType.ADMIN)) {
-            LOG.trace("Granting " + permission + " access by user class permissions");
-            return true;
-        }
+        return userClassPermissions.contains(permission) ||
+            userClassPermissions.contains(PermissionType.ADMIN);
+    }
 
-        // CHECK GROUP CLASS PERMISSIONS
+    public boolean hasPermissionByGroupClassPermission(User user, BaseEntity entity, PermissionType permission) {
         PermissionCollection groupClassPermissionsCol = groupClassPermissionService.findPermissionCollectionFor(entity, user);
         final Set<PermissionType> groupClassPermissions = groupClassPermissionsCol.getPermissions();
 
         // Grant access if group explicitly has the requested permission or
         // if the group has the ADMIN permission
-        if (groupClassPermissions.contains(permission) || groupClassPermissions.contains(PermissionType.ADMIN)) {
-            LOG.trace("Granting " + permission + " access by group instance permissions");
-            return true;
-        }
-
-        LOG.trace("Restricting " + permission + " access on secured object '"
-                + simpleClassName + "' with ID " + entity.getId());
-
-        return false;
+        return groupClassPermissions.contains(permission) ||
+            groupClassPermissions.contains(PermissionType.ADMIN);
     }
 }

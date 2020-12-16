@@ -6,5 +6,4 @@ import de.terrestris.shoguncore.service.BaseService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PermissionCollectionService extends BaseService<PermissionCollectionRepository, PermissionCollection> {
-}
+public class PermissionCollectionService extends BaseService<PermissionCollectionRepository, PermissionCollection> { }
