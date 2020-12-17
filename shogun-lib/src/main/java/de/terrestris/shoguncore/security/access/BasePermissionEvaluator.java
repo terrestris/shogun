@@ -31,8 +31,6 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
     @Autowired
     private DefaultPermissionEvaluator defaultPermissionEvaluator;
 
-    protected static final String ANONYMOUS_USERNAME = "ANONYMOUS";
-
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permissionObject) {
         LOG.trace("About to evaluate permission for user '{}' targetDomainObject '{}' " +
@@ -56,7 +54,11 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
 
         User user = this.getUserFromAuthentication(authentication);
 
-        String accountName = user != null ? user.getUsername() : ANONYMOUS_USERNAME;
+        if (user == null) {
+            LOG.trace("Restricting access since no user is available.");
+
+            return false;
+        }
 
         final BaseEntity persistentObject;
         if (targetDomainObject instanceof Optional) {
@@ -65,29 +67,23 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
             persistentObject = (BaseEntity) targetDomainObject;
         }
 
-        final Long persistentObjectId = persistentObject.getId();
-        final String persistentObjectSimpleName = targetDomainObject.getClass().getSimpleName();
         final PermissionType permission = PermissionType.valueOf((String) permissionObject);
 
-        LOG.trace("Evaluating whether user '{}' has permission '{}' on entity '{}' with ID {}",
-                accountName, permission, targetDomainObject.getClass().getSimpleName(), persistentObjectId);
+        LOG.trace("Getting the appropriate permission evaluator implementation for class '{}'",
+            targetDomainObject.getClass().getSimpleName());
 
         BaseEntityPermissionEvaluator entityPermissionEvaluator =
                 this.getPermissionEvaluatorForClass(persistentObject);
 
-        if (entityPermissionEvaluator != null) {
-            return entityPermissionEvaluator.hasPermission(user, persistentObject, permission);
-        }
+        LOG.trace("Checking permissions with permission evaluator '{}'",
+            entityPermissionEvaluator.getClass().getSimpleName());
 
-        LOG.warn("No permission evaluator for class {} could be found. Permission will " +
-                "be restricted", persistentObjectSimpleName);
-
-        return false;
+        return entityPermissionEvaluator.hasPermission(user, persistentObject, permission);
     }
 
     @Override
     public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType, Object permission) {
-        LOG.trace("HUHUHUHUHUHUHUUHUH");
+        // TODO Backport from main
         return false;
     }
 
