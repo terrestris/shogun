@@ -76,4 +76,3 @@ public class ShogunGwcManager extends AbstractShogunManager {
         }
     }
 }
-}
