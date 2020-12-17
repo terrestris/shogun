@@ -8,7 +8,6 @@
     <version>6.3.1-SNAPSHOT</version>
   </parent>
 
-  <groupId>de.terrestris</groupId>
   <artifactId>shogun-config</artifactId>
   <name>SHOGun Config</name>
   <packaging>jar</packaging>
@@ -33,7 +32,7 @@
     <!-- Swagger -->
     <dependency>
       <groupId>io.springfox</groupId>
-      <artifactId>springfox-swagger2</artifactId>
+      <artifactId>springfox-boot-starter</artifactId>
     </dependency>
 
     <dependency>
