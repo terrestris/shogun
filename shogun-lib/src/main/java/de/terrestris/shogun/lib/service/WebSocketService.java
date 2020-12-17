@@ -11,17 +11,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class WebSocketService {
     private final SimpMessagingTemplate simpMessagingTemplate;
-    private static final String DEFAULT_DESTINATION = "/topic/events";
+    private static final String DEFAULT_DESTINATION = "events";
+    public static final String DESTINATION_PREFIX = "/topic/";
 
     WebSocketService(SimpMessagingTemplate simpMessagingTemplate) {
         this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
     public void sendMessage(WebSocketMessage message) {
-        simpMessagingTemplate.convertAndSend(DEFAULT_DESTINATION, message);
+        simpMessagingTemplate.convertAndSend(DESTINATION_PREFIX + DEFAULT_DESTINATION, message);
     }
 
-    public void sendMessage(WebSocketMessage message, String destination) {
-        simpMessagingTemplate.convertAndSend(destination, message);
+    public void sendMessage(WebSocketMessage message, String destinationEndPoint) {
+        simpMessagingTemplate.convertAndSend(DESTINATION_PREFIX + destinationEndPoint, message);
     }
 }
