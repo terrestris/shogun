@@ -51,7 +51,7 @@ public abstract class AbstractShogunManager implements AutoCloseable {
     protected HttpClientContext context;
     protected ObjectMapper objectMapper;
     protected boolean closed = false;
-    protected String shogunServiceBaseUrl;
+    protected String serviceBaseUrl;
 
     /**
      * Constructor: Initialize HTTP-client and contexts
@@ -114,7 +114,7 @@ public abstract class AbstractShogunManager implements AutoCloseable {
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JtsModule());
 
-        this.shogunServiceBaseUrl = shogunBaseUrl;
+        this.serviceBaseUrl = shogunBaseUrl;
     }
 
     /**
