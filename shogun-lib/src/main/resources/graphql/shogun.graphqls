@@ -11,6 +11,7 @@ type Query {
     fileById(id: Int): File
     fileByUuid(uuid: String): File
     allFiles: [File]
+    getImageFileByUuid(uuid: String): File
     imageFileById(id: Int): ImageFile
     allImageFiles: [ImageFile]
 }

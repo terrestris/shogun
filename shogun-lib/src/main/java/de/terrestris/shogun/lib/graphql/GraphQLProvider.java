@@ -4,6 +4,7 @@ import com.google.common.io.Resources;
 import de.terrestris.shogun.lib.graphql.scalar.GeometryScalar;
 import graphql.GraphQL;
 import graphql.scalars.ExtendedScalars;
+import graphql.schema.DataFetcher;
 import graphql.schema.GraphQLScalarType;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.RuntimeWiring;
@@ -12,15 +13,24 @@ import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
 import graphql.schema.idl.TypeRuntimeWiring;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import javax.annotation.PostConstruct;
+
+import lombok.SneakyThrows;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.reflections.Reflections;
+import org.reflections.scanners.MethodAnnotationsScanner;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
@@ -35,6 +45,9 @@ public class GraphQLProvider {
 
     @Autowired
     GraphQLDataFetchers graphQLDataFetchers;
+
+    @Autowired
+    private ApplicationContext appContext;
 
     @Bean
     @ConditionalOnProperty(
@@ -84,57 +97,28 @@ public class GraphQLProvider {
         return scalars;
     }
 
+    @SneakyThrows
     protected List<TypeRuntimeWiring.Builder> gatherTypes() {
+
+        Reflections reflections = new Reflections(new ConfigurationBuilder()
+            .setUrls(ClasspathHelper.forJavaClassPath())
+            .setScanners(new MethodAnnotationsScanner()));
+        Set<Method> methods = reflections.getMethodsAnnotatedWith(GraphQLQuery.class);
+
         List<TypeRuntimeWiring.Builder> typeBuilders = new ArrayList<>();
 
-        typeBuilders.add(
-            TypeRuntimeWiring.newTypeWiring("Query")
-                .dataFetcher("applicationById", graphQLDataFetchers.getApplicationById())
-        );
-        typeBuilders.add(
-            TypeRuntimeWiring.newTypeWiring("Query")
-                .dataFetcher("allApplications", graphQLDataFetchers.getAllApplications())
-        );
-        typeBuilders.add(
-            TypeRuntimeWiring.newTypeWiring("Query")
-                .dataFetcher("layerById", graphQLDataFetchers.getLayerById())
-        );
-        typeBuilders.add(
-            TypeRuntimeWiring.newTypeWiring("Query")
-                .dataFetcher("allLayers", graphQLDataFetchers.getAllLayers())
-        );
-        typeBuilders.add(
-            TypeRuntimeWiring.newTypeWiring("Query")
-                .dataFetcher("userById", graphQLDataFetchers.getUserById())
-        );
-        typeBuilders.add(
-            TypeRuntimeWiring.newTypeWiring("Query")
-                .dataFetcher("allUsers", graphQLDataFetchers.getAllUsers())
-        );
-        typeBuilders.add(
-            TypeRuntimeWiring.newTypeWiring("Query")
-                .dataFetcher("fileById", graphQLDataFetchers.getFileById())
-        );
-        typeBuilders.add(
-            TypeRuntimeWiring.newTypeWiring("Query")
-                .dataFetcher("fileByUuid", graphQLDataFetchers.getFileByUuid())
-        );
-        typeBuilders.add(
-            TypeRuntimeWiring.newTypeWiring("Query")
-                .dataFetcher("allFiles", graphQLDataFetchers.getAllFiles())
-        );
-        typeBuilders.add(
-            TypeRuntimeWiring.newTypeWiring("Query")
-                .dataFetcher("imageFileById", graphQLDataFetchers.getImageFileById())
-        );
-        typeBuilders.add(
-            TypeRuntimeWiring.newTypeWiring("Query")
-                .dataFetcher("imageFileByUuid", graphQLDataFetchers.getImageFileByUuid())
-        );
-        typeBuilders.add(
-            TypeRuntimeWiring.newTypeWiring("Query")
-                .dataFetcher("allImageFiles", graphQLDataFetchers.getAllImageFiles())
-        );
+        for (Method m: methods) {
+            var name = m.getAnnotation(GraphQLQuery.class).name();
+            if (name.isBlank()) {
+                name = m.getName();
+            }
+
+            var bean = appContext.getBean(m.getDeclaringClass());
+            typeBuilders.add(
+                TypeRuntimeWiring.newTypeWiring("Query")
+                    .dataFetcher(name, (DataFetcher) m.invoke(bean))
+            );
+        }
 
         return typeBuilders;
     }
