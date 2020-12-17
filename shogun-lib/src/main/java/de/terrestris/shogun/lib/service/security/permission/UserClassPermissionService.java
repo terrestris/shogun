@@ -82,18 +82,7 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
             throw new RuntimeException("Could not find requested permission collection");
         }
 
-        Optional<UserClassPermission> existingPermissions = findFor(clazz, user);
-
-        // Check if there is already an existing permission set on the entity
-        if (existingPermissions.isPresent()) {
-            LOG.debug("Permission is already set for clazz {} and user {}: {}", clazz.getCanonicalName(),
-                user, permissionCollection.get());
-
-            // Remove the existing one
-            repository.delete(existingPermissions.get());
-
-            LOG.debug("Removed the permission");
-        }
+        clearExistingPermission(user, permissionCollection.get(), clazz);
 
         UserClassPermission userClassPermission = new UserClassPermission();
         userClassPermission.setUser(user);
@@ -101,5 +90,20 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
         userClassPermission.setPermissions(permissionCollection.get());
 
         repository.save(userClassPermission);
+    }
+
+    private void clearExistingPermission(User user, PermissionCollection permissionCollection, Class<? extends BaseEntity> clazz) {
+        Optional<UserClassPermission> existingPermission = findFor(clazz, user);
+
+        // Check if there is already an existing permission set on the entity
+        if (existingPermission.isPresent()) {
+            LOG.debug("Permission is already set for clazz {} and user {}: {}", clazz.getCanonicalName(),
+                user, permissionCollection);
+
+            // Remove the existing one
+            repository.delete(existingPermission.get());
+
+            LOG.debug("Removed the permission");
+        }
     }
 }
