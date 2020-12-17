@@ -1,0 +1,57 @@
+# This workflow will build a Java project with Maven
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+
+name: Startup Shogun
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 1.11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Cache the Maven packages to speed up build
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven
+
+      - name: Run mvn install
+        run: mvn install
+        working-directory: ./shogun-boot
+
+      - name: Clone shogun-docker
+        run: git clone https://github.com/terrestris/shogun-docker
+
+      - name: Start containers
+        run: docker-compose up -d
+        working-directory: ./shogun-docker
+          
+      - name: Start spring-boot
+        run: mvn spring-boot:run > mvn.out.txt &
+        working-directory: ./shogun-boot
+        
+      - name: Check if application has started
+        run: ./scripts/wait.sh
+        
+      - name: Docker logs
+        if: ${{ failure() }}
+        run: docker-compose logs
+        working-directory: ./shogun-docker
+        
+      - name: Maven output
+        if: ${{ failure() }}
+        run: cat mvn.out.txt
+        working-directory: ./shogun-boot
