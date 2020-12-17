@@ -15,7 +15,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
 
-//@Component
 public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implements EntityPermissionEvaluator<E> {
 
     protected final Logger LOG = LogManager.getLogger(getClass());
@@ -44,6 +43,9 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
     public boolean hasPermission(User user, E entity, PermissionType permission) {
 
         final String simpleClassName = entity.getClass().getSimpleName();
+
+        LOG.trace("Evaluating whether user '{}' has permission '{}' on entity '{}' with ID {}",
+            user.getEmail(), permission, simpleClassName, entity.getId());
 
         // CHECK USER INSTANCE PERMISSIONS
         if (this.hasPermissionByUserInstancePermission(user, entity, permission)) {

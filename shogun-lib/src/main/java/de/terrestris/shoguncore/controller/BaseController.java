@@ -4,6 +4,8 @@ import de.terrestris.shoguncore.enumeration.PermissionCollectionType;
 import de.terrestris.shoguncore.model.BaseEntity;
 import de.terrestris.shoguncore.service.BaseService;
 import de.terrestris.shoguncore.service.security.permission.UserInstancePermissionService;
+import java.util.List;
+import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +14,14 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
-import java.util.Optional;
 
 // TODO Specify and type extension of BaseService
 public abstract class BaseController<T extends BaseService<?, S>, S extends BaseEntity> {
