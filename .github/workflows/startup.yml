@@ -47,11 +47,11 @@ jobs:
         run: ./scripts/wait.sh
         
       - name: Docker logs
-        if: ${{ failure() }}
+        if: always()
         run: docker-compose logs
         working-directory: ./shogun-docker
         
       - name: Maven output
-        if: ${{ failure() }}
+        if: always()
         run: cat mvn.out.txt
         working-directory: ./shogun-boot
