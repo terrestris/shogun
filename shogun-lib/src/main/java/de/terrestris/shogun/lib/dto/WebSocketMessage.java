@@ -22,5 +22,4 @@ public class WebSocketMessage {
 
     private Map<String, Object> data = Collections.emptyMap();
 
-
 }
