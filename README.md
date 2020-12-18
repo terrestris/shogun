@@ -24,12 +24,15 @@
 
 3. Create a new project in IntelliJ by importing the first module:
 
-   - `File` -> `Project from Existing Sources…`
+   - `File` -> `New` -> `Project from Existing Sources…`
    - Navigate to the checkout of `shogun`
    - Select the Project Object Model file (`pom.xml`) of `shogun`
 
 4. Optional: You may also want to import the `shogun-docker` project.
-   If so, just follow the steps mentioned above.
+   If so, import the folder as a module:
+   
+   - `File` -> `New` -> `Module from Existing Sources…`
+   - Navigate to checkout of `shogun-docker` and choose the directory
 
 5. Startup the containers (`shogun-docker`)
 
