@@ -85,7 +85,7 @@ public class GraphQLDataFetchers {
     }
 
     // ImageFile
-    @GraphQLQuery(name = "getImageFileByUuid")
+    @GraphQLQuery(name = "imageFileByUuid")
     public DataFetcher getImageFileByUuid() {
         return dataFetchingEnvironment -> {
             UUID uuid = dataFetchingEnvironment.getArgument("uuid");
