@@ -81,7 +81,7 @@
     <spring-boot.version>2.4.0</spring-boot.version>
     <spring-data.version>2.4.1</spring-data.version>
 
-    <keycloak.version>9.0.0</keycloak.version>
+    <keycloak.version>12.0.1</keycloak.version>
 
     <!-- Database -->
     <hibernate.version>5.4.24.Final</hibernate.version>
