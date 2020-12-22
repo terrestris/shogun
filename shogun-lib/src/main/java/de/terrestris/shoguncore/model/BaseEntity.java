@@ -13,9 +13,10 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.TypeDef;
@@ -27,27 +28,28 @@ import org.hibernate.annotations.UpdateTimestamp;
 @TypeDefs({
     @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 })
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode
 public abstract class BaseEntity implements Serializable {
 
-    // TODO Don't create setter for ID?!
     @Id
     @GeneratedValue(strategy= GenerationType.SEQUENCE)
     @Column(unique = true, nullable = false)
+    @Getter
     private Long id;
 
     @CreationTimestamp
     @Column(updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
+    @Getter @Setter
     private Date created;
 
     @UpdateTimestamp
     @Column
     @Temporal(TemporalType.TIMESTAMP)
+    @Getter @Setter
     private Date modified;
 
 }
