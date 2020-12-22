@@ -83,6 +83,12 @@ public class GroupClassPermissionService extends BaseService<GroupClassPermissio
         // Get all groups of the user
         List<Group> groups = identityService.findAllGroupsFrom(user);
 
+        if (groups.size() > 1) {
+            LOG.warn("The given user is a member of multiple groups. If you encounter any " +
+                "errors or unexpected results, you may want to evaluate permissions via " +
+                "#findFor(BaseEntity entity, Group group, User user)");
+        }
+
         return repository.findOne(Specification.where(
             GroupClassPermissionSpecifications.hasEntity(entity)).and(
             GroupClassPermissionSpecifications.hasGroups(groups)
@@ -104,6 +110,12 @@ public class GroupClassPermissionService extends BaseService<GroupClassPermissio
 
         // Get all groups of the user
         List<Group> groups = identityService.findAllGroupsFrom(user);
+
+        if (groups.size() > 1) {
+            LOG.warn("The given user is a member of multiple groups. If you encounter any " +
+                "errors or unexpected results, you may want to evaluate permissions via " +
+                "#findFor(BaseEntity entity, Group group, User user)");
+        }
 
         return repository.findOne(Specification.where(
             GroupClassPermissionSpecifications.hasEntity(clazz)).and(
