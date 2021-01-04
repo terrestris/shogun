@@ -128,7 +128,7 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
      * @param group The SHOGun group
      * @param permissionCollectionType The permission collection type (e.g. READ, READ_WRITE)
      */
-    public void setPermissionBulk(
+    public void setPermission(
         List<? extends BaseEntity> persistedEntityList,
         Group group,
         PermissionCollectionType permissionCollectionType

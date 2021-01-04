@@ -98,7 +98,7 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
      * @param user The user
      * @param permissionCollectionType The permission collection type (e.g. READ, READ_WRITE)
      */
-    public void setPermissionBulk(
+    public void setPermission(
         List<? extends BaseEntity> persistedEntityList,
         User user,
         PermissionCollectionType permissionCollectionType
