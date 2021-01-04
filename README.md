@@ -78,7 +78,7 @@
 
 ## Swagger
 
-The swagger generated API documentation is available after the startup at [http://localhost:8080/shogun-boot/swagger-ui.html](http://localhost:8080/shogun-boot/swagger-ui.html)
+The swagger generated API documentation is available after the startup at [http://localhost:8080/shogun-boot/swagger-ui/index.html](http://localhost:8080/shogun-boot/swagger-ui/index.html)
 
 ## Keycloak
 
