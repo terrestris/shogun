@@ -14,7 +14,7 @@ public class BootWebSecurityConfig extends WebSecurityConfig {
     RequestMatcher csrfRequestMatcher = httpServletRequest -> {
         String refererHeader = httpServletRequest.getHeader("Referer");
 
-        return refererHeader != null && refererHeader.endsWith("swagger-ui.html");
+        return refererHeader != null && refererHeader.endsWith("swagger-ui/index.html");
     };
 
     @Override
@@ -27,7 +27,7 @@ public class BootWebSecurityConfig extends WebSecurityConfig {
                     "/info/**",
                     "/index.html",
                     // Enable anonymous access to swagger docs
-                    "/swagger-ui.html",
+                    "/swagger-ui/index.html",
                     "/webjars/springfox-swagger-ui/**",
                     "/swagger-resources/**",
                     "/v2/api-docs"
