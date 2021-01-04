@@ -111,19 +111,7 @@ public class GroupClassPermissionService extends BaseService<GroupClassPermissio
             throw new RuntimeException("Could not find requested permission collection");
         }
 
-        Optional<GroupClassPermission> existingPermissions = findFor(clazz, group);
-
-        // Check if there is already an existing permission set on the entity
-        if (existingPermissions.isPresent()) {
-            LOG.debug("Permission is already set for class {} and group {}: {}", clazz,
-                group, permissionCollection.get());
-
-            // Remove the existing one
-            // TODO: deletion really needed ???
-            repository.delete(existingPermissions.get());
-
-            LOG.debug("Removed the permission");
-        }
+        clearExistingPermission(group, permissionCollection.get(), clazz);
 
         GroupClassPermission groupClassPermission = new GroupClassPermission();
         groupClassPermission.setGroup(group);
@@ -131,5 +119,20 @@ public class GroupClassPermissionService extends BaseService<GroupClassPermissio
         groupClassPermission.setPermissions(permissionCollection.get());
 
         repository.save(groupClassPermission);
+    }
+
+    private void clearExistingPermission(Group group, PermissionCollection permissionCollection, Class<? extends BaseEntity> clazz) {
+        Optional<GroupClassPermission> existingPermission = findFor(clazz, group);
+
+        // Check if there is already an existing permission set on the entity
+        if (existingPermission.isPresent()) {
+            LOG.debug("Permission is already set for class {} and group {}: {}", clazz,
+                group, permissionCollection);
+
+            // Remove the existing one
+            repository.delete(existingPermission.get());
+
+            LOG.debug("Removed the permission");
+        }
     }
 }

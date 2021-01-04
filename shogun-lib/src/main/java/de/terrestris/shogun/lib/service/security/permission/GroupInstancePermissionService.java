@@ -13,6 +13,7 @@ import de.terrestris.shogun.lib.service.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -111,19 +112,7 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
             throw new RuntimeException("Could not find requested permission collection");
         }
 
-        Optional<GroupInstancePermission> existingPermissions = findFor(persistedEntity, group);
-
-        // Check if there is already an existing permission set on the entity
-        if (existingPermissions.isPresent()) {
-            LOG.debug("Permission is already set for entity {} and group {}: {}", persistedEntity,
-                group, permissionCollection.get());
-
-            // Remove the existing one
-            // TODO: deletion really needed ???
-            repository.delete(existingPermissions.get());
-
-            LOG.debug("Removed the permission");
-        }
+        clearExistingPermission(group, permissionCollection.get(), persistedEntity);
 
         GroupInstancePermission groupInstancePermission = new GroupInstancePermission();
         groupInstancePermission.setGroup(group);
@@ -131,6 +120,53 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
         groupInstancePermission.setPermissions(permissionCollection.get());
 
         repository.save(groupInstancePermission);
+    }
+
+    /**
+     * Set Permission for SHOGun group for multiple entities at once
+     * @param persistedEntityList A collection of entities to set permission for
+     * @param group The SHOGun group
+     * @param permissionCollectionType The permission collection type (e.g. READ, READ_WRITE)
+     */
+    public void setPermission(
+        List<? extends BaseEntity> persistedEntityList,
+        Group group,
+        PermissionCollectionType permissionCollectionType
+    ) {
+        Optional<PermissionCollection> permissionCollection = permissionCollectionRepository.findByName(permissionCollectionType);
+
+        if (permissionCollection.isEmpty()) {
+            throw new RuntimeException("Could not find requested permission collection");
+        }
+
+        List<GroupInstancePermission> groupInstancePermissionsToSave = new ArrayList<>();
+
+        persistedEntityList.forEach(e -> {
+            clearExistingPermission(group, permissionCollection.get(), e);
+            GroupInstancePermission groupInstancePermission = new GroupInstancePermission();
+            groupInstancePermission.setGroup(group);
+            groupInstancePermission.setEntityId(e.getId());
+            groupInstancePermission.setPermissions(permissionCollection.get());
+            groupInstancePermissionsToSave.add(groupInstancePermission);
+        });
+
+        repository.saveAll(groupInstancePermissionsToSave);
+    }
+
+    private void clearExistingPermission(Group group, PermissionCollection permissionCollection, BaseEntity entity) {
+        Optional<GroupInstancePermission> existingPermission = findFor(entity, group);
+
+        // Check if there is already an existing permission set on the entity
+        if (existingPermission.isPresent()) {
+            LOG.debug("Permission is already set for entity {} and group {}: {}", entity,
+                group, permissionCollection);
+
+            // Remove the existing one
+            // TODO: deletion really needed ???
+            repository.delete(existingPermission.get());
+
+            LOG.debug("Removed the permission");
+        }
     }
 
     public void deleteAllForEntity(BaseEntity persistedEntity) {
