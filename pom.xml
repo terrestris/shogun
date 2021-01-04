@@ -610,11 +610,6 @@
         <artifactId>flyway-core</artifactId>
         <version>${flyway.version}</version>
       </dependency>
-<!--      <dependency>-->
-<!--        <groupId>io.swagger.core.v3</groupId>-->
-<!--        <artifactId>swagger-annotations</artifactId>-->
-<!--        <version>${swagger-core-version}</version>-->
-<!--      </dependency>-->
 
       <dependency>
         <groupId>javax.annotation</groupId>
