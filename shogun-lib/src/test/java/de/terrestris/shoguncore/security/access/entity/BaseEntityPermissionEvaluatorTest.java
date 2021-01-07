@@ -1,19 +1,26 @@
 package de.terrestris.shoguncore.security.access.entity;
 
-import de.terrestris.shoguncore.enumeration.PermissionType;
-import de.terrestris.shoguncore.model.*;
-import de.terrestris.shoguncore.model.security.Identity;
-import de.terrestris.shoguncore.model.security.permission.PermissionCollection;
-import de.terrestris.shoguncore.service.security.IdentityService;
-import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-
-import java.util.*;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
+
+
+import de.terrestris.shoguncore.enumeration.PermissionType;
+import de.terrestris.shoguncore.model.BaseEntity;
+import de.terrestris.shoguncore.model.Group;
+import de.terrestris.shoguncore.model.User;
+import de.terrestris.shoguncore.model.security.Identity;
+import de.terrestris.shoguncore.model.security.permission.PermissionCollection;
+import de.terrestris.shoguncore.service.security.IdentityService;
+import de.terrestris.shoguncore.util.IdHelper;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 
 public abstract class BaseEntityPermissionEvaluatorTest<E extends BaseEntity> {
 
@@ -29,19 +36,19 @@ public abstract class BaseEntityPermissionEvaluatorTest<E extends BaseEntity> {
 
     protected BaseEntityPermissionEvaluatorTest(Class<E> entityClass,
             BaseEntityPermissionEvaluator<E> baseEntityPermissionEvaluator,
-            E entityToCheck) {
+            E entityToCheck) throws NoSuchFieldException {
         this.entityClass = entityClass;
         this.baseEntityPermissionEvaluator = baseEntityPermissionEvaluator;
         this.entityToCheck = entityToCheck;
 
-        this.entityToCheck.setId(123L);
+        IdHelper.setIdForEntity(this.entityToCheck, 123L);
     }
 
     @Test
-    public void hasPermission_shouldNeverGrantAnythingWithoutPermissions() {
+    public void hasPermission_shouldNeverGrantAnythingWithoutPermissions() throws NoSuchFieldException {
         final User user = new User();
         user.setUsername("Test user");
-        user.setId(1909L);
+        IdHelper.setIdForEntity(user, 1909L);
 
         Set<PermissionType> allPermissions = new HashSet<>(Arrays.asList(PermissionType.values()));
 
@@ -56,7 +63,7 @@ public abstract class BaseEntityPermissionEvaluatorTest<E extends BaseEntity> {
     public void hasPermission_shouldGrantPermissionOnSecuredObjectWithCorrectUserPermission() throws NoSuchFieldException, IllegalAccessException {
         final User user = new User();
         user.setUsername("Test user");
-        user.setId(1909L);
+        IdHelper.setIdForEntity(user, 1909L);
 
         Map<User, PermissionCollection> userPermissionsMap = new HashMap<>();
 
@@ -75,7 +82,7 @@ public abstract class BaseEntityPermissionEvaluatorTest<E extends BaseEntity> {
     public void hasPermission_shouldGrantPermissionOnSecuredObjectWithCorrectGroupPermission() throws NoSuchFieldException, IllegalAccessException {
         final User user = new User();
         user.setUsername("Test user");
-        user.setId(1909L);
+        IdHelper.setIdForEntity(user, 1909L);
 
         Group group = new Group();
         group.setName("Test group");
@@ -106,7 +113,7 @@ public abstract class BaseEntityPermissionEvaluatorTest<E extends BaseEntity> {
     public void hasPermission_shouldGrantAnyPermissionOnSecuredObjectWithUserAdminPermission() throws NoSuchFieldException, IllegalAccessException {
         final User user = new User();
         user.setUsername("Test user");
-        user.setId(1909L);
+        IdHelper.setIdForEntity(user, 1909L);
 
         Map<User, PermissionCollection> userPermissionsMap = new HashMap<>();
 
@@ -129,7 +136,7 @@ public abstract class BaseEntityPermissionEvaluatorTest<E extends BaseEntity> {
     public void hasPermission_shouldGrantAnyPermissionOnSecuredObjectWithUserGroupAdminPermission() throws NoSuchFieldException, IllegalAccessException {
         final User user = new User();
         user.setUsername("Test user");
-        user.setId(1909L);
+        IdHelper.setIdForEntity(user, 1909L);
 
         Group group = new Group();
         group.setName("Test group");

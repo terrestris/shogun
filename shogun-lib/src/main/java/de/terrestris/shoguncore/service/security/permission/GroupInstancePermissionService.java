@@ -61,6 +61,12 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
         // Get all groups of the user
         List<Group> groups = identityService.findAllGroupsFrom(user);
 
+        if (groups.size() > 1) {
+            LOG.warn("The given user is a member of multiple groups. If you encounter any " +
+                "errors or unexpected results, you may want to evaluate permissions via " +
+                "#findFor(BaseEntity entity, Group group, User user)");
+        }
+
         return repository.findOne(Specification.where(
                 GroupInstancePermissionSpecifications.hasEntity(entity)).and(
                 GroupInstancePermissionSpecifications.hasGroups(groups)

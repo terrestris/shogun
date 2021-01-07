@@ -1,9 +1,12 @@
 package de.terrestris.shoguncore.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.terrestris.shoguncore.model.BaseEntity;
 import de.terrestris.shoguncore.repository.BaseCrudRepository;
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +16,6 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
 
 public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpecificationExecutor<S>, S extends BaseEntity> {
 
@@ -51,7 +50,11 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
     public S update(Long id, S entity) throws IOException {
         Optional<S> persistedEntity = repository.findById(id);
 
-        JsonNode jsonObject = objectMapper.valueToTree(entity);
+        ObjectNode jsonObject = objectMapper.valueToTree(entity);
+
+        // Ensure the created timestamp will not be overridden.
+        jsonObject.put("created", persistedEntity.get().getCreated().toInstant().toString());
+
         S updatedEntity = objectMapper.readerForUpdating(persistedEntity.get()).readValue(jsonObject);
 
         return repository.save(updatedEntity);
