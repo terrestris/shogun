@@ -39,6 +39,9 @@ type Application {
 }
 
 type File {
+    id: ID
+    created: String
+    modified: String
     fileUuid: ID
     active: Boolean
     fileName: String
