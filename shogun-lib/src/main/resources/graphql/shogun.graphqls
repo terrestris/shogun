@@ -3,33 +3,71 @@ scalar Geometry
 
 type Query {
     allApplications: [Application]
-    applicationById(id: ID): Application
+    applicationById(id: Int): Application
 
     allFiles: [File]
-    fileById(id: ID): File
+    fileById(id: Int): File
 
     allGroups: [Group]
-    groupById(id: ID): Group
+    groupById(id: Int): Group
 
     allIdentities: [Identity]
-    identityById(id: ID): Identity
+    identityById(id: Int): Identity
 
     allImageFiles: [ImageFile]
-    imageFileById(id: ID): ImageFile
+    imageFileById(id: Int): ImageFile
 
     allLayers: [Layer]
-    layerById(id: ID): Layer
+    layerById(id: Int): Layer
 
     allRoles: [Role]
-    roleById(id: ID): Role
+    roleById(id: Int): Role
 
     allUsers: [User]
-    userById(id: ID): User
+    userById(id: Int): User
+}
+
+type Mutation {
+    createApplication(entity: MutateApplication): Application!
+    updateApplication(id: Int, entity: MutateApplication): Application!
+    deleteApplication(id: Int): Boolean
+
+    createGroup(entity: MutateGroup): Group!
+    updateGroup(id: Int, entity: MutateGroup): Group!
+    deleteGroup(id: Int): Boolean
+
+    createIdentity(entity: MutateIdentity): Identity!
+    updateIdentity(id: Int, entity: MutateIdentity): Identity!
+    deleteIdentity(id: Int): Boolean
+
+    createLayer(entity: MutateLayer): Layer!
+    updateLayer(id: Int, entity: MutateLayer): Layer!
+    deleteLayer(id: Int): Boolean
+
+    createRole(entity: MutateRole): Role!
+    updateRole(id: Int, entity: MutateRole): Role!
+    deleteRole(id: Int): Boolean
+
+    createUser(entity: MutateUser): User!
+    updateUser(id: Int, entity: MutateUser): User!
+    deleteUser(id: Int): Boolean
 }
 
 type Application {
     id: ID
+    created: String
+    modified: String
     name: String
+    i18n: JSON
+    stateOnly: Boolean
+    clientConfig: JSON
+    layerTree: JSON
+    layerConfig: JSON
+    toolConfig: JSON
+}
+
+input MutateApplication {
+    name: String!
     i18n: JSON
     stateOnly: Boolean
     clientConfig: JSON
@@ -50,14 +88,32 @@ type File {
 
 type Group {
     id: ID
+    created: String
+    modified: String
     name: String
+}
+
+input MutateGroup {
+    name: String
+}
+
+input ReferenceGroup {
+    id: ID
 }
 
 type Identity {
     id: ID
+    created: String
+    modified: String
     user: User
     group: Group
     role: Role
+}
+
+input MutateIdentity {
+    user: ReferenceUser!
+    group: ReferenceGroup
+    role: ReferenceRole
 }
 
 type ImageFile {
@@ -71,7 +127,17 @@ type ImageFile {
 
 type Layer {
     id: ID
+    created: String
+    modified: String
     name: String
+    clientConfig: JSON
+    sourceConfig: JSON
+    features: JSON
+    type: String
+}
+
+input MutateLayer {
+    name: String!
     clientConfig: JSON
     sourceConfig: JSON
     features: JSON
@@ -80,15 +146,41 @@ type Layer {
 
 type Role {
     id: ID
+    created: String
+    modified: String
     name: String
     description: String
 }
 
+input MutateRole {
+    name: String
+    description: String!
+}
+
+input ReferenceRole {
+    id: ID
+}
+
 type User {
     id: ID
+    created: String
+    modified: String
     username: String
     email: String
     enabled: Boolean
     details: JSON
     clientConfig: JSON
+}
+
+input MutateUser {
+    username: String!
+    email: String!
+    enabled: Boolean
+    details: JSON
+    clientConfig: JSON
+    password: String!
+}
+
+input ReferenceUser {
+    id: ID
 }
