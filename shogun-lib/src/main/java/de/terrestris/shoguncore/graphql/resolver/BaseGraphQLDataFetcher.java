@@ -58,14 +58,17 @@ public abstract class BaseGraphQLDataFetcher<E extends BaseEntity, S extends Bas
 
     public DataFetcher update() {
         return dataFetchingEnvironment -> {
-            Integer entityId = dataFetchingEnvironment
-                .getArgument("id");
+            Integer entityId = dataFetchingEnvironment.getArgument("id");
 
             LinkedHashMap<String, Object> updateEntity = dataFetchingEnvironment
                 .getArgument("entity");
 
-            // TODO Check if entity with id is available
-            // Optional<E> entity = this.service.findOne(entityId.longValue());
+             Optional<E> persistedEntity = this.service.findOne(entityId.longValue());
+
+            if (persistedEntity.isEmpty()) {
+                throw new EntityNotAvailableException(String.format("Entity with ID %s is not " +
+                    "available", entityId));
+            }
 
             updateEntity.put("id", entityId);
 
@@ -75,8 +78,7 @@ public abstract class BaseGraphQLDataFetcher<E extends BaseEntity, S extends Bas
             try {
                 updatedEntity = (E) this.service.update(entityId.longValue(), entity);
             } catch (IOException e) {
-                // TODO More logs (and compare to basecontroller)
-                log.error("Error while updating");
+                log.error("Error while updating entity with ID {}: {}", entityId, e.getMessage());
                 log.trace("Full stack trace: ", e);
             }
 
@@ -89,10 +91,15 @@ public abstract class BaseGraphQLDataFetcher<E extends BaseEntity, S extends Bas
             Integer entityId = dataFetchingEnvironment
                 .getArgument("id");
 
-            Optional<E> entity = this.service.findOne(entityId.longValue());
+            Optional<E> persistedEntity = this.service.findOne(entityId.longValue());
+
+            if (persistedEntity.isEmpty()) {
+                throw new EntityNotAvailableException(String.format("Entity with ID %s is not " +
+                    "available", entityId));
+            }
 
             try {
-                this.service.delete(entity.get());
+                this.service.delete(persistedEntity.get());
 
                 return true;
             } catch(Exception e) {
