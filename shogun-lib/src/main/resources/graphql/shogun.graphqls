@@ -2,12 +2,29 @@ scalar JSON
 scalar Geometry
 
 type Query {
-    applicationById(id: ID): Application
     allApplications: [Application]
-    layerById(id: ID): Layer
+    applicationById(id: ID): Application
+
+    allFiles: [File]
+    fileById(id: ID): File
+
+    allGroups: [Group]
+    groupById(id: ID): Group
+
+    allIdentities: [Identity]
+    identityById(id: ID): Identity
+
+    allImageFiles: [ImageFile]
+    imageFileById(id: ID): ImageFile
+
     allLayers: [Layer]
-    userById(id: ID): User
+    layerById(id: ID): Layer
+
+    allRoles: [Role]
+    roleById(id: ID): Role
+
     allUsers: [User]
+    userById(id: ID): User
 }
 
 type Application {
@@ -21,6 +38,34 @@ type Application {
     toolConfig: JSON
 }
 
+type File {
+    fileUuid: ID
+    active: Boolean
+    fileName: String
+    fileType: String
+}
+
+type Group {
+    id: ID
+    name: String
+}
+
+type Identity {
+    id: ID
+    user: User
+    group: Group
+    role: Role
+}
+
+type ImageFile {
+    fileUuid: ID
+    active: Boolean
+    fileName: String
+    fileType: String
+    width: Int
+    height: Int
+}
+
 type Layer {
     id: ID
     name: String
@@ -30,6 +75,12 @@ type Layer {
     type: String
 }
 
+type Role {
+    id: ID
+    name: String
+    description: String
+}
+
 type User {
     id: ID
     username: String
@@ -37,9 +88,4 @@ type User {
     enabled: Boolean
     details: JSON
     clientConfig: JSON
-}
-
-type Group {
-    id: ID
-    name: String
 }
