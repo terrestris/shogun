@@ -2,7 +2,7 @@ package de.terrestris.shoguncore.graphql;
 
 import com.google.common.io.Resources;
 import de.terrestris.shoguncore.annotation.GraphQLQuery;
-import de.terrestris.shoguncore.graphql.fetcher.BaseGraphQLDataFetcher;
+import de.terrestris.shoguncore.graphql.resolver.BaseGraphQLDataFetcher;
 import de.terrestris.shoguncore.graphql.scalar.GeometryScalar;
 import graphql.GraphQL;
 import graphql.scalars.ExtendedScalars;
@@ -122,6 +122,24 @@ public class GraphQLProvider {
             .dataFetcher(queryByIdName, dataFetcher.findOne()));
 
         log.debug("Added GraphQL query {}", queryByIdName);
+
+        String createName = String.format("create%s", simpleClassName);
+        typeBuilders.add(TypeRuntimeWiring.newTypeWiring("Mutation")
+            .dataFetcher(createName, dataFetcher.create()));
+
+        log.debug("Added GraphQL mutation {}", createName);
+
+        String updateName = String.format("update%s", simpleClassName);
+        typeBuilders.add(TypeRuntimeWiring.newTypeWiring("Mutation")
+            .dataFetcher(updateName, dataFetcher.update()));
+
+        log.debug("Added GraphQL mutation {}", updateName);
+
+        String deleteName = String.format("delete%s", simpleClassName);
+        typeBuilders.add(TypeRuntimeWiring.newTypeWiring("Mutation")
+            .dataFetcher(deleteName, dataFetcher.delete()));
+
+        log.debug("Added GraphQL mutation {}", deleteName);
     }
 
     private void addCustomTypes(List<TypeRuntimeWiring.Builder> typeBuilders, BaseGraphQLDataFetcher dataFetcher) {
