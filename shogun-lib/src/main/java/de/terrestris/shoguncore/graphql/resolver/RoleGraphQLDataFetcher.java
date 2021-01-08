@@ -1,4 +1,4 @@
-package de.terrestris.shoguncore.graphql.fetcher;
+package de.terrestris.shoguncore.graphql.resolver;
 
 import de.terrestris.shoguncore.model.Role;
 import de.terrestris.shoguncore.service.RoleService;

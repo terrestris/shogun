@@ -1,4 +1,4 @@
-package de.terrestris.shoguncore.graphql.fetcher;
+package de.terrestris.shoguncore.graphql.resolver;
 
 import de.terrestris.shoguncore.model.ImageFile;
 import de.terrestris.shoguncore.service.ImageFileService;
