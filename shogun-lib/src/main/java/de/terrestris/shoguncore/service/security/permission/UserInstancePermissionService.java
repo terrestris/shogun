@@ -11,7 +11,9 @@ import de.terrestris.shoguncore.security.SecurityContextUtil;
 import de.terrestris.shoguncore.service.BaseService;
 import de.terrestris.shoguncore.specification.security.permission.PermissionCollectionSpecification;
 import de.terrestris.shoguncore.specification.security.permission.UserInstancePermissionSpecifications;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -41,6 +43,50 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
                 UserInstancePermissionSpecifications.hasEntity(entity)).and(
                 UserInstancePermissionSpecifications.hasUser(user)
         ));
+    }
+
+    /**
+     * Returns the {@link UserInstancePermission} for the given query arguments.
+     *
+     * @param entity The entity to find the permission for.
+     * @param permissionCollectionType The permissionCollectionType to find the permission for.
+     * @return The (optional) permission.
+     */
+    public List<UserInstancePermission> findFor(BaseEntity entity, PermissionCollectionType permissionCollectionType) {
+
+        LOG.trace("Getting all user permissions for entity {} and permission collection type {}",
+            entity, permissionCollectionType);
+
+        List<UserInstancePermission> result = repository
+            .findByEntityAndPermissionCollectionType(entity, permissionCollectionType);
+
+        return result;
+    }
+
+    /**
+     * Returns the {@link User} that has the ADMIN permission on the given entity.
+     *
+     * @param entity The entity to find the owner for.
+     * @return The (optional) user.
+     */
+    public List<User> findOwner(BaseEntity entity) {
+
+        LOG.trace("Getting the owners of entity {}", entity);
+
+        List<UserInstancePermission> userInstancePermission =
+            this.findFor(entity, PermissionCollectionType.ADMIN);
+
+        if (userInstancePermission.isEmpty()) {
+            LOG.debug("No user instance permission candidate found.");
+
+            return null;
+        }
+
+        List<User> owners = userInstancePermission.stream()
+            .map(UserInstancePermission::getUser)
+            .collect(Collectors.toList());
+
+        return owners;
     }
 
     /**

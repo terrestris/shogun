@@ -93,6 +93,7 @@
     <commons.lang3.version>3.9</commons.lang3.version>
     <threetenbp.version>1.4.1</threetenbp.version>
     <com.sun.mail.version>1.6.2</com.sun.mail.version>
+    <evo-inflector.version>1.2.2</evo-inflector.version>
 
     <!-- Testing -->
     <junit.version>4.13</junit.version>
@@ -122,7 +123,6 @@
     <!-- GeoServer/Geodata -->
     <geoserver-manager.version>1.7.0</geoserver-manager.version>
     <jts.version>1.16.1</jts.version>
-
   </properties>
 
   <build>
@@ -429,6 +429,12 @@
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
         <version>${commons.lang3.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.atteo</groupId>
+        <artifactId>evo-inflector</artifactId>
+        <version>${evo-inflector.version}</version>
       </dependency>
 
       <!-- Testing -->
