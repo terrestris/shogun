@@ -1,8 +1,8 @@
-package de.terrestris.shoguncore.graphql.fetchers;
+package de.terrestris.shoguncore.graphql.fetcher;
 
 import de.terrestris.shoguncore.model.Group;
 import de.terrestris.shoguncore.service.GroupService;
 import org.springframework.stereotype.Component;
 
 @Component
-public class GroupGraphQLProvider extends BaseGraphQLDataFetcher<Group, GroupService> { }
+public class GroupGraphQLDataFetcher extends BaseGraphQLDataFetcher<Group, GroupService> { }

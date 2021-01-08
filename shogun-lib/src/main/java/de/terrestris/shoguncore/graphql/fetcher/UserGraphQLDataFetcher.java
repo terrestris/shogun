@@ -1,8 +1,8 @@
-package de.terrestris.shoguncore.graphql.fetchers;
+package de.terrestris.shoguncore.graphql.fetcher;
 
 import de.terrestris.shoguncore.model.User;
 import de.terrestris.shoguncore.service.UserService;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserGraphQLProvider extends BaseGraphQLDataFetcher<User, UserService> { }
+public class UserGraphQLDataFetcher extends BaseGraphQLDataFetcher<User, UserService> { }

@@ -1,4 +1,4 @@
-package de.terrestris.shoguncore.graphql.fetchers;
+package de.terrestris.shoguncore.graphql.fetcher;
 
 import de.terrestris.shoguncore.model.BaseEntity;
 import de.terrestris.shoguncore.service.BaseService;

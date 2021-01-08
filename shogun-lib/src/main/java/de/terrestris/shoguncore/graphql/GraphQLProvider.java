@@ -2,7 +2,7 @@ package de.terrestris.shoguncore.graphql;
 
 import com.google.common.io.Resources;
 import de.terrestris.shoguncore.annotation.GraphQLQuery;
-import de.terrestris.shoguncore.graphql.fetchers.BaseGraphQLDataFetcher;
+import de.terrestris.shoguncore.graphql.fetcher.BaseGraphQLDataFetcher;
 import de.terrestris.shoguncore.graphql.scalar.GeometryScalar;
 import graphql.GraphQL;
 import graphql.scalars.ExtendedScalars;
