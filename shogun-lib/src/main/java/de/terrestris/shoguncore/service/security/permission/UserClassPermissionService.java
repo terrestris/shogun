@@ -11,6 +11,7 @@ import de.terrestris.shoguncore.security.SecurityContextUtil;
 import de.terrestris.shoguncore.service.BaseService;
 import de.terrestris.shoguncore.specification.security.permission.PermissionCollectionSpecification;
 import de.terrestris.shoguncore.specification.security.permission.UserClassPermissionSpecifications;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -26,6 +27,21 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
     protected PermissionCollectionRepository permissionCollectionRepository;
 
     /**
+     * Returns all {@link UserClassPermission} for the given query arguments.
+     *
+     * @param user The user to find the permissions for.
+     * @return The permissions.
+     */
+    public List<UserClassPermission> findFor(User user) {
+
+        LOG.trace("Getting all user class permissions for user {}", user.getUsername());
+
+        return repository.findAll(Specification.where(
+            UserClassPermissionSpecifications.hasUser(user))
+        );
+    }
+
+    /**
      * Returns the {@link UserClassPermission} for the given query arguments.
      *
      * @param clazz The class to find the permission for.
@@ -34,7 +50,7 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
      */
     public Optional<UserClassPermission> findFor(Class<? extends BaseEntity> clazz, User user) {
 
-        LOG.trace("Getting all user class permissions for user {} and entity class {}",
+        LOG.trace("Getting the user class permission for user {} and entity class {}",
             user.getUsername(), clazz.getCanonicalName());
 
         return repository.findOne(Specification.where(

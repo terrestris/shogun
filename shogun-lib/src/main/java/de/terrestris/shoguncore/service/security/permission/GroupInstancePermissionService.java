@@ -28,6 +28,21 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
     protected PermissionCollectionRepository permissionCollectionRepository;
 
     /**
+     * Returns all {@link GroupInstancePermission} for the given query arguments.
+     *
+     * @param group The group to find the permissions for.
+     * @return The permissions.
+     */
+    public List<GroupInstancePermission> findFor(Group group) {
+
+        LOG.trace("Getting all group instance permissions for group {}", group.getName());
+
+        return repository.findAll(Specification.where(
+            GroupInstancePermissionSpecifications.hasGroup(group))
+        );
+    }
+
+    /**
      * Returns the {@link GroupInstancePermission} for the given query arguments.
      *
      * @param entity The entity to find the permission for.
@@ -36,7 +51,7 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
      */
     public Optional<GroupInstancePermission> findFor(BaseEntity entity, Group group) {
 
-        LOG.trace("Getting all group permissions for group {} and entity {}",
+        LOG.trace("Getting the group instance permission for group {} and entity {}",
             group.getName(), entity);
 
         return repository.findOne(Specification.where(
