@@ -1,6 +1,6 @@
 package de.terrestris.shogun.lib.model;
 
-import de.terrestris.shogun.lib.model.jsonb.application.ApplicationClientConfig;
+import de.terrestris.shogun.lib.model.jsonb.ApplicationClientConfig;
 import java.util.Locale;
 import java.util.Map;
 import javax.persistence.Basic;
