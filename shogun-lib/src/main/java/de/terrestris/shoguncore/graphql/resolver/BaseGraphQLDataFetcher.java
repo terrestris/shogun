@@ -9,6 +9,7 @@ import graphql.schema.DataFetcher;
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.extern.log4j.Log4j2;
@@ -40,6 +41,14 @@ public abstract class BaseGraphQLDataFetcher<E extends BaseEntity, S extends Bas
             }
 
             return persistedEntity;
+        };
+    }
+
+    public DataFetcher findAllByIds() {
+        return dataFetchingEnvironment -> {
+            List<Integer> entityIds = dataFetchingEnvironment.getArgument("ids");
+
+            return this.service.findAllById(entityIds);
         };
     }
 
