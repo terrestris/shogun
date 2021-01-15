@@ -31,6 +31,21 @@ public class GroupClassPermissionService extends BaseService<GroupClassPermissio
     IdentityService identityService;
 
     /**
+     * Returns all {@link GroupClassPermission} for the given query arguments.
+     *
+     * @param group The group to find the permissions for.
+     * @return The permissions.
+     */
+    public List<GroupClassPermission> findFor(Group group) {
+
+        LOG.trace("Getting all group class permissions for group {}", group.getName());
+
+        return repository.findAll(Specification.where(
+            GroupClassPermissionSpecifications.hasGroup(group)
+        ));
+    }
+
+    /**
      * Returns the {@link GroupClassPermission} for the given query arguments.
      *
      * @param clazz The class to find the permission for.
@@ -39,7 +54,7 @@ public class GroupClassPermissionService extends BaseService<GroupClassPermissio
      */
     public Optional<GroupClassPermission> findFor(Class<? extends BaseEntity> clazz, Group group) {
 
-        LOG.trace("Getting all group class permissions for group {} and entity class {}",
+        LOG.trace("Getting the group class permission for group {} and entity class {}",
             group.getName(), clazz.getCanonicalName());
 
         return repository.findOne(Specification.where(
@@ -58,7 +73,7 @@ public class GroupClassPermissionService extends BaseService<GroupClassPermissio
      */
     public Optional<GroupClassPermission> findFor(BaseEntity entity, Group group) {
 
-        LOG.trace("Getting all group class permissions for group {} and entity class {}",
+        LOG.trace("Getting the group class permission for group {} and entity class {}",
                 group.getName(), entity.getClass().getCanonicalName());
 
         return repository.findOne(Specification.where(
