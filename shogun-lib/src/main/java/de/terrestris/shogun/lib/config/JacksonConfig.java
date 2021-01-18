@@ -1,6 +1,7 @@
 package de.terrestris.shogun.lib.config;
 
 import com.bedatadriven.jackson.datatype.jts.JtsModule;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vladmihalcea.hibernate.type.util.ObjectMapperSupplier;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -15,6 +16,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
+import java.util.Set;
 
 @Configuration
 public class JacksonConfig implements ObjectMapperSupplier {
@@ -23,18 +25,18 @@ public class JacksonConfig implements ObjectMapperSupplier {
 
     @Bean
     public ObjectMapper objectMapper() {
-        this.init();
+        init();
         return mapper;
     }
 
     @Value("${shogun.srid:4326}")
-    protected int srid;
+    protected static int srid;
 
     @Value("${shogun.coordinatePrecisionScale:10}")
-    protected int coordinatePrecisionScale;
+    protected static int coordinatePrecisionScale;
 
     @Bean
-    public JtsModule jtsModule() {
+    public static JtsModule jtsModule() {
         GeometryFactory geomFactory = new GeometryFactory(new PrecisionModel(coordinatePrecisionScale), srid);
         return new JtsModule(geomFactory);
     }
@@ -45,20 +47,26 @@ public class JacksonConfig implements ObjectMapperSupplier {
     }
 
     @PostConstruct
-    private void init() {
+    public static void init() {
         if (mapper == null) {
-            mapper = new ObjectMapper();
+            mapper = new ObjectMapper().registerModule(jtsModule());
 
-            var reflections = new Reflections(new ConfigurationBuilder()
-                .setUrls(ClasspathHelper.forJavaClassPath())
-                .setScanners(new SubTypesScanner(),
-                    new TypeAnnotationsScanner()));
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-
-            for (var cl : reflections.getTypesAnnotatedWith(JsonSuperType.class)) {
+            for (var cl : findAnnotatedClasses()) {
                 var type = cl.getAnnotation(JsonSuperType.class).type();
                 mapper.addMixIn(type, cl);
             }
         }
     }
+
+    private static Set<Class<?>> findAnnotatedClasses() {
+        var reflections = new Reflections(new ConfigurationBuilder()
+            .setUrls(ClasspathHelper.forJavaClassPath())
+            .setScanners(new SubTypesScanner(),
+                new TypeAnnotationsScanner()));
+
+        return reflections.getTypesAnnotatedWith(JsonSuperType.class);
+    }
+
 }
