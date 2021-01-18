@@ -29,13 +29,6 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- SHOGun Config -->
-    <dependency>
-      <groupId>de.terrestris</groupId>
-      <artifactId>shogun-config</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
     <!-- Apache HTTP client -->
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
@@ -231,11 +224,12 @@
       <artifactId>HikariCP</artifactId>
       <scope>test</scope>
     </dependency>
-      <dependency>
-          <groupId>org.reflections</groupId>
-          <artifactId>reflections</artifactId>
-          <version>0.9.12</version>
-      </dependency>
+
+    <dependency>
+        <groupId>org.reflections</groupId>
+        <artifactId>reflections</artifactId>
+        <version>0.9.12</version>
+    </dependency>
   </dependencies>
 
 </project>
