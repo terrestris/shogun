@@ -35,10 +35,25 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
      */
     public List<GroupInstancePermission> findFor(Group group) {
 
-        LOG.trace("Getting all group instance permissions for group {}", group.getName());
+        LOG.trace("Getting all group instance permissions for group with ID {}", group.getId());
 
         return repository.findAll(Specification.where(
             GroupInstancePermissionSpecifications.hasGroup(group))
+        );
+    }
+
+    /**
+     * Returns all {@link GroupInstancePermission} for the given query arguments.
+     *
+     * @param entity The entity to find the permissions for.
+     * @return The permissions.
+     */
+    public List<GroupInstancePermission> findFor(BaseEntity entity) {
+
+        LOG.trace("Getting all group instance permissions for entity with ID {}", entity.getId());
+
+        return repository.findAll(Specification.where(
+            GroupInstancePermissionSpecifications.hasEntity(entity))
         );
     }
 
@@ -51,8 +66,8 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
      */
     public Optional<GroupInstancePermission> findFor(BaseEntity entity, Group group) {
 
-        LOG.trace("Getting the group instance permission for group {} and entity {}",
-            group.getName(), entity);
+        LOG.trace("Getting the group instance permission for group with ID {} and entity with " +
+                "ID {}", group.getId(), entity.getId());
 
         return repository.findOne(Specification.where(
                 GroupInstancePermissionSpecifications.hasEntity(entity)).and(
@@ -70,8 +85,8 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
      */
     public Optional<GroupInstancePermission> findFor(BaseEntity entity, User user) {
 
-        LOG.trace("Getting all group permissions for user {} and entity {}",
-            user.getUsername(), entity);
+        LOG.trace("Getting all group permissions for user with ID {} and entity with ID {}",
+            user.getId(), entity.getId());
 
         // Get all groups of the user
         List<Group> groups = identityService.findAllGroupsFrom(user);
@@ -99,8 +114,9 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
      */
     public Optional<GroupInstancePermission> findFor(BaseEntity entity, Group group, User user) {
 
-        LOG.trace("Getting all group instance permissions for user {} and entity {} in the " +
-            "context of group {}", user.getUsername(), entity, group);
+        LOG.trace("Getting all group instance permissions for user with ID {} and entity " +
+            "with ID {} in the context of group with ID {}", user.getId(), entity.getId(),
+            group.getId());
 
         boolean isUserMemberInGroup = identityService.isUserMemberInGroup(user, group);
 
@@ -177,8 +193,8 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
 
         // Check if there is already an existing permission set on the entity
         if (existingPermissions.isPresent()) {
-            LOG.debug("Permission is already set for entity {} and group {}: {}",
-                persistedEntity, group, permissionCollection.get());
+            LOG.debug("Permission is already set for entity with ID {} and group with ID {}: {}",
+                persistedEntity.getId(), group.getId(), permissionCollection.get());
 
             // Remove the existing one
             repository.delete(existingPermissions.get());

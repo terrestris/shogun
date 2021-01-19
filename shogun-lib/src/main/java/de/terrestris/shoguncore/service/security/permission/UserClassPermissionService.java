@@ -34,7 +34,7 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
      */
     public List<UserClassPermission> findFor(User user) {
 
-        LOG.trace("Getting all user class permissions for user {}", user.getUsername());
+        LOG.trace("Getting all user class permissions for user with ID {}", user.getId());
 
         return repository.findAll(Specification.where(
             UserClassPermissionSpecifications.hasUser(user))
@@ -50,8 +50,8 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
      */
     public Optional<UserClassPermission> findFor(Class<? extends BaseEntity> clazz, User user) {
 
-        LOG.trace("Getting the user class permission for user {} and entity class {}",
-            user.getUsername(), clazz.getCanonicalName());
+        LOG.trace("Getting the user class permission for user with ID {} and entity class {}",
+            user.getId(), clazz.getCanonicalName());
 
         return repository.findOne(Specification.where(
             UserClassPermissionSpecifications.hasEntity(clazz)).and(
@@ -69,8 +69,8 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
      */
     public Optional<UserClassPermission> findFor(BaseEntity entity, User user) {
 
-        LOG.trace("Getting all user class permissions for user {} and entity class {}",
-                user.getUsername(), entity.getClass().getCanonicalName());
+        LOG.trace("Getting all user class permissions for user with ID {} and entity class {}",
+                user.getId(), entity.getClass().getCanonicalName());
 
         return repository.findOne(Specification.where(
                 UserClassPermissionSpecifications.hasEntity(entity)).and(
@@ -128,8 +128,8 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
 
         // Check if there is already an existing permission set on the entity
         if (existingPermissions.isPresent()) {
-            LOG.debug("Permission is already set for clazz {} and user {}: {}",
-                clazz.getCanonicalName(), user, permissionCollection.get());
+            LOG.debug("Permission is already set for clazz {} and user with ID {}: {}",
+                clazz.getCanonicalName(), user.getId(), permissionCollection.get());
 
             // Remove the existing one
             repository.delete(existingPermissions.get());

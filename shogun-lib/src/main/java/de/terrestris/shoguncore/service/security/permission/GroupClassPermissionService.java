@@ -38,7 +38,7 @@ public class GroupClassPermissionService extends BaseService<GroupClassPermissio
      */
     public List<GroupClassPermission> findFor(Group group) {
 
-        LOG.trace("Getting all group class permissions for group {}", group.getName());
+        LOG.trace("Getting all group class permissions for group with ID {}", group.getId());
 
         return repository.findAll(Specification.where(
             GroupClassPermissionSpecifications.hasGroup(group)
@@ -54,8 +54,8 @@ public class GroupClassPermissionService extends BaseService<GroupClassPermissio
      */
     public Optional<GroupClassPermission> findFor(Class<? extends BaseEntity> clazz, Group group) {
 
-        LOG.trace("Getting the group class permission for group {} and entity class {}",
-            group.getName(), clazz.getCanonicalName());
+        LOG.trace("Getting the group class permission for group with ID {} and entity class",
+            group.getId(), clazz.getCanonicalName());
 
         return repository.findOne(Specification.where(
             GroupClassPermissionSpecifications.hasEntity(clazz)).and(
@@ -73,8 +73,8 @@ public class GroupClassPermissionService extends BaseService<GroupClassPermissio
      */
     public Optional<GroupClassPermission> findFor(BaseEntity entity, Group group) {
 
-        LOG.trace("Getting the group class permission for group {} and entity class {}",
-                group.getName(), entity.getClass().getCanonicalName());
+        LOG.trace("Getting the group class permission for group with ID {} and " +
+                "entity class {}", group.getId(), entity.getClass().getCanonicalName());
 
         return repository.findOne(Specification.where(
                 GroupClassPermissionSpecifications.hasEntity(entity)).and(
@@ -92,8 +92,8 @@ public class GroupClassPermissionService extends BaseService<GroupClassPermissio
      */
     public Optional<GroupClassPermission> findFor(BaseEntity entity, User user) {
 
-        LOG.trace("Getting all group class permissions for user {} and entity {}",
-            user.getUsername(), entity);
+        LOG.trace("Getting all group class permissions for user with ID {} and " +
+                "entity with ID {}", user.getId(), entity.getId());
 
         // Get all groups of the user
         List<Group> groups = identityService.findAllGroupsFrom(user);
@@ -120,8 +120,8 @@ public class GroupClassPermissionService extends BaseService<GroupClassPermissio
      */
     public Optional<GroupClassPermission> findFor(Class<? extends BaseEntity> clazz, User user) {
 
-        LOG.trace("Getting all group class permissions for user {} and entity class {}",
-            user.getUsername(), clazz.getCanonicalName());
+        LOG.trace("Getting all group class permissions for user with ID {} and entity class {}",
+            user.getId(), clazz.getCanonicalName());
 
         // Get all groups of the user
         List<Group> groups = identityService.findAllGroupsFrom(user);
@@ -149,8 +149,8 @@ public class GroupClassPermissionService extends BaseService<GroupClassPermissio
      */
     public Optional<GroupClassPermission> findFor(BaseEntity entity, Group group, User user) {
 
-        LOG.trace("Getting all group class permissions for user {} and entity {} in the " +
-            "context of group {}", user.getUsername(), entity, group);
+        LOG.trace("Getting all group class permissions for user with ID {} and entity with ID " +
+            "{} in the context of group with ID {}", user.getId(), entity.getId(), group.getId());
 
         boolean isUserMemberInGroup = identityService.isUserMemberInGroup(user, group);
 
@@ -227,8 +227,8 @@ public class GroupClassPermissionService extends BaseService<GroupClassPermissio
 
         // Check if there is already an existing permission set on the entity
         if (existingPermissions.isPresent()) {
-            LOG.debug("Permission is already set for class {} and group {}: {}", clazz,
-                group, permissionCollection.get());
+            LOG.debug("Permission is already set for class {} and group with ID {}: {}", clazz,
+                group.getId(), permissionCollection.get());
 
             // Remove the existing one
             repository.delete(existingPermissions.get());

@@ -35,7 +35,7 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
      */
     public List<UserInstancePermission> findFor(BaseEntity entity) {
 
-        LOG.trace("Getting all user instance permissions for entity {}", entity);
+        LOG.trace("Getting all user instance permissions for entity with ID {}", entity.getId());
 
         return repository.findAll(Specification.where(
             UserInstancePermissionSpecifications.hasEntity(entity))
@@ -50,7 +50,7 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
      */
     public List<UserInstancePermission> findFor(User user) {
 
-        LOG.trace("Getting all user instance permissions for user {}", user);
+        LOG.trace("Getting all user instance permissions for user with ID {}", user.getId());
 
         return repository.findAll(Specification.where(
             UserInstancePermissionSpecifications.hasUser(user))
@@ -66,8 +66,8 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
      */
     public Optional<UserInstancePermission> findFor(BaseEntity entity, User user) {
 
-        LOG.trace("Getting all user permissions for user {} and entity {}",
-            user.getUsername(), entity);
+        LOG.trace("Getting all user permissions for user with ID {} and entity with ID {}",
+            user.getId(), entity.getId());
 
         return repository.findOne(Specification.where(
                 UserInstancePermissionSpecifications.hasEntity(entity)).and(
@@ -84,8 +84,8 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
      */
     public List<UserInstancePermission> findFor(BaseEntity entity, PermissionCollectionType permissionCollectionType) {
 
-        LOG.trace("Getting all user permissions for entity {} and permission collection type {}",
-            entity, permissionCollectionType);
+        LOG.trace("Getting all user permissions for entity with ID {} and permission " +
+            "collection type {}", entity.getId(), permissionCollectionType);
 
         List<UserInstancePermission> result = repository
             .findByEntityAndPermissionCollectionType(entity, permissionCollectionType);
@@ -101,7 +101,7 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
      */
     public List<User> findOwner(BaseEntity entity) {
 
-        LOG.trace("Getting the owners of entity {}", entity);
+        LOG.trace("Getting the owners of entity with ID {}", entity.getId());
 
         List<UserInstancePermission> userInstancePermission =
             this.findFor(entity, PermissionCollectionType.ADMIN);
@@ -168,8 +168,8 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
 
         // Check if there is already an existing permission set on the entity
         if (existingPermissions.isPresent()) {
-            LOG.debug("Permission is already set for entity {} and user {}: {}",
-                persistedEntity, user, permissionCollection.get());
+            LOG.debug("Permission is already set for entity with ID {} and user {}: {}",
+                persistedEntity.getId(), user, permissionCollection.get());
 
             // Remove the existing one
             repository.delete(existingPermissions.get());
