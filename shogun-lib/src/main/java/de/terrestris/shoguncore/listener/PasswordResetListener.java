@@ -1,6 +1,7 @@
 package de.terrestris.shoguncore.listener;
 
-import de.terrestris.shoguncore.event.OnRegistrationCompleteEvent;
+import de.terrestris.shoguncore.event.OnPasswordResetCompleteEvent;
+import de.terrestris.shoguncore.event.OnPasswordResetRequestEvent;
 import de.terrestris.shoguncore.exception.MailException;
 import de.terrestris.shoguncore.model.User;
 import de.terrestris.shoguncore.service.UserService;
@@ -20,7 +21,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Component
-public class RegistrationListener {
+public class PasswordResetListener {
 
     private Logger LOG = LogManager.getLogger(getClass());
 
@@ -37,11 +38,11 @@ public class RegistrationListener {
     private Environment env;
 
     @EventListener
-    public void handleRegistrationEvent(OnRegistrationCompleteEvent event) {
-        this.handleConfirmRegistration(event);
+    public void handlePasswordResetEvent(OnPasswordResetRequestEvent event) {
+        this.handleConfirmPasswordReset(event);
     }
 
-    private void handleConfirmRegistration(final OnRegistrationCompleteEvent event) {
+    private void handleConfirmPasswordReset(final OnPasswordResetRequestEvent event) {
         final User user = event.getUser();
         final String token = UUID.randomUUID().toString();
 
@@ -50,17 +51,17 @@ public class RegistrationListener {
         LOG.info("Generated verification token for user " + user.getUsername());
 
         try {
-            final SimpleMailMessage email = constructRegistrationEmailMessage(event.getAppUrl(), user, token, event.getLocale());
+            final SimpleMailMessage email = constructPasswordResetEmailMessage(event.getAppUrl(), user, token, event.getLocale());
             mailSender.send(email);
         } catch (Exception e) {
             throw new MailException(e.getMessage());
         }
 
-        LOG.info("Successfully sent registration mail to user " + user.getEmail());
+        LOG.info("Successfully sent password reset mail to user " + user.getEmail());
     }
 
     /**
-     * Constructs a Registration Confirm Email based on the users' properties (name, language, etc.)
+     * Constructs a Reset password Confirm Email based on the users' properties (name, language, etc.)
      * for a given application URL
      *
      * @param appUrl Base URL of the application. Must be provided without a trailing slash. The confirm registration link is
@@ -70,18 +71,18 @@ public class RegistrationListener {
      * @return A SimpleMailMessage translated depending on the users' language containing the specified text and a
      * registration link.
      */
-    private SimpleMailMessage constructRegistrationEmailMessage(String appUrl, final User user,
+    private SimpleMailMessage constructPasswordResetEmailMessage(String appUrl, final User user,
                                                                 final String token, Locale locale) throws MessagingException {
         final String recipientAddress = user.getEmail();
-        final String subject = messages.getMessage("registration.email.subject", null, locale);
-        final String confirmationUrl = appUrl + "/users/confirm?token=" + token;
+        final String subject = messages.getMessage("passwordReset.email.subject", null, locale);
+        final String confirmationUrl = appUrl + "/users/password/resetPassword/confirm?token=" + token;
 
         String message = String.format("%s %s,%n%n",
-            messages.getMessage("registration.email.salutationPrefix", null, locale),
+            messages.getMessage("passwordReset.email.salutationPrefix", null, locale),
             user.getUsername()
         );
-        message += messages.getMessage("registration.email.infoSuccess", null, locale) + " ";
-        message += messages.getMessage("registration.email.linkText", null, locale);
+        message += messages.getMessage("passwordReset.email.infoSuccess", null, locale) + " ";
+        message += messages.getMessage("passwordReset.email.linkText", null, locale);
         message +=  " \r\n\r\n" + confirmationUrl;
 
         final SimpleMailMessage email = new SimpleMailMessage();
@@ -93,4 +94,6 @@ public class RegistrationListener {
         return email;
     }
 
+
 }
+

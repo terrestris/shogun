@@ -3,8 +3,10 @@ package de.terrestris.shoguncore.service;
 import de.terrestris.shoguncore.dto.PasswordChange;
 import de.terrestris.shoguncore.dto.RegisterUserDto;
 import de.terrestris.shoguncore.enumeration.PermissionCollectionType;
+import de.terrestris.shoguncore.event.OnPasswordResetCompleteEvent;
 import de.terrestris.shoguncore.event.OnRegistrationConfirmedEvent;
 import de.terrestris.shoguncore.exception.EmailExistsException;
+import de.terrestris.shoguncore.exception.MailException;
 import de.terrestris.shoguncore.model.Group;
 import de.terrestris.shoguncore.model.User;
 import de.terrestris.shoguncore.model.security.Identity;
@@ -20,16 +22,31 @@ import de.terrestris.shoguncore.service.security.IdentityService;
 import de.terrestris.shoguncore.service.security.permission.UserInstancePermissionService;
 import de.terrestris.shoguncore.specification.UserSpecification;
 import de.terrestris.shoguncore.specification.token.UserVerificationTokenSpecification;
+
+import java.net.URI;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.text.RandomStringGenerator;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
+import org.springframework.core.env.Environment;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.mail.MessagingException;
+
+import static de.terrestris.shoguncore.util.HttpUtil.getApplicationURIFromRequest;
 
 @Service
 public class UserService extends BaseService<UserRepository, User> {
@@ -60,6 +77,12 @@ public class UserService extends BaseService<UserRepository, User> {
 
     @Autowired
     protected MessageSource messageSource;
+
+    @Autowired
+    private JavaMailSender mailSender;
+
+    @Autowired
+    private Environment env;
 
     private static final String TOKEN_INVALID = "invalidToken";
     private static final String TOKEN_EXPIRED = "expired";
@@ -225,6 +248,15 @@ public class UserService extends BaseService<UserRepository, User> {
     }
 
     /**
+     * Find user by giving email
+     * @param email
+     * @return User
+     */
+    public User getUserByEmail(final String email){
+        return this.repository.findOne(UserSpecification.findByMail(email)).get();
+    }
+
+    /**
      * Creates an initial verification token for a new user.
      * @param user The user
      * @param token The token
@@ -240,7 +272,7 @@ public class UserService extends BaseService<UserRepository, User> {
      * @return Returns `TOKEN_INVALID` if the token can't be found, returns `TOKEN_EXPIRED` if the token has expired and
      * `TOKEN_VALID` otherwise.
      */
-    public String validateVerificationToken(String token) {
+    public String validateVerificationToken(String token, Locale locale, String module) {
         final UserVerificationToken verificationToken =
             userVerificationTokenRepository.findOne(UserVerificationTokenSpecification.findByToken(token)).orElseThrow();
 
@@ -258,18 +290,23 @@ public class UserService extends BaseService<UserRepository, User> {
             return TOKEN_EXPIRED;
         }
 
-        enableUser(user);
+        if (module.equals("userRegistration")) {
+            enableUser(user);
+            OnRegistrationConfirmedEvent event = new OnRegistrationConfirmedEvent(user);
+            eventPublisher.publishEvent(event);
+        }
+
+        if (module.equals("passwordReset")) {
+            completePasswordReset(user, locale);
+        }
 
         userVerificationTokenRepository.delete(verificationToken);
-
-        OnRegistrationConfirmedEvent event = new OnRegistrationConfirmedEvent(user);
-        eventPublisher.publishEvent(event);
 
         return TOKEN_VALID;
     }
 
     /**
-     *
+     * Logic to enable a user after successful registration
      * @param user
      */
     private void enableUser(User user) {
@@ -282,6 +319,19 @@ public class UserService extends BaseService<UserRepository, User> {
         repository.save(user);
     }
 
+    /**
+     * Logic to reset user password and attribute a new one
+     * @param user te user who requested the password change
+     * @return
+     */
+    public String resetUserPassword(User user){
+        String newPassword = generateRandomSpecialCharacters();
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        user.setPassword(encodedPassword);
+        repository.save(user);
+
+        return newPassword;
+    }
     /**
      * Changes user Password
      * @param user the user that is requesting a password change
@@ -302,5 +352,58 @@ public class UserService extends BaseService<UserRepository, User> {
         user.setPassword(encodedNewPassword);
 
         repository.save(user);
+    }
+
+    /**
+     * Generates a random string
+     * @return String
+     */
+    private String generateRandomSpecialCharacters() {
+        return RandomStringUtils.randomAlphanumeric(10);
+    }
+
+    /**
+     * Completes de user password request process
+     * @param user the user whose password is being reset
+     * @param locale the locale for translation purposes
+     */
+    public void completePasswordReset(final User user, final Locale locale) {
+        String password = resetUserPassword(user);
+
+        try {
+            final SimpleMailMessage email = constructPasswordResetConfirmedEmailMessage(user, password, locale);
+            mailSender.send(email);
+        } catch (Exception e) {
+            throw new MailException(e.getMessage());
+        }
+    }
+
+    /**
+     * Generates a simple email to send the confirmation the user has reset the password, with the new password
+     * @param user
+     * @param password
+     * @param locale
+     * @return SimpleMailMessage
+     */
+    private SimpleMailMessage constructPasswordResetConfirmedEmailMessage(final User user,
+                                                                          final String password, Locale locale){
+        final String recipientAddress = user.getEmail();
+        final String subject = messageSource.getMessage("passwordReset.email.confirmed.subject", null, locale);
+
+        String message = String.format("%s %s,%n%n",
+            messageSource.getMessage("passwordReset.email.confirmed.salutationPrefix", null, locale),
+            user.getUsername()
+        );
+        message += messageSource.getMessage("passwordReset.email.confirmed.infoSuccess", null, locale) + " ";
+        message += messageSource.getMessage("passwordReset.email.confirmed.newPassword", null, locale);
+        message += password;
+
+        final SimpleMailMessage email = new SimpleMailMessage();
+        email.setTo(recipientAddress);
+        email.setSubject(subject);
+        email.setText(message);
+        email.setFrom(Objects.requireNonNull(env.getProperty("support.email"), "Environment variable support.email not set"));
+
+        return email;
     }
 }
