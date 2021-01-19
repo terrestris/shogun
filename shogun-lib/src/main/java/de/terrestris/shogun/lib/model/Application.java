@@ -9,6 +9,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Table;
+
+import de.terrestris.shogun.lib.model.jsonb.LayerConfig;
+import de.terrestris.shogun.lib.model.jsonb.LayerToolConfig;
+import de.terrestris.shogun.lib.model.jsonb.LayerTree;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -55,18 +59,17 @@ public class Application extends BaseEntity {
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
-    private Map<String, Object> layerTree;
+    private LayerTree layerTree;
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
-    private Map<String, Object> layerConfig;
+    private LayerConfig layerConfig;
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
-    private Map<String, Object> toolConfig;
+    private LayerToolConfig toolConfig;
 }
-

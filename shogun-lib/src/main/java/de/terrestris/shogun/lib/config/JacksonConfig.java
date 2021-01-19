@@ -2,8 +2,11 @@ package de.terrestris.shogun.lib.config;
 
 import com.bedatadriven.jackson.datatype.jts.JtsModule;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.vladmihalcea.hibernate.type.util.ObjectMapperSupplier;
+import de.terrestris.shogun.lib.annotation.JsonSuperType;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.reflections.Reflections;
@@ -51,7 +54,9 @@ public class JacksonConfig implements ObjectMapperSupplier {
         if (mapper == null) {
             mapper = new ObjectMapper().registerModule(jtsModule());
 
+            mapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false);
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 
             for (var cl : findAnnotatedClasses()) {
                 var type = cl.getAnnotation(JsonSuperType.class).type();

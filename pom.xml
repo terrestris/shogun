@@ -636,6 +636,12 @@
         <artifactId>javax.mail</artifactId>
         <version>${com.sun.mail.version}</version>
       </dependency>
+
+      <dependency>
+        <groupId>org.reflections</groupId>
+        <artifactId>reflections</artifactId>
+        <version>0.9.12</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
