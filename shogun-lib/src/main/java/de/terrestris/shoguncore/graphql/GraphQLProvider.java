@@ -110,7 +110,7 @@ public class GraphQLProvider {
     private void addBaseTypes(List<TypeRuntimeWiring.Builder> typeBuilders, BaseGraphQLDataFetcher dataFetcher) {
         String simpleClassName = dataFetcher.getGenericSimpleClassName();
 
-        String queryAllName = String.format("all%s", (English.plural(simpleClassName)));
+        String queryAllName = String.format("all%s", English.plural(simpleClassName));
         typeBuilders.add(TypeRuntimeWiring.newTypeWiring("Query")
             .dataFetcher(queryAllName, dataFetcher.findAll()));
 
@@ -122,6 +122,12 @@ public class GraphQLProvider {
             .dataFetcher(queryByIdName, dataFetcher.findOne()));
 
         log.debug("Added GraphQL query {}", queryByIdName);
+
+        String queryAllByIdsName = String.format("all%sByIds", English.plural(simpleClassName));
+        typeBuilders.add(TypeRuntimeWiring.newTypeWiring("Query")
+            .dataFetcher(queryAllByIdsName, dataFetcher.findAllByIds()));
+
+        log.debug("Added GraphQL query {}", queryAllByIdsName);
 
         String createName = String.format("create%s", simpleClassName);
         typeBuilders.add(TypeRuntimeWiring.newTypeWiring("Mutation")
