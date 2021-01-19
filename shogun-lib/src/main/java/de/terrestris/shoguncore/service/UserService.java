@@ -10,8 +10,6 @@ import de.terrestris.shoguncore.exception.MailException;
 import de.terrestris.shoguncore.model.Group;
 import de.terrestris.shoguncore.model.User;
 import de.terrestris.shoguncore.model.security.Identity;
-import de.terrestris.shoguncore.model.security.permission.UserClassPermission;
-import de.terrestris.shoguncore.model.security.permission.UserInstancePermission;
 import de.terrestris.shoguncore.model.token.UserVerificationToken;
 import de.terrestris.shoguncore.repository.UserRepository;
 import de.terrestris.shoguncore.repository.security.IdentityRepository;
@@ -151,45 +149,27 @@ public class UserService extends BaseService<UserRepository, User> {
                 userVerificationTokens.size());
 
             // Delete the pending user verification tokens.
-            for (UserVerificationToken userVerificationToken : userVerificationTokens) {
-                userVerificationTokenRepository.delete(userVerificationToken);
+            userVerificationTokens.stream()
+                .forEach(userVerificationToken -> {
+                    userVerificationTokenRepository.delete(userVerificationToken);
 
-                LOG.trace("Successfully deleted user verification token with ID {}",
-                    userVerificationToken.getId());
-            }
+                    LOG.trace("Successfully deleted user verification token with ID {}",
+                        userVerificationToken.getId());
+                });
 
             LOG.trace("Deleting all user instance permissions");
 
-            // Get all user instance permissions.
-            List<UserInstancePermission> userInstancePermissions = userInstancePermissionRepository
-                .findAllByEntityId(user.getId());
+            // Delete all user instance permissions.
+            userInstancePermissionRepository.deleteAllByUserId(user.getId());
 
-            LOG.trace("Found {} user instance permissions to delete",
-                userInstancePermissions.size());
-
-            // Delete the user instance permissions.
-            for (UserInstancePermission userInstancePermission : userInstancePermissions) {
-                userInstancePermissionRepository.delete(userInstancePermission);
-
-                LOG.trace("Successfully deleted user instance permission with ID {}",
-                    userInstancePermission.getId());
-            }
+            LOG.trace("Successfully deleted all user instance permissions");
 
             LOG.trace("Deleting all user class permissions");
 
-            // Get all user class permissions.
-            List<UserClassPermission> userClassPermissions = userClassPermissionRepository
-                .findAllByUser(user);
+            // Delete all user class permissions.
+            userClassPermissionRepository.deleteAllByUserId(user.getId());
 
-            LOG.trace("Found {} user class permissions to delete", userClassPermissions.size());
-
-            // Delete the user class permissions.
-            for (UserClassPermission userClassPermission : userClassPermissions) {
-                userClassPermissionRepository.delete(userClassPermission);
-
-                LOG.trace("Successfully deleted user class permission with ID {}",
-                    userClassPermission.getId());
-            }
+            LOG.trace("Successfully deleted all user class permissions");
 
             LOG.trace("Removing the user from all its groups");
 
@@ -199,12 +179,13 @@ public class UserService extends BaseService<UserRepository, User> {
             LOG.trace("Found {} groups to remove the user from", groups.size());
 
             // Remove the user from all groups.
-            for (Group group : groups) {
-                identityService.removeUserFromGroup(user, group);
+            groups.stream()
+                .forEach(group -> {
+                    identityService.removeUserFromGroup(user, group);
 
-                LOG.trace("Successfully removed user from group with ID {}",
-                    group);
-            }
+                    LOG.trace("Successfully removed user from group with ID {}",
+                        group);
+                });
 
             LOG.trace("Deleting all identities");
 
@@ -214,12 +195,13 @@ public class UserService extends BaseService<UserRepository, User> {
             LOG.trace("Found {} identities to delete", identities.size());
 
             // Delete the identities.
-            for (Identity identity : identities) {
-                identityRepository.delete(identity);
+            identities.stream()
+                .forEach(identity -> {
+                    identityRepository.delete(identity);
 
-                LOG.trace("Successfully deleted identity with ID {}",
-                    identity.getId());
-            }
+                    LOG.trace("Successfully deleted identity with ID {}",
+                        identity.getId());
+                });
 
             LOG.trace("Deleting the user itself");
 
