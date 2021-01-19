@@ -78,13 +78,24 @@ public class UserService extends BaseService<UserRepository, User> {
 
         LOG.info("Registering a new user.");
 
-        User user = new User();
-        user.setUsername(registerUserData.getEmail());
-        user.setEmail(registerUserData.getEmail());
-        user.setEnabled(false);
-        user.setPassword(passwordEncoder.encode(registerUserData.getPassword()));
+        try {
+            User user = new User();
+            user.setUsername(registerUserData.getEmail());
+            user.setEmail(registerUserData.getEmail());
+            user.setEnabled(false);
+            user.setPassword(passwordEncoder.encode(registerUserData.getPassword()));
 
-        return repository.save(user);
+            User persistedUser = repository.save(user);
+
+            LOG.info("Successfully registered a new user.");
+
+            return persistedUser;
+        } catch (Exception e) {
+            LOG.error("Error while registering a new user: {}", e.getMessage());
+            LOG.trace("Full stack trace: ", e);
+
+            throw new RuntimeException();
+        }
     }
 
     /**
