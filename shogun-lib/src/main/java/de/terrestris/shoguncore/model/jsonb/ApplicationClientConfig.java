@@ -6,5 +6,4 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 public interface ApplicationClientConfig extends Serializable {
-
 }

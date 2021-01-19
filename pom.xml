@@ -94,6 +94,7 @@
     <threetenbp.version>1.4.1</threetenbp.version>
     <com.sun.mail.version>1.6.2</com.sun.mail.version>
     <evo-inflector.version>1.2.2</evo-inflector.version>
+    <reflections.version>0.9.12</reflections.version>
 
     <!-- Testing -->
     <junit.version>4.13</junit.version>
@@ -493,7 +494,7 @@
         <version>${springfox.version}</version>
       </dependency>
 
-      <!-- Flyway -->
+      <!-- Jupiter -->
       <dependency>
         <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter</artifactId>
@@ -582,6 +583,12 @@
         <groupId>org.locationtech.jts</groupId>
         <artifactId>jts-core</artifactId>
         <version>${jts.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.reflections</groupId>
+        <artifactId>reflections</artifactId>
+        <version>${reflections.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

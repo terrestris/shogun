@@ -2,7 +2,10 @@ package de.terrestris.shoguncore.model;
 
 import de.terrestris.shoguncore.model.jsonb.ApplicationClientConfig;
 import de.terrestris.shoguncore.model.jsonb.Locale;
-import java.util.Map;
+import de.terrestris.shoguncore.model.jsonb.ApplicationLayerConfig;
+import de.terrestris.shoguncore.model.jsonb.ApplicationToolConfig;
+import de.terrestris.shoguncore.model.jsonb.ApplicationLayerTree;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,7 +25,7 @@ import org.hibernate.annotations.Type;
 @EqualsAndHashCode(callSuper = true)
 public class Application extends BaseEntity {
 
-    @Column()
+    @Column
     private String name;
 
     @Type(type = "jsonb")
@@ -30,7 +33,7 @@ public class Application extends BaseEntity {
     @Basic(fetch = FetchType.LAZY)
     private Locale i18n;
 
-    @Column()
+    @Column
     private Boolean stateOnly;
 
     @Type(type = "jsonb")
@@ -41,17 +44,15 @@ public class Application extends BaseEntity {
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
-    private Map<String, Object> layerTree;
+    private ApplicationLayerTree layerTree;
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
-    private Map<String, Object> layerConfig;
+    private ApplicationLayerConfig layerConfig;
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
-    private Map<String, Object> toolConfig;
-
+    private ApplicationToolConfig toolConfig;
 }
-
