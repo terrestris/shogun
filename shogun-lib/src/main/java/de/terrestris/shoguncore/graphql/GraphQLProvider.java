@@ -123,11 +123,11 @@ public class GraphQLProvider {
 
         log.debug("Added GraphQL query {}", queryByIdName);
 
-        String queryAllByIdName = String.format("all%sByIds", English.plural(simpleClassName));
+        String queryAllByIdsName = String.format("all%sByIds", English.plural(simpleClassName));
         typeBuilders.add(TypeRuntimeWiring.newTypeWiring("Query")
-            .dataFetcher(queryByIdName, dataFetcher.findAllByIds()));
+            .dataFetcher(queryAllByIdsName, dataFetcher.findAllByIds()));
 
-        log.debug("Added GraphQL query {}", queryAllByIdName);
+        log.debug("Added GraphQL query {}", queryAllByIdsName);
 
         String createName = String.format("create%s", simpleClassName);
         typeBuilders.add(TypeRuntimeWiring.newTypeWiring("Mutation")
