@@ -248,7 +248,7 @@ public class UserService extends BaseService<UserRepository, User> {
     }
 
     /**
-     * Find user by giving email
+     * Find an user by the given email.
      * @param email
      * @return User
      */
