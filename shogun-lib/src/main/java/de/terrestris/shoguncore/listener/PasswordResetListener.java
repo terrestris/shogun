@@ -48,7 +48,7 @@ public class PasswordResetListener {
 
         userService.createVerificationTokenForUser(user, token);
 
-        LOG.info("Generated verification token for user " + user.getUsername());
+        LOG.info("Generated verification token for user {}", user.getUsername());
 
         try {
             final SimpleMailMessage email = constructPasswordResetEmailMessage(event.getAppUrl(), user, token, event.getLocale());
