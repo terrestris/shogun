@@ -1,17 +1,15 @@
 package de.terrestris.shoguncore.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.HashMap;
-import java.util.Map;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+
+import de.terrestris.shoguncore.model.jsonb.UserClientConfig;
+import de.terrestris.shoguncore.model.jsonb.UserDetails;
+import lombok.*;
 import org.hibernate.annotations.Type;
 
 @Entity(name = "users")
@@ -39,12 +37,12 @@ public class User extends BaseEntity {
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
-    private Map<String, Object> details = new HashMap<>();
+    private UserDetails details;
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
-    private Map<String, Object> clientConfig = new HashMap<>();
+    private UserClientConfig clientConfig;
 
 }
 
