@@ -6,6 +6,7 @@ import de.terrestris.shoguncore.model.security.permission.UserInstancePermission
 import de.terrestris.shoguncore.repository.BaseCrudRepository;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -21,4 +22,7 @@ public interface UserInstancePermissionRepository extends BaseCrudRepository<Use
         @Param("permissionCollectionType") PermissionCollectionType permissionCollectionType
     );
 
+    @Modifying
+    @Query(value = "DELETE FROM userinstancepermissions u WHERE u.user_id=:userId", nativeQuery = true)
+    void deleteAllByUserId(@Param("userId") Long userId);
 }
