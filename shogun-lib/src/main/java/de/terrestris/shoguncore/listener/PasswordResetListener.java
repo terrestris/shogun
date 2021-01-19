@@ -57,7 +57,7 @@ public class PasswordResetListener {
             throw new MailException(e.getMessage());
         }
 
-        LOG.info("Successfully sent password reset mail to user " + user.getEmail());
+        LOG.info("Successfully sent password reset mail to user {}", user.getEmail());
     }
 
     /**
