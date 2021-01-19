@@ -183,7 +183,7 @@ public class UserController extends BaseController<UserService, User> {
     }
 
     @PostMapping(value = "/resetPassword")
-    public void resetPassword(@RequestBody PasswordReset passwordResetBody, HttpServletRequest request){
+    public void resetPassword(@RequestBody PasswordReset passwordResetBody, HttpServletRequest request) {
         User user = service.getUserByEmail(passwordResetBody.getEmail());
 
         // publish event that sends the email with link to confirm password change
