@@ -3,7 +3,7 @@ package de.terrestris.shoguncore.service;
 import de.terrestris.shoguncore.dto.PasswordChange;
 import de.terrestris.shoguncore.dto.RegisterUserDto;
 import de.terrestris.shoguncore.enumeration.PermissionCollectionType;
-import de.terrestris.shoguncore.event.OnPasswordResetCompleteEvent;
+import de.terrestris.shoguncore.enumeration.UserVerificationTokenType;
 import de.terrestris.shoguncore.event.OnRegistrationConfirmedEvent;
 import de.terrestris.shoguncore.exception.EmailExistsException;
 import de.terrestris.shoguncore.exception.MailException;
@@ -23,15 +23,12 @@ import de.terrestris.shoguncore.service.security.permission.UserInstancePermissi
 import de.terrestris.shoguncore.specification.UserSpecification;
 import de.terrestris.shoguncore.specification.token.UserVerificationTokenSpecification;
 
-import java.net.URI;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.text.RandomStringGenerator;
-import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
@@ -44,9 +41,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.mail.MessagingException;
-
-import static de.terrestris.shoguncore.util.HttpUtil.getApplicationURIFromRequest;
+import static de.terrestris.shoguncore.enumeration.UserVerificationTokenType.PASSWORD_RESET;
+import static de.terrestris.shoguncore.enumeration.UserVerificationTokenType.USER_REGISTRATION;
 
 @Service
 public class UserService extends BaseService<UserRepository, User> {
@@ -272,7 +268,7 @@ public class UserService extends BaseService<UserRepository, User> {
      * @return Returns `TOKEN_INVALID` if the token can't be found, returns `TOKEN_EXPIRED` if the token has expired and
      * `TOKEN_VALID` otherwise.
      */
-    public String validateVerificationToken(String token, Locale locale, String module) {
+    public String validateVerificationToken(String token, Locale locale, UserVerificationTokenType module) {
         final UserVerificationToken verificationToken =
             userVerificationTokenRepository.findOne(UserVerificationTokenSpecification.findByToken(token)).orElseThrow();
 
@@ -290,13 +286,13 @@ public class UserService extends BaseService<UserRepository, User> {
             return TOKEN_EXPIRED;
         }
 
-        if (module.equals("userRegistration")) {
+        if (module.equals(USER_REGISTRATION)) {
             enableUser(user);
             OnRegistrationConfirmedEvent event = new OnRegistrationConfirmedEvent(user);
             eventPublisher.publishEvent(event);
         }
 
-        if (module.equals("passwordReset")) {
+        if (module.equals(PASSWORD_RESET)) {
             completePasswordReset(user, locale);
         }
 
