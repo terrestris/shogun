@@ -61,7 +61,7 @@ public class PasswordResetListener {
     }
 
     /**
-     * Constructs a Reset password Confirm Email based on the users' properties (name, language, etc.)
+     * Constructs a reset password confirm email based on the users' properties (name, language, etc.)
      * for a given application URL
      *
      * @param appUrl Base URL of the application. Must be provided without a trailing slash. The confirm registration link is
