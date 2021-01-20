@@ -33,16 +33,16 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
         return (List<S>) repository.findAll();
     }
 
-    @PostAuthorize("hasRole('ROLE_ADMIN') or hasPermission(returnObject.orElse(null), 'READ')")
+    @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
     @Transactional(readOnly = true)
-    public Optional<S> findOne(Long id) {
-        return repository.findById(id);
+    public List<S> findAllById(List<Long> id) {
+        return (List<S>) repository.findAllById(id);
     }
 
     @PostAuthorize("hasRole('ROLE_ADMIN') or hasPermission(returnObject.orElse(null), 'READ')")
     @Transactional(readOnly = true)
-    public List<S> findAllById(List<Long> id) {
-        return (List<S>) repository.findAllById(id);
+    public Optional<S> findOne(Long id) {
+        return repository.findById(id);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'CREATE')")
