@@ -31,7 +31,6 @@ public class ApplicationInfoService {
      * Returns general application information such as the version.
      *
      * @return a JSON string
-     * @throws IOException if the info could not be determined
      */
     public ApplicationInfo getApplicationInfo() {
         String name = "/META-INF/build-info.properties";
