@@ -18,7 +18,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 public class JacksonConfig implements ObjectMapperSupplier {
@@ -52,20 +53,44 @@ public class JacksonConfig implements ObjectMapperSupplier {
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 
-            for (var cl : findAnnotatedClasses()) {
-                var type = cl.getAnnotation(JsonSuperType.class).type();
-                mapper.addMixIn(type, cl);
+            for (var entry : findAnnotatedClasses().entrySet()) {
+                mapper.addMixIn(entry.getKey(), entry.getValue());
             }
         }
     }
 
-    private static Set<Class<?>> findAnnotatedClasses() {
+    private static Map<Class<?>, Class<?>> findAnnotatedClasses() {
         var reflections = new Reflections(new ConfigurationBuilder()
             .setUrls(ClasspathHelper.forJavaClassPath())
             .setScanners(new SubTypesScanner(),
                 new TypeAnnotationsScanner()));
 
-        return reflections.getTypesAnnotatedWith(JsonSuperType.class);
+        Map<Class<?>, Class<?>> implementers = new HashMap<>();
+
+        // this finds the type furthest down along the implementation chain
+        for (var cl : reflections.getTypesAnnotatedWith(JsonSuperType.class)) {
+            var annotation = cl.getAnnotation(JsonSuperType.class);
+            var superType = annotation.type();
+
+            if (!annotation.override() && !superType.isInterface()) {
+                throw new IllegalStateException("The super type " + superType.getName() + " is not an interface. " +
+                    "Set override to true if this is intended.");
+            }
+
+            if (!implementers.containsKey(superType)) {
+                implementers.put(superType, cl);
+            } else {
+                var previous = implementers.get(superType);
+                if (previous.isAssignableFrom(cl)) {
+                    implementers.put(superType, cl);
+                } else if (!cl.isAssignableFrom(previous)) {
+                    throw new IllegalStateException("Found 2 incompatible types that both want to deserialize to the type "
+                        + superType.getName() + ". Any existing type should get extended.");
+                }
+            }
+        }
+
+        return implementers;
     }
 
 }
