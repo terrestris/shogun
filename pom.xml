@@ -101,6 +101,7 @@
     <commons.io.version>2.8.0</commons.io.version>
     <threetenbp.version>1.4.1</threetenbp.version>
     <com.sun.mail.version>1.6.2</com.sun.mail.version>
+    <reflections.version>0.9.12</reflections.version>
 
     <!-- Testing -->
     <junit.version>4.13.1</junit.version>
@@ -640,7 +641,7 @@
       <dependency>
         <groupId>org.reflections</groupId>
         <artifactId>reflections</artifactId>
-        <version>0.9.12</version>
+        <version>${reflections.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
