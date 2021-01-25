@@ -33,15 +33,23 @@ public class JacksonConfig implements ObjectMapperSupplier {
         return mapper;
     }
 
+    private static int srid;
+
     @Value("${shogun.srid:4326}")
-    protected static int srid;
+    public void setSrid(int srid) {
+        JacksonConfig.srid = srid;
+    }
+
+    private static int coordinatePrecisionScale;
 
     @Value("${shogun.coordinatePrecisionScale:10}")
-    protected static int coordinatePrecisionScale;
+    public void setCoordinatePrecisionScale(int coordinatePrecisionScale) {
+        JacksonConfig.coordinatePrecisionScale = coordinatePrecisionScale;
+    }
 
     @Bean
     public static JtsModule jtsModule() {
-        GeometryFactory geomFactory = new GeometryFactory(new PrecisionModel(coordinatePrecisionScale), srid);
+        GeometryFactory geomFactory = new GeometryFactory(new PrecisionModel(JacksonConfig.coordinatePrecisionScale), JacksonConfig.srid);
         return new JtsModule(geomFactory);
     }
 
@@ -52,15 +60,15 @@ public class JacksonConfig implements ObjectMapperSupplier {
 
     @PostConstruct
     public static void init() {
-        if (mapper == null) {
-            mapper = new ObjectMapper().registerModule(jtsModule());
+        if (JacksonConfig.mapper == null) {
+            JacksonConfig.mapper = new ObjectMapper().registerModule(jtsModule());
 
-            mapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false);
-            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+            JacksonConfig.mapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false);
+            JacksonConfig.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            JacksonConfig.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 
             for (var entry : findAnnotatedClasses().entrySet()) {
-                mapper.addMixIn(entry.getKey(), entry.getValue());
+                JacksonConfig.mapper.addMixIn(entry.getKey(), entry.getValue());
             }
         }
     }
