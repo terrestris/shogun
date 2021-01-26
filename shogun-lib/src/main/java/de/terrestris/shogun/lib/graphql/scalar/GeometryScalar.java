@@ -2,7 +2,7 @@ package de.terrestris.shogun.lib.graphql.scalar;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.terrestris.shoguncore.config.JacksonConfig;
+import de.terrestris.shogun.lib.config.JacksonConfig;
 import graphql.language.StringValue;
 import graphql.schema.*;
 import org.apache.logging.log4j.LogManager;
