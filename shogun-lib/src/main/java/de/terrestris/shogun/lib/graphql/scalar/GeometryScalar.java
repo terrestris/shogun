@@ -1,8 +1,8 @@
 package de.terrestris.shogun.lib.graphql.scalar;
 
-import com.bedatadriven.jackson.datatype.jts.JtsModule;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.terrestris.shoguncore.config.JacksonConfig;
 import graphql.language.StringValue;
 import graphql.schema.*;
 import org.apache.logging.log4j.LogManager;
@@ -13,7 +13,14 @@ import java.util.HashMap;
 
 public class GeometryScalar {
 
-    protected static ObjectMapper objectMapper = (new ObjectMapper()).registerModule(new JtsModule());
+    protected static ObjectMapper _objectMapper;
+
+    protected static ObjectMapper objectMapper() {
+        if (_objectMapper == null) {
+            _objectMapper = (new JacksonConfig()).objectMapper();
+        }
+        return _objectMapper;
+    }
 
     protected final static Logger LOG = LogManager.getLogger(GeometryScalar.class);
 
@@ -43,7 +50,7 @@ public class GeometryScalar {
         if (isAGeometry(dataFetcherResult)) {
             Geometry geometry = (Geometry) dataFetcherResult;
             try {
-                return objectMapper.readValue(objectMapper.writeValueAsString(geometry), HashMap.class);
+                return objectMapper().readValue(objectMapper().writeValueAsString(geometry), HashMap.class);
             } catch (JsonProcessingException e) {
                 LOG.error("JSON Processing error while writing geometry for GraphQL");
                 LOG.trace("Full stack trace: ", e);
@@ -58,7 +65,7 @@ public class GeometryScalar {
         if (input instanceof String) {
             String geometryString = (String)input;
             try {
-                return objectMapper.readValue(geometryString, HashMap.class);
+                return objectMapper().readValue(geometryString, HashMap.class);
             } catch (JsonProcessingException e) {
                 throw new CoercingParseValueException("Unable to parse variable value " + input + " as a geometry");
             }
@@ -69,10 +76,8 @@ public class GeometryScalar {
     private static Object parseGeometryFromAstLiteral(Object input) {
         if (input instanceof StringValue) {
             String geometryString = ((StringValue) input).getValue();;
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.registerModule(new JtsModule());
             try {
-                return mapper.readValue(geometryString, HashMap.class);
+                return objectMapper().readValue(geometryString, HashMap.class);
             } catch (JsonProcessingException e) {
                 throw new CoercingParseValueException("Unable to parse value " + input + " as a geometry");
             }
