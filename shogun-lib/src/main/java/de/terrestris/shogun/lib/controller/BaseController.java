@@ -472,10 +472,9 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
             }
 
-            Optional<S> persistedEntity = service.findOne(entityId);
-
-            if (persistedEntity.isPresent()) {
-                S updatedEntity = service.updatePartial(entityId, values);
+            S persistedEntity = service.findOne(entityId).orElseThrow();
+            if (persistedEntity != null) {
+                S updatedEntity = service.updatePartial(entityId, persistedEntity, values);
 
                 LOG.trace("Successfully updated values for entity of type {} with ID {}",
                     getGenericClassName(), entityId);
