@@ -1,5 +1,6 @@
 package de.terrestris.shoguncore.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import java.io.Serializable;
 import java.util.Date;
