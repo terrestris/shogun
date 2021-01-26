@@ -1,6 +1,5 @@
 package de.terrestris.shoguncore.graphql.scalar;
 
-import com.bedatadriven.jackson.datatype.jts.JtsModule;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.terrestris.shoguncore.config.JacksonConfig;
@@ -62,10 +61,8 @@ public class DateTimeScalar {
     private static Object parseDateFromAstLiteral(Object dataFetcherResult) {
         if (dataFetcherResult instanceof StringValue) {
             String dateTimeString = ((StringValue) dataFetcherResult).getValue();;
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.registerModule(new JtsModule());
             try {
-                return mapper.readValue(dateTimeString, Date.class);
+                return objectMapper().readValue(dateTimeString, Date.class);
             } catch (JsonProcessingException e) {
                 throw new CoercingParseValueException("Unable to parse value " + dataFetcherResult + " as DateTime");
             }
