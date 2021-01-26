@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
+import java.text.SimpleDateFormat;
 
 @Configuration
 public class JacksonConfig implements ObjectMapperSupplier {
@@ -52,6 +53,7 @@ public class JacksonConfig implements ObjectMapperSupplier {
             mapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false);
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+            mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
 
             for (var entry : findAnnotatedClasses().entrySet()) {
                 mapper.addMixIn(entry.getKey(), entry.getValue());
