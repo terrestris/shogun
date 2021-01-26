@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 import com.vladmihalcea.hibernate.type.util.ObjectMapperSupplier;
 import de.terrestris.shoguncore.annotation.JsonSuperType;
 import org.locationtech.jts.geom.GeometryFactory;

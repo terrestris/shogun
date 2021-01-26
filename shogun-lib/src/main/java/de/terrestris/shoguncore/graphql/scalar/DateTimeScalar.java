@@ -1,10 +1,18 @@
 package de.terrestris.shoguncore.graphql.scalar;
 
+import com.bedatadriven.jackson.datatype.jts.JtsModule;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.terrestris.shoguncore.config.JacksonConfig;
+import graphql.language.StringValue;
 import graphql.schema.Coercing;
+import graphql.schema.CoercingParseLiteralException;
+import graphql.schema.CoercingParseValueException;
 import graphql.schema.GraphQLScalarType;
+import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
+
+import java.util.Date;
 
 @Log4j2
 public class DateTimeScalar {
@@ -22,11 +30,13 @@ public class DateTimeScalar {
             return serializeDate(dataFetcherResult);
         }
 
+        @SneakyThrows
         @Override
         public Object parseValue(Object input) {
             return parseDateFromVariable(input);
         }
 
+        @SneakyThrows
         @Override
         public Object parseLiteral(Object input) {
             return parseDateFromAstLiteral(input);
@@ -38,10 +48,28 @@ public class DateTimeScalar {
     }
 
     private static Object parseDateFromVariable(Object dataFetcherResult) {
-        return objectMapper().convertValue(dataFetcherResult, String.class);
+        if (dataFetcherResult instanceof String) {
+            String dateTimeString = (String)dataFetcherResult;
+            try {
+                return objectMapper().readValue(dateTimeString, Date.class);
+            } catch (JsonProcessingException e) {
+                throw new CoercingParseValueException("Unable to parse variable value " + dataFetcherResult + " as DateTime");
+            }
+        }
+        throw new CoercingParseValueException("Unable to parse variable value " + dataFetcherResult + " as DateTime");
     }
 
     private static Object parseDateFromAstLiteral(Object dataFetcherResult) {
-        return objectMapper().convertValue(dataFetcherResult, String.class);
+        if (dataFetcherResult instanceof StringValue) {
+            String dateTimeString = ((StringValue) dataFetcherResult).getValue();;
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JtsModule());
+            try {
+                return mapper.readValue(dateTimeString, Date.class);
+            } catch (JsonProcessingException e) {
+                throw new CoercingParseValueException("Unable to parse value " + dataFetcherResult + " as DateTime");
+            }
+        }
+        throw new CoercingParseLiteralException("Value is not DateTime");
     }
 }
