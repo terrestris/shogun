@@ -1,5 +1,6 @@
 scalar JSON
 scalar Geometry
+scalar DateTime
 
 type Query {
     allApplications: [Application]
@@ -63,8 +64,8 @@ type Mutation {
 
 type Application {
     id: ID
-    created: String
-    modified: String
+    created: DateTime
+    modified: DateTime
     name: String
     i18n: JSON
     stateOnly: Boolean
@@ -86,8 +87,8 @@ input MutateApplication {
 
 type File {
     id: ID
-    created: String
-    modified: String
+    created: DateTime
+    modified: DateTime
     fileUuid: ID
     active: Boolean
     fileName: String
@@ -96,8 +97,8 @@ type File {
 
 type Group {
     id: ID
-    created: String
-    modified: String
+    created: DateTime
+    modified: DateTime
     name: String
 }
 
@@ -111,8 +112,8 @@ input ReferenceGroup {
 
 type Identity {
     id: ID
-    created: String
-    modified: String
+    created: DateTime
+    modified: DateTime
     user: User
     group: Group
     role: Role
@@ -135,8 +136,8 @@ type ImageFile {
 
 type Layer {
     id: ID
-    created: String
-    modified: String
+    created: DateTime
+    modified: DateTime
     name: String
     clientConfig: JSON
     sourceConfig: JSON
@@ -154,8 +155,8 @@ input MutateLayer {
 
 type Role {
     id: ID
-    created: String
-    modified: String
+    created: DateTime
+    modified: DateTime
     name: String
     description: String
 }
@@ -171,8 +172,8 @@ input ReferenceRole {
 
 type User {
     id: ID
-    created: String
-    modified: String
+    created: DateTime
+    modified: DateTime
     username: String
     email: String
     enabled: Boolean

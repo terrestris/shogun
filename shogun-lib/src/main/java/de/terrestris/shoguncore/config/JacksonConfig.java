@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
+import java.text.SimpleDateFormat;
 import java.util.Set;
 
 @Configuration
@@ -51,6 +52,7 @@ public class JacksonConfig implements ObjectMapperSupplier {
             mapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false);
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+            mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
 
             for (var cl : findAnnotatedClasses()) {
                 var type = cl.getAnnotation(JsonSuperType.class).type();
