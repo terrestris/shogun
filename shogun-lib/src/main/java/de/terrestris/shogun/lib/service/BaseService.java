@@ -2,6 +2,7 @@ package de.terrestris.shogun.lib.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.repository.BaseCrudRepository;
@@ -92,7 +93,11 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
     public S update(Long id, S entity) throws IOException {
         Optional<S> persistedEntity = repository.findById(id);
 
-        JsonNode jsonObject = objectMapper.valueToTree(entity);
+        ObjectNode jsonObject = objectMapper.valueToTree(entity);
+
+        // Ensure the created timestamp will not be overridden.
+        jsonObject.put("created", persistedEntity.get().getCreated().toInstant().toString());
+
         S updatedEntity = objectMapper.readerForUpdating(persistedEntity.get()).readValue(jsonObject);
 
         return repository.save(updatedEntity);
