@@ -9,12 +9,11 @@ import de.terrestris.shogun.lib.repository.security.permission.PermissionCollect
 import de.terrestris.shogun.lib.repository.security.permission.UserInstancePermissionRepository;
 import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.service.BaseService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class UserInstancePermissionService extends BaseService<UserInstancePermissionRepository, UserInstancePermission> {
@@ -26,11 +25,11 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
     protected PermissionCollectionRepository permissionCollectionRepository;
 
     /**
-     * Get {@link UserInstancePermission} for SHOGun user
+     * Returns the {@link UserInstancePermission} for the given query arguments.
      *
-     * @param entity entity to get group permissions for
-     * @param user The SHOGun user
-     * @return
+     * @param entity The entity to find the permission for.
+     * @param user The user to find the permission for.
+     * @return The (optional) permission.
      */
     public Optional<UserInstancePermission> findFor(BaseEntity entity, User user) {
         LOG.trace("Getting all user permissions for user with Keycloak ID {} and " +
@@ -40,7 +39,7 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
     }
 
     /**
-     * Get all {@link UserInstancePermission} for the given entity.
+     * Returns all {@link UserInstancePermission} for the given entity.
      *
      * @param entity entity to get user permissions for
      * @return
@@ -52,21 +51,25 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
     }
 
     /**
-     * Return {@link PermissionCollection} for {@link BaseEntity} and {@link User}
-     * @param entity The entity to use in filter
-     * @param user The user to use in filter
-     * @return {@link PermissionCollection} for {@link BaseEntity} and {@link User}
+     * Returns the {@link PermissionCollection} for the given query arguments.
+     *
+     * @param entity The entity to find the collection for.
+     * @param user The user to find the collection for.
+     * @return The collection (may be empty).
      */
     public PermissionCollection findPermissionCollectionFor(BaseEntity entity, User user) {
         Optional<UserInstancePermission> userInstancePermission = this.findFor(entity, user);
 
-        if (userInstancePermission.isPresent()) {
-            return userInstancePermission.get().getPermissions();
-        }
-
-        return new PermissionCollection();
+        return getPermissionCollection(userInstancePermission);
     }
 
+    /**
+     * Sets the given {@link PermissionCollectionType} for the given entity and the currently
+     * logged in user.
+     *
+     * @param persistedEntity The entity to set the permission for.
+     * @param permissionCollectionType The permission to set.
+     */
     public void setPermission(BaseEntity persistedEntity, PermissionCollectionType permissionCollectionType) {
         Optional<User> activeUser = securityContextUtil.getUserBySession();
 
@@ -77,6 +80,13 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
         setPermission(persistedEntity, activeUser.get(), permissionCollectionType);
     }
 
+    /**
+     * Sets the given {@link PermissionCollectionType} for the given entity and user.
+     *
+     * @param persistedEntity The entity to set the permission for.
+     * @param user The user to set the permission for.
+     * @param permissionCollectionType The permission to set.
+     */
     public void setPermission(BaseEntity persistedEntity, User user, PermissionCollectionType permissionCollectionType) {
         Optional<PermissionCollection> permissionCollection = permissionCollectionRepository
             .findByName(permissionCollectionType);
@@ -96,10 +106,11 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
     }
 
     /**
-     * Set Permission for SHOGun user for multiple entities at once
-     * @param persistedEntityList A collection of entities to set permission for
-     * @param user The user
-     * @param permissionCollectionType The permission collection type (e.g. READ, READ_WRITE)
+     * Sets the given {@link PermissionCollectionType} for the given entities and user.
+     *
+     * @param persistedEntityList A collection of entities to set permission for.
+     * @param user The user to set the permission for.
+     * @param permissionCollectionType The permission collection type (e.g. READ, READ_WRITE) to set.
      */
     public void setPermission(
         List<? extends BaseEntity> persistedEntityList,
@@ -127,6 +138,13 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
         repository.saveAll(userInstancePermissionsToSave);
     }
 
+    /**
+     * Clears the given {@link PermissionCollection} for the given target combination.
+     *
+     * @param user The user to clear the permission for.
+     * @param permissionCollection The permission collection to clear.
+     * @param entity The entity to clear the permission for.
+     */
     private void clearExistingPermission(User user, PermissionCollection permissionCollection, BaseEntity entity) {
         Optional<UserInstancePermission> existingPermission = findFor(entity, user);
 
@@ -142,6 +160,11 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
         }
     }
 
+    /**
+     * Deletes all {@link UserInstancePermission} for the given entity.
+     *
+     * @param persistedEntity The entity to clear the permissions for.
+     */
     public void deleteAllForEntity(BaseEntity persistedEntity) {
         List<UserInstancePermission> userInstancePermissions = this.findFor(persistedEntity);
 
@@ -150,5 +173,21 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
         LOG.info("Successfully deleted all user instance permissions for entity " +
             "with ID {}", persistedEntity.getId());
         LOG.trace("Deleted entity: {}", persistedEntity);
+    }
+
+    /**
+     * Helper function to get the {@link PermissionCollection} from a given
+     * class permission. If no collection is available, it returns an empty
+     * list.
+     *
+     * @param classPermission The classPermission to get the permissions from.
+     * @return The collection (may be empty).
+     */
+    private PermissionCollection getPermissionCollection(Optional<UserInstancePermission> classPermission) {
+        if (classPermission.isPresent()) {
+            return classPermission.get().getPermissions();
+        }
+
+        return new PermissionCollection();
     }
 }

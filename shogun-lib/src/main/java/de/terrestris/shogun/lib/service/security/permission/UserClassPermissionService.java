@@ -23,10 +23,11 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
     protected PermissionCollectionRepository permissionCollectionRepository;
 
     /**
-     * Return {@link Optional} containing {@link UserClassPermission}
-     * @param clazz The class that should be checked
-     * @param user The user to check for
-     * @return {@link Optional} containing {@link UserClassPermission}
+     * Returns the {@link UserClassPermission} for the given query arguments.
+     *
+     * @param clazz The class to find the permission for.
+     * @param user The user to find the permission for.
+     * @return The (optional) permission.
      */
     public Optional<UserClassPermission> findFor(Class<? extends BaseEntity> clazz, User user) {
         String className = clazz.getCanonicalName();
@@ -38,26 +39,41 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
     }
 
     /**
-     * Return {@link Optional} containing {@link UserClassPermission}
-     * @param entity The entity whose class should be checked
-     * @param user The user to check for
-     * @return {@link Optional} containing {@link UserClassPermission}
+     * Returns the {@link UserClassPermission} for the given query arguments. Hereby
+     * the class of the given entity will be considered.
+     *
+     * @param entity The entity to find the permission for.
+     * @param user The user to find the permission for.
+     * @return The (optional) permission.
+     */
+    public Optional<UserClassPermission> findFor(BaseEntity entity, User user) {
+        LOG.trace("Getting all user class permissions for user with Keycloak ID {} and " +
+            "entity class {}", user.getKeycloakId(), entity.getClass().getCanonicalName());
+
+        return repository.findByUserIdAndClassName(user.getId(), entity.getClass().getCanonicalName());
+    }
+
+    /**
+     * Returns the {@link PermissionCollection} for the given query arguments. Hereby
+     * the class of the given entity and and all groups of the given user will be considered.
+     *
+     * @param entity The entity to find the collection for.
+     * @param user The user to find the collection for.
+     * @return The collection (may be empty).
      */
     public PermissionCollection findPermissionCollectionFor(BaseEntity entity, User user) {
         Class<? extends BaseEntity> clazz = entity.getClass();
         Optional<UserClassPermission> userClassPermission = this.findFor(clazz, user);
 
-        if (userClassPermission.isPresent()) {
-            return userClassPermission.get().getPermissions();
-        }
-
-        return new PermissionCollection();
+        return getPermissionCollection(userClassPermission);
     }
 
     /**
-     * Return {@link Optional} containing {@link UserClassPermission}
-     * @param clazz The class that should be checked
-     * @param permissionCollectionType The permissionCollectionType to set
+     * Sets the given {@link PermissionCollectionType} for the given class and the currently
+     * logged in user.
+     *
+     * @param clazz The class to set the permission for.
+     * @param permissionCollectionType The permission to set.
      */
     public void setPermission(Class<? extends BaseEntity> clazz, PermissionCollectionType permissionCollectionType) {
         Optional<User> activeUser = securityContextUtil.getUserBySession();
@@ -70,10 +86,11 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
     }
 
     /**
-     * Return {@link Optional} containing {@link UserClassPermission}
-     * @param clazz The class that should be set
-     * @param user The user to set permissions for
-     * @param permissionCollectionType The permissionCollectionType to set
+     * Sets the given {@link PermissionCollectionType} for the given class and user.
+     *
+     * @param clazz The class to find set the permission for.
+     * @param user The user to find set the permission for.
+     * @param permissionCollectionType The permission to set.
      */
     public void setPermission(Class<? extends BaseEntity> clazz, User user, PermissionCollectionType permissionCollectionType) {
         Optional<PermissionCollection> permissionCollection = permissionCollectionRepository
@@ -93,6 +110,13 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
         repository.save(userClassPermission);
     }
 
+    /**
+     * Clears the given {@link PermissionCollection} for the given target combination.
+     *
+     * @param user The user to clear the permission for.
+     * @param permissionCollection The permission collection to clear.
+     * @param clazz The class to clear the permission for.
+     */
     private void clearExistingPermission(User user, PermissionCollection permissionCollection, Class<? extends BaseEntity> clazz) {
         Optional<UserClassPermission> existingPermission = findFor(clazz, user);
 
@@ -106,5 +130,21 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
 
             LOG.debug("Removed the permission");
         }
+    }
+
+    /**
+     * Helper function to get the {@link PermissionCollection} from a given
+     * class permission. If no collection is available, it returns an empty
+     * list.
+     *
+     * @param classPermission The classPermission to get the permissions from.
+     * @return The collection (may be empty).
+     */
+    private PermissionCollection getPermissionCollection(Optional<UserClassPermission> classPermission) {
+        if (classPermission.isPresent()) {
+            return classPermission.get().getPermissions();
+        }
+
+        return new PermissionCollection();
     }
 }

@@ -6,16 +6,15 @@ import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.security.access.entity.BaseEntityPermissionEvaluator;
 import de.terrestris.shogun.lib.security.access.entity.DefaultPermissionEvaluator;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Optional;
 
 @Component
 public class BasePermissionEvaluator implements PermissionEvaluator {
@@ -31,7 +30,7 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
     @Autowired
     protected SecurityContextUtil securityContextUtil;
 
-    private static final String ANONYMOUS_USERNAME = "ANONYMOUS";
+    protected static final String ANONYMOUS_USERNAME = "ANONYMOUS";
 
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject,
@@ -39,10 +38,19 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
         LOG.trace("About to evaluate permission for user '{}' targetDomainObject '{}' " +
                 "and permissionObject '{}'", authentication, targetDomainObject, permissionObject);
 
-        if ((authentication == null) || (targetDomainObject == null) ||
-                !(permissionObject instanceof String) ||
-                (targetDomainObject instanceof Optional && ((Optional) targetDomainObject).isEmpty())) {
-            LOG.trace("Restricting access since not all input requirements are met.");
+        if (authentication == null) {
+            LOG.trace("Restricting access since no authentication is available.");
+            return false;
+        }
+
+        if (targetDomainObject == null || (targetDomainObject instanceof Optional &&
+            ((Optional) targetDomainObject).isEmpty())) {
+            LOG.trace("Restricting access since no target domain object is available.");
+            return false;
+        }
+
+        if (!(permissionObject instanceof String)) {
+            LOG.trace("Restricting access since no permission object is available.");
             return false;
         }
 
@@ -117,7 +125,7 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
      *
      * @return
      */
-    private BaseEntityPermissionEvaluator getPermissionEvaluatorForClass(String persistentObjectClass) {
+    protected BaseEntityPermissionEvaluator getPermissionEvaluatorForClass(String persistentObjectClass) {
 
         BaseEntityPermissionEvaluator entityPermissionEvaluator = permissionEvaluators.stream()
                 .filter(permissionEvaluator -> persistentObjectClass.equals(
