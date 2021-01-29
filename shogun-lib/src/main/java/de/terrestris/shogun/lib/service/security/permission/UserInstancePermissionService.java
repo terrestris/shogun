@@ -64,7 +64,7 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
             "collection type {}", entity.getId(), permissionCollectionType);
 
         List<UserInstancePermission> result = repository
-            .findByEntityAndPermissionCollectionType(entity, permissionCollectionType);
+            .findByEntityAndPermissionCollectionType(entity.getId(), permissionCollectionType);
 
         return result;
     }
