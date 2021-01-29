@@ -60,6 +60,11 @@ public class ApplicationInfoService {
                 }
                 applicationInfo.setAuthorities(simpleAuthList);
             }
+        } else {
+            List<String> grantedAuthorities = new ArrayList();
+            grantedAuthorities.add("ROLE_ANONYMOUS");
+
+            applicationInfo.setAuthorities(grantedAuthorities);
         }
 
         applicationInfo.setBuildTime(props.getProperty("build.time"));
