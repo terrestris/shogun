@@ -4,21 +4,27 @@ scalar Geometry
 type Query {
     allApplications: [Application]
     applicationById(id: Int): Application
+    allApplicationsByIds(ids: [Int]): [Application]
 
     allFiles: [File]
     fileById(id: Int): File
+    allFilesByIds(ids: [Int]): [File]
 
     allGroups: [Group]
     groupById(id: Int): Group
+    allGroupsByIds(ids: [Int]): [Group]
 
     allImageFiles: [ImageFile]
     imageFileById(id: Int): ImageFile
+    allImageFilesByIds(ids: [Int]): [ImageFile]
 
     allLayers: [Layer]
     layerById(id: Int): Layer
+    allLayersByIds(ids: [Int]): [Layer]
 
     allUsers: [User]
     userById(id: Int): User
+    allUsersByIds(ids: [Int]): [User]
 }
 
 type Mutation {
