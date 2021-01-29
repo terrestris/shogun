@@ -1,7 +1,9 @@
 package de.terrestris.shogun.lib.repository.security.permission;
 
+import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.model.security.permission.UserClassPermission;
 import de.terrestris.shogun.lib.repository.BaseCrudRepository;
+import java.util.List;
 import java.util.Optional;
 import javax.persistence.QueryHint;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -18,8 +20,10 @@ public interface UserClassPermissionRepository extends BaseCrudRepository<UserCl
     @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
     Optional<UserClassPermission> findByUserIdAndClassName(Long userId, String className);
 
+    @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
+    List<UserClassPermission> findAllByUser(User user);
+
     @Modifying
     @Query(value = "DELETE FROM userclasspermissions u WHERE u.user_id=:userId", nativeQuery = true)
     void deleteAllByUserId(@Param("userId") Long userId);
-
 }

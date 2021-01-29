@@ -1,7 +1,9 @@
 package de.terrestris.shogun.lib.repository.security.permission;
 
+import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.model.security.permission.GroupClassPermission;
 import de.terrestris.shogun.lib.repository.BaseCrudRepository;
+import java.util.List;
 import java.util.Optional;
 import javax.persistence.QueryHint;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -16,4 +18,6 @@ public interface GroupClassPermissionRepository extends BaseCrudRepository<Group
     @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
     Optional<GroupClassPermission> findByGroupIdAndClassName(Long groupId, String className);
 
+    @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
+    List<GroupClassPermission> findAllByGroup(Group group);
 }

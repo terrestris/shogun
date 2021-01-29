@@ -30,11 +30,24 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
     protected PermissionCollectionRepository permissionCollectionRepository;
 
     /**
-     * Returns the {@link GroupInstancePermission} for the given query arguments.
+     * Returns all {@link GroupInstancePermission} for the given query arguments.
      *
-     * @param entity The entity to find the permission for.
-     * @param group The group to find the permission for.
-     * @return The (optional) permission.
+     * @param group The group to find the permissions for.
+     * @return The permissions.
+     */
+    public List<GroupInstancePermission> findFor(Group group) {
+
+        LOG.trace("Getting all group instance permissions for group with Keycloak ID {}",
+            group.getKeycloakId());
+
+        return repository.findAllByGroup(group);
+    }
+
+    /**
+     * Get permission for SHOGun group
+     * @param entity entity to get group permissions for
+     * @param group The SHOGun group
+     * @return
      */
     public Optional<GroupInstancePermission> findFor(BaseEntity entity, Group group) {
         if (entity == null || group == null) {

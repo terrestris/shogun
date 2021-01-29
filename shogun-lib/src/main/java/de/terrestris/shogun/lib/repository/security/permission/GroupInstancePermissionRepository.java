@@ -1,5 +1,6 @@
 package de.terrestris.shogun.lib.repository.security.permission;
 
+import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.model.security.permission.GroupInstancePermission;
 import de.terrestris.shogun.lib.repository.BaseCrudRepository;
 import java.util.List;
@@ -19,5 +20,8 @@ public interface GroupInstancePermissionRepository extends BaseCrudRepository<Gr
 
     @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
     List<GroupInstancePermission> findByEntityId(Long entityId);
+
+    @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
+    List<GroupInstancePermission> findAllByGroup(Group group);
 
 }

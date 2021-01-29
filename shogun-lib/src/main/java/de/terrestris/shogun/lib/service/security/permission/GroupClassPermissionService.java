@@ -29,8 +29,21 @@ public class GroupClassPermissionService extends BaseService<GroupClassPermissio
     protected PermissionCollectionRepository permissionCollectionRepository;
 
     /**
-     * Returns the {@link GroupClassPermission} for the given query arguments. Hereby
-     * the class of the given entity will be considered.
+     * Returns all {@link GroupClassPermission} for the given query arguments.
+     *
+     * @param group The group to find the permissions for.
+     * @return The permissions.
+     */
+    public List<GroupClassPermission> findFor(Group group) {
+
+        LOG.trace("Getting all group class permissions for group with Keycloak ID {}",
+            group.getKeycloakId());
+
+        return repository.findAllByGroup(group);
+    }
+
+    /**
+     * Find group class permission for class of entity and given group
      *
      * @param entity The entity to find the permission for.
      * @param group The group to find the permission for.

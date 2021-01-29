@@ -26,7 +26,20 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
     protected PermissionCollectionRepository permissionCollectionRepository;
 
     /**
-     * Returns the {@link UserInstancePermission} for the given query arguments.
+     * Returns all {@link UserInstancePermission} for the given query arguments.
+     *
+     * @param user The user to find the permission for.
+     * @return The permissions
+     */
+    public List<UserInstancePermission> findFor(User user) {
+
+        LOG.trace("Getting all user instance permissions for user {}", user);
+
+        return repository.findAllByUser(user);
+    }
+
+    /**
+     * Get {@link UserInstancePermission} for SHOGun user
      *
      * @param entity The entity to find the permission for.
      * @param user The user to find the permission for.
