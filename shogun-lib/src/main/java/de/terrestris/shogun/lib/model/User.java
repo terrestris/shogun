@@ -1,7 +1,8 @@
 package de.terrestris.shogun.lib.model;
 
-import java.util.HashMap;
-import java.util.Map;
+import de.terrestris.shogun.lib.model.jsonb.UserClientConfig;
+import de.terrestris.shogun.lib.model.jsonb.UserDetails;
+
 import javax.persistence.Basic;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -44,13 +45,13 @@ public class User extends BaseEntity {
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
-    private Map<String, Object> details = new HashMap<>();
+    private UserDetails details;
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
-    private Map<String, Object> clientConfig = new HashMap<>();
+    private UserClientConfig clientConfig;
 
 }
 

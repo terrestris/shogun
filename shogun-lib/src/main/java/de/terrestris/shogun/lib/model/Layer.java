@@ -1,7 +1,11 @@
 package de.terrestris.shogun.lib.model;
 
 import de.terrestris.shogun.lib.enumeration.LayerType;
-import java.util.Map;
+import de.terrestris.shogun.lib.model.jsonb.LayerClientConfig;
+import de.terrestris.shogun.lib.model.jsonb.LayerFeature;
+import de.terrestris.shogun.lib.model.jsonb.LayerSourceConfig;
+
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -41,19 +45,19 @@ public class Layer extends BaseEntity {
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
-    private Map<String, Object> clientConfig;
+    private LayerClientConfig clientConfig;
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb", nullable = false)
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
-    private Map<String, Object> sourceConfig;
+    private LayerSourceConfig sourceConfig;
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
-    private Map<String, Object> features;
+    private List<LayerFeature> features;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
