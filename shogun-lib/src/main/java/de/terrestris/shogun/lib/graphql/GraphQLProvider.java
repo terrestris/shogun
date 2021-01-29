@@ -1,6 +1,8 @@
 package de.terrestris.shogun.lib.graphql;
 
 import com.google.common.io.Resources;
+import de.terrestris.shogun.lib.annotation.GraphQLQuery;
+import de.terrestris.shogun.lib.graphql.resolver.BaseGraphQLDataFetcher;
 import de.terrestris.shogun.lib.graphql.scalar.GeometryScalar;
 import graphql.GraphQL;
 import graphql.scalars.ExtendedScalars;
@@ -14,64 +16,46 @@ import graphql.schema.idl.TypeDefinitionRegistry;
 import graphql.schema.idl.TypeRuntimeWiring;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import javax.annotation.PostConstruct;
-
-import lombok.SneakyThrows;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.reflections.Reflections;
-import org.reflections.scanners.MethodAnnotationsScanner;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
+import lombok.extern.log4j.Log4j2;
+import org.atteo.evo.inflector.English;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
+@Log4j2
 @Component
 public class GraphQLProvider {
-
-    protected final Logger LOG = LogManager.getLogger(getClass());
 
     protected GraphQL graphQL;
 
     protected GraphQLSchema graphQLSchema;
 
     @Autowired
-    GraphQLDataFetchers graphQLDataFetchers;
-
-    @Autowired
     private ApplicationContext appContext;
 
+    @Autowired
+    private List<BaseGraphQLDataFetcher> dataFetchers;
+
     @Bean
-    @ConditionalOnProperty(
-        value="shogun.graphql.skipBean",
-        havingValue = "false",
-        matchIfMissing = true
-    )
     public GraphQL graphQL() {
         return graphQL;
     }
 
     @Bean
-    @ConditionalOnProperty(
-        value="shogun.graphql.skipBean",
-        havingValue = "false",
-        matchIfMissing = true
-    )
     public GraphQLSchema getSchema() {
         return this.graphQLSchema;
     }
 
     @PostConstruct
     public void init() throws IOException {
-        LOG.info("Initializing Graph QL");
+        log.info("Initializing Graph QL");
         this.buildSchema();
         this.graphQL = GraphQL.newGraphQL(graphQLSchema).build();
     }
@@ -85,8 +69,23 @@ public class GraphQLProvider {
     }
 
     protected String gatherResources() throws IOException {
-        URL url = Resources.getResource("graphql/shogun.graphqls");
-        String sdl = Resources.toString(url, StandardCharsets.UTF_8);
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        Resource[] resources = resolver.getResources("classpath*:graphql/*.graphqls");
+
+        List<String> resourceFiles = new ArrayList<>();
+
+        log.debug("Found {} GraphQL schema files", resources.length);
+
+        for (Resource resource : resources) {
+            log.debug("Found a GraphQL schema file in {}", resource.getURL());
+
+            resourceFiles.add(Resources.toString(resource.getURL(), StandardCharsets.UTF_8));
+        }
+
+        String sdl = String.join("\n", resourceFiles);
+
+        log.trace("Built the following GraphQL SDL:\n{}", sdl);
+
         return sdl;
     }
 
@@ -97,30 +96,69 @@ public class GraphQLProvider {
         return scalars;
     }
 
-    @SneakyThrows
     protected List<TypeRuntimeWiring.Builder> gatherTypes() {
-
-        Reflections reflections = new Reflections(new ConfigurationBuilder()
-            .setUrls(ClasspathHelper.forJavaClassPath())
-            .setScanners(new MethodAnnotationsScanner()));
-        Set<Method> methods = reflections.getMethodsAnnotatedWith(GraphQLQuery.class);
-
         List<TypeRuntimeWiring.Builder> typeBuilders = new ArrayList<>();
 
-        for (Method m: methods) {
-            var name = m.getAnnotation(GraphQLQuery.class).name();
-            if (name.isBlank()) {
-                name = m.getName();
-            }
-
-            var bean = appContext.getBean(m.getDeclaringClass());
-            typeBuilders.add(
-                TypeRuntimeWiring.newTypeWiring("Query")
-                    .dataFetcher(name, (DataFetcher) m.invoke(bean))
-            );
-        }
+        dataFetchers.forEach(dataFetcher -> {
+            this.addBaseTypes(typeBuilders, dataFetcher);
+            this.addCustomTypes(typeBuilders, dataFetcher);
+        });
 
         return typeBuilders;
+    }
+
+    private void addBaseTypes(List<TypeRuntimeWiring.Builder> typeBuilders, BaseGraphQLDataFetcher dataFetcher) {
+        String simpleClassName = dataFetcher.getGenericSimpleClassName();
+
+        String queryAllName = String.format("all%s", (English.plural(simpleClassName)));
+        typeBuilders.add(TypeRuntimeWiring.newTypeWiring("Query")
+            .dataFetcher(queryAllName, dataFetcher.findAll()));
+
+        log.debug("Added GraphQL query {}", queryAllName);
+
+        String queryByIdName = String.format("%sById",
+            Character.toLowerCase(simpleClassName.charAt(0)) + simpleClassName.substring(1));
+        typeBuilders.add(TypeRuntimeWiring.newTypeWiring("Query")
+            .dataFetcher(queryByIdName, dataFetcher.findOne()));
+
+        log.debug("Added GraphQL query {}", queryByIdName);
+
+        String createName = String.format("create%s", simpleClassName);
+        typeBuilders.add(TypeRuntimeWiring.newTypeWiring("Mutation")
+            .dataFetcher(createName, dataFetcher.create()));
+
+        log.debug("Added GraphQL mutation {}", createName);
+
+        String updateName = String.format("update%s", simpleClassName);
+        typeBuilders.add(TypeRuntimeWiring.newTypeWiring("Mutation")
+            .dataFetcher(updateName, dataFetcher.update()));
+
+        log.debug("Added GraphQL mutation {}", updateName);
+
+        String deleteName = String.format("delete%s", simpleClassName);
+        typeBuilders.add(TypeRuntimeWiring.newTypeWiring("Mutation")
+            .dataFetcher(deleteName, dataFetcher.delete()));
+
+        log.debug("Added GraphQL mutation {}", deleteName);
+    }
+
+    private void addCustomTypes(List<TypeRuntimeWiring.Builder> typeBuilders, BaseGraphQLDataFetcher dataFetcher) {
+        for (Method method : dataFetcher.getClass().getDeclaredMethods()) {
+            GraphQLQuery annotation = method.getAnnotation(GraphQLQuery.class);
+            if (annotation != null) {
+                String name = annotation.name();
+
+                try {
+                    typeBuilders.add(TypeRuntimeWiring.newTypeWiring("Query")
+                        .dataFetcher(name, (DataFetcher) method.invoke(dataFetcher)));
+
+                    log.debug("Added GraphQL query {}", name);
+                } catch (Exception e) {
+                    log.error("Error while adding GraphQL query {}", name);
+                    log.trace("Full stack trace ", e);
+                }
+            }
+        }
     }
 
     private RuntimeWiring buildWiring() {

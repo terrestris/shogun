@@ -2,18 +2,41 @@ scalar JSON
 scalar Geometry
 
 type Query {
-    applicationById(id: Int): Application
     allApplications: [Application]
-    layerById(id: Int): Layer
-    allLayers: [Layer]
-    userById(id: Int): User
-    allUsers: [User]
-    fileById(id: Int): File
-    fileByUuid(uuid: String): File
+    applicationById(id: Int): Application
+
     allFiles: [File]
-    imageFileByUuid(uuid: String): File
-    imageFileById(id: Int): ImageFile
+    fileById(id: Int): File
+
+    allGroups: [Group]
+    groupById(id: Int): Group
+
     allImageFiles: [ImageFile]
+    imageFileById(id: Int): ImageFile
+
+    allLayers: [Layer]
+    layerById(id: Int): Layer
+
+    allUsers: [User]
+    userById(id: Int): User
+}
+
+type Mutation {
+    createApplication(entity: MutateApplication): Application!
+    updateApplication(id: Int, entity: MutateApplication): Application!
+    deleteApplication(id: Int): Boolean
+
+    createGroup(entity: MutateGroup): Group!
+    updateGroup(id: Int, entity: MutateGroup): Group!
+    deleteGroup(id: Int): Boolean
+
+    createLayer(entity: MutateLayer): Layer!
+    updateLayer(id: Int, entity: MutateLayer): Layer!
+    deleteLayer(id: Int): Boolean
+
+    createUser(entity: MutateUser): User!
+    updateUser(id: Int, entity: MutateUser): User!
+    deleteUser(id: Int): Boolean
 }
 
 type Application {
@@ -29,44 +52,14 @@ type Application {
     toolConfig: JSON
 }
 
-type Layer {
-    id: Int
-    created: String
-    modified: String
-    name: String
+input MutateApplication {
+    name: String!
+    i18n: JSON
+    stateOnly: Boolean
     clientConfig: JSON
-    sourceConfig: JSON
-    features: JSON
-    type: String
-}
-
-type UserRepresentation  {
-    id: Int
-    created: String
-    modified: String
-    username: String
-    firstName: String
-    lastName: String
-    email: String
-}
-
-type User  {
-    id: Int
-    created: String
-    modified: String
-    username: String
-    email: String
-    enabled: Boolean
-    details: JSON
-    clientConfig: JSON
-    keycloakRepresentation: UserRepresentation
-}
-
-type UserGroup  {
-    id: Int
-    created: String
-    modified: String
-    name: String
+    layerTree: JSON
+    layerConfig: JSON
+    toolConfig: JSON
 }
 
 type File {
@@ -79,6 +72,26 @@ type File {
     fileType: String
 }
 
+type GroupRepresentation {
+    id: ID
+    name: String
+    path: String
+    realmRoles: [String]
+    subGroups: [GroupRepresentation]
+}
+
+type Group {
+    id: Int
+    created: String
+    modified: String
+    keycloakId: ID
+    keycloakRepresentation: GroupRepresentation
+}
+
+input MutateGroup {
+    keycloakId: ID
+}
+
 type ImageFile {
     id: Int
     created: String
@@ -89,4 +102,50 @@ type ImageFile {
     fileType: String
     width: Int
     height: Int
+}
+
+type Layer {
+    id: Int
+    created: String
+    modified: String
+    name: String
+    clientConfig: JSON
+    sourceConfig: JSON
+    features: JSON
+    type: String
+}
+
+input MutateLayer {
+    name: String!
+    clientConfig: JSON
+    sourceConfig: JSON
+    features: JSON
+    type: String
+}
+
+type UserRepresentation {
+    id: ID
+    username: String
+    enabled: Boolean
+    firstName: String
+    lastName: String
+    email: String
+    realmRoles: [String]
+    groups: [String]
+}
+
+type User {
+    id: Int
+    created: String
+    modified: String
+    keycloakId: ID
+    details: JSON
+    clientConfig: JSON
+    keycloakRepresentation: UserRepresentation
+}
+
+input MutateUser {
+    keycloakId: ID!
+    details: JSON
+    clientConfig: JSON
 }
