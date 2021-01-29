@@ -12,6 +12,7 @@ import de.terrestris.shogun.lib.service.BaseService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,11 +52,55 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
     }
 
     /**
-     * Returns the {@link PermissionCollection} for the given query arguments.
+     * Returns the {@link UserInstancePermission} for the given query arguments.
      *
-     * @param entity The entity to find the collection for.
-     * @param user The user to find the collection for.
-     * @return The collection (may be empty).
+     * @param entity The entity to find the permission for.
+     * @param permissionCollectionType The permissionCollectionType to find the permission for.
+     * @return The (optional) permission.
+     */
+    public List<UserInstancePermission> findFor(BaseEntity entity, PermissionCollectionType permissionCollectionType) {
+
+        LOG.trace("Getting all user permissions for entity with ID {} and permission " +
+            "collection type {}", entity.getId(), permissionCollectionType);
+
+        List<UserInstancePermission> result = repository
+            .findByEntityAndPermissionCollectionType(entity, permissionCollectionType);
+
+        return result;
+    }
+
+    /**
+     * Returns the {@link User} that has the ADMIN permission on the given entity.
+     *
+     * @param entity The entity to find the owner for.
+     * @return The (optional) user.
+     */
+    public List<User> findOwner(BaseEntity entity) {
+
+        LOG.trace("Getting the owners of entity with ID {}", entity.getId());
+
+        List<UserInstancePermission> userInstancePermission =
+            this.findFor(entity, PermissionCollectionType.ADMIN);
+
+        if (userInstancePermission.isEmpty()) {
+            LOG.debug("No user instance permission candidate found.");
+
+            return null;
+        }
+
+        List<User> owners = userInstancePermission.stream()
+            .map(UserInstancePermission::getUser)
+            .collect(Collectors.toList());
+
+        return owners;
+    }
+
+    /**
+     * Return {@link PermissionCollection} for {@link BaseEntity} and {@link User}
+     * @param entity The entity to use in filter
+     * @param user The user to use in filter
+     * @return {@link PermissionCollection} for {@link BaseEntity} and {@link User}
+>>>>>>> Add findOwner
      */
     public PermissionCollection findPermissionCollectionFor(BaseEntity entity, User user) {
         Optional<UserInstancePermission> userInstancePermission = this.findFor(entity, user);
