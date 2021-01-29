@@ -24,6 +24,7 @@ public class BootWebSecurityConfig extends WebSecurityConfig {
                 .antMatchers(
                     "/",
                     "/auth/**",
+                    "/info/**",
                     "/index.html",
                     // Enable anonymous access to swagger docs
                     "/swagger-ui.html",
