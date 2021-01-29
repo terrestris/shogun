@@ -37,3 +37,5 @@ Configuration:
         level: info
       - name: org.keycloak
         level: info
+      - name: org.reflections
+        level: error
