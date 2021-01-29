@@ -7,6 +7,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.vladmihalcea.hibernate.type.util.ObjectMapperSupplier;
 import de.terrestris.shogun.lib.annotation.JsonSuperType;
+import java.util.HashMap;
+import java.util.Map;
+import javax.annotation.PostConstruct;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.reflections.Reflections;
@@ -17,10 +20,6 @@ import org.reflections.util.ConfigurationBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.PostConstruct;
-import java.util.HashMap;
-import java.util.Map;
 
 @Configuration
 public class JacksonConfig implements ObjectMapperSupplier {
