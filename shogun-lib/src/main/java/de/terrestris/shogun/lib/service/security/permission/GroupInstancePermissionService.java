@@ -10,12 +10,11 @@ import de.terrestris.shogun.lib.repository.security.permission.GroupInstancePerm
 import de.terrestris.shogun.lib.repository.security.permission.PermissionCollectionRepository;
 import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.service.BaseService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class GroupInstancePermissionService extends BaseService<GroupInstancePermissionRepository, GroupInstancePermission> {
@@ -43,9 +42,10 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
             return Optional.empty();
         }
 
-        LOG.trace("Getting all group permissions for group {} and entity {}", group.getKeycloakId(), entity);
+        LOG.trace("Getting all group permissions for group with Keycloak ID {} and " +
+            "entity with ID {}", group.getKeycloakId(), entity.getId());
 
-        return repository.findByGroupIdAndEntityId(group.getId(), entity.getId()); // TODO: !
+        return repository.findByGroupIdAndEntityId(group.getId(), entity.getId());
     }
 
 
@@ -56,7 +56,7 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
      * @return
      */
     public List<GroupInstancePermission> findFor(BaseEntity entity) {
-        LOG.trace("Getting all group permissions for entity {}", entity);
+        LOG.trace("Getting all group permissions for entity with ID {}", entity.getId());
 
         return repository.findByEntityId(entity.getId());
     }
@@ -68,12 +68,15 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
      * @return
      */
     public Optional<GroupInstancePermission> findFor(BaseEntity entity, User user) {
-        LOG.trace("Getting all group permissions for user {} and entity {}", user.getKeycloakId(), entity);
+        LOG.trace("Getting all group permissions for user with Keycloak ID {} and " +
+            "entity with ID {}", user.getKeycloakId(), entity.getId());
+
         // Get all groups of the user from Keycloak
         List<Group> groups = securityContextUtil.getGroupsForUser(user);
         Optional<GroupInstancePermission> gip = Optional.empty();
         for (Group g : groups) {
-            Optional<GroupInstancePermission> permissionsForGroup = repository.findByGroupIdAndEntityId(g.getId(), entity.getId());
+            Optional<GroupInstancePermission> permissionsForGroup = repository
+                .findByGroupIdAndEntityId(g.getId(), entity.getId());
             if (permissionsForGroup.isPresent()) {
                 gip = permissionsForGroup;
                 break;
@@ -158,8 +161,8 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
 
         // Check if there is already an existing permission set on the entity
         if (existingPermission.isPresent()) {
-            LOG.debug("Permission is already set for entity {} and group {}: {}", entity,
-                group, permissionCollection);
+            LOG.debug("Permission is already set for entity with ID {} and group with " +
+                "Keycloak ID {}: {}", entity.getId(), group.getKeycloakId(), permissionCollection);
 
             // Remove the existing one
             // TODO: deletion really needed ???
@@ -174,7 +177,8 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
 
         repository.deleteAll(groupInstancePermissions);
 
-        LOG.info("Successfully deleted all group instance permissions for entity with id {}", persistedEntity.getId());
+        LOG.info("Successfully deleted all group instance permissions for entity " +
+            "with ID {}", persistedEntity.getId());
         LOG.trace("Deleted entity: {}", persistedEntity);
     }
 }

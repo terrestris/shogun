@@ -9,10 +9,9 @@ import de.terrestris.shogun.lib.repository.security.permission.PermissionCollect
 import de.terrestris.shogun.lib.repository.security.permission.UserClassPermissionRepository;
 import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.service.BaseService;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class UserClassPermissionService extends BaseService<UserClassPermissionRepository, UserClassPermission> {
@@ -31,8 +30,9 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
      */
     public Optional<UserClassPermission> findFor(Class<? extends BaseEntity> clazz, User user) {
         String className = clazz.getCanonicalName();
-        LOG.trace("Getting all user class permissions for user {} and entity class {}",
-            user.getKeycloakId(), className);
+
+        LOG.trace("Getting all user class permissions for user with Keycloak ID {} and " +
+            "entity class {}", user.getKeycloakId(), className);
 
         return repository.findByUserIdAndClassName(user.getId(), className);
     }
@@ -76,7 +76,8 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
      * @param permissionCollectionType The permissionCollectionType to set
      */
     public void setPermission(Class<? extends BaseEntity> clazz, User user, PermissionCollectionType permissionCollectionType) {
-        Optional<PermissionCollection> permissionCollection = permissionCollectionRepository.findByName(permissionCollectionType);
+        Optional<PermissionCollection> permissionCollection = permissionCollectionRepository
+            .findByName(permissionCollectionType);
 
         if (permissionCollection.isEmpty()) {
             throw new RuntimeException("Could not find requested permission collection");
@@ -97,8 +98,8 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
 
         // Check if there is already an existing permission set on the entity
         if (existingPermission.isPresent()) {
-            LOG.debug("Permission is already set for clazz {} and user {}: {}", clazz.getCanonicalName(),
-                user, permissionCollection);
+            LOG.debug("Permission is already set for clazz {} and user with " +
+                "Keycloak ID {}: {}", clazz.getCanonicalName(), user, permissionCollection);
 
             // Remove the existing one
             repository.delete(existingPermission.get());

@@ -33,7 +33,9 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
      * @return
      */
     public Optional<UserInstancePermission> findFor(BaseEntity entity, User user) {
-        LOG.trace("Getting all user permissions for user {} and entity {}", user.getKeycloakId(), entity);
+        LOG.trace("Getting all user permissions for user with Keycloak ID {} and " +
+            "entity with ID {}", user.getKeycloakId(), entity);
+
         return repository.findByUserIdAndEntityId(user.getId(), entity.getId());
     }
 
@@ -44,7 +46,7 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
      * @return
      */
     public List<UserInstancePermission> findFor(BaseEntity entity) {
-        LOG.trace("Getting all user permissions for entity {}", entity);
+        LOG.trace("Getting all user permissions for entity with ID {}", entity.getId());
 
         return repository.findByEntityId(entity.getId());
     }
@@ -76,7 +78,8 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
     }
 
     public void setPermission(BaseEntity persistedEntity, User user, PermissionCollectionType permissionCollectionType) {
-        Optional<PermissionCollection> permissionCollection = permissionCollectionRepository.findByName(permissionCollectionType);
+        Optional<PermissionCollection> permissionCollection = permissionCollectionRepository
+            .findByName(permissionCollectionType);
 
         if (permissionCollection.isEmpty()) {
             throw new RuntimeException("Could not find requested permission collection");
@@ -103,7 +106,8 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
         User user,
         PermissionCollectionType permissionCollectionType
     ) {
-        Optional<PermissionCollection> permissionCollection = permissionCollectionRepository.findByName(permissionCollectionType);
+        Optional<PermissionCollection> permissionCollection = permissionCollectionRepository
+            .findByName(permissionCollectionType);
 
         if (permissionCollection.isEmpty()) {
             throw new RuntimeException("Could not find requested permission collection");
@@ -128,8 +132,8 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
 
         // Check if there is already an existing permission set on the entity
         if (existingPermission.isPresent()) {
-            LOG.debug("Permission is already set for entity {} and user {}: {}", entity,
-                user, permissionCollection);
+            LOG.debug("Permission is already set for entity with ID {} and user with " +
+                "Keycloak ID {}: {}", entity.getId(), user.getKeycloakId(), permissionCollection);
 
             // Remove the existing one
             repository.delete(existingPermission.get());
@@ -143,7 +147,8 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
 
         repository.deleteAll(userInstancePermissions);
 
-        LOG.info("Successfully deleted all user instance permissions for entity with id {}", persistedEntity.getId());
+        LOG.info("Successfully deleted all user instance permissions for entity " +
+            "with ID {}", persistedEntity.getId());
         LOG.trace("Deleted entity: {}", persistedEntity);
     }
 }
