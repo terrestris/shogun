@@ -60,6 +60,12 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
         return repository.findById(id);
     }
 
+    @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
+    @Transactional(readOnly = true)
+    public List<S> findAllById(List<Long> id) {
+        return (List<S>) repository.findAllById(id);
+    }
+
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'READ')")
     @Transactional(readOnly = true)
     public Revisions<Integer, S> findRevisions(S entity) {
