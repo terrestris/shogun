@@ -105,7 +105,7 @@
     <!-- Testing -->
     <junit.version>4.13.1</junit.version>
     <hamcrest.version>2.2</hamcrest.version>
-    <mockito.version>3.7.0</mockito.version>
+    <mockito.version>3.7.7</mockito.version>
     <testcontainers.version>1.15.1</testcontainers.version>
     <junit.jupiter.version>5.7.0</junit.jupiter.version>
     <jaxb.version>2.3.1</jaxb.version>
