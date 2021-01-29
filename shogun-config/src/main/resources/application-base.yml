@@ -94,6 +94,26 @@ keycloakauth:
   master-realm: master
   admin-client: admin-cli
 
+controller:
+  applications:
+    enabled: true
+  auth:
+    enabled: true
+  cache:
+    enabled: true
+  files:
+    enabled: true
+  groups:
+    enabled: true
+  imagefiles:
+    enabled: true
+  info:
+    enabled: true
+  layers:
+    enabled: true
+  users:
+    enabled: true
+
 upload:
   file:
     supportedContentTypes:
