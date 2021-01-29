@@ -125,8 +125,7 @@
     <plugins>
       <plugin>
         <artifactId>maven-site-plugin</artifactId>
-        <!-- TODO Version -->
-        <version>3.9.1</version>
+        <version>${maven-site-plugin.version}</version>
         <extensions>true</extensions>
       </plugin>
       <plugin>
