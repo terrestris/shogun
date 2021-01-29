@@ -65,19 +65,6 @@ public class UserInstancePermissionService extends BasePermissionService<UserIns
     }
 
     /**
-     * Get {@link UserInstancePermission} for SHOGun user
-     *
-     * @param entity entity to get group permissions for
-     * @param user The SHOGun user
-     * @return
-     */
-    public Optional<UserInstancePermission> findFor(BaseEntity entity, User user) {
-        LOG.trace("Getting all user permissions for user {} and entity {}", user.getKeycloakId(), entity);
-
-        return repository.findByUserIdAndEntityId(user.getId(), entity.getId());
-    }
-
-    /**
      * Returns the {@link UserInstancePermission} for the given query arguments.
      *
      * @param entity The entity to find the permission for.

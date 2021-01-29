@@ -33,6 +33,19 @@ public class GroupClassPermissionService extends BasePermissionService<GroupClas
      * @param group The group to find the permissions for.
      * @return The permissions.
      */
+    public List<GroupClassPermission> findFor(BaseEntity entity) {
+
+        LOG.trace("Getting all group class permissions for entity with ID {}", entity.getId());
+
+        return repository.findByClassName(entity.getClass().getCanonicalName());
+    }
+
+    /**
+     * Returns all {@link GroupClassPermission} for the given query arguments.
+     *
+     * @param group The group to find the permissions for.
+     * @return The permissions.
+     */
     public List<GroupClassPermission> findFor(Group group) {
 
         LOG.trace("Getting all group class permissions for group with Keycloak ID {}",
