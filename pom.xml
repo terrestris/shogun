@@ -65,11 +65,12 @@
 
     <!-- Plugins -->
     <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+    <maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
     <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
+    <maven-site-plugin.version>3.9.1</maven-site-plugin.version>
     <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
     <jacoco-plugin.version>0.8.6</jacoco-plugin.version>
-    <project-info-reports-plugin.version>3.1.1</project-info-reports-plugin.version>
-    <maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
+    <maven-project-info-reports-plugin.version>3.1.1</maven-project-info-reports-plugin.version>
     <jib-maven-pluign.version>2.7.1</jib-maven-pluign.version>
 
     <!-- Javax -->
@@ -230,6 +231,11 @@
             </container>
           </configuration>
         </plugin>
+        <plugin>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>${maven-site-plugin.version}</version>
+          <extensions>true</extensions>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -262,7 +268,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-project-info-reports-plugin</artifactId>
-            <version>${project-info-reports-plugin.version}</version>
+            <version>${maven-project-info-reports-plugin.version}</version>
             <reportSets>
               <reportSet>
                 <reports>
