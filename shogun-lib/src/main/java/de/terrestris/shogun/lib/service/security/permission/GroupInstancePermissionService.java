@@ -10,6 +10,7 @@ import de.terrestris.shogun.lib.repository.security.permission.GroupInstancePerm
 import de.terrestris.shogun.lib.repository.security.permission.PermissionCollectionRepository;
 import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.service.BaseService;
+import de.terrestris.shogun.lib.util.KeycloakUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,13 +24,17 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
     protected SecurityContextUtil securityContextUtil;
 
     @Autowired
+    protected KeycloakUtil keycloakUtil;
+
+    @Autowired
     protected PermissionCollectionRepository permissionCollectionRepository;
 
     /**
-     * Get permission for SHOGun group
-     * @param entity entity to get group permissions for
-     * @param group The SHOGun group
-     * @return
+     * Returns the {@link GroupInstancePermission} for the given query arguments.
+     *
+     * @param entity The entity to find the permission for.
+     * @param group The group to find the permission for.
+     * @return The (optional) permission.
      */
     public Optional<GroupInstancePermission> findFor(BaseEntity entity, Group group) {
         if (entity == null || group == null) {
@@ -50,10 +55,10 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
 
 
     /**
-     * Get all {@link GroupInstancePermission} for the given entity.
+     * Returns the {@link GroupInstancePermission} for the given query arguments.
      *
-     * @param entity entity to get group permissions for
-     * @return
+     * @param entity The entity to find the permission for.
+     * @return The (optional) permission.
      */
     public List<GroupInstancePermission> findFor(BaseEntity entity) {
         LOG.trace("Getting all group permissions for entity with ID {}", entity.getId());
@@ -62,10 +67,12 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
     }
 
     /**
-     * Get groups of user from Keycloak and return resulting permissions
-     * @param entity entity to get group permissions for
-     * @param user The SHOGun user
-     * @return
+     * Returns the {@link GroupInstancePermission} for the given query arguments. Hereby
+     * all groups of the given user will be considered.
+     *
+     * @param entity The entity to find the permission for.
+     * @param user The user to find the permission for.
+     * @return The (optional) permission.
      */
     public Optional<GroupInstancePermission> findFor(BaseEntity entity, User user) {
         LOG.trace("Getting all group permissions for user with Keycloak ID {} and " +
@@ -87,26 +94,79 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
     }
 
     /**
-     * Return permission collection for base entity and group
-     * @param entity The entity to fetch permission collection for
-     * @param user The user
-     * @return The first permission collection of the user that can be found for this entity
+     * Returns the {@link GroupInstancePermission} for the given query arguments. Hereby
+     * it will be considered if the user is currently a member of the given group.
+     *
+     * @param entity The entity to find the permission for.
+     * @param group The group to find the permission for.
+     * @param user The user to find the permission for.
+     * @return The (optional) permission.
+     */
+    public Optional<GroupInstancePermission> findFor(BaseEntity entity, Group group, User user) {
+
+        LOG.trace("Getting all group instance permissions for user with Keycloak ID {} " +
+            "and entity with ID {} in the context of group with Keycloak ID {}",
+            user.getKeycloakId(), entity.getId(), group.getKeycloakId());
+
+        boolean isUserMemberInGroup = keycloakUtil.isUserInGroup(user, group);
+
+        if (!isUserMemberInGroup) {
+            LOG.trace("The user is not a member of the given group, no permissions available.");
+
+            return Optional.empty();
+        }
+
+        return repository.findByGroupIdAndEntityId(group.getId(), entity.getId());
+    }
+
+    /**
+     * Returns the {@link PermissionCollection} for the given query arguments.
+     *
+     * @param entity The entity to find the collection for.
+     * @param group The group to find the collection for.
+     * @return The collection (may be empty).
+     */
+    public PermissionCollection findPermissionCollectionFor(BaseEntity entity, Group group) {
+        Optional<GroupInstancePermission> groupInstancePermission = this.findFor(entity, group);
+
+        return getPermissionCollection(groupInstancePermission);
+    }
+
+    /**
+     * Returns the {@link PermissionCollection} for the given query arguments. Hereby
+     * all groups of the given user will be considered.
+     *
+     * @param entity The entity to find the collection for.
+     * @param user The user to find the collection for.
+     * @return The collection (may be empty).
      */
     public PermissionCollection findPermissionCollectionFor(BaseEntity entity, User user) {
         Optional<GroupInstancePermission> groupInstancePermission = this.findFor(entity, user);
 
-        if (groupInstancePermission.isPresent()) {
-            return groupInstancePermission.get().getPermissions();
-        }
-
-        return new PermissionCollection();
+        return getPermissionCollection(groupInstancePermission);
     }
 
     /**
-     * Set Permission for SHOGun group
-     * @param persistedEntity The entity to set permission for
-     * @param group The SHOGun group
-     * @param permissionCollectionType The permission collection type (e.g. READ, READ_WRITE)
+     * Returns the {@link PermissionCollection} for the given query arguments. Hereby
+     * it will be considered if the user is currently a member of the given group.
+     *
+     * @param entity The entity to find the collection for.
+     * @param group The group to find the collection for.
+     * @param user The user to find the collection for.
+     * @return The collection (may be empty).
+     */
+    public PermissionCollection findPermissionCollectionFor(BaseEntity entity, Group group, User user) {
+        Optional<GroupInstancePermission> groupInstancePermission = this.findFor(entity, group, user);
+
+        return getPermissionCollection(groupInstancePermission);
+    }
+
+    /**
+     * Sets the {@link PermissionCollection} for the given target combination.
+     *
+     * @param persistedEntity The entity to set the permission for.
+     * @param group The group to set the permission for.
+     * @param permissionCollectionType The permission collection type (e.g. READ, READ_WRITE) to set.
      */
     public void setPermission(BaseEntity persistedEntity, Group group, PermissionCollectionType permissionCollectionType) {
         Optional<PermissionCollection> permissionCollection = permissionCollectionRepository.findByName(permissionCollectionType);
@@ -126,10 +186,11 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
     }
 
     /**
-     * Set Permission for SHOGun group for multiple entities at once
-     * @param persistedEntityList A collection of entities to set permission for
-     * @param group The SHOGun group
-     * @param permissionCollectionType The permission collection type (e.g. READ, READ_WRITE)
+     * Sets the given {@link PermissionCollectionType} for the given entities and user.
+     *
+     * @param persistedEntityList A collection of entities to set permission for.
+     * @param group The group to set the permission for.
+     * @param permissionCollectionType The permission collection type (e.g. READ, READ_WRITE) to set.
      */
     public void setPermission(
         List<? extends BaseEntity> persistedEntityList,
@@ -156,6 +217,13 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
         repository.saveAll(groupInstancePermissionsToSave);
     }
 
+    /**
+     * Clears the given {@link PermissionCollection} for the given target combination.
+     *
+     * @param group The group to clear the permission for.
+     * @param permissionCollection The permission collection to clear.
+     * @param entity The entity to clear the permission for.
+     */
     private void clearExistingPermission(Group group, PermissionCollection permissionCollection, BaseEntity entity) {
         Optional<GroupInstancePermission> existingPermission = findFor(entity, group);
 
@@ -165,13 +233,17 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
                 "Keycloak ID {}: {}", entity.getId(), group.getKeycloakId(), permissionCollection);
 
             // Remove the existing one
-            // TODO: deletion really needed ???
             repository.delete(existingPermission.get());
 
             LOG.debug("Removed the permission");
         }
     }
 
+    /**
+     * Deletes all {@link GroupInstancePermission} for the given entity.
+     *
+     * @param persistedEntity The entity to clear the permissions for.
+     */
     public void deleteAllForEntity(BaseEntity persistedEntity) {
         List<GroupInstancePermission> groupInstancePermissions = this.findFor(persistedEntity);
 
@@ -180,5 +252,21 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
         LOG.info("Successfully deleted all group instance permissions for entity " +
             "with ID {}", persistedEntity.getId());
         LOG.trace("Deleted entity: {}", persistedEntity);
+    }
+
+    /**
+     * Helper function to get the {@link PermissionCollection} from a given
+     * class permission. If no collection is available, it returns an empty
+     * list.
+     *
+     * @param classPermission The classPermission to get the permissions from.
+     * @return The collection (may be empty).
+     */
+    private PermissionCollection getPermissionCollection(Optional<GroupInstancePermission> classPermission) {
+        if (classPermission.isPresent()) {
+            return classPermission.get().getPermissions();
+        }
+
+        return new PermissionCollection();
     }
 }
