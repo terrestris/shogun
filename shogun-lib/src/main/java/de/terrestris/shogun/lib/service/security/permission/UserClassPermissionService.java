@@ -9,6 +9,7 @@ import de.terrestris.shogun.lib.repository.security.permission.PermissionCollect
 import de.terrestris.shogun.lib.repository.security.permission.UserClassPermissionRepository;
 import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.service.BaseService;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,11 +24,24 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
     protected PermissionCollectionRepository permissionCollectionRepository;
 
     /**
-     * Returns the {@link UserClassPermission} for the given query arguments.
+     * Returns all {@link UserClassPermission} for the given query arguments.
      *
-     * @param clazz The class to find the permission for.
-     * @param user The user to find the permission for.
-     * @return The (optional) permission.
+     * @param user The user to find the permissions for.
+     * @return The permissions.
+     */
+    public List<UserClassPermission> findFor(User user) {
+
+        LOG.trace("Getting all user class permissions for user with Keycloak ID {}",
+            user.getKeycloakId());
+
+        return repository.findAllByUser(user);
+    }
+
+    /**
+     * Return {@link Optional} containing {@link UserClassPermission}
+     * @param clazz The class that should be checked
+     * @param user The user to check for
+     * @return {@link Optional} containing {@link UserClassPermission}
      */
     public Optional<UserClassPermission> findFor(Class<? extends BaseEntity> clazz, User user) {
         String className = clazz.getCanonicalName();
