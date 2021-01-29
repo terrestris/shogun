@@ -3,6 +3,7 @@ package de.terrestris.shogun.lib.graphql;
 import com.google.common.io.Resources;
 import de.terrestris.shogun.lib.annotation.GraphQLQuery;
 import de.terrestris.shogun.lib.graphql.resolver.BaseGraphQLDataFetcher;
+import de.terrestris.shogun.lib.graphql.scalar.DateTimeScalar;
 import de.terrestris.shogun.lib.graphql.scalar.GeometryScalar;
 import graphql.GraphQL;
 import graphql.scalars.ExtendedScalars;
@@ -90,6 +91,7 @@ public class GraphQLProvider {
         List<GraphQLScalarType> scalars = new ArrayList<>();
         scalars.add(ExtendedScalars.Json);
         scalars.add(GeometryScalar.GEOMETRY);
+        scalars.add(DateTimeScalar.DATE_TIME);
         return scalars;
     }
 
