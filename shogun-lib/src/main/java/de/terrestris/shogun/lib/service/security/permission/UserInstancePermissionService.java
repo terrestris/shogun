@@ -113,7 +113,6 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
      * @param entity The entity to use in filter
      * @param user The user to use in filter
      * @return {@link PermissionCollection} for {@link BaseEntity} and {@link User}
->>>>>>> Add findOwner
      */
     public PermissionCollection findPermissionCollectionFor(BaseEntity entity, User user) {
         Optional<UserInstancePermission> userInstancePermission = this.findFor(entity, user);
