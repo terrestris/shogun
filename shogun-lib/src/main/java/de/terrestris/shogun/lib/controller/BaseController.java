@@ -463,7 +463,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
         try {
             Object idFromValues = values.get("id");
             if (idFromValues == null) {
-                LOG.error("Field 'id' is missing in the passed values.", entityId, values);
+                LOG.error("Field 'id' (entity {})is missing in the passed values: {}.", entityId, values);
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
             }
             Long id = Long.valueOf((Integer) idFromValues);
@@ -472,10 +472,9 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
             }
 
-            Optional<S> persistedEntity = service.findOne(entityId);
-
-            if (persistedEntity.isPresent()) {
-                S updatedEntity = service.updatePartial(entityId, values);
+            S persistedEntity = service.findOne(entityId).orElseThrow();
+            if (persistedEntity != null) {
+                S updatedEntity = service.updatePartial(entityId, persistedEntity, values);
 
                 LOG.trace("Successfully updated values for entity of type {} with ID {}",
                     getGenericClassName(), entityId);
@@ -508,7 +507,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
                     ade
             );
         } catch (NumberFormatException nfe) {
-            LOG.error("Can't parse 'id' field ({}) from values ({}). It has to be an Integer.",
+            LOG.error("Can't parse 'id' field ({}) from values ({}). It has to be an Integer.: {}",
                 values, entityId, nfe.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         } catch (ResponseStatusException rse) {

@@ -8,6 +8,7 @@ import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.repository.BaseCrudRepository;
 import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionService;
 import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,26 +98,27 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'UPDATE')")
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public S update(Long id, S entity) throws IOException {
-        Optional<S> persistedEntity = repository.findById(id);
+        Optional<S> persistedEntityOpt = repository.findById(id);
 
         ObjectNode jsonObject = objectMapper.valueToTree(entity);
 
         // Ensure the created timestamp will not be overridden.
-        jsonObject.put("created", persistedEntity.get().getCreated().toInstant().toString());
+        S persistedEntity = persistedEntityOpt.orElseThrow();
+        jsonObject.put("created", persistedEntity.getCreated().toInstant().toString());
 
-        S updatedEntity = objectMapper.readerForUpdating(persistedEntity.get()).readValue(jsonObject);
+        S updatedEntity = objectMapper.readerForUpdating(persistedEntity).readValue(jsonObject);
 
         return repository.save(updatedEntity);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'UPDATE')")
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public S updatePartial(Long id, Map<String, Object> values) throws IOException {
-        Optional<S> persistedEntity = repository.findById(id);
-
+    public S updatePartial(Long entityId, S entity, Map<String, Object> values) throws IOException {
+        if (ObjectUtils.notEqual(entityId, entity.getId())) {
+            throw new IOException("ID's of passed entity and parameter do not match. No partial update possible");
+        }
         JsonNode jsonObject = objectMapper.valueToTree(values);
-        S updatedEntity = objectMapper.readerForUpdating(persistedEntity.get()).readValue(jsonObject);
-
+        S updatedEntity = objectMapper.readerForUpdating(entity).readValue(jsonObject);
         return repository.save(updatedEntity);
     }
 
