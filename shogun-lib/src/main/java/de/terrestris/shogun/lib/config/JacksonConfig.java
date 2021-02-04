@@ -1,16 +1,9 @@
 package de.terrestris.shogun.lib.config;
 
 import com.bedatadriven.jackson.datatype.jts.JtsModule;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.vladmihalcea.hibernate.type.util.ObjectMapperSupplier;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.*;
 import de.terrestris.shogun.lib.annotation.JsonSuperType;
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
-import javax.annotation.PostConstruct;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.reflections.Reflections;
@@ -22,55 +15,48 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
-public class JacksonConfig implements ObjectMapperSupplier {
+import javax.annotation.PostConstruct;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
 
-    private static ObjectMapper mapper;
+@Configuration
+public class JacksonConfig extends ObjectMapper {
 
     @Bean
     public ObjectMapper objectMapper() {
         init();
-        return mapper;
+        return this;
     }
 
-    private static int srid;
+    private boolean isInitialized = false;
 
     @Value("${shogun.srid:4326}")
-    public void setSrid(int srid) {
-        JacksonConfig.srid = srid;
-    }
-
-    private static int coordinatePrecisionScale;
+    protected int srid;
 
     @Value("${shogun.coordinatePrecisionScale:10}")
-    public void setCoordinatePrecisionScale(int coordinatePrecisionScale) {
-        JacksonConfig.coordinatePrecisionScale = coordinatePrecisionScale;
-    }
+    protected int coordinatePrecisionScale;
 
     @Bean
-    public static JtsModule jtsModule() {
-        GeometryFactory geomFactory = new GeometryFactory(new PrecisionModel(JacksonConfig.coordinatePrecisionScale), JacksonConfig.srid);
+    public JtsModule jtsModule() {
+        GeometryFactory geomFactory = new GeometryFactory(new PrecisionModel(coordinatePrecisionScale), srid);
         return new JtsModule(geomFactory);
     }
 
-    @Override
-    public ObjectMapper get() {
-        return objectMapper();
-    }
-
     @PostConstruct
-    public static void init() {
-        if (JacksonConfig.mapper == null) {
-            JacksonConfig.mapper = new ObjectMapper().registerModule(jtsModule());
+    public void init() {
+        if (!isInitialized) {
+            this.registerModule(jtsModule());
 
-            JacksonConfig.mapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false);
-            JacksonConfig.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            JacksonConfig.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-            JacksonConfig.mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
+            this.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false);
+            this.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            this.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+            this.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
 
             for (var entry : findAnnotatedClasses().entrySet()) {
-                JacksonConfig.mapper.addMixIn(entry.getKey(), entry.getValue());
+                this.addMixIn(entry.getKey(), entry.getValue());
             }
+            isInitialized = true;
         }
     }
 
@@ -106,6 +92,15 @@ public class JacksonConfig implements ObjectMapperSupplier {
         }
 
         return implementers;
+    }
+
+    @Override
+    public <T> T readValue(String content, JavaType valueType) throws JsonProcessingException {
+        if (!isInitialized) {
+            this.init();
+        }
+
+        return super.readValue(content, valueType);
     }
 
 }
