@@ -10,25 +10,21 @@ import graphql.scalars.ExtendedScalars;
 import graphql.schema.DataFetcher;
 import graphql.schema.GraphQLScalarType;
 import graphql.schema.GraphQLSchema;
-import graphql.schema.idl.RuntimeWiring;
-import graphql.schema.idl.SchemaGenerator;
-import graphql.schema.idl.SchemaParser;
-import graphql.schema.idl.TypeDefinitionRegistry;
-import graphql.schema.idl.TypeRuntimeWiring;
+import graphql.schema.idl.*;
+import lombok.extern.log4j.Log4j2;
+import org.atteo.evo.inflector.English;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.PostConstruct;
-import lombok.extern.log4j.Log4j2;
-import org.atteo.evo.inflector.English;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.stereotype.Component;
 
 @Log4j2
 @Component
@@ -90,8 +86,8 @@ public class GraphQLProvider {
     protected List<GraphQLScalarType> gatherScalars() {
         List<GraphQLScalarType> scalars = new ArrayList<>();
         scalars.add(ExtendedScalars.Json);
-        scalars.add(GeometryScalar.GEOMETRY);
-        scalars.add(DateTimeScalar.DATE_TIME);
+        scalars.add(new GeometryScalar());
+        scalars.add(new DateTimeScalar());
         return scalars;
     }
 
