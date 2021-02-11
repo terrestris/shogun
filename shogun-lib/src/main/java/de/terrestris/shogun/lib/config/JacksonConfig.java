@@ -1,9 +1,16 @@
 package de.terrestris.shogun.lib.config;
 
 import com.bedatadriven.jackson.datatype.jts.JtsModule;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.vladmihalcea.hibernate.type.util.ObjectMapperSupplier;
 import de.terrestris.shogun.lib.annotation.JsonSuperType;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
+import javax.annotation.PostConstruct;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.reflections.Reflections;
@@ -15,52 +22,55 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.PostConstruct;
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
-
 @Configuration
-public class JacksonConfig extends ObjectMapper {
+public class JacksonConfig implements ObjectMapperSupplier {
+
+    private static ObjectMapper mapper;
+
+    private static boolean initialized = false;
 
     @Bean
     public ObjectMapper objectMapper() {
-        init();
-        return this;
+        if (mapper == null) {
+            mapper = new ObjectMapper();
+        }
+        return mapper;
     }
 
-    private boolean isInitialized = false;
-
     @Value("${shogun.srid:4326}")
-    protected int srid;
+    private int srid;
 
     @Value("${shogun.coordinatePrecisionScale:10}")
-    protected int coordinatePrecisionScale;
+    private int coordinatePrecisionScale;
 
-    @Bean
-    public JtsModule jtsModule() {
-        GeometryFactory geomFactory = new GeometryFactory(new PrecisionModel(coordinatePrecisionScale), srid);
-        return new JtsModule(geomFactory);
+    @Override
+    public ObjectMapper get() {
+        return objectMapper();
     }
 
     @PostConstruct
     public void init() {
-        if (!isInitialized) {
-            this.registerModule(jtsModule());
+        if (!initialized) {
+            GeometryFactory geomFactory = new GeometryFactory(new PrecisionModel(coordinatePrecisionScale), srid);
+            JacksonConfig.mapper.registerModule(new JtsModule(geomFactory));
 
-            this.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false);
-            this.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            this.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-            this.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
+            JacksonConfig.mapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false);
+            JacksonConfig.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            JacksonConfig.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+            JacksonConfig.mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
 
             for (var entry : findAnnotatedClasses().entrySet()) {
-                this.addMixIn(entry.getKey(), entry.getValue());
+                JacksonConfig.mapper.addMixIn(entry.getKey(), entry.getValue());
             }
-            isInitialized = true;
         }
+        initialized = true;
     }
 
-    private static Map<Class<?>, Class<?>> findAnnotatedClasses() {
+    /**
+     * Find classes having types annotated with @{@link JsonSuperType} using reflections
+     * @return Map of matching classes
+     */
+    private Map<Class<?>, Class<?>> findAnnotatedClasses() {
         var reflections = new Reflections(new ConfigurationBuilder()
             .setUrls(ClasspathHelper.forJavaClassPath())
             .setScanners(new SubTypesScanner(),
@@ -90,17 +100,7 @@ public class JacksonConfig extends ObjectMapper {
                 }
             }
         }
-
         return implementers;
-    }
-
-    @Override
-    public <T> T readValue(String content, JavaType valueType) throws JsonProcessingException {
-        if (!isInitialized) {
-            this.init();
-        }
-
-        return super.readValue(content, valueType);
     }
 
 }
