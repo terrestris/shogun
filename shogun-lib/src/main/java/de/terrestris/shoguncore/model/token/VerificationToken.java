@@ -1,12 +1,11 @@
 package de.terrestris.shoguncore.model.token;
 
 import de.terrestris.shoguncore.model.BaseEntity;
-import java.util.Calendar;
-import java.util.Date;
+
+import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -27,8 +26,7 @@ public abstract class VerificationToken extends BaseEntity {
     private String token;
 
     @Column(nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date expiryDate;
+    private OffsetDateTime expiryDate;
 
     public VerificationToken(final String token) {
         super();
@@ -44,11 +42,7 @@ public abstract class VerificationToken extends BaseEntity {
         this.expiryDate = calculateExpiryDate(expiration);
     }
 
-    private Date calculateExpiryDate(int expiryTimeInMinutes) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(new Date().getTime());
-        cal.add(Calendar.MINUTE, expiryTimeInMinutes);
-
-        return new Date(cal.getTime().getTime());
+    private OffsetDateTime calculateExpiryDate(int expiryTimeInMinutes) {
+        return OffsetDateTime.now().plus(expiryTimeInMinutes, ChronoUnit.MINUTES);
     }
 }

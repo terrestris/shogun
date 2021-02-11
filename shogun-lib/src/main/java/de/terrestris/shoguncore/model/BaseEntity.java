@@ -9,7 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
@@ -30,14 +30,12 @@ public abstract class BaseEntity implements Serializable {
 
     @CreationTimestamp
     @Column(updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
     @Getter @Setter
-    private Date created;
+    private OffsetDateTime created;
 
     @UpdateTimestamp
     @Column
-    @Temporal(TemporalType.TIMESTAMP)
     @Getter @Setter
-    private Date modified;
+    private OffsetDateTime modified;
 
 }

@@ -4,8 +4,9 @@ import de.terrestris.shoguncore.model.User;
 import de.terrestris.shoguncore.model.token.UserVerificationToken;
 import de.terrestris.shoguncore.repository.token.UserVerificationTokenRepository;
 import de.terrestris.shoguncore.service.UserService;
-import java.util.Calendar;
-import java.util.Date;
+
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
@@ -31,11 +32,8 @@ public class UserTask {
         try {
             log.trace("Collecting all pending user registrations to delete.");
 
-            final Calendar cal = Calendar.getInstance();
-            Date date = cal.getTime();
-
             List<UserVerificationToken> userVerificationTokens =
-                userVerificationTokenRepository.findByExpiryDateBefore(date);
+                userVerificationTokenRepository.findByExpiryDateBefore(OffsetDateTime.now());
 
             userVerificationTokens = userVerificationTokens.stream()
                 .filter(token -> token.getClass().isAssignableFrom(UserVerificationToken.class))

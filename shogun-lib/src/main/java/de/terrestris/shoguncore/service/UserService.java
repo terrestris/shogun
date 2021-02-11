@@ -21,7 +21,7 @@ import de.terrestris.shoguncore.service.security.permission.UserInstancePermissi
 import de.terrestris.shoguncore.specification.UserSpecification;
 import de.terrestris.shoguncore.specification.token.UserVerificationTokenSpecification;
 
-import java.util.Calendar;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -270,11 +270,7 @@ public class UserService extends BaseService<UserRepository, User> {
         }
 
         final User user = verificationToken.getUser();
-        final Calendar cal = Calendar.getInstance();
-        if ((verificationToken.getExpiryDate()
-            .getTime()
-            - cal.getTime()
-            .getTime()) <= 0) {
+        if (verificationToken.getExpiryDate().isBefore(OffsetDateTime.now())) {
             userVerificationTokenRepository.delete(verificationToken);
             return TOKEN_EXPIRED;
         }
