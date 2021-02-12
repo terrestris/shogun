@@ -11,7 +11,7 @@ import graphql.schema.GraphQLScalarType;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 @Log4j2
 public class DateTimeScalar {
@@ -50,23 +50,23 @@ public class DateTimeScalar {
         if (dataFetcherResult instanceof String) {
             String dateTimeString = (String)dataFetcherResult;
             try {
-                return objectMapper().readValue(dateTimeString, Date.class);
+                return objectMapper().readValue(dateTimeString, OffsetDateTime.class);
             } catch (JsonProcessingException e) {
-                throw new CoercingParseValueException("Unable to parse variable value " + dataFetcherResult + " as DateTime");
+                throw new CoercingParseValueException("Unable to parse variable value " + dataFetcherResult + " as OffsetDateTime");
             }
         }
-        throw new CoercingParseValueException("Unable to parse variable value " + dataFetcherResult + " as DateTime");
+        throw new CoercingParseValueException("Unable to parse variable value " + dataFetcherResult + " as OffsetDateTime");
     }
 
     private static Object parseDateFromAstLiteral(Object dataFetcherResult) {
         if (dataFetcherResult instanceof StringValue) {
             String dateTimeString = ((StringValue) dataFetcherResult).getValue();;
             try {
-                return objectMapper().readValue(dateTimeString, Date.class);
+                return objectMapper().readValue(dateTimeString, OffsetDateTime.class);
             } catch (JsonProcessingException e) {
-                throw new CoercingParseValueException("Unable to parse value " + dataFetcherResult + " as DateTime");
+                throw new CoercingParseValueException("Unable to parse value " + dataFetcherResult + " as OffsetDateTime");
             }
         }
-        throw new CoercingParseLiteralException("Value is not DateTime");
+        throw new CoercingParseLiteralException("Value is not OffsetDateTime");
     }
 }

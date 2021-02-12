@@ -5,6 +5,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.ser.OffsetDateTimeSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.ZonedDateTimeSerializer;
 import com.vladmihalcea.hibernate.type.util.ObjectMapperSupplier;
 import de.terrestris.shoguncore.annotation.JsonSuperType;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -18,6 +21,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.text.SimpleDateFormat;
@@ -48,12 +54,18 @@ public class JacksonConfig implements ObjectMapperSupplier {
     @PostConstruct
     public static void init() {
         if (mapper == null) {
-            mapper = new ObjectMapper().registerModule(jtsModule());
+            mapper = new ObjectMapper();
+
+            mapper.registerModule(jtsModule());
+
+            var javaTimeModule = new JavaTimeModule();
+            mapper.registerModule(javaTimeModule);
+
+            mapper.configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false);
 
             mapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false);
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-            mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
 
             for (var entry : findAnnotatedClasses().entrySet()) {
                 mapper.addMixIn(entry.getKey(), entry.getValue());
