@@ -1,6 +1,5 @@
 package de.terrestris.shogun.config;
 
-import com.google.common.base.Predicate;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,13 +9,11 @@ import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.function.Predicate;
 
 @Configuration
-@EnableSwagger2
 @EnableAutoConfiguration
 public abstract class SwaggerConfig {
 
@@ -36,14 +33,14 @@ public abstract class SwaggerConfig {
             .paths(PathSelectors.any())
             .build()
             .apiInfo(apiInfo())
-            .securityContexts(Arrays.asList(actuatorSecurityContext()))
-            .securitySchemes(Arrays.asList(basicAuthScheme()));
+            .securityContexts(Collections.singletonList(actuatorSecurityContext()))
+            .securitySchemes(Collections.singletonList(basicAuthScheme()));
     }
 
     private SecurityContext actuatorSecurityContext() {
         return SecurityContext.builder()
-            .securityReferences(Arrays.asList(basicAuthReference()))
-            .forPaths(setSecurityContextPaths())
+            .securityReferences(Collections.singletonList(basicAuthReference()))
+            .forPaths(setSecurityContextPaths()::test)
             .build();
     }
 
@@ -56,7 +53,7 @@ public abstract class SwaggerConfig {
     }
 
     protected ApiInfo apiInfo() {
-        ApiInfo apiInfo = new ApiInfo(
+        return new ApiInfo(
             title,
             description,
             version,
@@ -66,8 +63,6 @@ public abstract class SwaggerConfig {
             licenseUrl,
             Collections.emptyList()
         );
-
-        return apiInfo;
     }
 
     /**

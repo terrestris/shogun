@@ -30,7 +30,6 @@ jobs:
 
       - name: Run mvn install
         run: mvn install
-        working-directory: ./shogun-boot
 
       - name: Clone shogun-docker
         run: git clone https://github.com/terrestris/shogun-docker
@@ -41,7 +40,6 @@ jobs:
           
       - name: Start spring-boot
         run: mvn spring-boot:run > mvn.out.txt &
-        working-directory: ./shogun-boot
         
       - name: Check if application has started
         run: ./scripts/wait.sh
@@ -54,4 +52,3 @@ jobs:
       - name: Maven output
         if: always()
         run: cat mvn.out.txt
-        working-directory: ./shogun-boot
