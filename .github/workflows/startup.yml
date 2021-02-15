@@ -21,9 +21,15 @@ jobs:
         with:
           java-version: 11
 
+      - name: Cache the Maven packages to speed up build
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven
+
       - name: Run mvn install
         run: mvn install
-        working-directory: ./shogun-boot
 
       - name: Clone shogun-docker
         run: git clone https://github.com/terrestris/shogun-docker
@@ -34,7 +40,6 @@ jobs:
           
       - name: Start spring-boot
         run: mvn spring-boot:run > mvn.out.txt &
-        working-directory: ./shogun-boot
         
       - name: Check if application has started
         run: ./scripts/wait.sh
