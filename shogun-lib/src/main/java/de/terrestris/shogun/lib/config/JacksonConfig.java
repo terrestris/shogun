@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.vladmihalcea.hibernate.type.util.ObjectMapperSupplier;
 import de.terrestris.shogun.lib.annotation.JsonSuperType;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -54,10 +54,13 @@ public class JacksonConfig implements ObjectMapperSupplier {
             GeometryFactory geomFactory = new GeometryFactory(new PrecisionModel(coordinatePrecisionScale), srid);
             JacksonConfig.mapper.registerModule(new JtsModule(geomFactory));
 
+            var javaTimeModule = new JavaTimeModule();
+            JacksonConfig.mapper.registerModule(javaTimeModule);
+            JacksonConfig.mapper.configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false);
+
             JacksonConfig.mapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false);
             JacksonConfig.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             JacksonConfig.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-            JacksonConfig.mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
 
             for (var entry : findAnnotatedClasses().entrySet()) {
                 JacksonConfig.mapper.addMixIn(entry.getKey(), entry.getValue());

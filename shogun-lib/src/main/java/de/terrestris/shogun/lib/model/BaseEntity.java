@@ -12,7 +12,7 @@ import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 @MappedSuperclass
 @Audited
@@ -35,14 +35,12 @@ public abstract class BaseEntity implements Serializable {
 
     @CreationTimestamp
     @Column(updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
     @Getter @Setter
-    private Date created;
+    private OffsetDateTime created;
 
     @UpdateTimestamp
     @Column
-    @Temporal(TemporalType.TIMESTAMP)
     @Getter @Setter
-    private Date modified;
+    private OffsetDateTime modified;
 
 }
