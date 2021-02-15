@@ -1,22 +1,32 @@
+package de.terrestris.shogun.boot.config;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.terrestris.shogun.boot.config.ApplicationConfig;
+import de.terrestris.shogun.boot.runner.ApplicationInitializer;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.AfterClass;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.LineString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest(classes = ApplicationConfig.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = { ApplicationConfig.class, JdbcConfiguration.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public class JacksonConfigTest {
+
+    // Replace ApplicationInitializer by functionless mock
+    @MockBean
+    private ApplicationInitializer applicationInitializer;
 
     @Value("${shogun.srid}")
     private int srid;
 
+    // The objectmapper created during boot procedure
     @Autowired
     ObjectMapper objectMapper;
 

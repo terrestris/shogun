@@ -5,15 +5,5 @@ spring:
   flyway:
     schemas: shogun, public
     defaultSchema: shogun
-    disabled: true
-  jpa:
-    show-sql: false
-    properties:
-      hibernate:
-        generate_statistics: false
-        cache:
-          use_second_level_cache: false
-          use_query_cache: false
-        integration:
-          envers:
-            enabled: false
+  session:
+    store-type: none
