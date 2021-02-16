@@ -27,31 +27,21 @@ public class JacksonConfig implements ObjectMapperSupplier {
 
     private static ObjectMapper mapper;
 
+    private static boolean initialized = false;
+
     @Bean
     public ObjectMapper objectMapper() {
-        init();
+        if (mapper == null) {
+            mapper = new ObjectMapper();
+        }
         return mapper;
     }
 
-    private static int srid;
-
     @Value("${shogun.srid:4326}")
-    public void setSrid(int srid) {
-        JacksonConfig.srid = srid;
-    }
-
-    private static int coordinatePrecisionScale;
+    private int srid;
 
     @Value("${shogun.coordinatePrecisionScale:10}")
-    public void setCoordinatePrecisionScale(int coordinatePrecisionScale) {
-        JacksonConfig.coordinatePrecisionScale = coordinatePrecisionScale;
-    }
-
-    @Bean
-    public static JtsModule jtsModule() {
-        GeometryFactory geomFactory = new GeometryFactory(new PrecisionModel(JacksonConfig.coordinatePrecisionScale), JacksonConfig.srid);
-        return new JtsModule(geomFactory);
-    }
+    private int coordinatePrecisionScale;
 
     @Override
     public ObjectMapper get() {
@@ -59,9 +49,10 @@ public class JacksonConfig implements ObjectMapperSupplier {
     }
 
     @PostConstruct
-    public static void init() {
-        if (JacksonConfig.mapper == null) {
-            JacksonConfig.mapper = new ObjectMapper().registerModule(jtsModule());
+    public void init() {
+        if (!initialized) {
+            GeometryFactory geomFactory = new GeometryFactory(new PrecisionModel(coordinatePrecisionScale), srid);
+            JacksonConfig.mapper.registerModule(new JtsModule(geomFactory));
 
             JacksonConfig.mapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false);
             JacksonConfig.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -72,9 +63,14 @@ public class JacksonConfig implements ObjectMapperSupplier {
                 JacksonConfig.mapper.addMixIn(entry.getKey(), entry.getValue());
             }
         }
+        initialized = true;
     }
 
-    private static Map<Class<?>, Class<?>> findAnnotatedClasses() {
+    /**
+     * Find classes having types annotated with @{@link JsonSuperType} using reflections
+     * @return Map of matching classes
+     */
+    private Map<Class<?>, Class<?>> findAnnotatedClasses() {
         var reflections = new Reflections(new ConfigurationBuilder()
             .setUrls(ClasspathHelper.forJavaClassPath())
             .setScanners(new SubTypesScanner(),
@@ -104,7 +100,6 @@ public class JacksonConfig implements ObjectMapperSupplier {
                 }
             }
         }
-
         return implementers;
     }
 
