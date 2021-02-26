@@ -290,7 +290,7 @@ public class GroupClassPermissionService extends BasePermissionService<GroupClas
 
         repository.deleteAll(groupClassPermissions);
 
-        LOG.info("Successfully deleted all group class permissions for entity with ID {}",
+        log.info("Successfully deleted all group class permissions for entity with ID {}",
             persistedEntity.getId());
     }
 
@@ -300,10 +300,10 @@ public class GroupClassPermissionService extends BasePermissionService<GroupClas
         if (groupClassPermission.isPresent()) {
             repository.delete(groupClassPermission.get());
 
-            LOG.info("Successfully deleted the group class permission for entity with ID {} and group {}.",
+            log.info("Successfully deleted the group class permission for entity with ID {} and group {}.",
                 persistedEntity.getId(), group.getId());
         } else {
-            LOG.warn("Could not delete the group class permission. The requested permission does not exist.");
+            log.warn("Could not delete the group class permission. The requested permission does not exist.");
         }
     }
 }

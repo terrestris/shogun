@@ -25,7 +25,6 @@ import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
 import de.terrestris.shogun.lib.repository.security.permission.GroupInstancePermissionRepository;
 import de.terrestris.shogun.lib.repository.security.permission.PermissionCollectionRepository;
 import de.terrestris.shogun.lib.security.SecurityContextUtil;
-import de.terrestris.shogun.lib.service.BaseService;
 import de.terrestris.shogun.lib.service.security.provider.GroupProviderService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -278,7 +277,7 @@ public class GroupInstancePermissionService extends BasePermissionService<GroupI
      *
      * @param persistedEntity The entity to clear the permissions for.
      */
-    public void deleteAllForEntity(BaseEntity persistedEntity) {
+    public void deleteAllFor(BaseEntity persistedEntity) {
         List<GroupInstancePermission> groupInstancePermissions = this.findFor(persistedEntity);
 
         repository.deleteAll(groupInstancePermissions);
@@ -294,10 +293,10 @@ public class GroupInstancePermissionService extends BasePermissionService<GroupI
         if (groupInstancePermission.isPresent()) {
             repository.delete(groupInstancePermission.get());
 
-            LOG.info("Successfully deleted the group instance permission for entity with ID {} and group {}.",
+            log.info("Successfully deleted the group instance permission for entity with ID {} and group {}.",
                 persistedEntity.getId(), group.getId());
         } else {
-            LOG.warn("Could not delete the group instance permission. The requested permission does not exist.");
+            log.warn("Could not delete the group instance permission. The requested permission does not exist.");
         }
     }
 

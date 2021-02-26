@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.terrestris.shogun.lib.model.security.permission.BasePermission;
 import de.terrestris.shogun.lib.repository.security.permission.BasePermissionRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -15,13 +17,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-
+@Log4j2
 public abstract class BasePermissionService<T extends BasePermissionRepository<S, Long> & JpaSpecificationExecutor<S>, S extends BasePermission> {
-
-    protected final Logger LOG = LogManager.getLogger(getClass());
 
     @Autowired
     protected T repository;

@@ -15,24 +15,25 @@ import de.terrestris.shogun.lib.service.security.permission.GroupClassPermission
 import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionService;
 import de.terrestris.shogun.lib.service.security.permission.UserClassPermissionService;
 import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.util.List;
+import java.util.Optional;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-import java.util.Optional;
-
-// TODO Specify and type extension of BaseService
+@Log4j2
 public abstract class BasePermissionController<T extends BaseService<?, S>, S extends BaseEntity> {
-
-    protected final Logger LOG = LogManager.getLogger(getClass());
 
     @Autowired
     protected T service;
@@ -61,8 +62,8 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
     @GetMapping("/{id}/permissions/instance/user")
     @ResponseStatus(HttpStatus.OK)
     public List<UserInstancePermission> getUserInstancePermissions(@PathVariable("id") Long entityId) {
-        LOG.trace("Requested to get all user instance permissions for entity of type {} with ID {}",
-            getGenericClassName(), entityId);
+        log.trace("Requested to get all user instance permissions for entity of " +
+            "type {} with ID {}", getGenericClassName(), entityId);
 
         try {
             Optional<S> entity = service.findOne(entityId);
@@ -70,8 +71,9 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
             if (entity.isPresent()) {
                 List<UserInstancePermission> permissions = userInstancePermissionService.findFor(entity.get());
 
-                LOG.trace("Successfully got all user instance permissions for entity of type {} with " +
-                    "ID {} (count: {})", getGenericClassName(), entityId, permissions.size());
+            log.trace("Successfully got all user instance permissions for entity " +
+                "of type {} with ID {} (count: {})", getGenericClassName(), entityId,
+                permissions.size());
 
                 return permissions;
             } else {
@@ -89,8 +91,8 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
     @GetMapping("/{id}/permissions/instance/group")
     @ResponseStatus(HttpStatus.OK)
     public List<GroupInstancePermission> getGroupInstancePermissions(@PathVariable("id") Long entityId) {
-        LOG.trace("Requested to get all group instance permissions for entity of type {} with ID {}",
-            getGenericClassName(), entityId);
+        log.trace("Requested to get all group instance permissions for entity of " +
+            "type {} with ID {}", getGenericClassName(), entityId);
 
         try {
             Optional<S> entity = service.findOne(entityId);
@@ -98,8 +100,9 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
             if (entity.isPresent()) {
                 List<GroupInstancePermission> permissions = groupInstancePermissionService.findFor(entity.get());
 
-                LOG.trace("Successfully got all group instance permissions for entity of type {} with " +
-                    "ID {} (count: {})", getGenericClassName(), entityId, permissions.size());
+            log.trace("Successfully got all group instance permissions for entity " +
+                "of type {} with ID {} (count: {})", getGenericClassName(), entityId,
+                permissions.size());
 
                 return permissions;
             } else {
@@ -117,8 +120,8 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
     @GetMapping("/{id}/permissions/class/user")
     @ResponseStatus(HttpStatus.OK)
     public List<UserClassPermission> getUserClassPermissions(@PathVariable("id") Long entityId) {
-        LOG.trace("Requested to get all user class permissions for entity of type {} with ID {}",
-            getGenericClassName(), entityId);
+        log.trace("Requested to get all user class permissions for entity of " +
+            "type {} with ID {}", getGenericClassName(), entityId);
 
         try {
             Optional<S> entity = service.findOne(entityId);
@@ -126,8 +129,9 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
             if (entity.isPresent()) {
                 List<UserClassPermission> permissions = userClassPermissionService.findFor(entity.get());
 
-                LOG.trace("Successfully got all user class permissions for entity of type {} with " +
-                    "ID {} (count: {})", getGenericClassName(), entityId, permissions.size());
+            log.trace("Successfully got all user class permissions for entity " +
+                "of type {} with ID {} (count: {})", getGenericClassName(), entityId,
+                permissions.size());
 
                 return permissions;
             } else {
@@ -145,8 +149,8 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
     @GetMapping("/{id}/permissions/class/group")
     @ResponseStatus(HttpStatus.OK)
     public List<GroupClassPermission> getGroupClassPermissions(@PathVariable("id") Long entityId) {
-        LOG.trace("Requested to get all group class permissions for entity of type {} with ID {}",
-            getGenericClassName(), entityId);
+        log.trace("Requested to get all group class permissions for entity of " +
+            "type {} with ID {}", getGenericClassName(), entityId);
 
         try {
             Optional<S> entity = service.findOne(entityId);
@@ -157,10 +161,11 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
                 LOG.trace("Successfully got all group class permissions for entity of type {} with " +
                     "ID {} (count: {})", getGenericClassName(), entityId, permissions.size());
 
-                return permissions;
-            } else {
-                throw getEntityNotFoundException(entityId);
-            }
+            log.trace("Successfully got all group class permissions for entity " +
+                "of type {} with ID {} (count: {})", getGenericClassName(), entityId,
+                permissions.size());
+
+            return permissions;
         } catch (AccessDeniedException ade) {
             throw getAccessDeniedException(ade);
         } catch (ResponseStatusException rse) {
@@ -176,8 +181,8 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
         @PathVariable("id") Long entityId,
         @PathVariable("userId") Long userId
     ) {
-        LOG.trace("Requested to get the user instance permission for entity of type {} with ID {} " +
-            "for user with ID {}", getGenericClassName(), entityId, userId);
+        log.trace("Requested to get the user instance permission for entity of " +
+            "type {} with ID {} for user with ID {}", getGenericClassName(), entityId, userId);
 
         try {
             Optional<S> entity = service.findOne(entityId);
@@ -197,8 +202,8 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
                 throw getPermissionNotFoundException(entityId);
             }
 
-            LOG.trace("Successfully got the user instance permission for entity of type {} with " +
-                "ID {} for user with ID {}", getGenericClassName(), entityId, userId);
+            log.trace("Successfully got the user instance permission for entity " +
+                "of type {} with ID {} for user with ID {}", getGenericClassName(), entityId, userId);
 
             return permission.get();
         } catch (AccessDeniedException ade) {
@@ -216,8 +221,8 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
         @PathVariable("id") Long entityId,
         @PathVariable("groupId") Long groupId
     ) {
-        LOG.trace("Requested to get the group instance permission for entity of type {} with ID {} " +
-            "for group with ID {}", getGenericClassName(), entityId, groupId);
+        log.trace("Requested to get the group instance permission for entity of " +
+            "type {} with ID {} for group with ID {}", getGenericClassName(), entityId, groupId);
 
         try {
             Optional<S> entity = service.findOne(entityId);
@@ -237,8 +242,8 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
                 throw getPermissionNotFoundException(entityId);
             }
 
-            LOG.trace("Successfully got the group instance permission for entity of type {} with " +
-                "ID {} for group with ID {}", getGenericClassName(), entityId, groupId);
+            log.trace("Successfully got the group instance permission for entity " +
+                "of type {} with ID {} for group with ID {}", getGenericClassName(), entityId, groupId);
 
             return permission.get();
         } catch (AccessDeniedException ade) {
@@ -256,8 +261,8 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
         @PathVariable("id") Long entityId,
         @PathVariable("userId") Long userId
     ) {
-        LOG.trace("Requested to get the user class permission for entity of type {} with ID {} " +
-            "for user with ID {}", getGenericClassName(), entityId, userId);
+        log.trace("Requested to get the user class permission for entity of " +
+            "type {} with ID {} for user with ID {}", getGenericClassName(), entityId, userId);
 
         try {
             Optional<S> entity = service.findOne(entityId);
@@ -277,8 +282,8 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
                 throw getPermissionNotFoundException(entityId);
             }
 
-            LOG.trace("Successfully got the user class permission for entity of type {} with " +
-                "ID {} for user with ID {}", getGenericClassName(), entityId, userId);
+            log.trace("Successfully got the user class permission for entity of " +
+                "type {} with ID {} for user with ID {}", getGenericClassName(), entityId, userId);
 
             return permission.get();
         } catch (AccessDeniedException ade) {
@@ -296,8 +301,8 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
         @PathVariable("id") Long entityId,
         @PathVariable("groupId") Long groupId)
     {
-        LOG.trace("Requested to get the group class permission for entity of type {} with ID {} " +
-            "for group with ID {}", getGenericClassName(), entityId, groupId);
+        log.trace("Requested to get the group class permission for entity of " +
+            "type {} with ID {} for group with ID {}", getGenericClassName(), entityId, groupId);
 
         try {
             Optional<S> entity = service.findOne(entityId);
@@ -317,8 +322,8 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
                 throw getPermissionNotFoundException(entityId);
             }
 
-            LOG.trace("Successfully got the group class permission for entity of type {} with " +
-                "ID {} for group with ID {}", getGenericClassName(), entityId, groupId);
+            log.trace("Successfully got the group class permission for entity of " +
+                "type {} with ID {} for group with ID {}", getGenericClassName(), entityId, groupId);
 
             return permission.get();
         } catch (AccessDeniedException ade) {
@@ -337,8 +342,9 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
         @PathVariable("userId") Long userId,
         @RequestBody PermissionCollectionType permissionType
     ) {
-        LOG.trace("Requested to set the user instance permission for entity of type {} with ID {} " +
-            "for user with ID {} to {}", getGenericClassName(), entityId, userId, permissionType);
+        log.trace("Requested to set the user instance permission for entity of " +
+            "type {} with ID {} for user with ID {} to {}", getGenericClassName(), entityId,
+            userId, permissionType);
 
         try {
             Optional<S> entity = service.findOne(entityId);
@@ -354,8 +360,8 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
 
             userInstancePermissionService.setPermission(entity.get(), user.get(), permissionType);
 
-            LOG.trace("Successfully set the user instance permission for entity of type {} with " +
-                "ID {} for user with ID {}", getGenericClassName(), entityId, userId);
+            log.trace("Successfully set the user instance permission for entity " +
+                "of type {} with ID {} for user with ID {}", getGenericClassName(), entityId, userId);
         } catch (AccessDeniedException ade) {
             throw getAccessDeniedException(ade);
         } catch (ResponseStatusException rse) {
@@ -372,8 +378,9 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
         @PathVariable("groupId") Long groupId,
         @RequestBody PermissionCollectionType permissionType
     ) {
-        LOG.trace("Requested to set the group instance permission for entity of type {} with ID {} " +
-            "for group with ID {} to {}", getGenericClassName(), entityId, groupId, permissionType);
+        log.trace("Requested to set the group instance permission for entity of " +
+            "type {} with ID {} for group with ID {} to {}", getGenericClassName(), entityId,
+            groupId, permissionType);
 
         try {
             Optional<S> entity = service.findOne(entityId);
@@ -389,8 +396,8 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
 
             groupInstancePermissionService.setPermission(entity.get(), group.get(), permissionType);
 
-            LOG.trace("Successfully set the group instance permission for entity of type {} with " +
-                "ID {} for group with ID {}", getGenericClassName(), entityId, groupId);
+            log.trace("Successfully set the group instance permission for entity " +
+                "of type {} with ID {} for group with ID {}", getGenericClassName(), entityId, groupId);
         } catch (AccessDeniedException ade) {
             throw getAccessDeniedException(ade);
         } catch (ResponseStatusException rse) {
@@ -407,8 +414,9 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
         @PathVariable("userId") Long userId,
         @RequestBody PermissionCollectionType permissionType
     ) {
-        LOG.trace("Requested to set the user class permission for entity of type {} with ID {} " +
-            "for user with ID {} to {}", getGenericClassName(), entityId, userId, permissionType);
+        log.trace("Requested to set the user class permission for entity of " +
+            "type {} with ID {} for user with ID {} to {}", getGenericClassName(), entityId,
+            userId, permissionType);
 
         try {
             Optional<S> entity = service.findOne(entityId);
@@ -424,8 +432,8 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
 
             userClassPermissionService.setPermission(entity.get().getClass(), user.get(), permissionType);
 
-            LOG.trace("Successfully set the user class permission for entity of type {} with " +
-                "ID {} for user with ID {}", getGenericClassName(), entityId, userId);
+            log.trace("Successfully set the user class permission for entity " +
+                "of type {} with ID {} for user with ID {}", getGenericClassName(), entityId, userId);
         } catch (AccessDeniedException ade) {
             throw getAccessDeniedException(ade);
         } catch (ResponseStatusException rse) {
@@ -442,8 +450,9 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
         @PathVariable("groupId") Long groupId,
         @RequestBody PermissionCollectionType permissionType
     ) {
-        LOG.trace("Requested to set the group class permission for entity of type {} with ID {} " +
-            "for user with ID {} to {}", getGenericClassName(), entityId, groupId, permissionType);
+        log.trace("Requested to set the group class permission for entity of " +
+            "type {} with ID {} for user with ID {} to {}", getGenericClassName(), entityId,
+            groupId, permissionType);
 
         try {
             Optional<S> entity = service.findOne(entityId);
@@ -459,8 +468,8 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
 
             groupClassPermissionService.setPermission(entity.get().getClass(), group.get(), permissionType);
 
-            LOG.trace("Successfully set the group class permission for entity of type {} with " +
-                "ID {} for group with ID {}", getGenericClassName(), entityId, groupId);
+            log.trace("Successfully set the group class permission for entity " +
+                "of type {} with ID {} for group with ID {}", getGenericClassName(), entityId, groupId);
         } catch (AccessDeniedException ade) {
             throw getAccessDeniedException(ade);
         } catch (ResponseStatusException rse) {
@@ -476,8 +485,8 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
         @PathVariable("id") Long entityId,
         @PathVariable("userId") Long userId
     ) {
-        LOG.trace("Requested to delete the user instance permission for entity of type {} with ID {} " +
-            "for user with ID {}", getGenericClassName(), entityId, userId);
+        log.trace("Requested to delete the user instance permission for " +
+            "entity of type {} with ID {} for user with ID {}", getGenericClassName(), entityId, userId);
 
         try {
             Optional<S> entity = service.findOne(entityId);
@@ -493,8 +502,9 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
 
             userInstancePermissionService.deleteFor(entity.get(), user.get());
 
-            LOG.trace("Successfully deleted the user instance permission for entity of type {} with " +
-                "ID {} for user with ID {}", getGenericClassName(), entityId, userId);
+            log.trace("Successfully deleted the user instance permission for " +
+                "entity of type {} with ID {} for user with ID {}", getGenericClassName(),
+                entityId, userId);
         } catch (AccessDeniedException ade) {
             throw getAccessDeniedException(ade);
         } catch (ResponseStatusException rse) {
@@ -510,8 +520,8 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
         @PathVariable("id") Long entityId,
         @PathVariable("groupId") Long groupId
     ) {
-        LOG.trace("Requested to delete the group instance permission for entity of type {} with ID {} " +
-            "for group with ID {}", getGenericClassName(), entityId, groupId);
+        log.trace("Requested to delete the group instance permission for entity " +
+            "of type {} with ID {} for group with ID {}", getGenericClassName(), entityId, groupId);
 
         try {
             Optional<S> entity = service.findOne(entityId);
@@ -527,8 +537,9 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
 
             groupInstancePermissionService.deleteFor(entity.get(), group.get());
 
-            LOG.trace("Successfully deleted the group instance permission for entity of type {} with " +
-                "ID {} for group with ID {}", getGenericClassName(), entityId, groupId);
+            log.trace("Successfully deleted the group instance permission for " +
+                "entity of type {} with ID {} for group with ID {}", getGenericClassName(),
+                entityId, groupId);
         } catch (AccessDeniedException ade) {
             throw getAccessDeniedException(ade);
         } catch (ResponseStatusException rse) {
@@ -544,8 +555,8 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
         @PathVariable("id") Long entityId,
         @PathVariable("userId") Long userId
     ) {
-        LOG.trace("Requested to delete the user class permission for entity of type {} with ID {} " +
-            "for user with ID {}", getGenericClassName(), entityId, userId);
+        log.trace("Requested to delete the user class permission for entity of " +
+            "type {} with ID {} for user with ID {}", getGenericClassName(), entityId, userId);
 
         try {
             Optional<S> entity = service.findOne(entityId);
@@ -561,8 +572,8 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
 
             userClassPermissionService.deleteFor(entity.get(), user.get());
 
-            LOG.trace("Successfully deleted the user class permission for entity of type {} with " +
-                "ID {} for user with ID {}", getGenericClassName(), entityId, userId);
+            log.trace("Successfully deleted the user class permission for entity " +
+                "of type {} with ID {} for user with ID {}", getGenericClassName(), entityId, userId);
         } catch (AccessDeniedException ade) {
             throw getAccessDeniedException(ade);
         } catch (ResponseStatusException rse) {
@@ -578,8 +589,8 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
         @PathVariable("id") Long entityId,
         @PathVariable("groupId") Long groupId
     ) {
-        LOG.trace("Requested to delete the group class permission for entity of type {} with ID {} " +
-            "for group with ID {}", getGenericClassName(), entityId, groupId);
+        log.trace("Requested to delete the group class permission for entity of " +
+            "type {} with ID {} for group with ID {}", getGenericClassName(), entityId, groupId);
 
         try {
             Optional<S> entity = service.findOne(entityId);
@@ -595,8 +606,8 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
 
             groupClassPermissionService.deleteFor(entity.get(), group.get());
 
-            LOG.trace("Successfully deleted the group class permission for entity of type {} with " +
-                "ID {} for group with ID {}", getGenericClassName(), entityId, groupId);
+            log.trace("Successfully deleted the group class permission for entity " +
+                "of type {} with ID {} for group with ID {}", getGenericClassName(), entityId, groupId);
         } catch (AccessDeniedException ade) {
             throw getAccessDeniedException(ade);
         } catch (ResponseStatusException rse) {
@@ -611,8 +622,8 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
     public void deleteUserInstancePermissions(
         @PathVariable("id") Long entityId
     ) {
-        LOG.trace("Requested to delete all user instance permissions for entity of type {} with ID {}",
-            getGenericClassName(), entityId);
+        log.trace("Requested to delete all user instance permissions for entity " +
+            "of type {} with ID {}", getGenericClassName(), entityId);
 
         try {
             Optional<S> entity = service.findOne(entityId);
@@ -623,8 +634,8 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
 
             userInstancePermissionService.deleteAllFor(entity.get());
 
-            LOG.trace("Successfully deleted all user instance permissions for entity of type {} with ID {}",
-                getGenericClassName(), entityId);
+            log.trace("Successfully deleted all user instance permissions for entity " +
+                "of type {} with ID {}", getGenericClassName(), entityId);
         } catch (AccessDeniedException ade) {
             throw getAccessDeniedException(ade);
         } catch (ResponseStatusException rse) {
@@ -639,8 +650,8 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
     public void deleteGroupInstancePermissions(
         @PathVariable("id") Long entityId
     ) {
-        LOG.trace("Requested to delete all group instance permissions for entity of type {} with ID {}",
-            getGenericClassName(), entityId);
+        log.trace("Requested to delete all group instance permissions for entity " +
+            "of type {} with ID {}", getGenericClassName(), entityId);
 
         try {
             Optional<S> entity = service.findOne(entityId);
@@ -651,8 +662,8 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
 
             groupInstancePermissionService.deleteAllFor(entity.get());
 
-            LOG.trace("Successfully deleted all group instance permissions for entity of type {} with ID {}",
-                getGenericClassName(), entityId);
+            log.trace("Successfully deleted all group instance permissions for entity " +
+                "of type {} with ID {}", getGenericClassName(), entityId);
         } catch (AccessDeniedException ade) {
             throw getAccessDeniedException(ade);
         } catch (ResponseStatusException rse) {
@@ -667,8 +678,8 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
     public void deleteUserClassPermissions(
         @PathVariable("id") Long entityId
     ) {
-        LOG.trace("Requested to delete all user class permissions for entity of type {} with ID {}",
-            getGenericClassName(), entityId);
+        log.trace("Requested to delete all user class permissions for entity of " +
+            "type {} with ID {}", getGenericClassName(), entityId);
 
         try {
             Optional<S> entity = service.findOne(entityId);
@@ -679,8 +690,8 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
 
             userClassPermissionService.deleteAllFor(entity.get());
 
-            LOG.trace("Successfully deleted all user class permissions for entity of type {} with ID {}",
-                getGenericClassName(), entityId);
+            log.trace("Successfully deleted all user class permissions for entity " +
+                "of type {} with ID {}", getGenericClassName(), entityId);
         } catch (AccessDeniedException ade) {
             throw getAccessDeniedException(ade);
         } catch (ResponseStatusException rse) {
@@ -695,8 +706,8 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
     public void deleteGroupClassPermissions(
         @PathVariable("id") Long entityId
     ) {
-        LOG.trace("Requested to delete all group class permissions for entity of type {} with ID {}",
-            getGenericClassName(), entityId);
+        log.trace("Requested to delete all group class permissions for entity of " +
+            "type {} with ID {}", getGenericClassName(), entityId);
 
         try {
             Optional<S> entity = service.findOne(entityId);
@@ -707,8 +718,8 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
 
             groupClassPermissionService.deleteAllFor(entity.get());
 
-            LOG.trace("Successfully deleted all group instance permissions for entity of type {} with ID {}",
-                getGenericClassName(), entityId);
+            log.trace("Successfully deleted all group instance permissions for entity " +
+                "of type {} with ID {}", getGenericClassName(), entityId);
         } catch (AccessDeniedException ade) {
             throw getAccessDeniedException(ade);
         } catch (ResponseStatusException rse) {

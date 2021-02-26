@@ -23,11 +23,7 @@ import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
 import de.terrestris.shogun.lib.model.security.permission.UserClassPermission;
 import de.terrestris.shogun.lib.repository.security.permission.PermissionCollectionRepository;
 import de.terrestris.shogun.lib.repository.security.permission.UserClassPermissionRepository;
-import java.util.List;
-import java.util.Optional;
 import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
-import lombok.extern.log4j.Log4j2;
-
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,9 +34,6 @@ import java.util.Optional;
 @Service
 @Log4j2
 public class UserClassPermissionService extends BasePermissionService<UserClassPermissionRepository, UserClassPermission> {
-
-    @Autowired
-    protected PermissionCollectionRepository permissionCollectionRepository;
 
     @Autowired
     protected PermissionCollectionRepository permissionCollectionRepository;
@@ -71,7 +64,7 @@ public class UserClassPermissionService extends BasePermissionService<UserClassP
     public List<UserClassPermission> findFor(BaseEntity entity) {
         String className = entity.getClass().getCanonicalName();
 
-        LOG.trace("Getting all user class permissions for entity class {}", className);
+        log.trace("Getting all user class permissions for entity class {}", className);
 
         return repository.findByClassName(className);
     }
@@ -206,7 +199,7 @@ public class UserClassPermissionService extends BasePermissionService<UserClassP
 
         repository.deleteAll(userClassPermissions);
 
-        LOG.info("Successfully deleted all user class permissions for entity with ID {}",
+        log.info("Successfully deleted all user class permissions for entity with ID {}",
             persistedEntity.getId());
     }
 
@@ -216,10 +209,10 @@ public class UserClassPermissionService extends BasePermissionService<UserClassP
         if (userClassPermission.isPresent()) {
             repository.delete(userClassPermission.get());
 
-            LOG.info("Successfully deleted the user class permission for entity with ID {} and user {}.",
+            log.info("Successfully deleted the user class permission for entity with ID {} and user {}.",
                 persistedEntity.getId(), user.getId());
         } else {
-            LOG.warn("Could not delete the user class permission. The requested permission does not exist.");
+            log.warn("Could not delete the user class permission. The requested permission does not exist.");
         }
     }
 }
