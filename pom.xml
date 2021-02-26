@@ -28,6 +28,11 @@
       <id>nexus.terrestris.de</id>
       <url>https://nexus.terrestris.de/repository/public/</url>
     </repository>
+    <repository>
+      <id>jcenter-snapshots</id>
+      <name>jcenter</name>
+      <url>https://jcenter.bintray.com/</url>
+    </repository>
   </repositories>
 
   <pluginRepositories>
@@ -85,7 +90,7 @@
     <keycloak.version>9.0.0</keycloak.version>
 
     <!-- Database -->
-    <hibernate.version>5.4.27.Final</hibernate.version>
+    <hibernate.version>5.4.28.Final</hibernate.version>
     <hibernate-extra-types.version>2.10.0</hibernate-extra-types.version>
     <postgres.version>42.2.18</postgres.version>
     <ehcache.version>3.9.0</ehcache.version>
@@ -110,11 +115,11 @@
     <hamcrest.version>2.2</hamcrest.version>
     <mockito.version>3.7.7</mockito.version>
     <testcontainers.version>1.15.2</testcontainers.version>
-    <junit.jupiter.version>5.7.0</junit.jupiter.version>
+    <junit.jupiter.version>5.7.1</junit.jupiter.version>
     <jaxb.version>2.3.1</jaxb.version>
 
     <!-- Doc -->
-    <springfox.version>2.9.2</springfox.version>
+    <springfox.version>3.0.0</springfox.version>
 
     <!-- Swagger/REST -->
     <swagger.version>2.1.1</swagger.version>
@@ -165,6 +170,9 @@
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-maven-plugin</artifactId>
           <version>${spring-boot.version}</version>
+          <configuration>
+            <skip>true</skip>
+          </configuration>
           <executions>
             <execution>
               <id>build-info</id>
@@ -253,6 +261,16 @@
       <id>reporting</id>
       <reporting>
         <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-site-plugin</artifactId>
+            <version>3.9.1</version>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-project-info-reports-plugin</artifactId>
+            <version>3.0.0</version>
+          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-report-plugin</artifactId>
@@ -363,6 +381,11 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-security</artifactId>
         <version>${spring-boot.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-boot-starter</artifactId>
+        <version>${springfox.version}</version>
       </dependency>
 
       <!-- Spring -->
@@ -565,11 +588,6 @@
       </dependency>
       <dependency>
         <groupId>io.springfox</groupId>
-        <artifactId>springfox-swagger2</artifactId>
-        <version>${springfox.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.springfox</groupId>
         <artifactId>springfox-swagger-ui</artifactId>
         <version>${springfox.version}</version>
       </dependency>
@@ -604,11 +622,6 @@
         <groupId>org.flywaydb</groupId>
         <artifactId>flyway-core</artifactId>
         <version>${flyway.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.swagger.core.v3</groupId>
-        <artifactId>swagger-annotations</artifactId>
-        <version>${swagger-core-version}</version>
       </dependency>
 
       <dependency>

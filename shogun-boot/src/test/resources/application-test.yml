@@ -1,0 +1,9 @@
+shogun:
+  srid: 25832
+
+spring:
+  flyway:
+    schemas: shogun, public
+    defaultSchema: shogun
+  session:
+    store-type: none

@@ -21,7 +21,7 @@ public class InterceptorWebSecurityConfig extends WebSecurityConfig {
             .authorizeRequests()
             .antMatchers(
                 // Allow access to swagger interface
-                "/swagger-ui.html",
+                "/swagger-ui/index.html",
                 "/swagger-resources/**",
                 "/webjars/**",
                 "/v2/**",
