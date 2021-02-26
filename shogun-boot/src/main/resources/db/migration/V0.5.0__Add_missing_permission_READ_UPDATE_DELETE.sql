@@ -1,3 +1,5 @@
+SET search_path TO shogun, public;
+
 INSERT INTO permissions (id, created, modified, name)
 SELECT
     nextval('hibernate_sequence'),
