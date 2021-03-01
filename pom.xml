@@ -85,14 +85,14 @@
 
     <!-- Spring -->
     <spring-boot.version>2.4.0</spring-boot.version>
-    <spring-data.version>2.4.1</spring-data.version>
+    <spring-data.version>2.4.5</spring-data.version>
 
     <keycloak.version>9.0.0</keycloak.version>
 
     <!-- Database -->
     <hibernate.version>5.4.28.Final</hibernate.version>
     <hibernate-extra-types.version>2.10.0</hibernate-extra-types.version>
-    <postgres.version>42.2.18</postgres.version>
+    <postgres.version>42.2.19</postgres.version>
     <ehcache.version>3.9.0</ehcache.version>
 
     <!-- GraphQL -->
