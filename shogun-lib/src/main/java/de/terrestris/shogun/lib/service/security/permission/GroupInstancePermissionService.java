@@ -9,16 +9,17 @@ import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
 import de.terrestris.shogun.lib.repository.security.permission.GroupInstancePermissionRepository;
 import de.terrestris.shogun.lib.repository.security.permission.PermissionCollectionRepository;
 import de.terrestris.shogun.lib.security.SecurityContextUtil;
-import de.terrestris.shogun.lib.service.BaseService;
 import de.terrestris.shogun.lib.util.KeycloakUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+@Log4j2
 @Service
-public class GroupInstancePermissionService extends BaseService<GroupInstancePermissionRepository, GroupInstancePermission> {
+public class GroupInstancePermissionService extends BasePermissionService<GroupInstancePermissionRepository, GroupInstancePermission> {
 
     @Autowired
     protected SecurityContextUtil securityContextUtil;
@@ -37,7 +38,7 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
      */
     public List<GroupInstancePermission> findFor(Group group) {
 
-        LOG.trace("Getting all group instance permissions for group with Keycloak ID {}",
+        log.trace("Getting all group instance permissions for group with Keycloak ID {}",
             group.getKeycloakId());
 
         return repository.findAllByGroup(group);
@@ -51,21 +52,20 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
      */
     public Optional<GroupInstancePermission> findFor(BaseEntity entity, Group group) {
         if (entity == null || group == null) {
-            LOG.trace("Either entity or group is null");
+            log.trace("Either entity or group is null");
             return Optional.empty();
         }
 
         if (entity.getId() == null || group.getId() == null) {
-            LOG.trace("Either entity or group is not persisted yet.");
+            log.trace("Either entity or group is not persisted yet.");
             return Optional.empty();
         }
 
-        LOG.trace("Getting all group permissions for group with Keycloak ID {} and " +
+        log.trace("Getting all group permissions for group with Keycloak ID {} and " +
             "entity with ID {}", group.getKeycloakId(), entity.getId());
 
         return repository.findByGroupIdAndEntityId(group.getId(), entity.getId());
     }
-
 
     /**
      * Returns the {@link GroupInstancePermission} for the given query arguments.
@@ -74,7 +74,7 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
      * @return The (optional) permission.
      */
     public List<GroupInstancePermission> findFor(BaseEntity entity) {
-        LOG.trace("Getting all group permissions for entity with ID {}", entity.getId());
+        log.trace("Getting all group permissions for entity with ID {}", entity.getId());
 
         return repository.findByEntityId(entity.getId());
     }
@@ -88,7 +88,7 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
      * @return The (optional) permission.
      */
     public Optional<GroupInstancePermission> findFor(BaseEntity entity, User user) {
-        LOG.trace("Getting all group permissions for user with Keycloak ID {} and " +
+        log.trace("Getting all group permissions for user with Keycloak ID {} and " +
             "entity with ID {}", user.getKeycloakId(), entity.getId());
 
         // Get all groups of the user from Keycloak
@@ -117,14 +117,14 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
      */
     public Optional<GroupInstancePermission> findFor(BaseEntity entity, Group group, User user) {
 
-        LOG.trace("Getting all group instance permissions for user with Keycloak ID {} " +
+        log.trace("Getting all group instance permissions for user with Keycloak ID {} " +
             "and entity with ID {} in the context of group with Keycloak ID {}",
             user.getKeycloakId(), entity.getId(), group.getKeycloakId());
 
         boolean isUserMemberInGroup = keycloakUtil.isUserInGroup(user, group);
 
         if (!isUserMemberInGroup) {
-            LOG.trace("The user is not a member of the given group, no permissions available.");
+            log.trace("The user is not a member of the given group, no permissions available.");
 
             return Optional.empty();
         }
@@ -242,13 +242,13 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
 
         // Check if there is already an existing permission set on the entity
         if (existingPermission.isPresent()) {
-            LOG.debug("Permission is already set for entity with ID {} and group with " +
+            log.debug("Permission is already set for entity with ID {} and group with " +
                 "Keycloak ID {}: {}", entity.getId(), group.getKeycloakId(), permissionCollection);
 
             // Remove the existing one
             repository.delete(existingPermission.get());
 
-            LOG.debug("Removed the permission");
+            log.debug("Removed the permission");
         }
     }
 
@@ -257,14 +257,27 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
      *
      * @param persistedEntity The entity to clear the permissions for.
      */
-    public void deleteAllForEntity(BaseEntity persistedEntity) {
+    public void deleteAllFor(BaseEntity persistedEntity) {
         List<GroupInstancePermission> groupInstancePermissions = this.findFor(persistedEntity);
 
         repository.deleteAll(groupInstancePermissions);
 
-        LOG.info("Successfully deleted all group instance permissions for entity " +
-            "with ID {}", persistedEntity.getId());
-        LOG.trace("Deleted entity: {}", persistedEntity);
+        log.info("Successfully deleted all group instance permissions for entity with ID {}",
+            persistedEntity.getId());
+        log.trace("Deleted entity: {}", persistedEntity);
+    }
+
+    public void deleteFor(BaseEntity persistedEntity, Group group) {
+        Optional<GroupInstancePermission> groupInstancePermission = this.findFor(persistedEntity, group);
+
+        if (groupInstancePermission.isPresent()) {
+            repository.delete(groupInstancePermission.get());
+
+            log.info("Successfully deleted the group instance permission for entity with ID {} and group {}.",
+                persistedEntity.getId(), group.getId());
+        } else {
+            log.warn("Could not delete the group instance permission. The requested permission does not exist.");
+        }
     }
 
     /**

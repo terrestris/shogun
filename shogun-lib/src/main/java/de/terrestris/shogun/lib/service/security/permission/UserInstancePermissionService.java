@@ -8,16 +8,17 @@ import de.terrestris.shogun.lib.model.security.permission.UserInstancePermission
 import de.terrestris.shogun.lib.repository.security.permission.PermissionCollectionRepository;
 import de.terrestris.shogun.lib.repository.security.permission.UserInstancePermissionRepository;
 import de.terrestris.shogun.lib.security.SecurityContextUtil;
-import de.terrestris.shogun.lib.service.BaseService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+@Log4j2
 @Service
-public class UserInstancePermissionService extends BaseService<UserInstancePermissionRepository, UserInstancePermission> {
+public class UserInstancePermissionService extends BasePermissionService<UserInstancePermissionRepository, UserInstancePermission> {
 
     @Autowired
     protected SecurityContextUtil securityContextUtil;
@@ -33,7 +34,7 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
      */
     public List<UserInstancePermission> findFor(User user) {
 
-        LOG.trace("Getting all user instance permissions for user {}", user);
+        log.trace("Getting all user instance permissions for user {}", user);
 
         return repository.findAllByUser(user);
     }
@@ -46,7 +47,7 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
      * @return The (optional) permission.
      */
     public Optional<UserInstancePermission> findFor(BaseEntity entity, User user) {
-        LOG.trace("Getting all user permissions for user with Keycloak ID {} and " +
+        log.trace("Getting all user permissions for user with Keycloak ID {} and " +
             "entity with ID {}", user.getKeycloakId(), entity);
 
         return repository.findByUserIdAndEntityId(user.getId(), entity.getId());
@@ -54,12 +55,13 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
 
     /**
      * Returns all {@link UserInstancePermission} for the given entity.
+     * Get all {@link UserInstancePermission} for the given entity.
      *
      * @param entity entity to get user permissions for
      * @return
      */
     public List<UserInstancePermission> findFor(BaseEntity entity) {
-        LOG.trace("Getting all user permissions for entity with ID {}", entity.getId());
+        log.trace("Getting all user permissions for entity with ID {}", entity.getId());
 
         return repository.findByEntityId(entity.getId());
     }
@@ -73,7 +75,7 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
      */
     public List<UserInstancePermission> findFor(BaseEntity entity, PermissionCollectionType permissionCollectionType) {
 
-        LOG.trace("Getting all user permissions for entity with ID {} and permission " +
+        log.trace("Getting all user permissions for entity with ID {} and permission " +
             "collection type {}", entity.getId(), permissionCollectionType);
 
         List<UserInstancePermission> result = repository
@@ -90,13 +92,13 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
      */
     public List<User> findOwner(BaseEntity entity) {
 
-        LOG.trace("Getting the owners of entity with ID {}", entity.getId());
+        log.trace("Getting the owners of entity with ID {}", entity.getId());
 
         List<UserInstancePermission> userInstancePermission =
             this.findFor(entity, PermissionCollectionType.ADMIN);
 
         if (userInstancePermission.isEmpty()) {
-            LOG.debug("No user instance permission candidate found.");
+            log.debug("No user instance permission candidate found.");
 
             return null;
         }
@@ -207,13 +209,13 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
 
         // Check if there is already an existing permission set on the entity
         if (existingPermission.isPresent()) {
-            LOG.debug("Permission is already set for entity with ID {} and user with " +
+            log.debug("Permission is already set for entity with ID {} and user with " +
                 "Keycloak ID {}: {}", entity.getId(), user.getKeycloakId(), permissionCollection);
 
             // Remove the existing one
             repository.delete(existingPermission.get());
 
-            LOG.debug("Removed the permission");
+            log.debug("Removed the permission");
         }
     }
 
@@ -222,14 +224,14 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
      *
      * @param persistedEntity The entity to clear the permissions for.
      */
-    public void deleteAllForEntity(BaseEntity persistedEntity) {
+    public void deleteAllFor(BaseEntity persistedEntity) {
         List<UserInstancePermission> userInstancePermissions = this.findFor(persistedEntity);
 
         repository.deleteAll(userInstancePermissions);
 
-        LOG.info("Successfully deleted all user instance permissions for entity " +
-            "with ID {}", persistedEntity.getId());
-        LOG.trace("Deleted entity: {}", persistedEntity);
+        log.info("Successfully deleted all user instance permissions for entity with ID {}",
+            persistedEntity.getId());
+        log.trace("Deleted entity: {}", persistedEntity);
     }
 
     /**
@@ -247,4 +249,18 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
 
         return new PermissionCollection();
     }
+
+    public void deleteFor(BaseEntity persistedEntity, User user) {
+        Optional<UserInstancePermission> userInstancePermission = this.findFor(persistedEntity, user);
+
+        if (userInstancePermission.isPresent()) {
+            repository.delete(userInstancePermission.get());
+
+            log.info("Successfully deleted the user instance permission for entity with ID {} and user {}.",
+                persistedEntity.getId(), user.getId());
+        } else {
+            log.warn("Could not delete the user instance permission. The requested permission does not exist.");
+        }
+    }
+
 }

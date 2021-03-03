@@ -8,9 +8,12 @@ import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.repository.BaseCrudRepository;
 import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionService;
 import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
@@ -22,14 +25,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
+@Log4j2
 public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpecificationExecutor<S>, S extends BaseEntity> {
-
-    protected final Logger LOG = LogManager.getLogger(getClass());
 
     @Autowired
     protected T repository;
@@ -125,9 +122,9 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'DELETE')")
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void delete(S entity) {
-        userInstancePermissionService.deleteAllForEntity(entity);
+        userInstancePermissionService.deleteAllFor(entity);
 
-        groupInstancePermissionService.deleteAllForEntity(entity);
+        groupInstancePermissionService.deleteAllFor(entity);
 
         repository.delete(entity);
     }

@@ -1,9 +1,12 @@
 package de.terrestris.shogun.lib.controller;
 
+import de.terrestris.shogun.lib.controller.security.permission.BasePermissionController;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.service.BaseService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -12,17 +15,18 @@ import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-// TODO Specify and type extension of BaseService
-public abstract class BaseController<T extends BaseService<?, S>, S extends BaseEntity> {
-
-    protected final Logger LOG = LogManager.getLogger(getClass());
+@Log4j2
+public abstract class BaseController<T extends BaseService<?, S>, S extends BaseEntity> extends BasePermissionController<T, S> {
 
     @Autowired
     protected T service;
@@ -33,17 +37,17 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<S> findAll() {
-        LOG.trace("Requested to return all entities of type {}", getGenericClassName());
+        log.trace("Requested to return all entities of type {}", getGenericClassName());
 
         try {
             List<S> persistedEntities = service.findAll();
 
-            LOG.trace("Successfully got all entities of type {} (count: {})",
+            log.trace("Successfully got all entities of type {} (count: {})",
                 getGenericClassName(), persistedEntities.size());
 
             return persistedEntities;
         } catch (AccessDeniedException ade) {
-            LOG.warn("Access to entity of type {} is denied", getGenericClassName());
+            log.warn("Access to entity of type {} is denied", getGenericClassName());
 
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
@@ -57,9 +61,9 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
         } catch (ResponseStatusException rse) {
             throw rse;
         } catch (Exception e) {
-            LOG.error("Error while requesting all entities of type {}: \n {}",
+            log.error("Error while requesting all entities of type {}: \n {}",
                     getGenericClassName(), e.getMessage());
-            LOG.trace("Full stack trace: ", e);
+            log.trace("Full stack trace: ", e);
 
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR,
@@ -76,7 +80,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public S findOne(@PathVariable("id") Long entityId) {
-        LOG.trace("Requested to return entity of type {} with ID {}",
+        log.trace("Requested to return entity of type {} with ID {}",
             getGenericClassName(), entityId);
 
         try {
@@ -85,12 +89,12 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
             if (entity.isPresent()) {
                 S persistedEntity = entity.get();
 
-                LOG.trace("Successfully got entity of type {} with ID {}",
+                log.trace("Successfully got entity of type {} with ID {}",
                     getGenericClassName(), entityId);
 
                 return persistedEntity;
             } else {
-                LOG.error("Could not find entity of type {} with ID {}",
+                log.error("Could not find entity of type {} with ID {}",
                         getGenericClassName(), entityId);
 
                 throw new ResponseStatusException(
@@ -103,7 +107,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
                 );
             }
         } catch (AccessDeniedException ade) {
-            LOG.warn("Access to entity of type {} with ID {} is denied",
+            log.warn("Access to entity of type {} with ID {} is denied",
                     getGenericClassName(), entityId);
 
             throw new ResponseStatusException(
@@ -118,9 +122,9 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
         } catch (ResponseStatusException rse) {
             throw rse;
         } catch (Exception e) {
-            LOG.error("Error while requesting entity of type {} with ID {}: \n {}",
+            log.error("Error while requesting entity of type {} with ID {}: \n {}",
                     getGenericClassName(), entityId, e.getMessage());
-            LOG.trace("Full stack trace: ", e);
+            log.trace("Full stack trace: ", e);
 
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR,
@@ -137,7 +141,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
     @GetMapping("/{id}/rev")
     @ResponseStatus(HttpStatus.OK)
     public Revisions<Integer, S> findRevisions(@PathVariable("id") Long entityId) {
-        LOG.trace("Requested to return all revisions for entity of type {} with ID {}",
+        log.trace("Requested to return all revisions for entity of type {} with ID {}",
             getGenericClassName(), entityId);
 
         try {
@@ -146,12 +150,12 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
             if (entity.isPresent()) {
                 Revisions<Integer, S> revisions = service.findRevisions(entity.get());
 
-                LOG.trace("Successfully got all revisions for entity of type {} with ID {}",
+                log.trace("Successfully got all revisions for entity of type {} with ID {}",
                     getGenericClassName(), entityId);
 
                 return revisions;
             } else {
-                LOG.error("Could not find entity of type {} with ID {}",
+                log.error("Could not find entity of type {} with ID {}",
                     getGenericClassName(), entityId);
 
                 throw new ResponseStatusException(
@@ -164,7 +168,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
                 );
             }
         } catch (AccessDeniedException ade) {
-            LOG.warn("Access to entity of type {} with ID {} is denied",
+            log.warn("Access to entity of type {} with ID {} is denied",
                 getGenericClassName(), entityId);
 
             throw new ResponseStatusException(
@@ -179,9 +183,9 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
         } catch (ResponseStatusException rse) {
             throw rse;
         } catch (Exception e) {
-            LOG.error("Error while requesting entity of type {} with ID {}: \n {}",
+            log.error("Error while requesting entity of type {} with ID {}: \n {}",
                 getGenericClassName(), entityId, e.getMessage());
-            LOG.trace("Full stack trace: ", e);
+            log.trace("Full stack trace: ", e);
 
             throw new ResponseStatusException(
                 HttpStatus.INTERNAL_SERVER_ERROR,
@@ -198,7 +202,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
     @GetMapping("/{id}/rev/{rev}")
     @ResponseStatus(HttpStatus.OK)
     public Revision<Integer, S> findRevision(@PathVariable("id") Long entityId, @PathVariable("rev") Integer rev) {
-        LOG.trace("Requested to return revision {} for entity of type {} with ID {}",
+        log.trace("Requested to return revision {} for entity of type {} with ID {}",
             rev, getGenericClassName(), entityId);
 
         try {
@@ -208,12 +212,12 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
                 Optional<Revision<Integer, S>> revision = service.findRevision(entity.get(), rev);
 
                 if (revision.isPresent()) {
-                    LOG.trace("Successfully got revision {} for entity of type {} with ID {}",
+                    log.trace("Successfully got revision {} for entity of type {} with ID {}",
                         rev, getGenericClassName(), entityId);
 
                     return revision.get();
                 } else {
-                    LOG.error("Could not find revision {} for entity with ID {}",
+                    log.error("Could not find revision {} for entity with ID {}",
                         rev, entityId);
 
                     throw new ResponseStatusException(
@@ -226,7 +230,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
                     );
                 }
             } else {
-                LOG.error("Could not find entity of type {} with ID {}",
+                log.error("Could not find entity of type {} with ID {}",
                     getGenericClassName(), entityId);
 
                 throw new ResponseStatusException(
@@ -239,7 +243,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
                 );
             }
         } catch (AccessDeniedException ade) {
-            LOG.warn("Access to entity of type {} with ID {} is denied",
+            log.warn("Access to entity of type {} with ID {} is denied",
                 getGenericClassName(), entityId);
 
             throw new ResponseStatusException(
@@ -254,9 +258,9 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
         } catch (ResponseStatusException rse) {
             throw rse;
         } catch (Exception e) {
-            LOG.error("Error while requesting entity of type {} with ID {}: \n {}",
+            log.error("Error while requesting entity of type {} with ID {}: \n {}",
                 getGenericClassName(), entityId, e.getMessage());
-            LOG.trace("Full stack trace: ", e);
+            log.trace("Full stack trace: ", e);
 
             throw new ResponseStatusException(
                 HttpStatus.INTERNAL_SERVER_ERROR,
@@ -273,7 +277,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
     @GetMapping("/{id}/lastrev")
     @ResponseStatus(HttpStatus.OK)
     public Revision<Integer, S> findLastChangeRevision(@PathVariable("id") Long entityId) {
-        LOG.trace("Requested to return the latest revision for entity of type {} with ID {}",
+        log.trace("Requested to return the latest revision for entity of type {} with ID {}",
             getGenericClassName(), entityId);
 
         try {
@@ -283,12 +287,12 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
                 Optional<Revision<Integer, S>> revision = service.findLastChangeRevision(entity.get());
 
                 if (revision.isPresent()) {
-                    LOG.trace("Successfully got the latest revision for entity of type {} with ID {}",
+                    log.trace("Successfully got the latest revision for entity of type {} with ID {}",
                         getGenericClassName(), entityId);
 
                     return revision.get();
                 } else {
-                    LOG.error("Could not find the latest revision for entity with ID {}", entityId);
+                    log.error("Could not find the latest revision for entity with ID {}", entityId);
 
                     throw new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
@@ -300,7 +304,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
                     );
                 }
             } else {
-                LOG.error("Could not find entity of type {} with ID {}",
+                log.error("Could not find entity of type {} with ID {}",
                     getGenericClassName(), entityId);
 
                 throw new ResponseStatusException(
@@ -313,7 +317,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
                 );
             }
         } catch (AccessDeniedException ade) {
-            LOG.warn("Access to entity of type {} with ID {} is denied",
+            log.warn("Access to entity of type {} with ID {} is denied",
                 getGenericClassName(), entityId);
 
             throw new ResponseStatusException(
@@ -328,9 +332,9 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
         } catch (ResponseStatusException rse) {
             throw rse;
         } catch (Exception e) {
-            LOG.error("Error while requesting entity of type {} with ID {}: \n {}",
+            log.error("Error while requesting entity of type {} with ID {}: \n {}",
                 getGenericClassName(), entityId, e.getMessage());
-            LOG.trace("Full stack trace: ", e);
+            log.trace("Full stack trace: ", e);
 
             throw new ResponseStatusException(
                 HttpStatus.INTERNAL_SERVER_ERROR,
@@ -347,18 +351,18 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public S add(@RequestBody S entity) {
-        LOG.trace("Requested to create a new entity of type {} ({})",
+        log.trace("Requested to create a new entity of type {} ({})",
             getGenericClassName(), entity);
 
         try {
             S persistedEntity = service.create(entity);
 
-            LOG.trace("Successfully created the entity of type {} with ID {}",
+            log.trace("Successfully created the entity of type {} with ID {}",
                 getGenericClassName(), persistedEntity.getId());
 
             return persistedEntity;
         } catch (AccessDeniedException ade) {
-            LOG.warn("Creating entity of type {} is denied", getGenericClassName());
+            log.warn("Creating entity of type {} is denied", getGenericClassName());
 
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
@@ -372,8 +376,8 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
         } catch (ResponseStatusException rse) {
             throw rse;
         } catch (Exception e) {
-            LOG.error("Error while creating entity {}: \n {}", entity, e.getMessage());
-            LOG.trace("Full stack trace: ", e);
+            log.error("Error while creating entity {}: \n {}", entity, e.getMessage());
+            log.trace("Full stack trace: ", e);
 
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR,
@@ -390,12 +394,12 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public S update(@RequestBody S entity, @PathVariable("id") Long entityId) {
-        LOG.trace("Requested to update entity of type {} with ID {} ({})",
+        log.trace("Requested to update entity of type {} with ID {} ({})",
             getGenericClassName(), entityId, entity);
 
         try {
             if (!entityId.equals(entity.getId())) {
-                LOG.error("IDs of update candidate (ID: {}) and update data ({}) don't match.",
+                log.error("IDs of update candidate (ID: {}) and update data ({}) don't match.",
                     entityId, entity);
 
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -406,12 +410,12 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
             if (persistedEntity.isPresent()) {
                 S updatedEntity = service.update(entityId, entity);
 
-                LOG.trace("Successfully updated entity of type {} with ID {}",
+                log.trace("Successfully updated entity of type {} with ID {}",
                     getGenericClassName(), entityId);
 
                 return updatedEntity;
             } else {
-                LOG.error("Could not find entity of type {} with ID {}",
+                log.error("Could not find entity of type {} with ID {}",
                         getGenericClassName(), entityId);
 
                 throw new ResponseStatusException(
@@ -424,7 +428,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
                 );
             }
         } catch (AccessDeniedException ade) {
-            LOG.warn("Updating entity of type {} with ID {} is denied",
+            log.warn("Updating entity of type {} with ID {} is denied",
                     getGenericClassName(), entityId);
 
             throw new ResponseStatusException(
@@ -439,9 +443,9 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
         } catch (ResponseStatusException rse) {
             throw rse;
         } catch (Exception e) {
-            LOG.error("Error while updating entity of type {} with ID {}: \n {}",
+            log.error("Error while updating entity of type {} with ID {}: \n {}",
                     getGenericClassName(), entityId, e.getMessage());
-            LOG.trace("Full stack trace: ", e);
+            log.trace("Full stack trace: ", e);
 
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR,
@@ -458,17 +462,17 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public S updatePartial(@RequestBody Map<String, Object> values, @PathVariable("id") Long entityId) {
-        LOG.trace("Requested to partially update entity of type {} with ID {} ({})", getGenericClassName(), entityId, values);
+        log.trace("Requested to partially update entity of type {} with ID {} ({})", getGenericClassName(), entityId, values);
 
         try {
             Object idFromValues = values.get("id");
             if (idFromValues == null) {
-                LOG.error("Field 'id' (entity {})is missing in the passed values: {}.", entityId, values);
+                log.error("Field 'id' (entity {})is missing in the passed values: {}.", entityId, values);
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
             }
             Long id = Long.valueOf((Integer) idFromValues);
             if (!entityId.equals(id)) {
-                LOG.error("IDs of update candidate (ID: {}) and update data ({}) don't match.", entityId, values);
+                log.error("IDs of update candidate (ID: {}) and update data ({}) don't match.", entityId, values);
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
             }
 
@@ -476,12 +480,12 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
             if (persistedEntity != null) {
                 S updatedEntity = service.updatePartial(entityId, persistedEntity, values);
 
-                LOG.trace("Successfully updated values for entity of type {} with ID {}",
+                log.trace("Successfully updated values for entity of type {} with ID {}",
                     getGenericClassName(), entityId);
 
                 return updatedEntity;
             } else {
-                LOG.error("Could not find entity of type {} with ID {}",
+                log.error("Could not find entity of type {} with ID {}",
                     getGenericClassName(), entityId);
 
                 throw new ResponseStatusException(
@@ -494,7 +498,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
                 );
             }
         } catch (AccessDeniedException ade) {
-            LOG.warn("Updating values of type {} with ID {} is denied",
+            log.warn("Updating values of type {} with ID {} is denied",
                 getGenericClassName(), entityId);
 
             throw new ResponseStatusException(
@@ -507,15 +511,15 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
                     ade
             );
         } catch (NumberFormatException nfe) {
-            LOG.error("Can't parse 'id' field ({}) from values ({}). It has to be an Integer.: {}",
+            log.error("Can't parse 'id' field ({}) from values ({}). It has to be an Integer.: {}",
                 values, entityId, nfe.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         } catch (ResponseStatusException rse) {
             throw rse;
         } catch (Exception e) {
-            LOG.error("Error while updating values for entity of type {} with ID {}: \n {}",
+            log.error("Error while updating values for entity of type {} with ID {}: \n {}",
                     getGenericClassName(), entityId, e.getMessage());
-            LOG.trace("Full stack trace: ", e);
+            log.trace("Full stack trace: ", e);
 
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR,
@@ -532,7 +536,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("id") Long entityId) {
-        LOG.trace("Requested to delete entity of type {} with ID {}",
+        log.trace("Requested to delete entity of type {} with ID {}",
             getGenericClassName(), entityId);
 
         try {
@@ -541,10 +545,10 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
             if (entity.isPresent()) {
                 service.delete(entity.get());
 
-                LOG.trace("Successfully deleted entity of type {} with ID {}",
+                log.trace("Successfully deleted entity of type {} with ID {}",
                     getGenericClassName(), entityId);
             } else {
-                LOG.error("Could not find entity of type {} with ID {}",
+                log.error("Could not find entity of type {} with ID {}",
                         getGenericClassName(), entityId);
 
                 throw new ResponseStatusException(
@@ -557,7 +561,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
                 );
             }
         } catch (AccessDeniedException ade) {
-            LOG.warn("Deleting entity of type {} with ID {} is denied",
+            log.warn("Deleting entity of type {} with ID {} is denied",
                     getGenericClassName(), entityId);
 
             throw new ResponseStatusException(
@@ -572,9 +576,9 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
         } catch (ResponseStatusException rse) {
             throw rse;
         } catch (Exception e) {
-            LOG.error("Error while deleting entity of type {} with ID {}: \n {}",
+            log.error("Error while deleting entity of type {} with ID {}: \n {}",
                     getGenericClassName(), entityId, e.getMessage());
-            LOG.trace("Full stack trace: ", e);
+            log.trace("Full stack trace: ", e);
 
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR,

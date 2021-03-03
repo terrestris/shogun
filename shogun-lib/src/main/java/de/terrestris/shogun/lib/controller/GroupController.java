@@ -6,6 +6,7 @@ import de.terrestris.shogun.lib.service.GroupService;
 import de.terrestris.shogun.lib.service.UserService;
 import java.util.List;
 import java.util.Optional;
+import lombok.extern.log4j.Log4j2;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+@Log4j2
 @RestController
 @RequestMapping("/groups")
 @ConditionalOnExpression("${controller.groups.enabled:true}")
@@ -38,9 +40,9 @@ public class GroupController extends BaseController<GroupService, Group> {
                 throw new Exception("Could not find user with ID " +  userId);
             }
         } catch (Exception e) {
-            LOG.error("Error while finding groups for user with ID {}: \n {}",
+            log.error("Error while finding groups for user with ID {}: \n {}",
                 userId, e.getMessage());
-            LOG.trace("Full stack trace: ", e);
+            log.trace("Full stack trace: ", e);
 
             throw new ResponseStatusException(
                 HttpStatus.INTERNAL_SERVER_ERROR,
@@ -60,9 +62,9 @@ public class GroupController extends BaseController<GroupService, Group> {
         try {
             return service.findByKeycloakId(keycloakId);
         } catch (Exception e) {
-            LOG.error("Error while requesting keycloak group with ID {}: \n {}",
+            log.error("Error while requesting keycloak group with ID {}: \n {}",
                 keycloakId, e.getMessage());
-            LOG.trace("Full stack trace: ", e);
+            log.trace("Full stack trace: ", e);
 
             throw new ResponseStatusException(
                 HttpStatus.INTERNAL_SERVER_ERROR,
@@ -82,9 +84,9 @@ public class GroupController extends BaseController<GroupService, Group> {
         try {
             return service.getGroupMembers(keycloakId);
         } catch (Exception e) {
-            LOG.error("Error while requesting the members of keycloak group with ID {}: \n {}",
+            log.error("Error while requesting the members of keycloak group with ID {}: \n {}",
                 keycloakId, e.getMessage());
-            LOG.trace("Full stack trace: ", e);
+            log.trace("Full stack trace: ", e);
 
             throw new ResponseStatusException(
                 HttpStatus.INTERNAL_SERVER_ERROR,

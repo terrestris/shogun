@@ -5,15 +5,16 @@ import de.terrestris.shogun.lib.repository.ImageFileRepository;
 import de.terrestris.shogun.lib.util.FileUtil;
 import de.terrestris.shogun.lib.util.ImageFileUtil;
 import de.terrestris.shogun.properties.UploadProperties;
+import java.awt.Dimension;
+import java.util.List;
+import lombok.extern.log4j.Log4j2;
 import org.apache.tomcat.util.http.fileupload.impl.InvalidContentTypeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.awt.*;
-import java.util.List;
-
+@Log4j2
 @Service
 public class ImageFileService extends BaseFileService<ImageFileRepository, ImageFile> {
 
@@ -39,7 +40,7 @@ public class ImageFileService extends BaseFileService<ImageFileRepository, Image
             file.setWidth(imageDimensions.width);
             file.setHeight(imageDimensions.height);
         } else {
-            LOG.warn("Could not detect the dimensions of the image. Neither width, height " +
+            log.warn("Could not detect the dimensions of the image. Neither width, height " +
                 "nor the thumbnail can be set.");
         }
 
