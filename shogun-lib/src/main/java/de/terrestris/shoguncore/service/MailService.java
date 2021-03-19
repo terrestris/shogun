@@ -28,10 +28,8 @@ public class MailService {
      * @param user
      * @param password
      * @param locale
-     * @return SimpleMailMessage
      */
-    public void sendPasswordResetConfirmedEmailMessage(final User user,
-                                                                          final String password, Locale locale){
+    public void sendPasswordResetConfirmedEmailMessage(final User user, final String password, Locale locale) {
         final String recipientAddress = user.getEmail();
         final String subject = messageSource.getMessage("passwordReset.email.confirmed.subject", null, locale);
 
@@ -60,11 +58,9 @@ public class MailService {
      *              built from this URL.
      * @param user The user about to be registered.
      * @param token The unique token (e.g. UUID).
-     * @return A SimpleMailMessage translated depending on the users' language containing the specified text and a
-     * registration link.
      */
-    public void sendRegistrationEmailMessage(String appUrl, final User user,
-                                                                final String token, Locale locale) throws MessagingException {
+    public void sendRegistrationEmailMessage(String appUrl, final User user, final String token, Locale locale)
+            throws MessagingException {
         final String recipientAddress = user.getEmail();
         final String subject = messageSource.getMessage("registration.email.subject", null, locale);
         final String confirmationUrl = appUrl + "/users/confirm?token=" + token;
@@ -94,11 +90,9 @@ public class MailService {
      *              built from this URL.
      * @param user The user about to be registered.
      * @param token The unique token (e.g. UUID).
-     * @return A SimpleMailMessage translated depending on the users' language containing the specified text and a
-     * registration link.
      */
-    public void sendPasswordResetEmailMessage(String appUrl, final User user,
-                                                                 final String token, Locale locale) throws MessagingException {
+    public void sendPasswordResetEmailMessage(String appUrl, final User user, final String token, Locale locale)
+            throws MessagingException {
         final String recipientAddress = user.getEmail();
         final String subject = messageSource.getMessage("passwordReset.email.subject", null, locale);
         final String confirmationUrl = appUrl + "/users/password/resetPassword/confirm?token=" + token;
