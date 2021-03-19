@@ -84,7 +84,7 @@
     <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
 
     <!-- Spring -->
-    <spring-boot.version>2.4.0</spring-boot.version>
+    <spring-boot.version>2.4.4</spring-boot.version>
     <spring-data.version>2.4.1</spring-data.version>
 
     <keycloak.version>9.0.0</keycloak.version>
