@@ -29,10 +29,6 @@ import java.util.Objects;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.MessageSource;
-import org.springframework.core.env.Environment;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -70,13 +66,7 @@ public class UserService extends BaseService<UserRepository, User> {
     private ApplicationEventPublisher eventPublisher;
 
     @Autowired
-    protected MessageSource messageSource;
-
-    @Autowired
-    private JavaMailSender mailSender;
-
-    @Autowired
-    private Environment env;
+    private MailService mailService;
 
     private static final String TOKEN_INVALID = "invalidToken";
     private static final String TOKEN_EXPIRED = "expired";
@@ -356,39 +346,11 @@ public class UserService extends BaseService<UserRepository, User> {
         String password = resetUserPassword(user);
 
         try {
-            final SimpleMailMessage email = constructPasswordResetConfirmedEmailMessage(user, password, locale);
-            mailSender.send(email);
+            mailService.sendPasswordResetConfirmedEmailMessage(user, password, locale);
         } catch (Exception e) {
             throw new MailException(e.getMessage());
         }
     }
 
-    /**
-     * Generates a simple email to send the confirmation the user has reset the password, with the new password
-     * @param user
-     * @param password
-     * @param locale
-     * @return SimpleMailMessage
-     */
-    private SimpleMailMessage constructPasswordResetConfirmedEmailMessage(final User user,
-                                                                          final String password, Locale locale){
-        final String recipientAddress = user.getEmail();
-        final String subject = messageSource.getMessage("passwordReset.email.confirmed.subject", null, locale);
 
-        String message = String.format("%s %s,%n%n",
-            messageSource.getMessage("passwordReset.email.confirmed.salutationPrefix", null, locale),
-            user.getUsername()
-        );
-        message += messageSource.getMessage("passwordReset.email.confirmed.infoSuccess", null, locale) + " ";
-        message += messageSource.getMessage("passwordReset.email.confirmed.newPassword", null, locale);
-        message += password;
-
-        final SimpleMailMessage email = new SimpleMailMessage();
-        email.setTo(recipientAddress);
-        email.setSubject(subject);
-        email.setText(message);
-        email.setFrom(Objects.requireNonNull(env.getProperty("support.email"), "Environment variable support.email not set"));
-
-        return email;
-    }
 }
