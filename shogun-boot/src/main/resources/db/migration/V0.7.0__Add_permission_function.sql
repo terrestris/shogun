@@ -1,4 +1,4 @@
-drop function has_permission(text, integer, text[], text);
+drop function if exists has_permission(text, integer, text[], text);
 
 create or replace function has_permission(userid text, entityid int, group_ids text[], classname text) returns boolean
 	as $$
