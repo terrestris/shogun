@@ -1,4 +1,4 @@
-package de.terrestris.shogun.boot.config;
+package de.terrestris.shogun.lib.config;
 
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
