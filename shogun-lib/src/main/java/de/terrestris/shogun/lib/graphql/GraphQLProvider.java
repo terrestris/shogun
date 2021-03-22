@@ -166,11 +166,11 @@ public class GraphQLProvider {
         RuntimeWiring.Builder runtimeWiring = RuntimeWiring.newRuntimeWiring();
         List<GraphQLScalarType> scalars = this.gatherScalars();
         List<TypeRuntimeWiring.Builder> types = gatherTypes();
-        for (int i = 0; i < scalars.size(); i++) {
-            runtimeWiring = runtimeWiring.scalar(scalars.get(i));
+        for (GraphQLScalarType scalar : scalars) {
+            runtimeWiring = runtimeWiring.scalar(scalar);
         }
-        for (int i = 0; i < types.size(); i++) {
-            runtimeWiring = runtimeWiring.type(types.get(i));
+        for (TypeRuntimeWiring.Builder type : types) {
+            runtimeWiring = runtimeWiring.type(type);
         }
         return runtimeWiring.build();
     }

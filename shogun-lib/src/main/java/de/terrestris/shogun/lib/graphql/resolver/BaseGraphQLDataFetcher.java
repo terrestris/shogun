@@ -4,21 +4,24 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.terrestris.shogun.lib.graphql.exception.EntityNotAvailableException;
 import de.terrestris.shogun.lib.model.BaseEntity;
+import de.terrestris.shogun.lib.repository.BaseCrudRepository;
 import de.terrestris.shogun.lib.service.BaseService;
 import graphql.schema.DataFetcher;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.GenericTypeResolver;
+
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
+import java.time.OffsetDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.GenericTypeResolver;
 
 @Log4j2
-public abstract class BaseGraphQLDataFetcher<E extends BaseEntity, S extends BaseService> {
+public abstract class BaseGraphQLDataFetcher<E extends BaseEntity, S extends BaseService<? extends BaseCrudRepository<E, Long>, E>> {
 
     @Autowired
     protected ObjectMapper objectMapper;
@@ -26,11 +29,11 @@ public abstract class BaseGraphQLDataFetcher<E extends BaseEntity, S extends Bas
     @Autowired
     protected S service;
 
-    public DataFetcher findAll() {
-        return dataFetchingEnvironment ->  this.service.findAll();
+    public DataFetcher<List<? extends BaseEntity>> findAll() {
+        return dataFetchingEnvironment -> this.service.findAll();
     }
 
-    public DataFetcher findOne() {
+    public DataFetcher<Optional<E>> findOne() {
         return dataFetchingEnvironment -> {
             Integer entityId = dataFetchingEnvironment.getArgument("id");
 
@@ -45,7 +48,38 @@ public abstract class BaseGraphQLDataFetcher<E extends BaseEntity, S extends Bas
         };
     }
 
-    public DataFetcher findAllByIds() {
+    public DataFetcher<Optional<E>> findOneForTime() {
+        return dataFetchingEnvironment -> {
+            Integer entityId = dataFetchingEnvironment.getArgument("id");
+            OffsetDateTime time = dataFetchingEnvironment.getArgument("time");
+
+            Optional<E> persistedEntity = this.service.findOneByDate(entityId.longValue(), time);
+
+            if (persistedEntity.isEmpty()) {
+                throw new EntityNotAvailableException(String.format("Entity with ID %s is not " +
+                    "available", entityId));
+            }
+
+            return persistedEntity;
+        };
+    }
+
+    public DataFetcher<Optional<E>> findOneRevision() {
+        return dataFetchingEnvironment -> {
+            Integer entityId = dataFetchingEnvironment.getArgument("id");
+
+            Optional<E> persistedEntity = this.service.findOne(entityId.longValue());
+
+            if (persistedEntity.isEmpty()) {
+                throw new EntityNotAvailableException(String.format("Entity with ID %s is not " +
+                    "available", entityId));
+            }
+
+            return persistedEntity;
+        };
+    }
+
+    public DataFetcher<List<E>> findAllByIds() {
         return dataFetchingEnvironment -> {
             List<Integer> entityIds = dataFetchingEnvironment.getArgument("ids");
 
@@ -54,20 +88,18 @@ public abstract class BaseGraphQLDataFetcher<E extends BaseEntity, S extends Bas
         };
     }
 
-    public DataFetcher create() {
+    public DataFetcher<E> create() {
         return dataFetchingEnvironment -> {
             LinkedHashMap<String, Object> createEntity = dataFetchingEnvironment
                 .getArgument("entity");
 
             E entity = this.deserializeInput(createEntity);
 
-            E persistedEntity = (E) this.service.create(entity);
-
-            return persistedEntity;
+            return this.service.create(entity);
         };
     }
 
-    public DataFetcher update() {
+    public DataFetcher<E> update() {
         return dataFetchingEnvironment -> {
             Integer entityId = dataFetchingEnvironment.getArgument("id");
 
@@ -97,7 +129,7 @@ public abstract class BaseGraphQLDataFetcher<E extends BaseEntity, S extends Bas
         };
     }
 
-    public DataFetcher delete() {
+    public DataFetcher<Boolean> delete() {
         return dataFetchingEnvironment -> {
             Integer entityId = dataFetchingEnvironment
                 .getArgument("id");
@@ -137,7 +169,7 @@ public abstract class BaseGraphQLDataFetcher<E extends BaseEntity, S extends Bas
         }
     }
 
-    private E deserializeInput(Map entityMap) {
+    private E deserializeInput(Map<String, Object> entityMap) {
         E entity = null;
 
         try {
