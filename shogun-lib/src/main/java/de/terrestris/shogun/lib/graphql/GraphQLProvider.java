@@ -104,6 +104,7 @@ public class GraphQLProvider {
 
     private void addBaseTypes(List<TypeRuntimeWiring.Builder> typeBuilders, BaseGraphQLDataFetcher dataFetcher) {
         String simpleClassName = dataFetcher.getGenericSimpleClassName();
+        String entityName = Character.toLowerCase(simpleClassName.charAt(0)) + simpleClassName.substring(1);
 
         String queryAllName = String.format("all%s", English.plural(simpleClassName));
         typeBuilders.add(TypeRuntimeWiring.newTypeWiring("Query")
@@ -112,11 +113,25 @@ public class GraphQLProvider {
         log.debug("Added GraphQL query {}", queryAllName);
 
         String queryByIdName = String.format("%sById",
-            Character.toLowerCase(simpleClassName.charAt(0)) + simpleClassName.substring(1));
+            entityName);
         typeBuilders.add(TypeRuntimeWiring.newTypeWiring("Query")
             .dataFetcher(queryByIdName, dataFetcher.findOne()));
 
         log.debug("Added GraphQL query {}", queryByIdName);
+
+        String queryByRevisionName = String.format("%sByIdAndRevision",
+            entityName);
+        typeBuilders.add(TypeRuntimeWiring.newTypeWiring("Query")
+            .dataFetcher(queryByRevisionName, dataFetcher.findOneRevision()));
+
+        log.debug("Added GraphQL query {}", queryByRevisionName);
+
+        String queryByTimeName = String.format("%sByIdAndTime",
+            entityName);
+        typeBuilders.add(TypeRuntimeWiring.newTypeWiring("Query")
+            .dataFetcher(queryByTimeName, dataFetcher.findOneForTime()));
+
+        log.debug("Added GraphQL query {}", queryByTimeName);
 
         String queryAllByIdsName = String.format("all%sByIds", English.plural(simpleClassName));
         typeBuilders.add(TypeRuntimeWiring.newTypeWiring("Query")
