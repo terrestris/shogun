@@ -11,7 +11,10 @@ import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissi
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.envers.AuditReader;
+import org.hibernate.envers.query.AuditEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.GenericTypeResolver;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
 import org.springframework.data.jpa.domain.Specification;
@@ -23,6 +26,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,6 +40,9 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
 
     @Autowired
     ObjectMapper objectMapper;
+
+    @Autowired
+    protected AuditReader auditReader;
 
     @Autowired
     protected UserInstancePermissionService userInstancePermissionService;
@@ -130,5 +137,50 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
         groupInstancePermissionService.deleteAllForEntity(entity);
 
         repository.delete(entity);
+    }
+
+    /**
+     * Get a historic {@link BaseEntity} for a given time
+     *
+     * @param id The id of the entity
+     * @param time
+     * @return A single {@link BaseEntity}
+     */
+    @PostAuthorize("hasRole('ROLE_ADMIN') or hasPermission(returnObject.orElse(null), 'READ')")
+    @Transactional(readOnly = true)
+    public Optional<S> findOneByDate(
+        Long id,
+        OffsetDateTime time
+    ) {
+        Class<? extends BaseEntity> clazz = getBaseEntityClass();
+        if (clazz == null) {
+            return Optional.empty();
+        }
+        List<S> revisions = (List<S>) auditReader.createQuery()
+            .forRevisionsOfEntity(clazz, true, true)
+            .add(AuditEntity.id().eq(id))
+            .add(AuditEntity.revisionProperty("timestamp").le(time.toInstant().toEpochMilli()))
+            .addOrder(AuditEntity.revisionProperty("timestamp").desc())
+            .setMaxResults(1)
+            .getResultList();
+
+        return revisions.stream().findFirst();
+    }
+
+    /**
+     * Returns the class of the {@link BaseEntity} this abstract class
+     * has been declared with, e.g. 'Application.class'.
+     *
+     * @return The class.
+     */
+    public Class<? extends BaseEntity> getBaseEntityClass() {
+        Class<? extends BaseEntity>[] resolvedTypeArguments = (Class<? extends BaseEntity>[]) GenericTypeResolver.resolveTypeArguments(getClass(),
+            BaseService.class);
+
+        if (resolvedTypeArguments != null && resolvedTypeArguments.length == 2) {
+            return resolvedTypeArguments[1];
+        } else {
+            return null;
+        }
     }
 }
