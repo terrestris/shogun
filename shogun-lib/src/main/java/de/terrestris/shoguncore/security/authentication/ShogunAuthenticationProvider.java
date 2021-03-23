@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -52,30 +53,34 @@ public class ShogunAuthenticationProvider implements AuthenticationProvider {
             throw new InsufficientAuthenticationException("No password for user");
         }
 
-        Optional<User> user = userRepository.findOne(UserSpecification.findByMail(email));
+        Optional<User> userCandidate = userRepository.findOne(UserSpecification.findByMail(email));
 
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
 
-        String encryptedPassword = null;
+        String encryptedPassword;
 
-        if (!user.isPresent()) {
+        if (!userCandidate.isPresent()) {
             LOG.warn("No user for email '" + email + "' could be found.");
             throw new UsernameNotFoundException(exceptionMessage);
-        } else if (!user.get().isEnabled()) {
+        } else if (!userCandidate.get().isEnabled()) {
             LOG.warn("The user with the email '" + email + "' is not active.");
             throw new DisabledException(exceptionMessage);
         } else {
-            encryptedPassword = user.get().getPassword();
+            User user = userCandidate.get();
+            encryptedPassword = user.getPassword();
 
             // Check if rawPassword matches the hash from the DB.
             if (passwordEncoder.matches(rawPassword, encryptedPassword)) {
                 // TODO Move this to ShogunUserDetailsService and make use of service to get user here?!
-                Set<Role> allUserRoles = getAllUserRoles(user.get());
+                Set<Role> allUserRoles = getAllUserRoles(user);
 
                 // Create granted authorities for the security context.
                 for (Role role : allUserRoles) {
                     grantedAuthorities.add(new SimpleGrantedAuthority(role.getName()));
                 }
+
+                user.setLastLogin(OffsetDateTime.now());
+                userRepository.save(user);
             } else {
                 LOG.warn("The given password for the user with email '" + email + "' does not match.");
                 throw new BadCredentialsException(exceptionMessage);
@@ -84,7 +89,7 @@ public class ShogunAuthenticationProvider implements AuthenticationProvider {
 
         // Create the corresponding token to forward in Spring Security's filter
         // chain. We will use the SHOGun-Core user as the principal.
-        Authentication authResult = null;
+        Authentication authResult;
         if (grantedAuthorities.isEmpty()) {
             // If the user has no authorities, we will build the
             // UsernamePasswordAuthenticationToken without authorities, which
@@ -124,14 +129,6 @@ public class ShogunAuthenticationProvider implements AuthenticationProvider {
         if (user != null) {
             allUserRoles.addAll(identityService.findAllRolesFrom(user));
         }
-
-//        Set<Group> userGroups = user.getUserGroups();
-//        // userGroup roles
-//        if (userGroups != null) {
-//            for (UserGroup userGroup : userGroups) {
-//                allUserRoles.addAll(userGroup.getRoles());
-//            }
-//        }
 
         return allUserRoles;
     }
