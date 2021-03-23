@@ -55,7 +55,7 @@ public abstract class BaseGraphQLDataFetcher<E extends BaseEntity, S extends Bas
             Integer entityId = dataFetchingEnvironment.getArgument("id");
             OffsetDateTime time = dataFetchingEnvironment.getArgument("time");
 
-            Optional<E> persistedEntity = this.service.findOneByDate(entityId.longValue(), time);
+            Optional<E> persistedEntity = this.service.findOneByTime(entityId.longValue(), time);
 
             if (persistedEntity.isEmpty()) {
                 throw new EntityNotAvailableException(String.format("Entity with ID %s is not " +

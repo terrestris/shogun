@@ -282,7 +282,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
             getGenericClassName(), entityId, timeStamp);
 
         try {
-            Optional<S> entity = service.findOneByDate(entityId, timeStamp);
+            Optional<S> entity = service.findOneByTime(entityId, timeStamp);
 
             if (entity.isPresent()) {
                 S persistedEntity = entity.get();

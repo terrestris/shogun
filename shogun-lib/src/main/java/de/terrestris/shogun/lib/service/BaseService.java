@@ -148,7 +148,7 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
      */
     @PostAuthorize("hasRole('ROLE_ADMIN') or hasPermission(returnObject.orElse(null), 'READ')")
     @Transactional(readOnly = true)
-    public Optional<S> findOneByDate(
+    public Optional<S> findOneByTime(
         Long id,
         OffsetDateTime time
     ) {
