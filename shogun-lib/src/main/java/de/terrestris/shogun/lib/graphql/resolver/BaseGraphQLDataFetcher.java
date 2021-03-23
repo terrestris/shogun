@@ -10,6 +10,8 @@ import graphql.schema.DataFetcher;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
+import org.springframework.data.history.Revision;
+import org.springframework.data.history.Revisions;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
@@ -64,7 +66,7 @@ public abstract class BaseGraphQLDataFetcher<E extends BaseEntity, S extends Bas
         };
     }
 
-    public DataFetcher<Optional<E>> findOneRevision() {
+    public DataFetcher<Revisions<Integer, ? extends BaseEntity>> findRevisions() {
         return dataFetchingEnvironment -> {
             Integer entityId = dataFetchingEnvironment.getArgument("id");
 
@@ -75,7 +77,30 @@ public abstract class BaseGraphQLDataFetcher<E extends BaseEntity, S extends Bas
                     "available", entityId));
             }
 
-            return persistedEntity;
+            return this.service.findRevisions(persistedEntity.get());
+        };
+    }
+
+    public DataFetcher<Optional<Revision<Integer, E>>> findRevision() {
+        return dataFetchingEnvironment -> {
+            Integer entityId = dataFetchingEnvironment.getArgument("id");
+            Integer revId = dataFetchingEnvironment.getArgument("rev");
+
+            Optional<E> persistedEntity = this.service.findOne(entityId.longValue());
+
+            if (persistedEntity.isEmpty()) {
+                throw new EntityNotAvailableException(String.format("Entity with ID %s is not " +
+                    "available", entityId));
+            }
+
+            Optional<Revision<Integer, E>> revision = this.service.findRevision(persistedEntity.get(), revId);
+
+            if (revision.isEmpty()) {
+                throw new EntityNotAvailableException(String.format("Revision %s of entity with ID %s is not " +
+                    "available", revId, entityId));
+            }
+
+            return revision;
         };
     }
 
@@ -119,7 +144,7 @@ public abstract class BaseGraphQLDataFetcher<E extends BaseEntity, S extends Bas
 
             E updatedEntity = null;
             try {
-                updatedEntity = (E) this.service.update(entityId.longValue(), entity);
+                updatedEntity = this.service.update(entityId.longValue(), entity);
             } catch (IOException e) {
                 log.error("Error while updating entity with ID {}: {}", entityId, e.getMessage());
                 log.trace("Full stack trace: ", e);

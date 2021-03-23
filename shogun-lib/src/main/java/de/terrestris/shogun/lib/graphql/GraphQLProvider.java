@@ -2,6 +2,7 @@ package de.terrestris.shogun.lib.graphql;
 
 import com.google.common.io.Resources;
 import de.terrestris.shogun.lib.annotation.GraphQLQuery;
+import de.terrestris.shogun.lib.graphql.resolver.BaseEntityTypeResolver;
 import de.terrestris.shogun.lib.graphql.resolver.BaseGraphQLDataFetcher;
 import de.terrestris.shogun.lib.graphql.scalar.DateTimeScalar;
 import de.terrestris.shogun.lib.graphql.scalar.GeometryScalar;
@@ -109,52 +110,46 @@ public class GraphQLProvider {
         String queryAllName = String.format("all%s", English.plural(simpleClassName));
         typeBuilders.add(TypeRuntimeWiring.newTypeWiring("Query")
             .dataFetcher(queryAllName, dataFetcher.findAll()));
-
         log.debug("Added GraphQL query {}", queryAllName);
 
-        String queryByIdName = String.format("%sById",
-            entityName);
+        String queryRevisionsName = String.format("%sRevisionsById", entityName);
+        typeBuilders.add(TypeRuntimeWiring.newTypeWiring("Query")
+            .dataFetcher(queryRevisionsName, dataFetcher.findRevisions()));
+        log.debug("Added GraphQL query {}", queryRevisionsName);
+
+        String queryByIdName = String.format("%sById", entityName);
         typeBuilders.add(TypeRuntimeWiring.newTypeWiring("Query")
             .dataFetcher(queryByIdName, dataFetcher.findOne()));
-
         log.debug("Added GraphQL query {}", queryByIdName);
 
-        String queryByRevisionName = String.format("%sByIdAndRevision",
-            entityName);
+        String queryByRevisionName = String.format("%sByIdAndRevision", entityName);
         typeBuilders.add(TypeRuntimeWiring.newTypeWiring("Query")
-            .dataFetcher(queryByRevisionName, dataFetcher.findOneRevision()));
-
+            .dataFetcher(queryByRevisionName, dataFetcher.findRevision()));
         log.debug("Added GraphQL query {}", queryByRevisionName);
 
-        String queryByTimeName = String.format("%sByIdAndTime",
-            entityName);
+        String queryByTimeName = String.format("%sByIdAndTime", entityName);
         typeBuilders.add(TypeRuntimeWiring.newTypeWiring("Query")
             .dataFetcher(queryByTimeName, dataFetcher.findOneForTime()));
-
         log.debug("Added GraphQL query {}", queryByTimeName);
 
         String queryAllByIdsName = String.format("all%sByIds", English.plural(simpleClassName));
         typeBuilders.add(TypeRuntimeWiring.newTypeWiring("Query")
             .dataFetcher(queryAllByIdsName, dataFetcher.findAllByIds()));
-
         log.debug("Added GraphQL query {}", queryAllByIdsName);
 
         String createName = String.format("create%s", simpleClassName);
         typeBuilders.add(TypeRuntimeWiring.newTypeWiring("Mutation")
             .dataFetcher(createName, dataFetcher.create()));
-
         log.debug("Added GraphQL mutation {}", createName);
 
         String updateName = String.format("update%s", simpleClassName);
         typeBuilders.add(TypeRuntimeWiring.newTypeWiring("Mutation")
             .dataFetcher(updateName, dataFetcher.update()));
-
         log.debug("Added GraphQL mutation {}", updateName);
 
         String deleteName = String.format("delete%s", simpleClassName);
         typeBuilders.add(TypeRuntimeWiring.newTypeWiring("Mutation")
             .dataFetcher(deleteName, dataFetcher.delete()));
-
         log.debug("Added GraphQL mutation {}", deleteName);
     }
 
@@ -187,6 +182,8 @@ public class GraphQLProvider {
         for (TypeRuntimeWiring.Builder type : types) {
             runtimeWiring = runtimeWiring.type(type);
         }
+        // TODO: can this be automated?
+        runtimeWiring.type("BaseEntity", typeWiring -> typeWiring.typeResolver(new BaseEntityTypeResolver()));
         return runtimeWiring.build();
     }
 }

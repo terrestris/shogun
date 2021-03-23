@@ -5,26 +5,44 @@ scalar DateTime
 type Query {
     allApplications: [Application]
     applicationById(id: Int): Application
+    applicationByIdAndTime(id: Int, time: DateTime): Application
+    applicationByIdAndRevision(id: Int, rev: Int): Revision
+    applicationRevisionsById(id: Int): Revisions
     allApplicationsByIds(ids: [Int]): [Application]
 
     allFiles: [File]
     fileById(id: Int): File
+    fileByIdAndTime(id: Int, time: DateTime): File
+    fileByIdAndRevision(id: Int, rev: Int): Revision
+    fileRevisionsById(id: Int): Revisions
     allFilesByIds(ids: [Int]): [File]
 
     allGroups: [Group]
     groupById(id: Int): Group
+    groupByIdAndTime(id: Int, time: DateTime): Group
+    groupByIdAndRevision(id: Int, rev: Int): Revision
+    groupRevisionsById(id: Int): Revisions
     allGroupsByIds(ids: [Int]): [Group]
 
     allImageFiles: [ImageFile]
     imageFileById(id: Int): ImageFile
+    imageFileByIdAndTime(id: Int, time: DateTime): ImageFile
+    imageFileByIdAndRevision(id: Int, rev: Int): Revision
+    imageFileRevisionsById(id: Int): Revisions
     allImageFilesByIds(ids: [Int]): [ImageFile]
 
     allLayers: [Layer]
     layerById(id: Int): Layer
+    layerByIdAndTime(id: Int, time: DateTime): Layer
+    layerByIdAndRevision(id: Int, rev: Int): Revision
+    layerRevisionsById(id: Int): Revisions
     allLayersByIds(ids: [Int]): [Layer]
 
     allUsers: [User]
     userById(id: Int): User
+    userByIdAndTime(id: Int, time: DateTime): User
+    userByIdAndRevision(id: Int, rev: Int): Revision
+    userRevisionsById(id: Int): Revisions
     allUsersByIds(ids: [Int]): [User]
 }
 
@@ -46,7 +64,43 @@ type Mutation {
     deleteUser(id: Int): Boolean
 }
 
-type Application {
+interface BaseEntity {
+  id: Int
+  created: DateTime
+  modified: DateTime
+}
+
+type Revisions {
+    content: [Revision]
+}
+
+type Revision {
+    metadata: RevisionMetadata
+    entity: BaseEntity
+}
+
+type RevisionMetadata {
+    revisionType: String
+    delegate: RevisionDelegate
+    revisionNumber: RevisionFieldInfo
+    revisionDate: RevisionFieldInfo
+    revisionInstant: RevisionFieldInfo
+    requiredRevisionNumber: Int
+    requiredRevisionInstant: DateTime
+}
+
+type RevisionDelegate {
+    id: Int
+    timestamp: Long
+    revisionDate: DateTime
+}
+
+type RevisionFieldInfo {
+    empty: Boolean
+    present: Boolean
+}
+
+type Application implements BaseEntity {
     id: Int
     created: DateTime
     modified: DateTime
@@ -69,7 +123,7 @@ input MutateApplication {
     toolConfig: JSON
 }
 
-type File {
+type File implements BaseEntity {
     id: Int
     created: DateTime
     modified: DateTime
@@ -87,7 +141,7 @@ type GroupRepresentation {
     subGroups: [GroupRepresentation]
 }
 
-type Group {
+type Group implements BaseEntity {
     id: Int
     created: DateTime
     modified: DateTime
@@ -99,7 +153,7 @@ input MutateGroup {
     keycloakId: ID
 }
 
-type ImageFile {
+type ImageFile implements BaseEntity {
     id: Int
     created: DateTime
     modified: DateTime
@@ -111,7 +165,7 @@ type ImageFile {
     height: Int
 }
 
-type Layer {
+type Layer implements BaseEntity {
     id: Int
     created: DateTime
     modified: DateTime
@@ -141,7 +195,7 @@ type UserRepresentation {
     groups: [String]
 }
 
-type User {
+type User implements BaseEntity {
     id: Int
     created: DateTime
     modified: DateTime
