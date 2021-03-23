@@ -77,6 +77,10 @@ type Revisions {
 type Revision {
     metadata: RevisionMetadata
     entity: BaseEntity
+    revisionNumber: RevisionFieldInfo
+    revisionInstant: RevisionFieldInfo
+    requiredRevisionNumber: Int
+    requiredRevisionInstant: DateTime
 }
 
 type RevisionMetadata {
