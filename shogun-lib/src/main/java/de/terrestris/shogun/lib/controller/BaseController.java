@@ -10,11 +10,13 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -256,6 +258,70 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
         } catch (Exception e) {
             LOG.error("Error while requesting entity of type {} with ID {}: \n {}",
                 getGenericClassName(), entityId, e.getMessage());
+            LOG.trace("Full stack trace: ", e);
+
+            throw new ResponseStatusException(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                messageSource.getMessage(
+                    "BaseController.INTERNAL_SERVER_ERROR",
+                    null,
+                    LocaleContextHolder.getLocale()
+                ),
+                e
+            );
+        }
+    }
+
+    @GetMapping({"/{id}/forTime/{timeStamp}"})
+    @ResponseStatus(HttpStatus.OK)
+    public S findOneByTime(
+        @PathVariable("id") Long entityId, @PathVariable("timeStamp")
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime timeStamp
+    ) {
+        LOG.trace("Requested to return entity of type {} with ID {} for date {}",
+            getGenericClassName(), entityId, timeStamp);
+
+        try {
+            Optional<S> entity = service.findOneByTime(entityId, timeStamp);
+
+            if (entity.isPresent()) {
+                S persistedEntity = entity.get();
+
+                LOG.trace("Successfully got entity of type {} with ID {}",
+                    getGenericClassName(), entityId);
+
+                return persistedEntity;
+            } else {
+                LOG.error("Could not find entity of type {} with ID {} for time {}",
+                    getGenericClassName(), entityId, timeStamp);
+
+                throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    messageSource.getMessage(
+                        "BaseController.NOT_FOUND",
+                        null,
+                        LocaleContextHolder.getLocale()
+                    )
+                );
+            }
+        } catch (AccessDeniedException ade) {
+            LOG.warn("Access to entity of type {} with ID {} is denied",
+                getGenericClassName(), entityId);
+
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                messageSource.getMessage(
+                    "BaseController.NOT_FOUND",
+                    null,
+                    LocaleContextHolder.getLocale()
+                ),
+                ade
+            );
+        } catch (ResponseStatusException rse) {
+            throw rse;
+        } catch (Exception e) {
+            LOG.error("Error while requesting entity of type {} with ID {} for time {}: \n {}",
+                getGenericClassName(), entityId, timeStamp, e.getMessage());
             LOG.trace("Full stack trace: ", e);
 
             throw new ResponseStatusException(
