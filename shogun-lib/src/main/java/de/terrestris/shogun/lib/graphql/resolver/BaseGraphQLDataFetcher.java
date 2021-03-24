@@ -31,7 +31,7 @@ public abstract class BaseGraphQLDataFetcher<E extends BaseEntity, S extends Bas
     @Autowired
     protected S service;
 
-    public DataFetcher<List<? extends BaseEntity>> findAll() {
+    public DataFetcher<List<E>> findAll() {
         return dataFetchingEnvironment -> this.service.findAll();
     }
 
@@ -66,7 +66,7 @@ public abstract class BaseGraphQLDataFetcher<E extends BaseEntity, S extends Bas
         };
     }
 
-    public DataFetcher<Revisions<Integer, ? extends BaseEntity>> findRevisions() {
+    public DataFetcher<Revisions<Integer, E>> findRevisions() {
         return dataFetchingEnvironment -> {
             Integer entityId = dataFetchingEnvironment.getArgument("id");
 
