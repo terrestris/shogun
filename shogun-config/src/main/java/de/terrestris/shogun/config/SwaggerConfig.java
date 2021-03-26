@@ -22,8 +22,8 @@ public abstract class SwaggerConfig {
     protected String version = "1.0.0";
     protected String termsOfServiceUrl = "https://www.terrestris.de/en/impressum/";
     protected Contact contact = new Contact("terrestris GmbH & Co. KG", "www.terrestris.de", "info@terrestris.de");
-    protected String license = "MIT";
-    protected String licenseUrl = "https://opensource.org/licenses/MIT";
+    protected String license = "Apache License, Version 2.0";
+    protected String licenseUrl = "https://opensource.org/licenses/Apache-2.0";
 
     @Bean
     public Docket api() {
