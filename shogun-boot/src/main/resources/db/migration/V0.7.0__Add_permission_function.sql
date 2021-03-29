@@ -1,6 +1,6 @@
 drop function if exists has_permission(text, integer, text[], text);
 
-create or replace function has_permission(userid text, entityid int, group_ids text[], classname text) returns boolean
+create or replace function has_permission(entity_id int, user_id text, group_ids text[], classname text) returns boolean
 	as $$
 	declare
 	userinstanceperms int;
@@ -10,8 +10,8 @@ create or replace function has_permission(userid text, entityid int, group_ids t
 --			left join users u ON u.id = uip.user_id
 --			left join permissions p on uip.permissions_id = p.id
 --		where
---			u.keycloak_id = userid and
---			uip.entity_id = entityid and
+--			u.keycloak_id = user_id and
+--			uip.entity_id = entity_id and
 --			(p.name like '%READ%' or p.name = 'ADMIN'));
 
 --	if (userinstanceperms <> 0) then
@@ -26,8 +26,8 @@ create or replace function has_permission(userid text, entityid int, group_ids t
 			left join users u ON u.id = uip.user_id
 			left join permissions p on uip.permissions_id = p.id
 		where
-			u.keycloak_id = userid and
-			uip.entity_id = entityid and
+			u.keycloak_id = user_id and
+			uip.entity_id = entity_id and
 			(p.name like '%READ%' or p.name = 'ADMIN')
 		) as a
 		,
@@ -38,7 +38,7 @@ create or replace function has_permission(userid text, entityid int, group_ids t
 		where
 			g.keycloak_id = any (group_ids) and
 			--g.keycloak_id = 'e8bc650f-c577-4b63-a6bf-90a70482c25a' and
-			gip.entity_id = entityid and
+			gip.entity_id = entity_id and
 			(p.name like '%READ%' or p.name = 'ADMIN')
 		) as b,
 		(
@@ -46,7 +46,7 @@ create or replace function has_permission(userid text, entityid int, group_ids t
 			left join users u ON u.id = ucp.user_id
 			left join permissions p on ucp.permissions_id = p.id
 		where
-			u.keycloak_id = userid and
+			u.keycloak_id = user_id and
 			ucp.class_name = classname and
 			(p.name like '%READ%' or p.name = 'ADMIN')
 		) as c,

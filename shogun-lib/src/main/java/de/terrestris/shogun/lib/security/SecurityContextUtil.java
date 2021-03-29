@@ -62,7 +62,7 @@ public class SecurityContextUtil {
     @Transactional(readOnly = true)
     public Optional<User> getUserBySession() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String keycloakUserId = SecurityContextUtil.getKeycloakUserIdFromAuthentication(authentication);
+        String keycloakUserId = SecurityContextUtil.getKeycloakUserUuidFromAuthentication(authentication);
 
         if (StringUtils.isEmpty(keycloakUserId)) {
             return Optional.empty();
@@ -85,7 +85,6 @@ public class SecurityContextUtil {
     }
 
     /**
-     *
      * @return
      */
     public List<GrantedAuthority> getGrantedAuthorities() {
@@ -100,23 +99,19 @@ public class SecurityContextUtil {
      * @return
      */
     public Optional<User> getUserFromAuthentication(Authentication authentication) {
-        final Object principal = authentication.getPrincipal();
-        if (!(principal instanceof KeycloakPrincipal)) {
-            return Optional.empty();
-        }
-        // get user info from authentication object
-        String keycloakUserId = getKeycloakUserIdFromAuthentication(authentication);
+        String keycloakUserId = this.getKeycloakUserUuid(authentication);
         return userRepository.findByKeycloakId(keycloakUserId);
     }
 
     /**
      * Return keycloak user id from {@link Authentication} object
-     *   - from {@link IDToken}
-     *   - from {@link org.keycloak.Token}
+     * - from {@link IDToken}
+     * - from {@link org.keycloak.Token}
+     *
      * @param authentication The Spring security authentication
      * @return The keycloak user id token
      */
-    public static String getKeycloakUserIdFromAuthentication(Authentication authentication) {
+    public static String getKeycloakUserUuidFromAuthentication(Authentication authentication) {
         if (authentication.getPrincipal() instanceof KeycloakPrincipal) {
             KeycloakPrincipal<KeycloakSecurityContext> keycloakPrincipal = (KeycloakPrincipal<KeycloakSecurityContext>) authentication.getPrincipal();
             KeycloakSecurityContext keycloakSecurityContext = keycloakPrincipal.getKeycloakSecurityContext();
@@ -207,6 +202,7 @@ public class SecurityContextUtil {
 
     /**
      * Return if user (in session) is an admin of SHOGun-GeoServer-Interceptor microservice
+     *
      * @return true if so, false otherwise
      */
     public boolean isInterceptorAdmin() {
@@ -215,6 +211,21 @@ public class SecurityContextUtil {
             grantedAuthority -> StringUtils.endsWithIgnoreCase(grantedAuthority.getAuthority(), "INTERCEPTOR_ADMIN") ||
                 StringUtils.endsWithIgnoreCase(grantedAuthority.getAuthority(), "ADMIN")
         );
+    }
+
+    /**
+     * Return the UUID of the user from keycloak given the authentication object
+     * @param authentication The {@link Authentication} object
+     * @return The UUID of the user
+     */
+    public String getKeycloakUserUuid(Authentication authentication) {
+        final Object principal = authentication.getPrincipal();
+        if (!(principal instanceof KeycloakPrincipal)) {
+            return null;
+        }
+
+        // get user info from authentication object (keycloak is requested)
+        return getKeycloakUserUuidFromAuthentication(authentication);
     }
 
 }

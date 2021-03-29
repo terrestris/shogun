@@ -87,6 +87,7 @@
     <module>shogun-config</module>
     <module>shogun-manager</module>
     <module>shogun-proxy</module>
+    <module>shogun-keycloak-oidc-protocol-mapper</module>
   </modules>
 
   <properties>
@@ -500,6 +501,21 @@
         <version>${keycloak.version}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.keycloak</groupId>
+        <artifactId>keycloak-services</artifactId>
+        <version>${keycloak.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.keycloak</groupId>
+        <artifactId>keycloak-server-spi</artifactId>
+        <version>${keycloak.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.keycloak</groupId>
+        <artifactId>keycloak-server-spi-private</artifactId>
+        <version>${keycloak.version}</version>
       </dependency>
 
       <!-- evo-inflector -->
