@@ -33,7 +33,7 @@ public interface BaseCrudRepository<T, ID> extends RevisionRepository<T, ID, Int
     @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
     List<T> findAll();
 
-    @Query(nativeQuery = true, value = "select m from #{#entityName} m where has_permission(?#{ principal?.context.token.subject }, m.id, has_permission(?#{ principal?.context.token.subject }, 'de.terrestris.progemis.model.Application')")
+    @Query(nativeQuery = true, value = "select m from shogun.#{#entityName} m where has_permission( m.id, ?#{ principal?.getKeycloakSecurityContext().token.subject }, ?#{ principal?.getKeycloakSecurityContext().token.otherClaims.get(\"groups_uuid\") }, 'de.terrestris.shogun.model.Application' )")
     @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
     Page<T> findAll(Pageable pageable);
 
