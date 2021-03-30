@@ -1,22 +1,15 @@
-drop function if exists has_permission(text, integer, text[], text);
+drop function if exists has_permission(integer, text, text[], text);
 
-create or replace function has_permission(entity_id int, user_id text, group_ids text[], classname text) returns boolean
+create or replace function has_permission(e_id int, user_uuid text, group_ids text[], classname text) returns boolean
 	as $$
 	declare
 	userinstanceperms int;
 	begin
 
---    userinstanceperms := (select count(*) from userinstancepermissions uip
---			left join users u ON u.id = uip.user_id
---			left join permissions p on uip.permissions_id = p.id
---		where
---			u.keycloak_id = user_id and
---			uip.entity_id = entity_id and
---			(p.name like '%READ%' or p.name = 'ADMIN'));
-
---	if (userinstanceperms <> 0) then
---		return true;
---	end if;
+    raise info 'user_uuid %', user_uuid;
+    raise info 'entity id %', e_id;
+    raise info 'group_ids %', group_ids;
+    raise info 'classname %', classname;
 
 	return (select
   		(a.count +  b.count +  c.count +  d.count) > 0
@@ -26,8 +19,8 @@ create or replace function has_permission(entity_id int, user_id text, group_ids
 			left join users u ON u.id = uip.user_id
 			left join permissions p on uip.permissions_id = p.id
 		where
-			u.keycloak_id = user_id and
-			uip.entity_id = entity_id and
+			u.keycloak_id = user_uuid and
+			uip.entity_id = e_id and
 			(p.name like '%READ%' or p.name = 'ADMIN')
 		) as a
 		,
@@ -38,7 +31,7 @@ create or replace function has_permission(entity_id int, user_id text, group_ids
 		where
 			g.keycloak_id = any (group_ids) and
 			--g.keycloak_id = 'e8bc650f-c577-4b63-a6bf-90a70482c25a' and
-			gip.entity_id = entity_id and
+			gip.entity_id = e_id and
 			(p.name like '%READ%' or p.name = 'ADMIN')
 		) as b,
 		(
@@ -46,7 +39,7 @@ create or replace function has_permission(entity_id int, user_id text, group_ids
 			left join users u ON u.id = ucp.user_id
 			left join permissions p on ucp.permissions_id = p.id
 		where
-			u.keycloak_id = user_id and
+			u.keycloak_id = user_uuid and
 			ucp.class_name = classname and
 			(p.name like '%READ%' or p.name = 'ADMIN')
 		) as c,
