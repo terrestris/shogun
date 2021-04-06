@@ -282,15 +282,15 @@ If envers is enabled mid-way and there is already data this can result in errors
 
 See https://discourse.hibernate.org/t/safe-envers-queries-when-the-audit-history-is-incomplete/771.
 
-For example there is an existing group with id `720617`:
+Example migration if there is an existing group with id `720617`:
 
 ```sql
--- Create a new revision:
+-- First create a new revision:
 INSERT INTO shogun_rev.revinfo(rev, revtstmp)
 VALUES (nextval('shogun.hibernate_sequence'), 1310421600000);
 
 /*
-  rev  |   revtstmp    
+ rev  |   revtstmp    
 -------+---------------
  1234 | 1310421600000
 (1 row)
