@@ -281,22 +281,3 @@ Auditing is enabled by default and can be disabled by setting `spring.jpa.proper
 If envers is enabled mid-way and there is already data this can result in errors when querying audit data. To fix this, a revision with revisiontype `0` (created) has to be manually inserted for each existing entity into the respective audit table.
 
 See https://discourse.hibernate.org/t/safe-envers-queries-when-the-audit-history-is-incomplete/771.
-
-Example migration if there is an existing group with id `720617`:
-
-```sql
--- First create a new revision:
-INSERT INTO shogun_rev.revinfo(rev, revtstmp)
-VALUES (nextval('shogun.hibernate_sequence'), 1310421600000);
-
-/*
- rev  |   revtstmp    
--------+---------------
- 1234 | 1310421600000
-(1 row)
-*/
-
--- Create an entry for group `720617`
-INSERT INTO shogun_rev.groups_rev (id, rev, revtype, created, modified, keycloak_id)
-VALUES (720617, 1234, 0, '2011-07-12 00:00:00', '2011-07-12 00:00:00', '4425da02-d3b5-4fb1-8c3e-2d31602ae300');
-```
