@@ -34,6 +34,7 @@ spring:
           envers:
             default_schema: shogun_rev
             audit_table_prefix: _rev
+            global_with_modified_flag: true
       hibernate:
         javax:
           cache:
