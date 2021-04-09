@@ -85,11 +85,11 @@ public class CustomRevisionRepositoryImpl<T, ID, N extends Number & Comparable<N
         QueryResult(Object[] data) {
 
             Assert.notNull(data, "Data must not be null");
-            Assert.isTrue( //
-                data.length == 4, //
+            Assert.isTrue(
+                data.length == 4,
                 () -> String.format("Data must have length three, but has length %d.", data.length));
-            Assert.isTrue( //
-                data[2] instanceof RevisionType, //
+            Assert.isTrue(
+                data[2] instanceof RevisionType,
                 () -> String.format("The third array element must be of type Revision type, but is of type %s",
                     data[2].getClass()));
 
@@ -97,16 +97,12 @@ public class CustomRevisionRepositoryImpl<T, ID, N extends Number & Comparable<N
             metadata = data[1];
             revisionType = convertRevisionType((RevisionType) data[2]);
             changedFields = data[3];
-//            String[] changedFieldsArray = (String[]) data[3];
-//            if (changedFieldsArray) {
-//                changedFields = Arrays.asList(data[3])
-//            }
         }
 
         RevisionMetadata<?> createRevisionMetadata() {
 
-            return metadata instanceof DefaultRevisionEntity //
-                ? new CustomRevisionMetadata((DefaultRevisionEntity) metadata, revisionType, (Set<String>) changedFields) //
+            return metadata instanceof DefaultRevisionEntity
+                ? new CustomRevisionMetadata((DefaultRevisionEntity) metadata, revisionType, (Set<String>) changedFields)
                 : new CustomAnnotationRevisionMetadata<>(metadata, RevisionNumber.class, RevisionTimestamp.class, revisionType, (Set<String>) changedFields);
         }
 

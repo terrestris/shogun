@@ -17,7 +17,6 @@
 package de.terrestris.shogun.lib.envers;
 
 import org.hibernate.envers.DefaultRevisionEntity;
-import org.springframework.data.envers.repository.support.DefaultRevisionMetadata;
 import org.springframework.data.history.RevisionMetadata;
 import org.springframework.util.Assert;
 
@@ -107,7 +106,7 @@ public final class CustomRevisionMetadata implements RevisionMetadata<Integer> {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        DefaultRevisionMetadata that = (DefaultRevisionMetadata) o;
+        CustomRevisionMetadata that = (CustomRevisionMetadata) o;
         return getRevisionNumber().equals(that.getRevisionNumber())
             && getRevisionInstant().equals(that.getRevisionInstant()) && revisionType.equals(that.getRevisionType());
     }
@@ -118,6 +117,6 @@ public final class CustomRevisionMetadata implements RevisionMetadata<Integer> {
      */
     @Override
     public String toString() {
-        return "DefaultRevisionMetadata{" + "entity=" + entity + ", revisionType=" + revisionType + '}';
+        return "CustomRevisionMetadata{" + "entity=" + entity + ", revisionType=" + revisionType + '}';
     }
 }

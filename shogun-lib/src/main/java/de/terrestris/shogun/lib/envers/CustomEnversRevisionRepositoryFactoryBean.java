@@ -84,24 +84,24 @@ public class CustomEnversRevisionRepositoryFactoryBean<T extends RevisionReposit
             super(entityManager);
 
             this.entityManager = entityManager;
-            this.revisionEntityInformation = Optional.ofNullable(revisionEntityClass) //
-                .filter(it -> !it.equals(DefaultRevisionEntity.class))//
-                .<RevisionEntityInformation> map(ReflectionRevisionEntityInformation::new) //
+            this.revisionEntityInformation = Optional.ofNullable(revisionEntityClass)
+                .filter(it -> !it.equals(DefaultRevisionEntity.class))
+                .<RevisionEntityInformation> map(ReflectionRevisionEntityInformation::new)
                 .orElseGet(DefaultRevisionEntityInformation::new);
         }
 
         @Override
         protected RepositoryComposition.RepositoryFragments getRepositoryFragments(RepositoryMetadata metadata) {
 
-            Object fragmentImplementation = getTargetRepositoryViaReflection( //
-                CustomRevisionRepositoryImpl.class, //
-                getEntityInformation(metadata.getDomainType()), //
-                revisionEntityInformation, //
-                entityManager //
+            Object fragmentImplementation = getTargetRepositoryViaReflection(
+                CustomRevisionRepositoryImpl.class,
+                getEntityInformation(metadata.getDomainType()),
+                revisionEntityInformation,
+                entityManager
             );
 
-            return RepositoryComposition.RepositoryFragments //
-                .just(fragmentImplementation) //
+            return RepositoryComposition.RepositoryFragments
+                .just(fragmentImplementation)
                 .append(super.getRepositoryFragments(metadata));
         }
     }
