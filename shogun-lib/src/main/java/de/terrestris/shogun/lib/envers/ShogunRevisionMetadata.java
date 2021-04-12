@@ -27,17 +27,17 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-public final class CustomRevisionMetadata implements RevisionMetadata<Integer> {
+public final class ShogunRevisionMetadata implements RevisionMetadata<Integer> {
 
     private final DefaultRevisionEntity entity;
     private final RevisionMetadata.RevisionType revisionType;
     private final Set<String> changedFields;
 
-    public CustomRevisionMetadata(DefaultRevisionEntity entity) {
+    public ShogunRevisionMetadata(DefaultRevisionEntity entity) {
         this(entity, RevisionMetadata.RevisionType.UNKNOWN, new HashSet<>());
     }
 
-    public CustomRevisionMetadata(DefaultRevisionEntity entity, RevisionMetadata.RevisionType revisionType, Set<String> changedFields) {
+    public ShogunRevisionMetadata(DefaultRevisionEntity entity, RevisionMetadata.RevisionType revisionType, Set<String> changedFields) {
         Assert.notNull(entity, "DefaultRevisionEntity must not be null");
 
         this.entity = entity;
@@ -106,7 +106,7 @@ public final class CustomRevisionMetadata implements RevisionMetadata<Integer> {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        CustomRevisionMetadata that = (CustomRevisionMetadata) o;
+        ShogunRevisionMetadata that = (ShogunRevisionMetadata) o;
         return getRevisionNumber().equals(that.getRevisionNumber())
             && getRevisionInstant().equals(that.getRevisionInstant()) && revisionType.equals(that.getRevisionType());
     }

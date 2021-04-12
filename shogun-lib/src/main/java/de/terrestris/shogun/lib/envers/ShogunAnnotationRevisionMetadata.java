@@ -39,7 +39,7 @@ import java.util.Set;
  * @author Oliver Gierke
  * @author Jens Schauder
  */
-public class CustomAnnotationRevisionMetadata<N extends Number & Comparable<N>> implements RevisionMetadata<N> {
+public class ShogunAnnotationRevisionMetadata<N extends Number & Comparable<N>> implements RevisionMetadata<N> {
 
     private final Object entity;
     private final Lazy<Optional<N>> revisionNumber;
@@ -48,7 +48,7 @@ public class CustomAnnotationRevisionMetadata<N extends Number & Comparable<N>> 
     private final Set<String> changedFields;
 
     /**
-     * Creates a new {@link CustomAnnotationRevisionMetadata} inspecting the given entity for the given annotations. If no
+     * Creates a new {@link ShogunAnnotationRevisionMetadata} inspecting the given entity for the given annotations. If no
      * annotations will be provided these values will not be looked up from the entity and return {@literal null}. The
      * revisionType will be set to {@literal unknown}
      *
@@ -56,8 +56,8 @@ public class CustomAnnotationRevisionMetadata<N extends Number & Comparable<N>> 
      * @param revisionNumberAnnotation must not be {@literal null}.
      * @param revisionTimeStampAnnotation must not be {@literal null}.
      */
-    public CustomAnnotationRevisionMetadata(Object entity, Class<? extends Annotation> revisionNumberAnnotation,
-                                      Class<? extends Annotation> revisionTimeStampAnnotation) {
+    public ShogunAnnotationRevisionMetadata(Object entity, Class<? extends Annotation> revisionNumberAnnotation,
+                                            Class<? extends Annotation> revisionTimeStampAnnotation) {
 
         this(entity, revisionNumberAnnotation, revisionTimeStampAnnotation, RevisionType.UNKNOWN, new HashSet<>());
     }
@@ -72,8 +72,8 @@ public class CustomAnnotationRevisionMetadata<N extends Number & Comparable<N>> 
      * @param revisionType must not be {@literal null}.
      * @since 2.2.0
      */
-    public CustomAnnotationRevisionMetadata(Object entity, Class<? extends Annotation> revisionNumberAnnotation,
-                                      Class<? extends Annotation> revisionTimeStampAnnotation, RevisionType revisionType, Set<String> changedFields) {
+    public ShogunAnnotationRevisionMetadata(Object entity, Class<? extends Annotation> revisionNumberAnnotation,
+                                            Class<? extends Annotation> revisionTimeStampAnnotation, RevisionType revisionType, Set<String> changedFields) {
 
         Assert.notNull(entity, "Entity must not be null!");
         Assert.notNull(revisionNumberAnnotation, "Revision number annotation must not be null!");
@@ -101,7 +101,7 @@ public class CustomAnnotationRevisionMetadata<N extends Number & Comparable<N>> 
      * @see org.springframework.data.history.RevisionMetadata#getRevisionDate()
      */
     public Optional<Instant> getRevisionInstant() {
-        return revisionDate.get().map(CustomAnnotationRevisionMetadata::convertToInstant);
+        return revisionDate.get().map(ShogunAnnotationRevisionMetadata::convertToInstant);
     }
 
     /*

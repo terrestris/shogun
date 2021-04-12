@@ -16,9 +16,9 @@
  */
 package de.terrestris.shogun.lib.repository.impl;
 
-import de.terrestris.shogun.lib.envers.CustomAnnotationRevisionMetadata;
-import de.terrestris.shogun.lib.envers.CustomRevisionMetadata;
-import de.terrestris.shogun.lib.repository.CustomRevisionRepository;
+import de.terrestris.shogun.lib.envers.ShogunAnnotationRevisionMetadata;
+import de.terrestris.shogun.lib.envers.ShogunRevisionMetadata;
+import de.terrestris.shogun.lib.repository.ShogunRevisionRepository;
 import org.hibernate.envers.*;
 import org.hibernate.envers.query.AuditEntity;
 import org.springframework.data.envers.repository.support.EnversRevisionRepositoryImpl;
@@ -37,12 +37,12 @@ import java.util.Set;
 
 import static org.springframework.data.history.RevisionMetadata.RevisionType.*;
 
-public class CustomRevisionRepositoryImpl<T, ID, N extends Number & Comparable<N>> extends EnversRevisionRepositoryImpl<T, ID, N> implements CustomRevisionRepository<T, ID, N> {
+public class ShogunRevisionRepositoryImpl<T, ID, N extends Number & Comparable<N>> extends EnversRevisionRepositoryImpl<T, ID, N> implements ShogunRevisionRepository<T, ID, N> {
 
     private final EntityInformation<T, ?> entityInformation;
     private final EntityManager entityManager;
 
-    public CustomRevisionRepositoryImpl(JpaEntityInformation<T, ?> entityInformation,
+    public ShogunRevisionRepositoryImpl(JpaEntityInformation<T, ?> entityInformation,
                                         RevisionEntityInformation revisionEntityInformation, EntityManager entityManager) {
         super(entityInformation, revisionEntityInformation, entityManager);
         Assert.notNull(revisionEntityInformation, "RevisionEntityInformation must not be null!");
@@ -102,8 +102,8 @@ public class CustomRevisionRepositoryImpl<T, ID, N extends Number & Comparable<N
         RevisionMetadata<?> createRevisionMetadata() {
 
             return metadata instanceof DefaultRevisionEntity
-                ? new CustomRevisionMetadata((DefaultRevisionEntity) metadata, revisionType, (Set<String>) changedFields)
-                : new CustomAnnotationRevisionMetadata<>(metadata, RevisionNumber.class, RevisionTimestamp.class, revisionType, (Set<String>) changedFields);
+                ? new ShogunRevisionMetadata((DefaultRevisionEntity) metadata, revisionType, (Set<String>) changedFields)
+                : new ShogunAnnotationRevisionMetadata<>(metadata, RevisionNumber.class, RevisionTimestamp.class, revisionType, (Set<String>) changedFields);
         }
 
         private static RevisionMetadata.RevisionType convertRevisionType(RevisionType datum) {

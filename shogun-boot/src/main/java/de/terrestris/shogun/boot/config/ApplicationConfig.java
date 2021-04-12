@@ -1,6 +1,6 @@
 package de.terrestris.shogun.boot.config;
 
-import de.terrestris.shogun.lib.envers.CustomEnversRevisionRepositoryFactoryBean;
+import de.terrestris.shogun.lib.envers.ShogunEnversRevisionRepositoryFactoryBean;
 import de.terrestris.shogun.properties.FileUploadProperties;
 import de.terrestris.shogun.properties.ImageFileUploadProperties;
 import de.terrestris.shogun.properties.UploadProperties;
@@ -14,7 +14,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @SpringBootApplication
 @EnableJpaRepositories(
     basePackages = { "de.terrestris.shogun" },
-    repositoryFactoryBeanClass = CustomEnversRevisionRepositoryFactoryBean.class
+    repositoryFactoryBeanClass = ShogunEnversRevisionRepositoryFactoryBean.class
 )
 @ComponentScan(basePackages = { "de.terrestris.shogun" })
 @EntityScan(basePackages = { "de.terrestris.shogun" })

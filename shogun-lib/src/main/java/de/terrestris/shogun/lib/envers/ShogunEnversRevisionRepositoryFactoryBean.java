@@ -16,7 +16,7 @@
  */
 package de.terrestris.shogun.lib.envers;
 
-import de.terrestris.shogun.lib.repository.impl.CustomRevisionRepositoryImpl;
+import de.terrestris.shogun.lib.repository.impl.ShogunRevisionRepositoryImpl;
 import org.hibernate.envers.DefaultRevisionEntity;
 import org.springframework.data.envers.repository.support.EnversRevisionRepositoryFactoryBean;
 import org.springframework.data.envers.repository.support.ReflectionRevisionEntityInformation;
@@ -30,7 +30,7 @@ import org.springframework.data.repository.history.support.RevisionEntityInforma
 import javax.persistence.EntityManager;
 import java.util.Optional;
 
-public class CustomEnversRevisionRepositoryFactoryBean<T extends RevisionRepository<S, ID, N>, S, ID, N extends Number & Comparable<N>>
+public class ShogunEnversRevisionRepositoryFactoryBean<T extends RevisionRepository<S, ID, N>, S, ID, N extends Number & Comparable<N>>
     extends EnversRevisionRepositoryFactoryBean<T, S, ID, N> {
 
     private Class<?> revisionEntityClass;
@@ -40,7 +40,7 @@ public class CustomEnversRevisionRepositoryFactoryBean<T extends RevisionReposit
      *
      * @param repositoryInterface must not be {@literal null}.
      */
-    public CustomEnversRevisionRepositoryFactoryBean(Class<? extends T> repositoryInterface) {
+    public ShogunEnversRevisionRepositoryFactoryBean(Class<? extends T> repositoryInterface) {
         super(repositoryInterface);
     }
 
@@ -59,7 +59,7 @@ public class CustomEnversRevisionRepositoryFactoryBean<T extends RevisionReposit
      */
     @Override
     protected RepositoryFactorySupport createRepositoryFactory(EntityManager entityManager) {
-        return new CustomEnversRevisionRepositoryFactoryBean.RevisionRepositoryFactory<T, ID, N>(entityManager, revisionEntityClass);
+        return new ShogunEnversRevisionRepositoryFactoryBean.RevisionRepositoryFactory<T, ID, N>(entityManager, revisionEntityClass);
     }
 
     /**
@@ -74,7 +74,7 @@ public class CustomEnversRevisionRepositoryFactoryBean<T extends RevisionReposit
         private final EntityManager entityManager;
 
         /**
-         * Creates a new {@link CustomEnversRevisionRepositoryFactoryBean.RevisionRepositoryFactory} using the given {@link EntityManager} and revision entity class.
+         * Creates a new {@link ShogunEnversRevisionRepositoryFactoryBean.RevisionRepositoryFactory} using the given {@link EntityManager} and revision entity class.
          *
          * @param entityManager must not be {@literal null}.
          * @param revisionEntityClass can be {@literal null}, will default to {@link DefaultRevisionEntity}.
@@ -94,7 +94,7 @@ public class CustomEnversRevisionRepositoryFactoryBean<T extends RevisionReposit
         protected RepositoryComposition.RepositoryFragments getRepositoryFragments(RepositoryMetadata metadata) {
 
             Object fragmentImplementation = getTargetRepositoryViaReflection(
-                CustomRevisionRepositoryImpl.class,
+                ShogunRevisionRepositoryImpl.class,
                 getEntityInformation(metadata.getDomainType()),
                 revisionEntityInformation,
                 entityManager
