@@ -269,3 +269,15 @@ app.
 
 8. Integrate your app into the Keycloak clients list as new redirect URI for
 `shogun-app` (e.g. `http://localhost:8080/shogun-example-app/*`).
+
+## Entity Auditing
+
+Shogun supports auditing of entities, powered by [Hibernate Envers](https://hibernate.org/orm/envers/).
+
+Auditing is enabled by default and can be disabled by setting `spring.jpa.properties.hibernate.integration.envers` to `false`.
+
+### Enabling envers mid-project
+
+If envers is enabled mid-way and there is already data this can result in errors when querying audit data. To fix this, a revision with revision type `0` (created) has to be manually inserted for each existing entity into the respective audit table.
+
+See https://discourse.hibernate.org/t/safe-envers-queries-when-the-audit-history-is-incomplete/771.
