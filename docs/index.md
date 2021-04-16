@@ -15,8 +15,8 @@ SHOGun…
   data infrastructure (e.g. layers, applications, users or groups).
 * …provides (secured) web interfaces (REST & GraphQL) for accessing and 
   manipulating these entities (e.g. for creating an application configuration).
-* …separates its functionalities into isolated microservices (e.g. for ) and is
-  highly scalable.
+* …separates its functionalities into isolated microservices (e.g. for proxying OGC 
+  requests) and is highly scalable.
 
 ## Demo
 
