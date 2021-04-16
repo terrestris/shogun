@@ -1,0 +1,17 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+.project-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.project-logo {
+    height: 80px;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    padding-right: 10px;
+}
