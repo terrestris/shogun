@@ -23,14 +23,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
 @Log4j2
 public class SecurityContextUtil {
+
+    public static final String groupUuidsClaimName = "groups_uuid";
 
     @Autowired
     protected UserRepository userRepository;
@@ -98,7 +98,7 @@ public class SecurityContextUtil {
      */
     public static String getKeycloakUserIdFromAuthentication(Authentication authentication) {
         if (authentication.getPrincipal() instanceof KeycloakPrincipal) {
-            KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) authentication.getPrincipal();
+            KeycloakPrincipal<KeycloakSecurityContext> keycloakPrincipal = (KeycloakPrincipal<KeycloakSecurityContext>) authentication.getPrincipal();
             KeycloakSecurityContext keycloakSecurityContext = keycloakPrincipal.getKeycloakSecurityContext();
             IDToken idToken = keycloakSecurityContext.getIdToken();
             String keycloakUserId;
@@ -117,9 +117,9 @@ public class SecurityContextUtil {
     }
 
     /**
-     * Get (SHOGun) groups for user based on actual assignment in keycloak
+     * Get SHOGun groups for user based on actual assignment in keycloak
      * @param user The SHOGun user
-     * @return List of groups
+     * @return List of SHOGun groups
      */
     public List<Group> getGroupsForUser(User user) {
         List<GroupRepresentation> userGroups = this.getKeycloakGroupsForUser(user);
@@ -132,6 +132,39 @@ public class SecurityContextUtil {
             map(GroupRepresentation::getId).
             map(keycloakGroupId -> groupRepository.findByKeycloakId(keycloakGroupId).get()).
             collect(Collectors.toList());
+    }
+
+    /**
+     * Get SHOGun groups for currently logged in user based on actual assignment in keycloak
+     * @return List of SHOGun for currently logged in user
+     */
+    public List<Group> getGroupsForUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication.getPrincipal() instanceof KeycloakPrincipal) {
+            KeycloakPrincipal<?> keycloakPrincipal = (KeycloakPrincipal<KeycloakSecurityContext>) authentication.getPrincipal();
+            KeycloakSecurityContext keycloakSecurityContext = keycloakPrincipal.getKeycloakSecurityContext();
+            IDToken idToken = keycloakSecurityContext.getIdToken();
+            AccessToken token = keycloakSecurityContext.getToken();
+
+            ArrayList<String> idTokenGroups = (idToken == null) ? null : (ArrayList<String>) idToken.getOtherClaims().get(groupUuidsClaimName);
+            ArrayList<String> tokenGroups = (token == null) ? null : (ArrayList<String>) token.getOtherClaims().get(groupUuidsClaimName);
+
+            Set<String> keycloakGroupIds = new HashSet<>();
+            if (idTokenGroups != null && !idTokenGroups.isEmpty()) {
+                keycloakGroupIds.addAll(idTokenGroups);
+            }
+            if (tokenGroups != null && !tokenGroups.isEmpty()) {
+                keycloakGroupIds.addAll(tokenGroups);
+            }
+            if (!keycloakGroupIds.isEmpty()) {
+                return keycloakGroupIds.stream().
+                    map(keycloakGroupId -> groupRepository.findByKeycloakId(keycloakGroupId).orElseThrow()).
+                    collect(Collectors.toList());
+            }
+        }
+
+        // default: use already existing
+        return getGroupsForUser(getUserBySession().get());
     }
 
     /**
