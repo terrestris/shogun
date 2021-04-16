@@ -1,1 +1,1 @@
-## Welcome to SHOGun
+# Welcome to SHOGun
