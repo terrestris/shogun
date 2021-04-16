@@ -1,1 +1,6 @@
 theme: jekyll-theme-cayman
+
+title: SHOGun
+description: SHOGun Webmapping using Spring Boot
+
+show_downloads: true
