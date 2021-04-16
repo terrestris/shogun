@@ -1,0 +1,5230 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "description": "This is the REST API description of SHOGun",
+      "version": "1.0.0",
+      "title": "SHOGun Boot REST-API",
+      "termsOfService": "https://www.terrestris.de/en/impressum/",
+      "contact": {
+        "name": "terrestris GmbH & Co. KG",
+        "url": "www.terrestris.de",
+        "email": "info@terrestris.de"
+      },
+      "license": {
+        "name": "MIT",
+        "url": "https://opensource.org/licenses/MIT"
+      }
+    },
+    "host": "localhost:8080",
+    "tags": [
+      {
+        "name": "application-controller",
+        "description": "Application Controller"
+      },
+      {
+        "name": "application-info-controller",
+        "description": "Application Info Controller"
+      },
+      {
+        "name": "auth-controller",
+        "description": "Auth Controller"
+      },
+      {
+        "name": "basic-error-controller",
+        "description": "Basic Error Controller"
+      },
+      {
+        "name": "cache-controller",
+        "description": "Cache Controller"
+      },
+      {
+        "name": "file-controller",
+        "description": "File Controller"
+      },
+      {
+        "name": "graphi-ql-controller",
+        "description": "Graphi QL Controller"
+      },
+      {
+        "name": "group-controller",
+        "description": "Group Controller"
+      },
+      {
+        "name": "image-file-controller",
+        "description": "Image File Controller"
+      },
+      {
+        "name": "layer-controller",
+        "description": "Layer Controller"
+      },
+      {
+        "name": "operation-handler",
+        "description": "Operation Handler"
+      },
+      {
+        "name": "user-controller",
+        "description": "User Controller"
+      },
+      {
+        "name": "web-mvc-links-handler",
+        "description": "Web Mvc Links Handler"
+      }
+    ],
+    "paths": {
+      "/shogun-boot/actuator": {
+        "get": {
+          "tags": [
+            "web-mvc-links-handler"
+          ],
+          "summary": "links",
+          "operationId": "linksUsingGET",
+          "produces": [
+            "application/json",
+            "application/vnd.spring-boot.actuator.v2+json",
+            "application/vnd.spring-boot.actuator.v3+json"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "$ref": "#/definitions/Link"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/actuator/beans": {
+        "get": {
+          "tags": [
+            "operation-handler"
+          ],
+          "summary": "handle",
+          "operationId": "handleUsingGET",
+          "produces": [
+            "application/json",
+            "application/vnd.spring-boot.actuator.v2+json",
+            "application/vnd.spring-boot.actuator.v3+json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "body",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/actuator/caches": {
+        "get": {
+          "tags": [
+            "operation-handler"
+          ],
+          "summary": "handle",
+          "operationId": "handleUsingGET_1",
+          "produces": [
+            "application/json",
+            "application/vnd.spring-boot.actuator.v2+json",
+            "application/vnd.spring-boot.actuator.v3+json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "body",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "delete": {
+          "tags": [
+            "operation-handler"
+          ],
+          "summary": "handle",
+          "operationId": "handleUsingDELETE",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "body",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/actuator/caches/{cache}": {
+        "get": {
+          "tags": [
+            "operation-handler"
+          ],
+          "summary": "handle",
+          "operationId": "handleUsingGET_2",
+          "produces": [
+            "application/json",
+            "application/vnd.spring-boot.actuator.v2+json",
+            "application/vnd.spring-boot.actuator.v3+json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "body",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "delete": {
+          "tags": [
+            "operation-handler"
+          ],
+          "summary": "handle",
+          "operationId": "handleUsingDELETE_1",
+          "produces": [
+            "application/json",
+            "application/vnd.spring-boot.actuator.v2+json",
+            "application/vnd.spring-boot.actuator.v3+json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "body",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/actuator/conditions": {
+        "get": {
+          "tags": [
+            "operation-handler"
+          ],
+          "summary": "handle",
+          "operationId": "handleUsingGET_3",
+          "produces": [
+            "application/json",
+            "application/vnd.spring-boot.actuator.v2+json",
+            "application/vnd.spring-boot.actuator.v3+json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "body",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/actuator/configprops": {
+        "get": {
+          "tags": [
+            "operation-handler"
+          ],
+          "summary": "handle",
+          "operationId": "handleUsingGET_4",
+          "produces": [
+            "application/json",
+            "application/vnd.spring-boot.actuator.v2+json",
+            "application/vnd.spring-boot.actuator.v3+json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "body",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/actuator/env": {
+        "get": {
+          "tags": [
+            "operation-handler"
+          ],
+          "summary": "handle",
+          "operationId": "handleUsingGET_5",
+          "produces": [
+            "application/json",
+            "application/vnd.spring-boot.actuator.v2+json",
+            "application/vnd.spring-boot.actuator.v3+json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "body",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/actuator/env/{toMatch}": {
+        "get": {
+          "tags": [
+            "operation-handler"
+          ],
+          "summary": "handle",
+          "operationId": "handleUsingGET_6",
+          "produces": [
+            "application/json",
+            "application/vnd.spring-boot.actuator.v2+json",
+            "application/vnd.spring-boot.actuator.v3+json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "body",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/actuator/flyway": {
+        "get": {
+          "tags": [
+            "operation-handler"
+          ],
+          "summary": "handle",
+          "operationId": "handleUsingGET_7",
+          "produces": [
+            "application/json",
+            "application/vnd.spring-boot.actuator.v2+json",
+            "application/vnd.spring-boot.actuator.v3+json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "body",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/actuator/health": {
+        "get": {
+          "tags": [
+            "operation-handler"
+          ],
+          "summary": "handle",
+          "operationId": "handleUsingGET_8",
+          "produces": [
+            "application/json",
+            "application/vnd.spring-boot.actuator.v2+json",
+            "application/vnd.spring-boot.actuator.v3+json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "body",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/actuator/health/**": {
+        "get": {
+          "tags": [
+            "operation-handler"
+          ],
+          "summary": "handle",
+          "operationId": "handleUsingGET_9",
+          "produces": [
+            "application/json",
+            "application/vnd.spring-boot.actuator.v2+json",
+            "application/vnd.spring-boot.actuator.v3+json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "body",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/actuator/heapdump": {
+        "get": {
+          "tags": [
+            "operation-handler"
+          ],
+          "summary": "handle",
+          "operationId": "handleUsingGET_10",
+          "produces": [
+            "application/octet-stream"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "body",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/actuator/info": {
+        "get": {
+          "tags": [
+            "operation-handler"
+          ],
+          "summary": "handle",
+          "operationId": "handleUsingGET_11",
+          "produces": [
+            "application/json",
+            "application/vnd.spring-boot.actuator.v2+json",
+            "application/vnd.spring-boot.actuator.v3+json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "body",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/actuator/loggers": {
+        "get": {
+          "tags": [
+            "operation-handler"
+          ],
+          "summary": "handle",
+          "operationId": "handleUsingGET_12",
+          "produces": [
+            "application/json",
+            "application/vnd.spring-boot.actuator.v2+json",
+            "application/vnd.spring-boot.actuator.v3+json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "body",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/actuator/loggers/{name}": {
+        "get": {
+          "tags": [
+            "operation-handler"
+          ],
+          "summary": "handle",
+          "operationId": "handleUsingGET_13",
+          "produces": [
+            "application/json",
+            "application/vnd.spring-boot.actuator.v2+json",
+            "application/vnd.spring-boot.actuator.v3+json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "body",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "post": {
+          "tags": [
+            "operation-handler"
+          ],
+          "summary": "handle",
+          "operationId": "handleUsingPOST",
+          "consumes": [
+            "application/json",
+            "application/vnd.spring-boot.actuator.v3+json",
+            "application/vnd.spring-boot.actuator.v2+json"
+          ],
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "body",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "201": {
+              "description": "Created"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/actuator/mappings": {
+        "get": {
+          "tags": [
+            "operation-handler"
+          ],
+          "summary": "handle",
+          "operationId": "handleUsingGET_14",
+          "produces": [
+            "application/json",
+            "application/vnd.spring-boot.actuator.v2+json",
+            "application/vnd.spring-boot.actuator.v3+json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "body",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/actuator/metrics": {
+        "get": {
+          "tags": [
+            "operation-handler"
+          ],
+          "summary": "handle",
+          "operationId": "handleUsingGET_15",
+          "produces": [
+            "application/json",
+            "application/vnd.spring-boot.actuator.v2+json",
+            "application/vnd.spring-boot.actuator.v3+json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "body",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/actuator/metrics/{requiredMetricName}": {
+        "get": {
+          "tags": [
+            "operation-handler"
+          ],
+          "summary": "handle",
+          "operationId": "handleUsingGET_16",
+          "produces": [
+            "application/json",
+            "application/vnd.spring-boot.actuator.v2+json",
+            "application/vnd.spring-boot.actuator.v3+json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "body",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/actuator/scheduledtasks": {
+        "get": {
+          "tags": [
+            "operation-handler"
+          ],
+          "summary": "handle",
+          "operationId": "handleUsingGET_17",
+          "produces": [
+            "application/json",
+            "application/vnd.spring-boot.actuator.v2+json",
+            "application/vnd.spring-boot.actuator.v3+json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "body",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/actuator/sessions": {
+        "get": {
+          "tags": [
+            "operation-handler"
+          ],
+          "summary": "handle",
+          "operationId": "handleUsingGET_18",
+          "produces": [
+            "application/json",
+            "application/vnd.spring-boot.actuator.v2+json",
+            "application/vnd.spring-boot.actuator.v3+json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "body",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/actuator/sessions/{sessionId}": {
+        "get": {
+          "tags": [
+            "operation-handler"
+          ],
+          "summary": "handle",
+          "operationId": "handleUsingGET_19",
+          "produces": [
+            "application/json",
+            "application/vnd.spring-boot.actuator.v2+json",
+            "application/vnd.spring-boot.actuator.v3+json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "body",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "delete": {
+          "tags": [
+            "operation-handler"
+          ],
+          "summary": "handle",
+          "operationId": "handleUsingDELETE_2",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "body",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/actuator/threaddump": {
+        "get": {
+          "tags": [
+            "operation-handler"
+          ],
+          "summary": "handle",
+          "operationId": "handleUsingGET_20",
+          "produces": [
+            "application/json",
+            "application/vnd.spring-boot.actuator.v2+json",
+            "application/vnd.spring-boot.actuator.v3+json",
+            "text/plain;charset=UTF-8"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "body",
+              "required": false,
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/applications": {
+        "get": {
+          "tags": [
+            "application-controller"
+          ],
+          "summary": "findAll",
+          "operationId": "findAllUsingGET",
+          "produces": [
+            "*/*"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/ApplicationRes"
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "post": {
+          "tags": [
+            "application-controller"
+          ],
+          "summary": "add",
+          "operationId": "addUsingPOST",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "entity",
+              "description": "entity",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/ApplicationReq"
+              }
+            }
+          ],
+          "responses": {
+            "201": {
+              "description": "Created",
+              "schema": {
+                "$ref": "#/definitions/ApplicationRes"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/applications/{id}": {
+        "get": {
+          "tags": [
+            "application-controller"
+          ],
+          "summary": "findOne",
+          "operationId": "findOneUsingGET",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "id",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ApplicationRes"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "put": {
+          "tags": [
+            "application-controller"
+          ],
+          "summary": "update",
+          "operationId": "updateUsingPUT",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "entity",
+              "description": "entity",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/ApplicationReq"
+              }
+            },
+            {
+              "name": "id",
+              "in": "path",
+              "description": "id",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ApplicationRes"
+              }
+            },
+            "201": {
+              "description": "Created"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "delete": {
+          "tags": [
+            "application-controller"
+          ],
+          "summary": "delete",
+          "operationId": "deleteUsingDELETE",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "id",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "patch": {
+          "tags": [
+            "application-controller"
+          ],
+          "summary": "updatePartial",
+          "operationId": "updatePartialUsingPATCH",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "id",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            },
+            {
+              "in": "body",
+              "name": "values",
+              "description": "values",
+              "required": true,
+              "schema": {
+                "type": "object"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ApplicationRes"
+              }
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/applications/{id}/lastrev": {
+        "get": {
+          "tags": [
+            "application-controller"
+          ],
+          "summary": "findLastChangeRevision",
+          "operationId": "findLastChangeRevisionUsingGET",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "id",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/Revision«int,Application»"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/applications/{id}/rev": {
+        "get": {
+          "tags": [
+            "application-controller"
+          ],
+          "summary": "findRevisions",
+          "operationId": "findRevisionsUsingGET",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "id",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/Revisions«int,Application»"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/applications/{id}/rev/{rev}": {
+        "get": {
+          "tags": [
+            "application-controller"
+          ],
+          "summary": "findRevision",
+          "operationId": "findRevisionUsingGET",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "id",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            },
+            {
+              "name": "rev",
+              "in": "path",
+              "description": "rev",
+              "required": true,
+              "type": "integer",
+              "format": "int32"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/Revision«int,Application»"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/auth/isSessionValid": {
+        "get": {
+          "tags": [
+            "auth-controller"
+          ],
+          "summary": "isSessionValid",
+          "operationId": "isSessionValidUsingGET",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "authenticated",
+              "in": "query",
+              "required": false,
+              "type": "boolean"
+            },
+            {
+              "name": "authorities[0].authority",
+              "in": "query",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "credentials",
+              "in": "query",
+              "required": false,
+              "type": "object"
+            },
+            {
+              "name": "details",
+              "in": "query",
+              "required": false,
+              "type": "object"
+            },
+            {
+              "name": "principal",
+              "in": "query",
+              "required": false,
+              "type": "object"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/cache/evict": {
+        "post": {
+          "tags": [
+            "cache-controller"
+          ],
+          "summary": "evictCache",
+          "operationId": "evictCacheUsingPOST",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "*/*"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "201": {
+              "description": "Created"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/error": {
+        "get": {
+          "tags": [
+            "basic-error-controller"
+          ],
+          "summary": "errorHtml",
+          "operationId": "errorHtmlUsingGET",
+          "produces": [
+            "text/html"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "head": {
+          "tags": [
+            "basic-error-controller"
+          ],
+          "summary": "errorHtml",
+          "operationId": "errorHtmlUsingHEAD",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "text/html"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "post": {
+          "tags": [
+            "basic-error-controller"
+          ],
+          "summary": "errorHtml",
+          "operationId": "errorHtmlUsingPOST",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "text/html"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "201": {
+              "description": "Created"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "put": {
+          "tags": [
+            "basic-error-controller"
+          ],
+          "summary": "errorHtml",
+          "operationId": "errorHtmlUsingPUT",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "text/html"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "201": {
+              "description": "Created"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "delete": {
+          "tags": [
+            "basic-error-controller"
+          ],
+          "summary": "errorHtml",
+          "operationId": "errorHtmlUsingDELETE",
+          "produces": [
+            "text/html"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "options": {
+          "tags": [
+            "basic-error-controller"
+          ],
+          "summary": "errorHtml",
+          "operationId": "errorHtmlUsingOPTIONS",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "text/html"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "patch": {
+          "tags": [
+            "basic-error-controller"
+          ],
+          "summary": "errorHtml",
+          "operationId": "errorHtmlUsingPATCH",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "text/html"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/files": {
+        "get": {
+          "tags": [
+            "file-controller"
+          ],
+          "summary": "findAll",
+          "operationId": "findAllUsingGET_1",
+          "produces": [
+            "*/*"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/File"
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/files/upload": {
+        "post": {
+          "tags": [
+            "file-controller"
+          ],
+          "summary": "add",
+          "operationId": "addUsingPOST_1",
+          "consumes": [
+            "multipart/form-data"
+          ],
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "uploadedFile",
+              "description": "uploadedFile",
+              "required": false,
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              }
+            }
+          ],
+          "responses": {
+            "201": {
+              "description": "Created",
+              "schema": {
+                "$ref": "#/definitions/File"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/files/{fileUuid}": {
+        "get": {
+          "tags": [
+            "file-controller"
+          ],
+          "summary": "findOne",
+          "operationId": "findOneUsingGET_1",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "fileUuid",
+              "in": "path",
+              "description": "fileUuid",
+              "required": true,
+              "type": "string",
+              "format": "uuid"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "delete": {
+          "tags": [
+            "file-controller"
+          ],
+          "summary": "delete",
+          "operationId": "deleteUsingDELETE_1",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "fileUuid",
+              "in": "path",
+              "description": "fileUuid",
+              "required": true,
+              "type": "string",
+              "format": "uuid"
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/graphiql": {
+        "get": {
+          "tags": [
+            "graphi-ql-controller"
+          ],
+          "summary": "graphiql",
+          "operationId": "graphiqlUsingGET",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "params",
+              "in": "path",
+              "description": "params",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "head": {
+          "tags": [
+            "graphi-ql-controller"
+          ],
+          "summary": "graphiql",
+          "operationId": "graphiqlUsingHEAD",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "params",
+              "in": "path",
+              "description": "params",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "post": {
+          "tags": [
+            "graphi-ql-controller"
+          ],
+          "summary": "graphiql",
+          "operationId": "graphiqlUsingPOST",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "params",
+              "in": "path",
+              "description": "params",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "201": {
+              "description": "Created"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "put": {
+          "tags": [
+            "graphi-ql-controller"
+          ],
+          "summary": "graphiql",
+          "operationId": "graphiqlUsingPUT",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "params",
+              "in": "path",
+              "description": "params",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "201": {
+              "description": "Created"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "delete": {
+          "tags": [
+            "graphi-ql-controller"
+          ],
+          "summary": "graphiql",
+          "operationId": "graphiqlUsingDELETE",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "params",
+              "in": "path",
+              "description": "params",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "options": {
+          "tags": [
+            "graphi-ql-controller"
+          ],
+          "summary": "graphiql",
+          "operationId": "graphiqlUsingOPTIONS",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "params",
+              "in": "path",
+              "description": "params",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "patch": {
+          "tags": [
+            "graphi-ql-controller"
+          ],
+          "summary": "graphiql",
+          "operationId": "graphiqlUsingPATCH",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "params",
+              "in": "path",
+              "description": "params",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/groups": {
+        "get": {
+          "tags": [
+            "group-controller"
+          ],
+          "summary": "findAll",
+          "operationId": "findAllUsingGET_2",
+          "produces": [
+            "*/*"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/Group"
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "post": {
+          "tags": [
+            "group-controller"
+          ],
+          "summary": "add",
+          "operationId": "addUsingPOST_2",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "entity",
+              "description": "entity",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/Group"
+              }
+            }
+          ],
+          "responses": {
+            "201": {
+              "description": "Created",
+              "schema": {
+                "$ref": "#/definitions/Group"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/groups/keycloak/{id}": {
+        "get": {
+          "tags": [
+            "group-controller"
+          ],
+          "summary": "findByKeycloakId",
+          "operationId": "findByKeycloakIdUsingGET",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "id",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/GroupRepresentation"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/groups/keycloak/{id}/members": {
+        "get": {
+          "tags": [
+            "group-controller"
+          ],
+          "summary": "getGroupMembers",
+          "operationId": "getGroupMembersUsingGET",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "id",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/User"
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/groups/user/{id}": {
+        "get": {
+          "tags": [
+            "group-controller"
+          ],
+          "summary": "findByUser",
+          "operationId": "findByUserUsingGET",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "id",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/Group"
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/groups/{id}": {
+        "get": {
+          "tags": [
+            "group-controller"
+          ],
+          "summary": "findOne",
+          "operationId": "findOneUsingGET_2",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "id",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/Group"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "put": {
+          "tags": [
+            "group-controller"
+          ],
+          "summary": "update",
+          "operationId": "updateUsingPUT_1",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "entity",
+              "description": "entity",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/Group"
+              }
+            },
+            {
+              "name": "id",
+              "in": "path",
+              "description": "id",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/Group"
+              }
+            },
+            "201": {
+              "description": "Created"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "delete": {
+          "tags": [
+            "group-controller"
+          ],
+          "summary": "delete",
+          "operationId": "deleteUsingDELETE_2",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "id",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "patch": {
+          "tags": [
+            "group-controller"
+          ],
+          "summary": "updatePartial",
+          "operationId": "updatePartialUsingPATCH_1",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "id",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            },
+            {
+              "in": "body",
+              "name": "values",
+              "description": "values",
+              "required": true,
+              "schema": {
+                "type": "object"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/Group"
+              }
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/groups/{id}/lastrev": {
+        "get": {
+          "tags": [
+            "group-controller"
+          ],
+          "summary": "findLastChangeRevision",
+          "operationId": "findLastChangeRevisionUsingGET_1",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "id",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/Revision«int,Group»"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/groups/{id}/rev": {
+        "get": {
+          "tags": [
+            "group-controller"
+          ],
+          "summary": "findRevisions",
+          "operationId": "findRevisionsUsingGET_1",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "id",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/Revisions«int,Group»"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/groups/{id}/rev/{rev}": {
+        "get": {
+          "tags": [
+            "group-controller"
+          ],
+          "summary": "findRevision",
+          "operationId": "findRevisionUsingGET_1",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "id",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            },
+            {
+              "name": "rev",
+              "in": "path",
+              "description": "rev",
+              "required": true,
+              "type": "integer",
+              "format": "int32"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/Revision«int,Group»"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/imagefiles": {
+        "get": {
+          "tags": [
+            "image-file-controller"
+          ],
+          "summary": "findAll",
+          "operationId": "findAllUsingGET_3",
+          "produces": [
+            "*/*"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/ImageFile"
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/imagefiles/upload": {
+        "post": {
+          "tags": [
+            "image-file-controller"
+          ],
+          "summary": "add",
+          "operationId": "addUsingPOST_3",
+          "consumes": [
+            "multipart/form-data"
+          ],
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "uploadedFile",
+              "description": "uploadedFile",
+              "required": false,
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              }
+            }
+          ],
+          "responses": {
+            "201": {
+              "description": "Created",
+              "schema": {
+                "$ref": "#/definitions/ImageFile"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/imagefiles/{fileUuid}": {
+        "get": {
+          "tags": [
+            "image-file-controller"
+          ],
+          "summary": "findOne",
+          "operationId": "findOneUsingGET_3",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "fileUuid",
+              "in": "path",
+              "description": "fileUuid",
+              "required": true,
+              "type": "string",
+              "format": "uuid"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "delete": {
+          "tags": [
+            "image-file-controller"
+          ],
+          "summary": "delete",
+          "operationId": "deleteUsingDELETE_3",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "fileUuid",
+              "in": "path",
+              "description": "fileUuid",
+              "required": true,
+              "type": "string",
+              "format": "uuid"
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/imagefiles/{fileUuid}/thumbnail": {
+        "get": {
+          "tags": [
+            "image-file-controller"
+          ],
+          "summary": "findOneThumbnail",
+          "operationId": "findOneThumbnailUsingGET",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "fileUuid",
+              "in": "path",
+              "description": "fileUuid",
+              "required": true,
+              "type": "string",
+              "format": "uuid"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/info/app": {
+        "get": {
+          "tags": [
+            "application-info-controller"
+          ],
+          "summary": "info",
+          "operationId": "infoUsingGET",
+          "produces": [
+            "*/*"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ApplicationInfo"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/layers": {
+        "get": {
+          "tags": [
+            "layer-controller"
+          ],
+          "summary": "findAll",
+          "operationId": "findAllUsingGET_4",
+          "produces": [
+            "*/*"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/Layer"
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "post": {
+          "tags": [
+            "layer-controller"
+          ],
+          "summary": "add",
+          "operationId": "addUsingPOST_4",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "entity",
+              "description": "entity",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/Layer"
+              }
+            }
+          ],
+          "responses": {
+            "201": {
+              "description": "Created",
+              "schema": {
+                "$ref": "#/definitions/Layer"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/layers/{id}": {
+        "get": {
+          "tags": [
+            "layer-controller"
+          ],
+          "summary": "findOne",
+          "operationId": "findOneUsingGET_4",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "id",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/Layer"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "put": {
+          "tags": [
+            "layer-controller"
+          ],
+          "summary": "update",
+          "operationId": "updateUsingPUT_2",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "entity",
+              "description": "entity",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/Layer"
+              }
+            },
+            {
+              "name": "id",
+              "in": "path",
+              "description": "id",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/Layer"
+              }
+            },
+            "201": {
+              "description": "Created"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "delete": {
+          "tags": [
+            "layer-controller"
+          ],
+          "summary": "delete",
+          "operationId": "deleteUsingDELETE_4",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "id",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "patch": {
+          "tags": [
+            "layer-controller"
+          ],
+          "summary": "updatePartial",
+          "operationId": "updatePartialUsingPATCH_2",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "id",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            },
+            {
+              "in": "body",
+              "name": "values",
+              "description": "values",
+              "required": true,
+              "schema": {
+                "type": "object"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/Layer"
+              }
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/layers/{id}/lastrev": {
+        "get": {
+          "tags": [
+            "layer-controller"
+          ],
+          "summary": "findLastChangeRevision",
+          "operationId": "findLastChangeRevisionUsingGET_2",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "id",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/Revision«int,Layer»"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/layers/{id}/rev": {
+        "get": {
+          "tags": [
+            "layer-controller"
+          ],
+          "summary": "findRevisions",
+          "operationId": "findRevisionsUsingGET_2",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "id",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/Revisions«int,Layer»"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/layers/{id}/rev/{rev}": {
+        "get": {
+          "tags": [
+            "layer-controller"
+          ],
+          "summary": "findRevision",
+          "operationId": "findRevisionUsingGET_2",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "id",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            },
+            {
+              "name": "rev",
+              "in": "path",
+              "description": "rev",
+              "required": true,
+              "type": "integer",
+              "format": "int32"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/Revision«int,Layer»"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/users": {
+        "get": {
+          "tags": [
+            "user-controller"
+          ],
+          "summary": "findAll",
+          "operationId": "findAllUsingGET_5",
+          "produces": [
+            "*/*"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/User"
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "post": {
+          "tags": [
+            "user-controller"
+          ],
+          "summary": "add",
+          "operationId": "addUsingPOST_5",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "entity",
+              "description": "entity",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          ],
+          "responses": {
+            "201": {
+              "description": "Created",
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/users/{id}": {
+        "get": {
+          "tags": [
+            "user-controller"
+          ],
+          "summary": "findOne",
+          "operationId": "findOneUsingGET_5",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "id",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "put": {
+          "tags": [
+            "user-controller"
+          ],
+          "summary": "update",
+          "operationId": "updateUsingPUT_3",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "entity",
+              "description": "entity",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            },
+            {
+              "name": "id",
+              "in": "path",
+              "description": "id",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            },
+            "201": {
+              "description": "Created"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "delete": {
+          "tags": [
+            "user-controller"
+          ],
+          "summary": "delete",
+          "operationId": "deleteUsingDELETE_5",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "id",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        },
+        "patch": {
+          "tags": [
+            "user-controller"
+          ],
+          "summary": "updatePartial",
+          "operationId": "updatePartialUsingPATCH_3",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "id",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            },
+            {
+              "in": "body",
+              "name": "values",
+              "description": "values",
+              "required": true,
+              "schema": {
+                "type": "object"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/users/{id}/lastrev": {
+        "get": {
+          "tags": [
+            "user-controller"
+          ],
+          "summary": "findLastChangeRevision",
+          "operationId": "findLastChangeRevisionUsingGET_3",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "id",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/Revision«int,User»"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/users/{id}/rev": {
+        "get": {
+          "tags": [
+            "user-controller"
+          ],
+          "summary": "findRevisions",
+          "operationId": "findRevisionsUsingGET_3",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "id",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/Revisions«int,User»"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      },
+      "/shogun-boot/users/{id}/rev/{rev}": {
+        "get": {
+          "tags": [
+            "user-controller"
+          ],
+          "summary": "findRevision",
+          "operationId": "findRevisionUsingGET_3",
+          "produces": [
+            "*/*"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "id",
+              "required": true,
+              "type": "integer",
+              "format": "int64"
+            },
+            {
+              "name": "rev",
+              "in": "path",
+              "description": "rev",
+              "required": true,
+              "type": "integer",
+              "format": "int32"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/Revision«int,User»"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "security": [
+            {
+              "basicAuth": []
+            }
+          ]
+        }
+      }
+    },
+    "securityDefinitions": {
+      "basicAuth": {
+        "type": "basic"
+      }
+    },
+    "definitions": {
+      "ApplicationClientConfig": {
+        "type": "object",
+        "title": "ApplicationClientConfig"
+      },
+      "ApplicationInfo": {
+        "type": "object",
+        "properties": {
+          "authorities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "buildTime": {
+            "type": "string"
+          },
+          "commitHash": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "string"
+          }
+        },
+        "title": "ApplicationInfo"
+      },
+      "ApplicationReq": {
+        "type": "object",
+        "properties": {
+          "clientConfig": {
+            "$ref": "#/definitions/ApplicationClientConfig"
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "i18n": {
+            "$ref": "#/definitions/LocaleReq"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "layerConfig": {
+            "$ref": "#/definitions/LayerConfig"
+          },
+          "layerTree": {
+            "$ref": "#/definitions/LayerTree"
+          },
+          "modified": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "name": {
+            "type": "string"
+          },
+          "stateOnly": {
+            "type": "boolean"
+          },
+          "toolConfig": {
+            "$ref": "#/definitions/LayerToolConfig"
+          }
+        },
+        "title": "ApplicationReq"
+      },
+      "ApplicationRes": {
+        "type": "object",
+        "properties": {
+          "clientConfig": {
+            "$ref": "#/definitions/ApplicationClientConfig"
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "i18n": {
+            "$ref": "#/definitions/LocaleRes"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "layerConfig": {
+            "$ref": "#/definitions/LayerConfig"
+          },
+          "layerTree": {
+            "$ref": "#/definitions/LayerTree"
+          },
+          "modified": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "name": {
+            "type": "string"
+          },
+          "stateOnly": {
+            "type": "boolean"
+          },
+          "toolConfig": {
+            "$ref": "#/definitions/LayerToolConfig"
+          }
+        },
+        "title": "ApplicationRes"
+      },
+      "CredentialRepresentation": {
+        "type": "object",
+        "properties": {
+          "algorithm": {
+            "type": "string"
+          },
+          "config": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "counter": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdDate": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "credentialData": {
+            "type": "string"
+          },
+          "device": {
+            "type": "string"
+          },
+          "digits": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hashIterations": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hashedSaltedValue": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "period": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "priority": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "salt": {
+            "type": "string"
+          },
+          "secretData": {
+            "type": "string"
+          },
+          "temporary": {
+            "type": "boolean"
+          },
+          "type": {
+            "type": "string"
+          },
+          "userLabel": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "title": "CredentialRepresentation"
+      },
+      "FederatedIdentityRepresentation": {
+        "type": "object",
+        "properties": {
+          "identityProvider": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "userName": {
+            "type": "string"
+          }
+        },
+        "title": "FederatedIdentityRepresentation"
+      },
+      "File": {
+        "type": "object",
+        "properties": {
+          "active": {
+            "type": "boolean"
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "fileName": {
+            "type": "string"
+          },
+          "fileType": {
+            "type": "string"
+          },
+          "fileUuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "modified": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "title": "File"
+      },
+      "Group": {
+        "type": "object",
+        "properties": {
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "keycloakId": {
+            "type": "string"
+          },
+          "keycloakRepresentation": {
+            "$ref": "#/definitions/GroupRepresentation"
+          },
+          "modified": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "title": "Group"
+      },
+      "GroupRepresentation": {
+        "type": "object",
+        "properties": {
+          "access": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "boolean"
+            }
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "clientRoles": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "realmRoles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "subGroups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/GroupRepresentation"
+            }
+          }
+        },
+        "title": "GroupRepresentation"
+      },
+      "ImageFile": {
+        "type": "object",
+        "properties": {
+          "active": {
+            "type": "boolean"
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "fileName": {
+            "type": "string"
+          },
+          "fileType": {
+            "type": "string"
+          },
+          "fileUuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "height": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "modified": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "width": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "title": "ImageFile"
+      },
+      "Layer": {
+        "type": "object",
+        "properties": {
+          "clientConfig": {
+            "$ref": "#/definitions/LayerClientConfig"
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "features": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/LayerFeature"
+            }
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "modified": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "name": {
+            "type": "string"
+          },
+          "sourceConfig": {
+            "$ref": "#/definitions/LayerSourceConfig"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "TILEWMS",
+              "VECTORTILE",
+              "WFS",
+              "WMS",
+              "WMTS",
+              "XYZ"
+            ]
+          }
+        },
+        "title": "Layer"
+      },
+      "LayerClientConfig": {
+        "type": "object",
+        "title": "LayerClientConfig"
+      },
+      "LayerConfig": {
+        "type": "object",
+        "title": "LayerConfig"
+      },
+      "LayerFeature": {
+        "type": "object",
+        "title": "LayerFeature"
+      },
+      "LayerSourceConfig": {
+        "type": "object",
+        "title": "LayerSourceConfig"
+      },
+      "LayerToolConfig": {
+        "type": "object",
+        "title": "LayerToolConfig"
+      },
+      "LayerTree": {
+        "type": "object",
+        "title": "LayerTree"
+      },
+      "Link": {
+        "type": "object",
+        "properties": {
+          "href": {
+            "type": "string"
+          },
+          "templated": {
+            "type": "boolean"
+          }
+        },
+        "title": "Link"
+      },
+      "LocaleReq": {
+        "type": "object",
+        "title": "LocaleReq"
+      },
+      "LocaleRes": {
+        "type": "object",
+        "properties": {
+          "country": {
+            "type": "string"
+          },
+          "displayCountry": {
+            "type": "string"
+          },
+          "displayLanguage": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "displayScript": {
+            "type": "string"
+          },
+          "displayVariant": {
+            "type": "string"
+          },
+          "extensionKeys": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "iso3Country": {
+            "type": "string"
+          },
+          "iso3Language": {
+            "type": "string"
+          },
+          "language": {
+            "type": "string"
+          },
+          "script": {
+            "type": "string"
+          },
+          "unicodeLocaleAttributes": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "unicodeLocaleKeys": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "variant": {
+            "type": "string"
+          }
+        },
+        "title": "LocaleRes"
+      },
+      "ModelAndView": {
+        "type": "object",
+        "properties": {
+          "empty": {
+            "type": "boolean"
+          },
+          "model": {
+            "type": "object"
+          },
+          "modelMap": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "reference": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACCEPTED",
+              "ALREADY_REPORTED",
+              "BAD_GATEWAY",
+              "BAD_REQUEST",
+              "BANDWIDTH_LIMIT_EXCEEDED",
+              "CHECKPOINT",
+              "CONFLICT",
+              "CONTINUE",
+              "CREATED",
+              "DESTINATION_LOCKED",
+              "EXPECTATION_FAILED",
+              "FAILED_DEPENDENCY",
+              "FORBIDDEN",
+              "FOUND",
+              "GATEWAY_TIMEOUT",
+              "GONE",
+              "HTTP_VERSION_NOT_SUPPORTED",
+              "IM_USED",
+              "INSUFFICIENT_SPACE_ON_RESOURCE",
+              "INSUFFICIENT_STORAGE",
+              "INTERNAL_SERVER_ERROR",
+              "I_AM_A_TEAPOT",
+              "LENGTH_REQUIRED",
+              "LOCKED",
+              "LOOP_DETECTED",
+              "METHOD_FAILURE",
+              "METHOD_NOT_ALLOWED",
+              "MOVED_PERMANENTLY",
+              "MOVED_TEMPORARILY",
+              "MULTIPLE_CHOICES",
+              "MULTI_STATUS",
+              "NETWORK_AUTHENTICATION_REQUIRED",
+              "NON_AUTHORITATIVE_INFORMATION",
+              "NOT_ACCEPTABLE",
+              "NOT_EXTENDED",
+              "NOT_FOUND",
+              "NOT_IMPLEMENTED",
+              "NOT_MODIFIED",
+              "NO_CONTENT",
+              "OK",
+              "PARTIAL_CONTENT",
+              "PAYLOAD_TOO_LARGE",
+              "PAYMENT_REQUIRED",
+              "PERMANENT_REDIRECT",
+              "PRECONDITION_FAILED",
+              "PRECONDITION_REQUIRED",
+              "PROCESSING",
+              "PROXY_AUTHENTICATION_REQUIRED",
+              "REQUESTED_RANGE_NOT_SATISFIABLE",
+              "REQUEST_ENTITY_TOO_LARGE",
+              "REQUEST_HEADER_FIELDS_TOO_LARGE",
+              "REQUEST_TIMEOUT",
+              "REQUEST_URI_TOO_LONG",
+              "RESET_CONTENT",
+              "SEE_OTHER",
+              "SERVICE_UNAVAILABLE",
+              "SWITCHING_PROTOCOLS",
+              "TEMPORARY_REDIRECT",
+              "TOO_EARLY",
+              "TOO_MANY_REQUESTS",
+              "UNAUTHORIZED",
+              "UNAVAILABLE_FOR_LEGAL_REASONS",
+              "UNPROCESSABLE_ENTITY",
+              "UNSUPPORTED_MEDIA_TYPE",
+              "UPGRADE_REQUIRED",
+              "URI_TOO_LONG",
+              "USE_PROXY",
+              "VARIANT_ALSO_NEGOTIATES"
+            ]
+          },
+          "view": {
+            "$ref": "#/definitions/View"
+          },
+          "viewName": {
+            "type": "string"
+          }
+        },
+        "title": "ModelAndView"
+      },
+      "RevisionMetadata«int»": {
+        "type": "object",
+        "properties": {
+          "delegate": {
+            "type": "object"
+          },
+          "requiredRevisionInstant": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "requiredRevisionNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "revisionInstant": {
+            "$ref": "#/definitions/Error-ModelName{namespace='java.time', name='Instant'}"
+          },
+          "revisionNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "revisionType": {
+            "type": "string",
+            "enum": [
+              "DELETE",
+              "INSERT",
+              "UNKNOWN",
+              "UPDATE"
+            ]
+          }
+        },
+        "title": "RevisionMetadata«int»"
+      },
+      "Revisions«int,Application»": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/Revision«int,Application»"
+            }
+          },
+          "empty": {
+            "type": "boolean"
+          },
+          "latestRevision": {
+            "$ref": "#/definitions/Revision«int,Application»"
+          }
+        },
+        "title": "Revisions«int,Application»"
+      },
+      "Revisions«int,Group»": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/Revision«int,Group»"
+            }
+          },
+          "empty": {
+            "type": "boolean"
+          },
+          "latestRevision": {
+            "$ref": "#/definitions/Revision«int,Group»"
+          }
+        },
+        "title": "Revisions«int,Group»"
+      },
+      "Revisions«int,Layer»": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/Revision«int,Layer»"
+            }
+          },
+          "empty": {
+            "type": "boolean"
+          },
+          "latestRevision": {
+            "$ref": "#/definitions/Revision«int,Layer»"
+          }
+        },
+        "title": "Revisions«int,Layer»"
+      },
+      "Revisions«int,User»": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/Revision«int,User»"
+            }
+          },
+          "empty": {
+            "type": "boolean"
+          },
+          "latestRevision": {
+            "$ref": "#/definitions/Revision«int,User»"
+          }
+        },
+        "title": "Revisions«int,User»"
+      },
+      "Revision«int,Application»": {
+        "type": "object",
+        "properties": {
+          "entity": {
+            "$ref": "#/definitions/ApplicationRes"
+          },
+          "metadata": {
+            "$ref": "#/definitions/RevisionMetadata«int»"
+          },
+          "requiredRevisionInstant": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "requiredRevisionNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "revisionInstant": {
+            "$ref": "#/definitions/Error-ModelName{namespace='java.time', name='Instant'}"
+          },
+          "revisionNumber": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "title": "Revision«int,Application»"
+      },
+      "Revision«int,Group»": {
+        "type": "object",
+        "properties": {
+          "entity": {
+            "$ref": "#/definitions/Group"
+          },
+          "metadata": {
+            "$ref": "#/definitions/RevisionMetadata«int»"
+          },
+          "requiredRevisionInstant": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "requiredRevisionNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "revisionInstant": {
+            "$ref": "#/definitions/Error-ModelName{namespace='java.time', name='Instant'}"
+          },
+          "revisionNumber": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "title": "Revision«int,Group»"
+      },
+      "Revision«int,Layer»": {
+        "type": "object",
+        "properties": {
+          "entity": {
+            "$ref": "#/definitions/Layer"
+          },
+          "metadata": {
+            "$ref": "#/definitions/RevisionMetadata«int»"
+          },
+          "requiredRevisionInstant": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "requiredRevisionNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "revisionInstant": {
+            "$ref": "#/definitions/Error-ModelName{namespace='java.time', name='Instant'}"
+          },
+          "revisionNumber": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "title": "Revision«int,Layer»"
+      },
+      "Revision«int,User»": {
+        "type": "object",
+        "properties": {
+          "entity": {
+            "$ref": "#/definitions/User"
+          },
+          "metadata": {
+            "$ref": "#/definitions/RevisionMetadata«int»"
+          },
+          "requiredRevisionInstant": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "requiredRevisionNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "revisionInstant": {
+            "$ref": "#/definitions/Error-ModelName{namespace='java.time', name='Instant'}"
+          },
+          "revisionNumber": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "title": "Revision«int,User»"
+      },
+      "SocialLinkRepresentation": {
+        "type": "object",
+        "properties": {
+          "socialProvider": {
+            "type": "string"
+          },
+          "socialUserId": {
+            "type": "string"
+          },
+          "socialUsername": {
+            "type": "string"
+          }
+        },
+        "title": "SocialLinkRepresentation"
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "clientConfig": {
+            "$ref": "#/definitions/UserClientConfig"
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "details": {
+            "$ref": "#/definitions/UserDetails"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "keycloakId": {
+            "type": "string"
+          },
+          "keycloakRepresentation": {
+            "$ref": "#/definitions/UserRepresentation"
+          },
+          "modified": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "title": "User"
+      },
+      "UserClientConfig": {
+        "type": "object",
+        "title": "UserClientConfig"
+      },
+      "UserConsentRepresentation": {
+        "type": "object",
+        "properties": {
+          "clientId": {
+            "type": "string"
+          },
+          "createdDate": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "grantedClientScopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "grantedRealmRoles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "lastUpdatedDate": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "title": "UserConsentRepresentation"
+      },
+      "UserDetails": {
+        "type": "object",
+        "title": "UserDetails"
+      },
+      "UserRepresentation": {
+        "type": "object",
+        "properties": {
+          "access": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "boolean"
+            }
+          },
+          "applicationRoles": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "clientConsents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/UserConsentRepresentation"
+            }
+          },
+          "clientRoles": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "createdTimestamp": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "credentials": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/CredentialRepresentation"
+            }
+          },
+          "disableableCredentialTypes": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "email": {
+            "type": "string"
+          },
+          "emailVerified": {
+            "type": "boolean"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "federatedIdentities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/FederatedIdentityRepresentation"
+            }
+          },
+          "federationLink": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "notBefore": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "origin": {
+            "type": "string"
+          },
+          "realmRoles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "requiredActions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "self": {
+            "type": "string"
+          },
+          "serviceAccountClientId": {
+            "type": "string"
+          },
+          "socialLinks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/SocialLinkRepresentation"
+            }
+          },
+          "totp": {
+            "type": "boolean"
+          },
+          "username": {
+            "type": "string"
+          }
+        },
+        "title": "UserRepresentation"
+      },
+      "View": {
+        "type": "object",
+        "properties": {
+          "contentType": {
+            "type": "string"
+          }
+        },
+        "title": "View"
+      }
+    }
+  }
