@@ -24,7 +24,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class ShogunClientBuilder {
 
-    private String shogunServiceBaseUrl;
+    private String serviceBaseUrl;
     private String adminUser;
     private String adminPassword;
     private ShogunManagerType managerType;
@@ -45,7 +45,7 @@ public class ShogunClientBuilder {
      * @return builder
      */
     public ShogunClientBuilder shogunServiceBaseUrl(String shogunServiceBaseUrl) {
-        this.shogunServiceBaseUrl = shogunServiceBaseUrl;
+        this.serviceBaseUrl = shogunServiceBaseUrl;
         return this;
     }
 
@@ -92,8 +92,8 @@ public class ShogunClientBuilder {
             throw new IllegalStateException("SHOGun admin user password required");
         }
 
-        if (shogunServiceBaseUrl == null) {
-            throw new IllegalStateException("SHOGun base URL required");
+        if (serviceBaseUrl == null) {
+            throw new IllegalStateException("Service base URL required");
         }
 
         if (managerType == null) {
@@ -102,7 +102,9 @@ public class ShogunClientBuilder {
 
         switch (managerType) {
             case GEOSERVER_INTERCEPTOR:
-                return new ShogunGsInterceptorManager(adminUser, adminPassword, shogunServiceBaseUrl);
+                return new ShogunGsInterceptorManager(adminUser, adminPassword, serviceBaseUrl);
+            case GWC:
+                return new ShogunGwcManager(adminUser, adminPassword, serviceBaseUrl);
             default:
                 log.warn("Manager type unknown…");
                 return null;
