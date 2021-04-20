@@ -77,31 +77,21 @@
     <java.version>11</java.version>
 
     <!-- Plugins -->
-    <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-    <maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
     <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
     <maven-site-plugin.version>3.9.1</maven-site-plugin.version>
-    <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
     <jacoco-plugin.version>0.8.6</jacoco-plugin.version>
     <maven-project-info-reports-plugin.version>3.1.1</maven-project-info-reports-plugin.version>
-    <jib-maven-pluign.version>2.8.0</jib-maven-pluign.version>
-
-    <!-- Javax -->
-    <javax.servlet.api.version>4.0.1</javax.servlet.api.version>
-    <javax.validation.version>2.0.1.Final</javax.validation.version>
-    <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
+    <jib-maven-plugin.version>2.8.0</jib-maven-plugin.version>
 
     <!-- Spring -->
-    <spring-boot.version>2.4.0</spring-boot.version>
-    <spring-data.version>2.4.1</spring-data.version>
+    <spring-boot.version>2.3.5.RELEASE</spring-boot.version>
+    <spring-data.version>2.3.5.RELEASE</spring-data.version>
 
+    <!-- Security -->
     <keycloak.version>12.0.4</keycloak.version>
 
     <!-- Database -->
-    <hibernate.version>5.4.29.Final</hibernate.version>
     <hibernate-extra-types.version>2.10.0</hibernate-extra-types.version>
-    <postgres.version>42.2.19</postgres.version>
-    <ehcache.version>3.9.0</ehcache.version>
 
     <!-- GraphQL -->
     <graphql-spring-boot-starter.version>5.0.2</graphql-spring-boot-starter.version>
@@ -109,40 +99,25 @@
     <graphql-java-tools.version>5.2.4</graphql-java-tools.version>
     <graphql-java-extended-scalars.version>15.0.0</graphql-java-extended-scalars.version>
 
-    <!-- Utils -->
-    <lombok.version>1.18.18</lombok.version>
-    <okhttp.version>4.3.1</okhttp.version>
-    <commons.io.version>2.8.0</commons.io.version>
-    <threetenbp.version>1.4.1</threetenbp.version>
-    <com.sun.mail.version>1.6.2</com.sun.mail.version>
-    <reflections.version>0.9.12</reflections.version>
-    <evo-inflector.version>1.2.2</evo-inflector.version>
-
-    
-    <!-- Testing -->
-    <junit.version>4.13.2</junit.version>
-    <hamcrest.version>2.2</hamcrest.version>
-    <mockito.version>3.8.0</mockito.version>
-    <testcontainers.version>1.15.2</testcontainers.version>
-    <junit.jupiter.version>5.7.1</junit.jupiter.version>
-    <jaxb.version>2.3.1</jaxb.version>
-
-    <!-- Doc -->
-    <springfox.version>3.0.0</springfox.version>
-
     <!-- Swagger/REST -->
+    <springfox.version>3.0.0</springfox.version>
     <swagger.version>2.1.1</swagger.version>
     <swagger-codegen-maven-plugin.version>2.4.19</swagger-codegen-maven-plugin.version>
 
     <!-- JSON/Dataformats -->
     <jackson-datatype-jts.version>1.0-2.7</jackson-datatype-jts.version>
 
-    <!-- Logging -->
-    <log4j.version>2.14.1</log4j.version>
-    <log4j-over-slf4j.version>1.7.30</log4j-over-slf4j.version>
-
     <!-- GeoServer/Geodata -->
     <geoserver-manager.version>1.7.0</geoserver-manager.version>
+
+    <!-- Utils -->
+    <commons.io.version>2.8.0</commons.io.version>
+    <reflections.version>0.9.12</reflections.version>
+    <evo-inflector.version>1.2.2</evo-inflector.version>
+
+    <!-- Testing -->
+    <testcontainers.version>1.15.2</testcontainers.version>
+    <junit.jupiter.version>5.7.1</junit.jupiter.version>
   </properties>
 
   <build>
@@ -206,14 +181,9 @@
           </executions>
         </plugin>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-deploy-plugin</artifactId>
-          <version>${maven-deploy-plugin.version}</version>
-        </plugin>
-        <plugin>
           <groupId>com.google.cloud.tools</groupId>
           <artifactId>jib-maven-plugin</artifactId>
-          <version>${jib-maven-pluign.version}</version>
+          <version>${jib-maven-plugin.version}</version>
           <executions>
             <execution>
               <id>dockerBuild</id>
@@ -273,17 +243,17 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-site-plugin</artifactId>
-            <version>3.9.1</version>
+            <version>${maven-site-plugin.version}</version>
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-project-info-reports-plugin</artifactId>
-            <version>3.1.1</version>
+            <version>${maven-project-info-reports-plugin.version}</version>
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-report-plugin</artifactId>
-            <version>${surefire-plugin.version}</version>
+            <version>${maven-surefire-plugin.version}</version>
             <configuration>
               <aggregate>true</aggregate>
             </configuration>
@@ -321,28 +291,7 @@
 
   <dependencyManagement>
     <dependencies>
-
-      <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>javax.servlet-api</artifactId>
-        <version>${javax.servlet.api.version}</version>
-        <scope>provided</scope>
-      </dependency>
-
       <!-- Spring Boot -->
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-devtools</artifactId>
-        <version>${spring-boot.version}</version>
-        <scope>runtime</scope>
-        <optional>true</optional>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-configuration-processor</artifactId>
-        <version>${spring-boot.version}</version>
-        <optional>true</optional>
-      </dependency>
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-test</artifactId>
@@ -366,30 +315,12 @@
           </exclusion>
         </exclusions>
       </dependency>
+
+      <!-- Swagger -->
       <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-data-redis</artifactId>
-        <version>${spring-boot.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-mail</artifactId>
-        <version>${spring-boot.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-data-jpa</artifactId>
-        <version>${spring-boot.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-thymeleaf</artifactId>
-        <version>${spring-boot.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-security</artifactId>
-        <version>${spring-boot.version}</version>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-swagger-ui</artifactId>
+        <version>${springfox.version}</version>
       </dependency>
       <dependency>
         <groupId>io.springfox</groupId>
@@ -434,38 +365,11 @@
         <version>${spring-security.version}</version>
       </dependency>
 
-      <!-- Database driver -->
-      <dependency>
-        <groupId>org.postgresql</groupId>
-        <artifactId>postgresql</artifactId>
-        <version>${postgres.version}</version>
-      </dependency>
-
       <!-- Hibernate -->
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-core</artifactId>
-        <version>${hibernate.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-spatial</artifactId>
-        <version>${hibernate.version}</version>
-      </dependency>
       <dependency>
         <groupId>com.vladmihalcea</groupId>
         <artifactId>hibernate-types-52</artifactId>
         <version>${hibernate-extra-types.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-jcache</artifactId>
-        <version>${hibernate.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.ehcache</groupId>
-        <artifactId>ehcache</artifactId>
-        <version>${ehcache.version}</version>
       </dependency>
 
       <!-- GraphQL -->
@@ -494,41 +398,17 @@
       <dependency>
         <groupId>org.apache.logging.log4j</groupId>
         <artifactId>log4j-api</artifactId>
-        <version>${log4j.version}</version>
+        <version>${log4j2.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.logging.log4j</groupId>
         <artifactId>log4j-core</artifactId>
-        <version>${log4j.version}</version>
+        <version>${log4j2.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.logging.log4j</groupId>
         <artifactId>log4j-slf4j-impl</artifactId>
-        <version>${log4j.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>log4j-over-slf4j</artifactId>
-        <version>${log4j-over-slf4j.version}</version>
-      </dependency>
-
-      <!-- Lombok -->
-      <dependency>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok</artifactId>
-        <version>${lombok.version}</version>
-      </dependency>
-
-      <!-- Apache HTTP client -->
-      <dependency>
-        <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>httpclient</artifactId>
-        <version>${httpclient.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>httpmime</artifactId>
-        <version>${httpclient.version}</version>
+        <version>${log4j2.version}</version>
       </dependency>
 
       <!-- Apache Commons -->
@@ -537,75 +417,22 @@
         <artifactId>commons-io</artifactId>
         <version>${commons.io.version}</version>
       </dependency>
-      <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-lang3</artifactId>
-        <version>${commons-lang3.version}</version>
-      </dependency>
 
-      <!-- evo-inflector -->
+      <!-- Jackson -->
       <dependency>
-        <groupId>org.atteo</groupId>
-        <artifactId>evo-inflector</artifactId>
-        <version>${evo-inflector.version}</version>
-      </dependency>
-
-      <!-- Testing -->
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>${junit.version}</version>
-        <scope>test</scope>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>${jackson-bom.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-test</artifactId>
-        <version>${spring-framework.version}</version>
-        <scope>test</scope>
+        <groupId>com.fasterxml.jackson.dataformat</groupId>
+        <artifactId>jackson-dataformat-yaml</artifactId>
+        <version>${jackson-bom.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.hamcrest</groupId>
-        <artifactId>hamcrest</artifactId>
-        <version>${hamcrest.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.mockito</groupId>
-        <artifactId>mockito-core</artifactId>
-        <version>${mockito.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.testcontainers</groupId>
-        <artifactId>testcontainers</artifactId>
-        <version>${testcontainers.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>javax.xml.bind</groupId>
-        <artifactId>jaxb-api</artifactId>
-        <version>${jaxb.version}</version>
-        <scope>test</scope>
-      </dependency>
-
-      <!-- Swagger -->
-      <dependency>
-        <groupId>org.testcontainers</groupId>
-        <artifactId>postgresql</artifactId>
-        <version>${testcontainers.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>io.springfox</groupId>
-        <artifactId>springfox-swagger-ui</artifactId>
-        <version>${springfox.version}</version>
-      </dependency>
-
-      <!-- Jupiter -->
-      <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter</artifactId>
-        <version>${junit.jupiter.version}</version>
+        <groupId>com.graphhopper.external</groupId>
+        <artifactId>jackson-datatype-jts</artifactId>
+        <version>${jackson-datatype-jts.version}</version>
       </dependency>
 
       <!-- Keycloak -->
@@ -627,39 +454,11 @@
         <scope>import</scope>
       </dependency>
 
+      <!-- evo-inflector -->
       <dependency>
-        <groupId>org.flywaydb</groupId>
-        <artifactId>flyway-core</artifactId>
-        <version>${flyway.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>javax.annotation</groupId>
-        <artifactId>javax.annotation-api</artifactId>
-        <version>${javax.annotation-api.version}</version>
-        <scope>compile</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-databind</artifactId>
-        <version>${jackson-bom.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.dataformat</groupId>
-        <artifactId>jackson-dataformat-yaml</artifactId>
-        <version>${jackson-bom.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>com.graphhopper.external</groupId>
-        <artifactId>jackson-datatype-jts</artifactId>
-        <version>${jackson-datatype-jts.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>javax.validation</groupId>
-        <artifactId>validation-api</artifactId>
-        <version>${javax.validation.version}</version>
+        <groupId>org.atteo</groupId>
+        <artifactId>evo-inflector</artifactId>
+        <version>${evo-inflector.version}</version>
       </dependency>
 
       <dependency>
@@ -671,13 +470,33 @@
       <dependency>
         <groupId>com.sun.mail</groupId>
         <artifactId>javax.mail</artifactId>
-        <version>${com.sun.mail.version}</version>
+        <version>${javax-mail.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.reflections</groupId>
         <artifactId>reflections</artifactId>
         <version>${reflections.version}</version>
+      </dependency>
+
+      <!-- Testing -->
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-test</artifactId>
+        <version>${spring-framework.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>testcontainers</artifactId>
+        <version>${testcontainers.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>postgresql</artifactId>
+        <version>${testcontainers.version}</version>
+        <scope>test</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
