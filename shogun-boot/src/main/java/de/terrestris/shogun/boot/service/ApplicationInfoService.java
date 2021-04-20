@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +24,7 @@ public class ApplicationInfoService {
     protected final Logger LOG = LogManager.getLogger(getClass());
 
     @Autowired
-    private SecurityContextUtil securityContextUtil;
+    protected SecurityContextUtil securityContextUtil;
 
     /**
      * Returns general application information such as the version.
@@ -61,7 +60,7 @@ public class ApplicationInfoService {
                 applicationInfo.setAuthorities(simpleAuthList);
             }
         } else {
-            List<String> grantedAuthorities = new ArrayList();
+            List<String> grantedAuthorities = new ArrayList<>();
             grantedAuthorities.add("ROLE_ANONYMOUS");
 
             applicationInfo.setAuthorities(grantedAuthorities);
