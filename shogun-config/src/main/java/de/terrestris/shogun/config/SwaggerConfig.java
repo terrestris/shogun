@@ -1,3 +1,19 @@
+/* SHOGun, https://terrestris.github.io/shogun/
+ *
+ * Copyright © 2020-present terrestris GmbH & Co. KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   https://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.terrestris.shogun.config;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -23,7 +39,7 @@ public abstract class SwaggerConfig {
     protected String termsOfServiceUrl = "https://www.terrestris.de/en/impressum/";
     protected Contact contact = new Contact("terrestris GmbH & Co. KG", "www.terrestris.de", "info@terrestris.de");
     protected String license = "Apache License, Version 2.0";
-    protected String licenseUrl = "https://opensource.org/licenses/Apache-2.0";
+    protected String licenseUrl = "https://www.apache.org/licenses/LICENSE-2.0.txt";
 
     @Bean
     public Docket api() {
