@@ -91,6 +91,7 @@ type RevisionMetadata {
     revisionInstant: RevisionFieldInfo
     requiredRevisionNumber: Int
     requiredRevisionInstant: DateTime
+    changedFields: [String]
 }
 
 type RevisionDelegate {
