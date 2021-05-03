@@ -67,7 +67,7 @@ public class FileService extends BaseFileService<FileRepository, File> {
 
     /**
      * Creates a new File entity in the Database.
-     * The file is stored as file on the .
+     * The file is stored as file on the disk.
      *
      * @param uploadFile
      * @param writeToSystem
@@ -80,12 +80,18 @@ public class FileService extends BaseFileService<FileRepository, File> {
         }
 
         String uploadBasePath = uploadProperties.getPath();
-        String filename = uploadFile.getOriginalFilename();
+        if(uploadBasePath != null) {
+            throw new Exception("Could not upload file. uploadBasePath is null.");
+        }
+        String fileName = uploadFile.getOriginalFilename();
+        if(fileName != null) {
+            throw new Exception("Could not upload file. fileName is null.");
+        }
 
         FileUtil.validateFile(uploadFile);
         File file = new File();
         file.setFileType(uploadFile.getContentType());
-        file.setFileName(filename);
+        file.setFileName(fileName);
         file.setActive(true);
 
         File savedFile = this.create(file);
@@ -93,13 +99,13 @@ public class FileService extends BaseFileService<FileRepository, File> {
         UUID fileUuid = savedFile.getFileUuid();
 
         // Setup path and directory
-        String path = fileUuid + "/" + filename;
+        String path = fileUuid + "/" + fileName;
         java.io.File fileDirectory = new java.io.File(uploadBasePath + "/" + fileUuid);
         fileDirectory.mkdirs();
 
         // Write multipart file data to target directory
         byte[] fileByteArray = FileUtil.fileToByteArray(uploadFile);
-        java.io.File outFile = new java.io.File(fileDirectory, filename);
+        java.io.File outFile = new java.io.File(fileDirectory, fileName);
         InputStream in = new ByteArrayInputStream(fileByteArray);
 
         try (OutputStream out = new FileOutputStream(outFile)) {
@@ -107,14 +113,14 @@ public class FileService extends BaseFileService<FileRepository, File> {
             LOG.info("Saved file with id {} to {}: ", savedFile.getId(), savedFile.getPath());
         } catch (Exception e) {
             LOG.error("Error when saving file {} to disk: " + e.getMessage(), savedFile.getId());
+            LOG.info("Rollback creation of file {}.", savedFile.getId());
+            this.repository.delete(savedFile);
             throw e;
         }
 
         // Update entity with saved File
         savedFile.setPath(path);
-        this.repository.save(savedFile);
-
-        return savedFile;
+        return this.repository.save(savedFile);
     }
 
     /**
