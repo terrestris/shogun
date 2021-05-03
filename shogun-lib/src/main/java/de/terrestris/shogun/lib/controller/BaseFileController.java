@@ -18,9 +18,12 @@ package de.terrestris.shogun.lib.controller;
 
 import de.terrestris.shogun.lib.model.File;
 import de.terrestris.shogun.lib.service.BaseFileService;
+import de.terrestris.shogun.lib.util.FileUtil;
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.GenericTypeResolver;
@@ -30,13 +33,20 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static de.terrestris.shogun.lib.util.FileUtil.convertToFile;
+
 public abstract class BaseFileController<T extends BaseFileService<?, S>, S extends File> {
 
     protected final Logger LOG = LogManager.getLogger(getClass());
+
+    @Value("${upload.path}")
+    protected String uploadBasePath;
 
     @Autowired
     protected T service;
@@ -97,31 +107,36 @@ public abstract class BaseFileController<T extends BaseFileService<?, S>, S exte
 
             if (entity.isPresent()) {
                 S file = entity.get();
-
-                LOG.info("Successfully got file with UUID {}", fileUuid);
-
                 final HttpHeaders responseHeaders = new HttpHeaders();
                 responseHeaders.setContentType(MediaType.parseMediaType(file.getFileType()));
                 responseHeaders.setContentDisposition(ContentDisposition.parse(
                     String.format("inline; filename=\"%s\"", file.getFileName())));
 
-                return new ResponseEntity<>(file.getFile(), responseHeaders, HttpStatus.OK);
-            } else {
-                LOG.error("Could not find entity of type {} with UUID {}",
-                    getGenericClassName(), fileUuid);
+                LOG.trace("Successfully got file with UUID {}", fileUuid);
+                if (file.getPath() == null) {
+                    LOG.trace("… load file from database");
+                    return new ResponseEntity<>(file.getFile(), responseHeaders, HttpStatus.OK);
+                }
 
-                throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    messageSource.getMessage(
-                        "BaseController.NOT_FOUND",
-                        null,
-                        LocaleContextHolder.getLocale()
-                    )
-                );
+                java.io.File dataFile = new java.io.File(uploadBasePath + "/" + file.getPath());
+                if (dataFile.exists()) {
+                    LOG.trace("… load file from disk");
+                    byte[] fileByteArray = FileUtils.readFileToByteArray(dataFile);
+                    return new ResponseEntity<>(fileByteArray, responseHeaders, HttpStatus.OK);
+                }
             }
+
+            LOG.error("Could not find entity of type {} with UUID {}", getGenericClassName(), fileUuid);
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                messageSource.getMessage(
+                    "BaseController.NOT_FOUND",
+                    null,
+                    LocaleContextHolder.getLocale()
+                )
+            );
         } catch (AccessDeniedException ade) {
-            LOG.info("Access to entity of type {} with UUID {} is denied",
-                getGenericClassName(), fileUuid);
+            LOG.info("Access to entity of type {} with UUID {} is denied", getGenericClassName(), fileUuid);
 
             throw new ResponseStatusException(
                 HttpStatus.NOT_FOUND,
@@ -161,6 +176,49 @@ public abstract class BaseFileController<T extends BaseFileService<?, S>, S exte
             service.isValidType(uploadedFile.getContentType());
 
             S persistedFile = service.create(uploadedFile);
+
+            LOG.info("Successfully uploaded file " + persistedFile.getFileName());
+
+            return persistedFile;
+        } catch (AccessDeniedException ade) {
+            LOG.info("Uploading entity of type {} is denied", getGenericClassName());
+
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                messageSource.getMessage(
+                    "BaseController.NOT_FOUND",
+                    null,
+                    LocaleContextHolder.getLocale()
+                ),
+                ade
+            );
+        } catch (ResponseStatusException rse) {
+            throw rse;
+        } catch (Exception e) {
+            LOG.error("Could not upload the file: " + e.getMessage());
+            LOG.trace("Full stack trace: ", e);
+
+            throw new ResponseStatusException(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                messageSource.getMessage(
+                    "BaseController.INTERNAL_SERVER_ERROR",
+                    null,
+                    LocaleContextHolder.getLocale()
+                )
+            );
+        }
+    }
+
+    @PostMapping(value = "/uploadToFileSystem", consumes = "multipart/form-data")
+    @ResponseStatus(HttpStatus.CREATED)
+    public S addToFileSystem(MultipartFile uploadedFile) {
+        LOG.debug("Requested to upload a multipart-file");
+
+        try {
+
+            service.isValidType(uploadedFile.getContentType());
+
+            S persistedFile = service.create(uploadedFile, true);
 
             LOG.info("Successfully uploaded file " + persistedFile.getFileName());
 

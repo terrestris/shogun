@@ -20,13 +20,19 @@ import de.terrestris.shogun.lib.model.File;
 import de.terrestris.shogun.lib.repository.FileRepository;
 import de.terrestris.shogun.lib.util.FileUtil;
 import de.terrestris.shogun.properties.UploadProperties;
+import org.apache.commons.io.IOUtils;
 import org.apache.tomcat.util.http.fileupload.impl.InvalidContentTypeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class FileService extends BaseFileService<FileRepository, File> {
@@ -34,6 +40,14 @@ public class FileService extends BaseFileService<FileRepository, File> {
     @Autowired
     private UploadProperties uploadProperties;
 
+    /**
+     * Creates a new File entity in the Database.
+     * The file content is stored as bytearray in the DB.
+     *
+     * @param uploadFile
+     * @return
+     * @throws Exception
+     */
     public File create(MultipartFile uploadFile) throws Exception {
 
         FileUtil.validateFile(uploadFile);
@@ -51,6 +65,63 @@ public class FileService extends BaseFileService<FileRepository, File> {
         return savedFile;
     }
 
+    /**
+     * Creates a new File entity in the Database.
+     * The file is stored as file on the .
+     *
+     * @param uploadFile
+     * @param writeToSystem
+     * @return
+     * @throws Exception
+     */
+    public File create(MultipartFile uploadFile, Boolean writeToSystem) throws Exception {
+        if (!writeToSystem) {
+            return this.create(uploadFile);
+        }
+
+        String uploadBasePath = uploadProperties.getPath();
+        String filename = uploadFile.getOriginalFilename();
+
+        FileUtil.validateFile(uploadFile);
+        File file = new File();
+        file.setFileType(uploadFile.getContentType());
+        file.setFileName(filename);
+        file.setActive(true);
+
+        File savedFile = this.create(file);
+
+        UUID fileUuid = savedFile.getFileUuid();
+
+        // Setup path and directory
+        String path = fileUuid + "/" + filename;
+        java.io.File fileDirectory = new java.io.File(uploadBasePath + "/" + fileUuid);
+        fileDirectory.mkdirs();
+
+        // Write multipart file data to target directory
+        byte[] fileByteArray = FileUtil.fileToByteArray(uploadFile);
+        java.io.File outFile = new java.io.File(fileDirectory, filename);
+        InputStream in = new ByteArrayInputStream(fileByteArray);
+
+        try (OutputStream out = new FileOutputStream(outFile)) {
+            IOUtils.copy(in, out);
+            LOG.info("Saved file with id {} to {}: ", savedFile.getId(), savedFile.getPath());
+        } catch (Exception e) {
+            LOG.error("Error when saving file {} to disk: " + e.getMessage(), savedFile.getId());
+            throw e;
+        }
+
+        // Update entity with saved File
+        savedFile.setPath(path);
+        this.repository.save(savedFile);
+
+        return savedFile;
+    }
+
+    /**
+     *
+     * @param contentType
+     * @throws InvalidContentTypeException
+     */
     public void isValidType(String contentType) throws InvalidContentTypeException {
         if (uploadProperties == null) {
             throw new InvalidContentTypeException("No properties for the upload found. " +
@@ -75,5 +146,4 @@ public class FileService extends BaseFileService<FileRepository, File> {
             throw new InvalidContentTypeException("Unsupported content type for upload!");
         }
     }
-
 }

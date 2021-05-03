@@ -134,3 +134,5 @@ upload:
       - image/png
       - image/svg+xml
       - image/tiff
+  path: /data
+  maxSize: 500M

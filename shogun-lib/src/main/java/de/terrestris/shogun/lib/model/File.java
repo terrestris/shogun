@@ -67,4 +67,8 @@ public class File extends BaseEntity {
     @Column(length = Integer.MAX_VALUE)
     @Getter @Setter
     private byte[] file;
+
+    @Column
+    @Getter @Setter
+    private String path;
 }
