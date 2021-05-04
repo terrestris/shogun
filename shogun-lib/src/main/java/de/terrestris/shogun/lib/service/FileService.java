@@ -80,11 +80,11 @@ public class FileService extends BaseFileService<FileRepository, File> {
         }
 
         String uploadBasePath = uploadProperties.getPath();
-        if(uploadBasePath != null) {
+        if(uploadBasePath == null || uploadBasePath.isEmpty()) {
             throw new Exception("Could not upload file. uploadBasePath is null.");
         }
         String fileName = uploadFile.getOriginalFilename();
-        if(fileName != null) {
+        if(fileName == null || fileName.isEmpty()) {
             throw new Exception("Could not upload file. fileName is null.");
         }
 
