@@ -16,8 +16,16 @@
  */
 package de.terrestris.shogun.lib.util;
 
+import de.terrestris.shogun.properties.UploadProperties;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.tika.config.TikaConfig;
+import org.apache.tika.io.TikaInputStream;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.mime.MediaType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -27,6 +35,11 @@ import java.io.InputStream;
 
 @Log4j2
 public class FileUtil {
+
+    @Autowired
+    protected static UploadProperties uploadProperties;
+
+    protected final static Logger LOG = LogManager.getLogger(HttpUtil.class);
 
     public static byte[] fileToByteArray(MultipartFile file) throws Exception {
         byte[] fileByteArray;
@@ -64,6 +77,18 @@ public class FileUtil {
         } else if (file.isEmpty()) {
             throw new Exception("Given file is empty.");
         }
+
+        String name = file.getName();
+        String contentType = file.getContentType();
+        Metadata metadata = new Metadata();
+        metadata.set(Metadata.RESOURCE_NAME_KEY, name);
+        TikaConfig tika = new TikaConfig();
+        MediaType mediaType = tika.getDetector().detect(TikaInputStream.get(file.getBytes()), metadata);
+
+        if (!mediaType.toString().equals(contentType)) {
+            throw new Exception("Mediatype validation failed. Passed content type is " + contentType + " but detected mediatype is " + mediaType);
+        }
+
     }
 
 }
