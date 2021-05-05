@@ -142,9 +142,9 @@ public class ImageFileService extends BaseFileService<ImageFileRepository, Image
 
         try (OutputStream out = new FileOutputStream(outFile)) {
             IOUtils.copy(in, out);
-            LOG.info("Saved file with id {} to {}: ", savedFile.getId(), savedFile.getPath());
+            LOG.info("Saved file with id {} to: {}", savedFile.getId(), savedFile.getPath());
         } catch (Exception e) {
-            LOG.error("Error when saving file {} to disk: " + e.getMessage(), savedFile.getId());
+            LOG.error("Error while saving file {} to disk: {}", e.getMessage(), savedFile.getId());
             LOG.info("Rollback creation of file {}.", savedFile.getId());
             this.repository.delete(savedFile);
             throw e;
