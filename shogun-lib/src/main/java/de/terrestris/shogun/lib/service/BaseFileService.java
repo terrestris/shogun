@@ -80,4 +80,26 @@ public abstract class BaseFileService<T extends BaseFileRepository<S, Long> & Jp
         }
     }
 
+    /**
+     * Get the file data as bytearray. Depends on storage strategy (DB vs. disk);
+     *
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    public byte[] getFileData(S file) throws IOException {
+        if (file.getPath() == null) {
+            LOG.trace("… load file from database");
+            return file.getFile();
+        }
+        java.io.File dataFile = new java.io.File(uploadProperties.getBasePath() + "/" + file.getPath());
+        if (dataFile.exists()) {
+            LOG.trace("… load file from disk");
+            return FileUtils.readFileToByteArray(dataFile);
+        } else {
+            LOG.error("Could not load File {} from disk", file.getId());
+            throw new FileNotFoundException("Could not load File " + file.getId() + " from disk");
+        }
+    }
+
 }

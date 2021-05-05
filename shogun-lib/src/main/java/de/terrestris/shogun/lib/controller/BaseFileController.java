@@ -107,21 +107,10 @@ public abstract class BaseFileController<T extends BaseFileService<?, S>, S exte
                 responseHeaders.setContentType(MediaType.parseMediaType(file.getFileType()));
                 responseHeaders.setContentDisposition(ContentDisposition.parse(
                     String.format("inline; filename=\"%s\"", file.getFileName())));
-
                 LOG.trace("Successfully got file with UUID {}", fileUuid);
-                if (file.getPath() == null) {
-                    LOG.trace("… load file from database");
-                    return new ResponseEntity<>(file.getFile(), responseHeaders, HttpStatus.OK);
-                }
 
-                java.io.File dataFile = new java.io.File(uploadBasePath + "/" + file.getPath());
-                if (dataFile.exists()) {
-                    LOG.trace("… load file from disk");
-                    byte[] fileByteArray = FileUtils.readFileToByteArray(dataFile);
-                    return new ResponseEntity<>(fileByteArray, responseHeaders, HttpStatus.OK);
-                } else {
-                    LOG.error("Could not load File {} from disk", file.getId());
-                }
+                byte[] fileData = service.getFileData(file);
+                return new ResponseEntity<>(fileData, responseHeaders, HttpStatus.OK);
             }
 
             LOG.error("Could not find entity of type {} with UUID {}", getGenericClassName(), fileUuid);
