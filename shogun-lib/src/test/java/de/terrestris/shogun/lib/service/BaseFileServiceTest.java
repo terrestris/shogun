@@ -53,7 +53,7 @@ public class BaseFileServiceTest {
             fileService.isValidFileName("Mein_Spezial_Bild_mit_Unterstrichen.png");
             fileService.isValidFileName("Mein-Spezial-Bild-mit-Bindestrichen.png");
             fileService.isValidFileName("@klammeraffe#hastag.png");
-            fileService.isValidFileName("@klammeraffe#hastag.png");
+            fileService.isValidFileName("lord-fauntleroy.png");
         } catch(InvalidFileNameException e) {
             fail(failMsg);
         }
