@@ -25,6 +25,7 @@ import org.apache.tika.exception.TikaException;
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.mime.MediaType;
+import org.apache.tomcat.util.http.fileupload.InvalidFileNameException;
 import org.apache.tomcat.util.http.fileupload.impl.InvalidContentTypeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -34,9 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public abstract class BaseFileService<T extends BaseFileRepository<S, Long> & JpaSpecificationExecutor<S>, S extends File> extends BaseService<T, S> implements IBaseFileService<T, S> {
 
@@ -56,6 +55,7 @@ public abstract class BaseFileService<T extends BaseFileRepository<S, Long> & Jp
         } else if (file.isEmpty()) {
             throw new Exception("Given file is empty.");
         }
+        this.isValidFileName(file.getOriginalFilename());
         this.isValidType(file.getContentType());
         this.verifyContentType(file);
     }
@@ -77,6 +77,13 @@ public abstract class BaseFileService<T extends BaseFileRepository<S, Long> & Jp
         boolean isMatch = PatternMatchUtils.simpleMatch(supportedContentTypes.toArray(new String[supportedContentTypes.size()]), contentType);
         if (!isMatch) {
             throw new InvalidContentTypeException("Unsupported content type for upload!");
+        }
+    }
+
+    public void isValidFileName(String fileName) throws InvalidFileNameException {
+        List<String> illegalCharacters = Arrays.asList("\\", "/", ":", "*", "?", "\"", "<", ">", "|", "\\0", "\\n");
+        if (illegalCharacters.stream().anyMatch(fileName::contains)) {
+            throw new InvalidFileNameException(fileName, "Filename contains illegal chracters. [\\, /, :, *, ?, \", <, >, |, \\0, \\n]");
         }
     }
 

@@ -19,6 +19,7 @@ package de.terrestris.shogun.lib.service;
 import de.terrestris.shogun.lib.model.File;
 import de.terrestris.shogun.lib.repository.BaseFileRepository;
 import org.apache.tika.exception.TikaException;
+import org.apache.tomcat.util.http.fileupload.InvalidFileNameException;
 import org.apache.tomcat.util.http.fileupload.impl.InvalidContentTypeException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -43,6 +44,14 @@ public interface IBaseFileService<T extends BaseFileRepository<S, Long> & JpaSpe
      * @throws TikaException
      */
     void verifyContentType(MultipartFile file) throws IOException, TikaException;
+
+    /**
+     * Checks if the given filename includes illegal characters.
+     *
+     * @param fileName
+     * @throws InvalidFileNameException
+     */
+    void isValidFileName(String fileName) throws InvalidFileNameException;
 
     /**
      * Checks if the given contentType is included in the content type whitelist configured via UploadProperties.
