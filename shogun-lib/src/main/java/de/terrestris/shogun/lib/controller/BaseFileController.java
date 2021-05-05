@@ -33,13 +33,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import static de.terrestris.shogun.lib.util.FileUtil.convertToFile;
 
 public abstract class BaseFileController<T extends BaseFileService<?, S>, S extends File> {
 
@@ -175,7 +171,7 @@ public abstract class BaseFileController<T extends BaseFileService<?, S>, S exte
 
         try {
 
-            service.isValidType(uploadedFile.getContentType());
+            service.isValid(uploadedFile);
 
             S persistedFile = service.create(uploadedFile);
 
@@ -218,7 +214,7 @@ public abstract class BaseFileController<T extends BaseFileService<?, S>, S exte
 
         try {
 
-            service.isValidType(uploadedFile.getContentType());
+            service.isValid(uploadedFile);
 
             S persistedFile = service.create(uploadedFile, true);
 

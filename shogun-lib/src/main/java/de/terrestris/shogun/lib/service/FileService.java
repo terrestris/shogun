@@ -23,15 +23,14 @@ import de.terrestris.shogun.properties.UploadProperties;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.http.fileupload.impl.InvalidContentTypeException;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,8 +49,6 @@ public class FileService extends BaseFileService<FileRepository, File> {
      * @throws Exception
      */
     public File create(MultipartFile uploadFile) throws Exception {
-
-        FileUtil.validateFile(uploadFile);
 
         byte[] fileByteArray = FileUtil.fileToByteArray(uploadFile);
 
@@ -89,7 +86,6 @@ public class FileService extends BaseFileService<FileRepository, File> {
             throw new Exception("Could not upload file. fileName is null.");
         }
 
-        FileUtil.validateFile(uploadFile);
         File file = new File();
         file.setFileType(uploadFile.getContentType());
         file.setFileName(fileName);
@@ -125,33 +121,18 @@ public class FileService extends BaseFileService<FileRepository, File> {
         return this.repository.save(savedFile);
     }
 
-    /**
-     *
-     * @param contentType
-     * @throws InvalidContentTypeException
-     */
-    public void isValidType(String contentType) throws InvalidContentTypeException {
+    @Override
+    public List<String> getSupportedContentTypes() {
         if (uploadProperties == null) {
-            throw new InvalidContentTypeException("No properties for the upload found. " +
-                "Please check your application.yml");
+            throw new NoSuchBeanDefinitionException("No properties for the upload found. Please check your application.yml");
         }
-
         if (uploadProperties.getFile() == null) {
-            throw new InvalidContentTypeException("No properties for the file upload found. " +
-                "Please check your application.yml");
+            throw new NoSuchBeanDefinitionException("No properties for the file upload found. Please check your application.yml");
         }
-
         if (uploadProperties.getFile().getSupportedContentTypes() == null) {
-            throw new InvalidContentTypeException("No list of supported content types for the file upload found. " +
+            throw new NoSuchBeanDefinitionException("No list of supported content types for the file upload found. " +
                 "Please check your application.yml");
         }
-
-        List<String> supportedContentTypes = uploadProperties.getFile().getSupportedContentTypes();
-
-        boolean isMatch = PatternMatchUtils.simpleMatch(supportedContentTypes.toArray(new String[supportedContentTypes.size()]), contentType);
-
-        if (!isMatch) {
-            throw new InvalidContentTypeException("Unsupported content type for upload!");
-        }
+        return uploadProperties.getFile().getSupportedContentTypes();
     }
 }

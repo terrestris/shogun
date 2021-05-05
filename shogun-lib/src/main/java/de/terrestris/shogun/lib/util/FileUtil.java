@@ -67,24 +67,4 @@ public class FileUtil {
         return file;
     }
 
-    public static void validateFile(MultipartFile file) throws Exception {
-        if (file == null) {
-            throw new Exception("Given file is null.");
-        } else if (file.isEmpty()) {
-            throw new Exception("Given file is empty.");
-        }
-
-        String name = file.getName();
-        String contentType = file.getContentType();
-        Metadata metadata = new Metadata();
-        metadata.set(Metadata.RESOURCE_NAME_KEY, name);
-        TikaConfig tika = new TikaConfig();
-        MediaType mediaType = tika.getDetector().detect(TikaInputStream.get(file.getBytes()), metadata);
-
-        if (!mediaType.toString().equals(contentType)) {
-            throw new Exception("Mediatype validation failed. Passed content type is " + contentType + " but detected mediatype is " + mediaType);
-        }
-
-    }
-
 }

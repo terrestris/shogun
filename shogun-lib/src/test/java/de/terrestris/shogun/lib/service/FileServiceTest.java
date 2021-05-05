@@ -25,6 +25,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +54,7 @@ public class FileServiceTest {
     @Test
     public void isValidType_failsIfNoConfigIsGiven() {
         // initializeConfig hasn't been called.
+        File mockFile = new File("/");
         assertThrows(InvalidContentTypeException.class, () -> fileService.isValidType("application/zip"));
     }
 

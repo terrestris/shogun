@@ -18,10 +18,14 @@ package de.terrestris.shogun.lib.service;
 
 import de.terrestris.shogun.lib.model.File;
 import de.terrestris.shogun.lib.repository.BaseFileRepository;
+import org.apache.tika.exception.TikaException;
 import org.apache.tomcat.util.http.fileupload.impl.InvalidContentTypeException;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -31,5 +35,36 @@ public interface IBaseFileService<T extends BaseFileRepository<S, Long> & JpaSpe
 
     S create(MultipartFile uploadFile) throws Exception;
 
+    /**
+     * Verifies if the content type of the file matches its content.
+     *
+     * @param file
+     * @throws IOException
+     * @throws TikaException
+     */
+    void verifyContentType(MultipartFile file) throws IOException, TikaException;
+
+    /**
+     * Checks if the given contentType is included in the content type whitelist configured via UploadProperties.
+     *
+     * @param contentType
+     * @throws InvalidContentTypeException
+     */
     void isValidType(String contentType) throws InvalidContentTypeException;
+
+    /**
+     * Checks if the file is not null or empty and has a valid content type.
+     *
+     * @param file
+     * @throws Exception
+     */
+    void isValid(MultipartFile file) throws Exception;
+
+    /**
+     * Get the list of supported content types. Should be implement by real class.
+     *
+     * @return
+     * @throws NoSuchBeanDefinitionException
+     */
+    List<String> getSupportedContentTypes() throws NoSuchBeanDefinitionException;
 }
