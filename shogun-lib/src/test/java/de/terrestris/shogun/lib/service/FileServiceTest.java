@@ -24,6 +24,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ public class FileServiceTest {
     public void isValidType_failsIfNoConfigIsGiven() {
         // initializeConfig hasn't been called.
         File mockFile = new File("/");
-        assertThrows(InvalidContentTypeException.class, () -> fileService.isValidType("application/zip"));
+        assertThrows(NoSuchBeanDefinitionException.class, () -> fileService.isValidType("application/zip"));
     }
 
     @Test

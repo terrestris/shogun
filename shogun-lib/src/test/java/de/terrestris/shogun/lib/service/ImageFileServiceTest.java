@@ -24,6 +24,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +54,7 @@ public class ImageFileServiceTest {
     @Test
     public void isValidType_failsIfNoConfigIsGiven() {
         // initializeConfig hasn't been called.
-        assertThrows(InvalidContentTypeException.class, () -> imageFileService.isValidType("image/png"));
+        assertThrows(NoSuchBeanDefinitionException.class, () -> imageFileService.isValidType("image/png"));
     }
 
     @Test
