@@ -68,6 +68,7 @@ public class File extends BaseEntity {
     @Getter @Setter
     private byte[] file;
 
+    @JsonIgnore
     @Column
     @Getter @Setter
     private String path;

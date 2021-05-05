@@ -19,8 +19,6 @@ package de.terrestris.shogun.lib.util;
 import de.terrestris.shogun.properties.UploadProperties;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.tika.config.TikaConfig;
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
@@ -38,8 +36,6 @@ public class FileUtil {
 
     @Autowired
     protected static UploadProperties uploadProperties;
-
-    protected final static Logger LOG = LogManager.getLogger(HttpUtil.class);
 
     public static byte[] fileToByteArray(MultipartFile file) throws Exception {
         byte[] fileByteArray;

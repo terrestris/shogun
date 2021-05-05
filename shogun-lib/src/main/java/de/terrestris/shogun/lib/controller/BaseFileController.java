@@ -123,6 +123,8 @@ public abstract class BaseFileController<T extends BaseFileService<?, S>, S exte
                     LOG.trace("… load file from disk");
                     byte[] fileByteArray = FileUtils.readFileToByteArray(dataFile);
                     return new ResponseEntity<>(fileByteArray, responseHeaders, HttpStatus.OK);
+                } else {
+                    LOG.error("Could not load File {} from disk", file.getId());
                 }
             }
 

@@ -32,7 +32,7 @@ public class UploadProperties {
     @NestedConfigurationProperty
     private ImageFileUploadProperties image;
 
-    private String path;
+    private String basePath;
 
     private String maxSize;
 

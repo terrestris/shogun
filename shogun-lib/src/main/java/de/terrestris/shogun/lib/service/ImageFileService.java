@@ -22,6 +22,7 @@ import de.terrestris.shogun.lib.util.FileUtil;
 import de.terrestris.shogun.lib.util.ImageFileUtil;
 import de.terrestris.shogun.properties.UploadProperties;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.http.fileupload.impl.InvalidContentTypeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -101,12 +102,12 @@ public class ImageFileService extends BaseFileService<ImageFileRepository, Image
             return this.create(uploadFile);
         }
 
-        String uploadBasePath = uploadProperties.getPath();
-        if(uploadBasePath == null || uploadBasePath.isEmpty()) {
+        String uploadBasePath = uploadProperties.getBasePath();
+        if(StringUtils.isEmpty(uploadBasePath)) {
             throw new Exception("Could not upload file. uploadBasePath is null.");
         }
         String fileName = uploadFile.getOriginalFilename();
-        if(fileName == null || fileName.isEmpty()) {
+        if(StringUtils.isEmpty(fileName)) {
             throw new Exception("Could not upload file. fileName is null.");
         }
 
@@ -147,6 +148,7 @@ public class ImageFileService extends BaseFileService<ImageFileRepository, Image
             LOG.error("Error while saving file {} to disk: {}", e.getMessage(), savedFile.getId());
             LOG.info("Rollback creation of file {}.", savedFile.getId());
             this.repository.delete(savedFile);
+            fileDirectory.delete();
             throw e;
         }
 
