@@ -79,7 +79,7 @@
     <!-- Plugins -->
     <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
     <maven-site-plugin.version>3.9.1</maven-site-plugin.version>
-    <jacoco-plugin.version>0.8.6</jacoco-plugin.version>
+    <jacoco-plugin.version>0.8.7</jacoco-plugin.version>
     <maven-project-info-reports-plugin.version>3.1.2</maven-project-info-reports-plugin.version>
     <jib-maven-plugin.version>2.8.0</jib-maven-plugin.version>
 
