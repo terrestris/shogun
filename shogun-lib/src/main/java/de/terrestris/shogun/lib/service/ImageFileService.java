@@ -21,14 +21,24 @@ import de.terrestris.shogun.lib.repository.ImageFileRepository;
 import de.terrestris.shogun.lib.util.FileUtil;
 import de.terrestris.shogun.lib.util.ImageFileUtil;
 import de.terrestris.shogun.properties.UploadProperties;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.tika.config.TikaConfig;
+import org.apache.tika.exception.TikaException;
+import org.apache.tika.io.TikaInputStream;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.mime.MediaType;
 import org.apache.tomcat.util.http.fileupload.impl.InvalidContentTypeException;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.*;
+import java.io.*;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ImageFileService extends BaseFileService<ImageFileRepository, ImageFile> {
@@ -37,8 +47,6 @@ public class ImageFileService extends BaseFileService<ImageFileRepository, Image
     private UploadProperties uploadProperties;
 
     public ImageFile create(MultipartFile uploadFile) throws Exception {
-
-        FileUtil.validateFile(uploadFile);
 
         byte[] fileByteArray = FileUtil.fileToByteArray(uploadFile);
 
@@ -64,29 +72,77 @@ public class ImageFileService extends BaseFileService<ImageFileRepository, Image
         return savedFile;
     }
 
-    public void isValidType(String contentType) throws InvalidContentTypeException {
-        if (uploadProperties == null) {
-            throw new InvalidContentTypeException("No properties for the upload found. " +
-                "Please check your application.yml");
+    @Override
+    public ImageFile create(MultipartFile uploadFile, Boolean writeToSystem) throws Exception {
+        if (!writeToSystem) {
+            return this.create(uploadFile);
         }
 
-        if (uploadProperties.getImage() == null) {
-            throw new InvalidContentTypeException("No properties for the image file upload found. " +
-                "Please check your application.yml");
+        String uploadBasePath = uploadProperties.getBasePath();
+        if (StringUtils.isEmpty(uploadBasePath)) {
+            throw new Exception("Could not upload file. uploadBasePath is null.");
+        }
+        String fileName = uploadFile.getOriginalFilename();
+        if (StringUtils.isEmpty(fileName)) {
+            throw new Exception("Could not upload file. fileName is null.");
         }
 
-        if (uploadProperties.getImage().getSupportedContentTypes() == null) {
-            throw new InvalidContentTypeException("No list of supported content types for the image file upload found. " +
-                "Please check your application.yml");
+        byte[] fileByteArray = FileUtil.fileToByteArray(uploadFile);
+        ImageFile file = new ImageFile();
+        file.setFileType(uploadFile.getContentType());
+        file.setFileName(uploadFile.getOriginalFilename());
+        file.setActive(true);
+
+        Dimension imageDimensions = ImageFileUtil.getImageDimensions(uploadFile);
+        if (imageDimensions != null) {
+            int thumbnailSize = uploadProperties.getImage().getThumbnailSize();
+            file.setThumbnail(ImageFileUtil.getScaledImage(uploadFile, imageDimensions, thumbnailSize));
+            file.setWidth(imageDimensions.width);
+            file.setHeight(imageDimensions.height);
+        } else {
+            LOG.warn("Could not detect the dimensions of the image. Neither width, height " +
+                "nor the thumbnail can be set.");
         }
 
-        List<String> supportedContentTypes = uploadProperties.getImage().getSupportedContentTypes();
+        ImageFile savedFile = this.create(file);
+        UUID fileUuid = savedFile.getFileUuid();
 
-        boolean isMatch = PatternMatchUtils.simpleMatch(supportedContentTypes.toArray(new String[supportedContentTypes.size()]), contentType);
+        // Setup path and directory
+        String path = fileUuid + "/" + fileName;
+        java.io.File fileDirectory = new java.io.File(uploadBasePath + "/" + fileUuid);
+        fileDirectory.mkdirs();
 
-        if (!isMatch) {
-            throw new InvalidContentTypeException("Unsupported content type for upload!");
+        // Write multipart file data to target directory
+        java.io.File outFile = new java.io.File(fileDirectory, fileName);
+        InputStream in = new ByteArrayInputStream(fileByteArray);
+
+        try (OutputStream out = new FileOutputStream(outFile)) {
+            IOUtils.copy(in, out);
+            LOG.info("Saved file with id {} to: {}", savedFile.getId(), savedFile.getPath());
+        } catch (Exception e) {
+            LOG.error("Error while saving file {} to disk: {}", e.getMessage(), savedFile.getId());
+            LOG.info("Rollback creation of file {}.", savedFile.getId());
+            this.repository.delete(savedFile);
+            fileDirectory.delete();
+            throw e;
         }
+
+        // Update entity with saved File
+        savedFile.setPath(path);
+        return this.repository.save(savedFile);
     }
 
+    public List<String> getSupportedContentTypes() {
+        if (uploadProperties == null) {
+            throw new NoSuchBeanDefinitionException("No properties for the upload found. Please check your application.yml");
+        }
+        if (uploadProperties.getImage() == null) {
+            throw new NoSuchBeanDefinitionException("No properties for the imagefile upload found. Please check your application.yml");
+        }
+        if (uploadProperties.getImage().getSupportedContentTypes() == null) {
+            throw new NoSuchBeanDefinitionException("No list of supported content types for the imagefile upload found. " +
+                "Please check your application.yml");
+        }
+        return uploadProperties.getImage().getSupportedContentTypes();
+    }
 }

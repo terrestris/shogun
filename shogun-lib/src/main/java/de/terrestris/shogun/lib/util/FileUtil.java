@@ -16,8 +16,14 @@
  */
 package de.terrestris.shogun.lib.util;
 
+import de.terrestris.shogun.properties.UploadProperties;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.IOUtils;
+import org.apache.tika.config.TikaConfig;
+import org.apache.tika.io.TikaInputStream;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.mime.MediaType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -27,6 +33,9 @@ import java.io.InputStream;
 
 @Log4j2
 public class FileUtil {
+
+    @Autowired
+    protected static UploadProperties uploadProperties;
 
     public static byte[] fileToByteArray(MultipartFile file) throws Exception {
         byte[] fileByteArray;
@@ -56,14 +65,6 @@ public class FileUtil {
         file.deleteOnExit();
 
         return file;
-    }
-
-    public static void validateFile(MultipartFile file) throws Exception {
-        if (file == null) {
-            throw new Exception("Given file is null.");
-        } else if (file.isEmpty()) {
-            throw new Exception("Given file is empty.");
-        }
     }
 
 }
