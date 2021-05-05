@@ -18,8 +18,6 @@ package de.terrestris.shogun.lib.controller;
 
 import de.terrestris.shogun.lib.model.File;
 import de.terrestris.shogun.lib.service.BaseFileService;
-import de.terrestris.shogun.lib.util.FileUtil;
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +39,7 @@ public abstract class BaseFileController<T extends BaseFileService<?, S>, S exte
 
     protected final Logger LOG = LogManager.getLogger(getClass());
 
-    @Value("${upload.path}")
+    @Value("${upload.basePath}")
     protected String uploadBasePath;
 
     @Autowired
