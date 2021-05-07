@@ -16,14 +16,9 @@
  */
 package de.terrestris.shogun.lib.util;
 
-import de.terrestris.shogun.properties.UploadProperties;
+import de.terrestris.shogun.lib.service.BaseFileService;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.IOUtils;
-import org.apache.tika.config.TikaConfig;
-import org.apache.tika.io.TikaInputStream;
-import org.apache.tika.metadata.Metadata;
-import org.apache.tika.mime.MediaType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -33,10 +28,6 @@ import java.io.InputStream;
 
 @Log4j2
 public class FileUtil {
-
-    @Autowired
-    protected static UploadProperties uploadProperties;
-
     public static byte[] fileToByteArray(MultipartFile file) throws Exception {
         byte[] fileByteArray;
 
@@ -52,6 +43,20 @@ public class FileUtil {
         }
 
         return fileByteArray;
+    }
+
+    /**
+     * @deprecated Since 7.1.0, please make use of {@link BaseFileService#isValid(MultipartFile)}}
+     * @param file
+     * @throws Exception
+     */
+    @Deprecated
+    public static void validateFile(MultipartFile file) throws Exception {
+        if (file == null) {
+            throw new Exception("Given file is null.");
+        } else if (file.isEmpty()) {
+            throw new Exception("Given file is empty.");
+        }
     }
 
     public static File convertToFile(MultipartFile multipartFile) throws IOException {
