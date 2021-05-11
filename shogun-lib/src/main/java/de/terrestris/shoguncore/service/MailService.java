@@ -68,6 +68,7 @@ public class MailService {
 
         mailSender.send(email);
     }
+
     /**
      * Constructs a Registration Confirm Email based on the users' properties (name, language, etc.)
      * for a given application URL
