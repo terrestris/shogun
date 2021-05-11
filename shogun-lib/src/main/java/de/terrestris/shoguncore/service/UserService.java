@@ -1,5 +1,6 @@
 package de.terrestris.shoguncore.service;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.terrestris.shoguncore.dto.PasswordChange;
 import de.terrestris.shoguncore.dto.RegisterUserDto;
 import de.terrestris.shoguncore.enumeration.PermissionCollectionType;
@@ -21,10 +22,12 @@ import de.terrestris.shoguncore.service.security.permission.UserInstancePermissi
 import de.terrestris.shoguncore.specification.UserSpecification;
 import de.terrestris.shoguncore.specification.token.UserVerificationTokenSpecification;
 
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -367,5 +370,21 @@ public class UserService extends BaseService<UserRepository, User> {
         }
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#user, 'UPDATE')")
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Override
+    public User update(Long id, User user) throws IOException {
+        Optional<User> persistedUser = repository.findById(id);
+
+        ObjectNode jsonObject = objectMapper.valueToTree(user);
+
+        // Ensure the created timestamp and last login timestamp will not be overridden.
+        jsonObject.put("created", persistedUser.get().getCreated().toInstant().toString());
+        jsonObject.put("lastLogin", persistedUser.get().getLastLogin().toInstant().toString());
+
+        User updatedUser = objectMapper.readerForUpdating(persistedUser.get()).readValue(jsonObject);
+
+        return repository.save(updatedUser);
+    }
 
 }
