@@ -317,7 +317,7 @@ public class UserService extends BaseService<UserRepository, User> {
      * @return
      */
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#user, 'UPDATE')")
-    public void changeUserPassword(User user, PasswordChange passwordChange) throws SecurityException {
+    public void changeUserPassword(User user, PasswordChange passwordChange, Locale local) throws SecurityException {
         String currentPassword = user.getPassword();
         String givenOldPassword = passwordChange.getOldPassword();
         String newPassword = passwordChange.getNewPassword();
@@ -330,6 +330,8 @@ public class UserService extends BaseService<UserRepository, User> {
         user.setPassword(encodedNewPassword);
 
         repository.save(user);
+
+        completePasswordChange(user, local);
     }
 
     /**
@@ -341,15 +343,28 @@ public class UserService extends BaseService<UserRepository, User> {
     }
 
     /**
-     * Completes de user password request process
+     * Completes the user password request process
      * @param user the user whose password is being reset
      * @param locale the locale for translation purposes
      */
-    public void completePasswordReset(final User user, final Locale locale) {
+    private void completePasswordReset(final User user, final Locale locale) {
         String password = resetUserPassword(user);
 
         try {
             mailService.sendPasswordResetConfirmedEmailMessage(user, password, locale);
+        } catch (Exception e) {
+            throw new MailException(e.getMessage());
+        }
+    }
+
+    /**
+     * Completes the user password change process
+     * @param user the user whose password is being reset
+     * @param locale the locale for translation purposes
+     */
+    private void completePasswordChange(final User user, final Locale locale) {
+        try {
+            mailService.sendPasswordChangeConfirmedEmailMessage(user, locale);
         } catch (Exception e) {
             throw new MailException(e.getMessage());
         }

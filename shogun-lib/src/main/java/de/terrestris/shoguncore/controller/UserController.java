@@ -130,12 +130,12 @@ public class UserController extends BaseController<UserService, User> {
     }
 
     @PostMapping(value = "/password/change")
-    public void changePassword(@RequestBody PasswordChange passwordChangeBody) {
+    public void changePassword(@RequestBody PasswordChange passwordChangeBody, HttpServletRequest request) {
         Optional<User> user = securityContextUtil.getUserBySession();
 
         if (user.isPresent()) {
             try {
-                service.changeUserPassword(user.get(), passwordChangeBody);
+                service.changeUserPassword(user.get(), passwordChangeBody, request.getLocale());
             } catch(SecurityException exception) {
                 LOG.debug("Your current password does not match with the given old one. Aborting password change.");
 

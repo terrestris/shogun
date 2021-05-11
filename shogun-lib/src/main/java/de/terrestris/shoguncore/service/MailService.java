@@ -50,6 +50,25 @@ public class MailService {
         mailSender.send(email);
     }
 
+    public void sendPasswordChangeConfirmedEmailMessage(final User user, Locale locale) {
+        final String recipientAddress = user.getEmail();
+        final String subject = messageSource.getMessage("passwordChange.email.confirmed.subject", null, locale);
+
+        String message = String.format("%s %s,%n%n",
+            messageSource.getMessage("passwordChange.email.confirmed.salutationPrefix", null, locale),
+            user.getUsername()
+        );
+        message += messageSource.getMessage("passwordChange.email.confirmed.infoSuccess", null, locale);
+
+        final SimpleMailMessage email = new SimpleMailMessage();
+        email.setTo(recipientAddress);
+        email.setSubject(subject);
+        email.setText(message);
+        email.setFrom(Objects.requireNonNull(env.getProperty("support.email"), "Environment variable support.email not set"));
+
+        mailSender.send(email);
+    }
+
     /**
      * Constructs a Registration Confirm Email based on the users' properties (name, language, etc.)
      * for a given application URL
