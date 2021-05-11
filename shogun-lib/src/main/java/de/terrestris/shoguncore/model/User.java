@@ -37,6 +37,9 @@ public class User extends BaseEntity {
     @Column
     private OffsetDateTime lastLogin;
 
+    @Column
+    private boolean isDemoUser;
+
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
