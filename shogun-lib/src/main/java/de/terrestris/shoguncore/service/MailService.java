@@ -29,7 +29,7 @@ public class MailService {
      * @param password
      * @param locale
      */
-    public void sendPasswordResetConfirmedEmailMessage(final User user, final String password, Locale locale) {
+    public void sendPasswordResetConfirmedEmailMessage(final User user, final String password, Locale locale) throws MessagingException {
         final String recipientAddress = user.getEmail();
         final String subject = messageSource.getMessage("passwordReset.email.confirmed.subject", null, locale);
 
@@ -50,7 +50,7 @@ public class MailService {
         mailSender.send(email);
     }
 
-    public void sendPasswordChangeConfirmedEmailMessage(final User user, Locale locale) {
+    public void sendPasswordChangeConfirmedEmailMessage(final User user, Locale locale) throws MessagingException {
         final String recipientAddress = user.getEmail();
         final String subject = messageSource.getMessage("passwordChange.email.confirmed.subject", null, locale);
 
