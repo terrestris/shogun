@@ -88,7 +88,7 @@
     <spring-data.version>2.3.5.RELEASE</spring-data.version>
 
     <!-- Security -->
-    <keycloak.version>12.0.4</keycloak.version>
+    <keycloak.version>13.0.1</keycloak.version>
 
     <!-- Database -->
     <hibernate-extra-types.version>2.10.0</hibernate-extra-types.version>
