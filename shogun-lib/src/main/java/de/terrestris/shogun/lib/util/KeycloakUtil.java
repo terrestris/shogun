@@ -270,6 +270,23 @@ public class KeycloakUtil {
     }
 
     /**
+     *  Delete a user from the SHOGun DB by its keycloak Id.
+     *
+     * @param keycloakUserId
+     */
+    public void deleteShogunUser(String keycloakUserId) {
+        Optional<User> userOptional = userRepository.findByKeycloakId(keycloakUserId);
+        User user = userOptional.orElse(null);
+        if (user == null) {
+            log.debug("User with keycloak id {} was deleted in Keycloak. It did not exists in SHOGun DB. No action needed.", keycloakUserId);
+            return;
+        }
+        userInstancePermissionService.deleteAllForEntity(user);
+        userRepository.delete(user);
+        log.info("User with keycloak id {} was deleted in Keycloak and was therefore deleted in SHOGun DB, too.", keycloakUserId);
+    }
+
+    /**
      * Checks if a group with the passed keycloak ID exists in the SHOGun DB and creates it if not.
      *
      * @param keycloakGroupId
@@ -288,6 +305,22 @@ public class KeycloakUtil {
         }
 
         return group;
+    }
+
+    /**
+     *  Delete a group from the SHOGun DB by its keycloak Id.
+     *
+     * @param keycloakGroupId
+     */
+    public void deleteShogunGroup(String keycloakGroupId) {
+        Optional<Group> groupOptional = groupRepository.findByKeycloakId(keycloakGroupId);
+        Group group = groupOptional.orElse(null);
+        if (group == null) {
+            log.debug("Group with keycloak id {} was deleted in Keycloak. It did not exists in SHOGun DB. No action needed.", keycloakGroupId);
+            return;
+        }
+        groupRepository.delete(group);
+        log.info("Group with keycloak id {} was deleted in Keycloak and was therefore deleted in SHOGun DB, too.", keycloakGroupId);
     }
 
 }
