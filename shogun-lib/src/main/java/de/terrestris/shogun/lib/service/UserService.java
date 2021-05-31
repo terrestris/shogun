@@ -76,6 +76,18 @@ public class UserService extends BaseService<UserRepository, User> {
         return user;
     }
 
+    @PostAuthorize("hasRole('ROLE_ADMIN') or hasPermission(returnObject.orElse(null), 'READ')")
+    @Transactional(readOnly = true)
+    public Optional<User> findByKeyCloakId(String keycloakId) {
+        Optional<User> user = repository.findByKeycloakId(keycloakId);
+
+        if (user.isPresent()) {
+            this.setTransientKeycloakRepresentations(user.get());
+        }
+
+        return user;
+    }
+
     private User setTransientKeycloakRepresentations(User user) {
         UserResource userResource = keycloakUtil.getUserResource(user);
 
