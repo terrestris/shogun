@@ -88,7 +88,7 @@ public class GroupService extends BaseService<GroupRepository, Group> {
     public List<Group> findByUser(User user) {
         List<Group> groups = new ArrayList<>();
 
-        List<GroupRepresentation> keycloakGroups = keycloakUtil.getUserGroups(user);
+        List<GroupRepresentation> keycloakGroups = keycloakUtil.getKeycloakUserGroups(user);
 
         for (GroupRepresentation keycloakGroup : keycloakGroups) {
             Optional<Group> group = repository.findByKeycloakId(keycloakGroup.getId());

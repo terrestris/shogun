@@ -16,19 +16,22 @@
  */
 package de.terrestris.shogun.lib.util;
 
+import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
+import de.terrestris.shogun.lib.event.OnRegistrationConfirmedEvent;
 import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.model.User;
+import de.terrestris.shogun.lib.repository.GroupRepository;
+import de.terrestris.shogun.lib.repository.UserRepository;
+import de.terrestris.shogun.lib.security.SecurityContextUtil;
+import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.resource.*;
-import org.keycloak.representations.AccessToken;
-import org.keycloak.representations.IDToken;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
@@ -36,6 +39,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -45,9 +49,32 @@ public class KeycloakUtil {
     @Autowired
     protected RealmResource keycloakRealm;
 
+    @Autowired
+    protected UserRepository userRepository;
+
+    @Autowired
+    protected GroupRepository groupRepository;
+
+    @Autowired
+    private KeycloakUtil keycloakUtil;
+
+    @Autowired
+    private SecurityContextUtil securityContextUtil;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
+
+    @Autowired
+    private UserInstancePermissionService userInstancePermissionService;
+
     public UserResource getUserResource(User user) {
         UsersResource kcUsers = this.keycloakRealm.users();
         return kcUsers.get(user.getKeycloakId());
+    }
+
+    public UserResource getUserResource(String id) {
+        UsersResource kcUsers = this.keycloakRealm.users();
+        return kcUsers.get(id);
     }
 
     public GroupResource getGroupResource(Group group) {
@@ -153,33 +180,42 @@ public class KeycloakUtil {
     }
 
     /**
-     * Return keycloak user id from {@link Authentication} object
-     *   - from {@link IDToken}
-     *   - from {@link org.keycloak.Token}
-     * @param authentication The Spring security authentication
-     * @return The keycloak user id token
+     * @deprecated
+     * This method was moved to the {@link SecurityContextUtil} as it receives an authentication as parameter.
      */
+    @Deprecated
     public String getKeycloakUserIdFromAuthentication(Authentication authentication) {
-        if (authentication.getPrincipal() instanceof KeycloakPrincipal) {
-            KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) authentication.getPrincipal();
-            KeycloakSecurityContext keycloakSecurityContext = keycloakPrincipal.getKeycloakSecurityContext();
-            IDToken idToken = keycloakSecurityContext.getIdToken();
-            String keycloakUserId;
-
-            if (idToken != null) {
-                keycloakUserId = idToken.getSubject();
-            } else {
-                AccessToken accessToken = keycloakSecurityContext.getToken();
-                keycloakUserId = accessToken.getSubject();
-            }
-
-            return keycloakUserId;
-        } else {
-            return null;
-        }
+        return securityContextUtil.getKeycloakUserIdFromAuthentication(authentication);
     }
 
+    /**
+     * Fetch user name of user from keycloak
+     * @param user
+     * @return
+     */
+    public String getUserNameFromKeycloak(User user) {
+        UsersResource users = this.keycloakRealm.users();
+        UserResource kcUser = users.get(user.getKeycloakId());
+        UserRepresentation kcUserRepresentation = kcUser.toRepresentation();
+        return String.format("%s %s", kcUserRepresentation.getFirstName(), kcUserRepresentation.getLastName());
+    }
+
+    /**
+     * @deprecated
+     * Renamed to `getKeycloakUserGroups`.
+     */
+    @Deprecated
     public List<GroupRepresentation> getUserGroups(User user) {
+        return this.getKeycloakUserGroups(user);
+    };
+
+    /**
+     * Get the Keycloak GroupRepresentations from a user instance.
+     *
+     * @param user
+     * @return
+     */
+    public List<GroupRepresentation> getKeycloakUserGroups(User user) {
         UserResource userResource = this.getUserResource(user);
         List<GroupRepresentation> groups = new ArrayList<>();
 
@@ -193,6 +229,65 @@ public class KeycloakUtil {
         }
 
         return groups;
+    }
+
+    /**
+     * Checks if a passed user with the passed keycloak ID exists in the SHOGun DB and creates it if not.
+     *
+     * The groups of the user are also checked and created if needed.
+     *
+     * @param keycloakUserId
+     * @return
+     */
+    public User createOrGetShogunUser(String keycloakUserId) {
+        Optional<User> userOptional = userRepository.findByKeycloakId(keycloakUserId);
+        User user = userOptional.orElse(null);
+
+        // User is not yet it SHOGun DB
+        if (user == null) {
+            user = new User(keycloakUserId, null, null, null);
+            userRepository.save(user);
+
+            // If the user doesn't exist, we assume it's the first login after registration.
+            eventPublisher.publishEvent(new OnRegistrationConfirmedEvent(user));
+
+            // Add admin instance permissions for the user.
+            userInstancePermissionService.setPermission(user, user, PermissionCollectionType.ADMIN);
+
+            log.info("User with keycloak id {} did not yet exist in the SHOGun DB and was therefore created.", keycloakUserId);
+            return user;
+        }
+
+        List<GroupRepresentation> keycloakUserGroups = this.getKeycloakUserGroups(user);
+
+        // Add missing groups to shogun db
+        keycloakUserGroups
+            .stream()
+            .map(GroupRepresentation::getId)
+            .forEach(this::createOrGetShogunGroup);
+
+        return user;
+    }
+
+    /**
+     * Checks if a group with the passed keycloak ID exists in the SHOGun DB and creates it if not.
+     *
+     * @param keycloakGroupId
+     * @return
+     */
+    public Group createOrGetShogunGroup(String keycloakGroupId) {
+        Optional<Group> groupOptional = groupRepository.findByKeycloakId(keycloakGroupId);
+        Group group = groupOptional.orElse(null);
+
+        if (group == null) {
+            group = new Group(keycloakGroupId, null);
+            groupRepository.save(group);
+
+            log.info("Group with keycloak id {} did not yet exist in the SHOGun DB and was therefore created.", keycloakGroupId);
+            return group;
+        }
+
+        return group;
     }
 
 }
