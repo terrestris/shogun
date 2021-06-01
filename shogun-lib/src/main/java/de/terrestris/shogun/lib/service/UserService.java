@@ -16,12 +16,16 @@
  */
 package de.terrestris.shogun.lib.service;
 
+import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
+import de.terrestris.shogun.lib.event.OnRegistrationConfirmedEvent;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.UserRepository;
 import de.terrestris.shogun.lib.util.KeycloakUtil;
 import org.keycloak.admin.client.resource.UserResource;
+import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
@@ -36,6 +40,12 @@ public class UserService extends BaseService<UserRepository, User> {
 
     @Autowired
     KeycloakUtil keycloakUtil;
+
+    @Autowired
+    GroupService groupService;
+
+    @Autowired
+    ApplicationEventPublisher eventPublisher;
 
     @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
     @Transactional(readOnly = true)
@@ -86,6 +96,67 @@ public class UserService extends BaseService<UserRepository, User> {
         }
 
         return user;
+    }
+
+    /**
+     * Finds a User by the passed keycloak ID. If it does not exists in the SHOGun DB it gets created.
+     *
+     * The groups of the user are also checked and created if needed.
+     *
+     * @param keycloakUserId
+     * @return
+     */
+//    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#keycloakUserId, 'CREATE')")
+    @Transactional
+    public User findOrCreateByKeyCloakId(String keycloakUserId) {
+        Optional<User> userOptional = repository.findByKeycloakId(keycloakUserId);
+        User user = userOptional.orElse(null);
+
+        // User is not yet it SHOGun DB
+        if (user == null) {
+            user = new User(keycloakUserId, null, null, null);
+            repository.save(user);
+
+            // If the user doesn't exist, we assume it's the first login after registration.
+            eventPublisher.publishEvent(new OnRegistrationConfirmedEvent(user));
+
+            // Add admin instance permissions for the user.
+            userInstancePermissionService.setPermission(user, user, PermissionCollectionType.ADMIN);
+
+            LOG.info("User with keycloak id {} did not yet exist in the SHOGun DB and was therefore created.", keycloakUserId);
+            this.setTransientKeycloakRepresentations(user);
+            return user;
+        }
+
+        List<GroupRepresentation> keycloakUserGroups = keycloakUtil.getKeycloakUserGroups(user);
+
+        // Add missing groups to shogun db
+        keycloakUserGroups
+            .stream()
+            .map(GroupRepresentation::getId)
+            .forEach(groupService::findOrCreateByKeycloakId);
+
+        this.setTransientKeycloakRepresentations(user);
+        return user;
+    }
+
+    /**
+     *  Delete a user from the SHOGun DB by its keycloak Id.
+     *
+     * @param keycloakUserId
+     */
+    @Transactional
+//    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#keycloakUserId, 'DELETE')")
+    public void deleteByKeycloakId(String keycloakUserId) {
+        Optional<User> userOptional = repository.findByKeycloakId(keycloakUserId);
+        User user = userOptional.orElse(null);
+        if (user == null) {
+            LOG.debug("User with keycloak id {} was deleted in Keycloak. It did not exists in SHOGun DB. No action needed.", keycloakUserId);
+            return;
+        }
+        userInstancePermissionService.deleteAllForEntity(user);
+        repository.delete(user);
+        LOG.info("User with keycloak id {} was deleted in Keycloak and was therefore deleted in SHOGun DB, too.", keycloakUserId);
     }
 
     private User setTransientKeycloakRepresentations(User user) {

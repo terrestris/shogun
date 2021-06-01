@@ -16,8 +16,6 @@
  */
 package de.terrestris.shogun.lib.util;
 
-import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
-import de.terrestris.shogun.lib.event.OnRegistrationConfirmedEvent;
 import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.GroupRepository;
@@ -39,7 +37,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -207,7 +204,7 @@ public class KeycloakUtil {
     @Deprecated
     public List<GroupRepresentation> getUserGroups(User user) {
         return this.getKeycloakUserGroups(user);
-    };
+    }
 
     /**
      * Get the Keycloak GroupRepresentations from a user instance.
@@ -229,98 +226,6 @@ public class KeycloakUtil {
         }
 
         return groups;
-    }
-
-    /**
-     * Checks if a passed user with the passed keycloak ID exists in the SHOGun DB and creates it if not.
-     *
-     * The groups of the user are also checked and created if needed.
-     *
-     * @param keycloakUserId
-     * @return
-     */
-    public User createOrGetShogunUser(String keycloakUserId) {
-        Optional<User> userOptional = userRepository.findByKeycloakId(keycloakUserId);
-        User user = userOptional.orElse(null);
-
-        // User is not yet it SHOGun DB
-        if (user == null) {
-            user = new User(keycloakUserId, null, null, null);
-            userRepository.save(user);
-
-            // If the user doesn't exist, we assume it's the first login after registration.
-            eventPublisher.publishEvent(new OnRegistrationConfirmedEvent(user));
-
-            // Add admin instance permissions for the user.
-            userInstancePermissionService.setPermission(user, user, PermissionCollectionType.ADMIN);
-
-            log.info("User with keycloak id {} did not yet exist in the SHOGun DB and was therefore created.", keycloakUserId);
-            return user;
-        }
-
-        List<GroupRepresentation> keycloakUserGroups = this.getKeycloakUserGroups(user);
-
-        // Add missing groups to shogun db
-        keycloakUserGroups
-            .stream()
-            .map(GroupRepresentation::getId)
-            .forEach(this::createOrGetShogunGroup);
-
-        return user;
-    }
-
-    /**
-     *  Delete a user from the SHOGun DB by its keycloak Id.
-     *
-     * @param keycloakUserId
-     */
-    public void deleteShogunUser(String keycloakUserId) {
-        Optional<User> userOptional = userRepository.findByKeycloakId(keycloakUserId);
-        User user = userOptional.orElse(null);
-        if (user == null) {
-            log.debug("User with keycloak id {} was deleted in Keycloak. It did not exists in SHOGun DB. No action needed.", keycloakUserId);
-            return;
-        }
-        userInstancePermissionService.deleteAllForEntity(user);
-        userRepository.delete(user);
-        log.info("User with keycloak id {} was deleted in Keycloak and was therefore deleted in SHOGun DB, too.", keycloakUserId);
-    }
-
-    /**
-     * Checks if a group with the passed keycloak ID exists in the SHOGun DB and creates it if not.
-     *
-     * @param keycloakGroupId
-     * @return
-     */
-    public Group createOrGetShogunGroup(String keycloakGroupId) {
-        Optional<Group> groupOptional = groupRepository.findByKeycloakId(keycloakGroupId);
-        Group group = groupOptional.orElse(null);
-
-        if (group == null) {
-            group = new Group(keycloakGroupId, null);
-            groupRepository.save(group);
-
-            log.info("Group with keycloak id {} did not yet exist in the SHOGun DB and was therefore created.", keycloakGroupId);
-            return group;
-        }
-
-        return group;
-    }
-
-    /**
-     *  Delete a group from the SHOGun DB by its keycloak Id.
-     *
-     * @param keycloakGroupId
-     */
-    public void deleteShogunGroup(String keycloakGroupId) {
-        Optional<Group> groupOptional = groupRepository.findByKeycloakId(keycloakGroupId);
-        Group group = groupOptional.orElse(null);
-        if (group == null) {
-            log.debug("Group with keycloak id {} was deleted in Keycloak. It did not exists in SHOGun DB. No action needed.", keycloakGroupId);
-            return;
-        }
-        groupRepository.delete(group);
-        log.info("Group with keycloak id {} was deleted in Keycloak and was therefore deleted in SHOGun DB, too.", keycloakGroupId);
     }
 
 }
