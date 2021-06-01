@@ -88,7 +88,7 @@ public class GroupService extends BaseService<GroupRepository, Group> {
     public List<Group> findByUser(User user) {
         List<Group> groups = new ArrayList<>();
 
-        List<GroupRepresentation> keycloakGroups = keycloakUtil.getUserGroups(user);
+        List<GroupRepresentation> keycloakGroups = keycloakUtil.getKeycloakUserGroups(user);
 
         for (GroupRepresentation keycloakGroup : keycloakGroups) {
             Optional<Group> group = repository.findByKeycloakId(keycloakGroup.getId());
@@ -101,6 +101,10 @@ public class GroupService extends BaseService<GroupRepository, Group> {
         return groups;
     }
 
+    /**
+     * @deprecated Use KeycloakUtil instead
+     */
+    @Deprecated
     public GroupRepresentation findByKeycloakId(String keycloakId) {
         GroupResource groupResource = keycloakUtil.getGroupResource(keycloakId);
 
@@ -121,6 +125,47 @@ public class GroupService extends BaseService<GroupRepository, Group> {
         }
 
         return users;
+    }
+
+    /**
+     * Finds a Group by the passed keycloak ID. If it does not exists in the SHOGun DB it gets created.
+     *
+     * @param keycloakGroupId
+     * @return
+     */
+    @Transactional
+//    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#keycloakGroupId, 'CREATE')")
+    public Group findOrCreateByKeycloakId(String keycloakGroupId) {
+        Optional<Group> groupOptional = repository.findByKeycloakId(keycloakGroupId);
+        Group group = groupOptional.orElse(null);
+
+        if (group == null) {
+            group = new Group(keycloakGroupId, null);
+            repository.save(group);
+
+            LOG.info("Group with keycloak id {} did not yet exist in the SHOGun DB and was therefore created.", keycloakGroupId);
+            return group;
+        }
+
+        return group;
+    }
+
+    /**
+     *  Delete a group from the SHOGun DB by its keycloak Id.
+     *
+     * @param keycloakGroupId
+     */
+    @Transactional
+//    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#keycloakGroupId, 'DELETE')")
+    public void deleteByKeycloakId(String keycloakGroupId) {
+        Optional<Group> groupOptional = repository.findByKeycloakId(keycloakGroupId);
+        Group group = groupOptional.orElse(null);
+        if (group == null) {
+            LOG.debug("Group with keycloak id {} was deleted in Keycloak. It did not exists in SHOGun DB. No action needed.", keycloakGroupId);
+            return;
+        }
+        repository.delete(group);
+        LOG.info("Group with keycloak id {} was deleted in Keycloak and was therefore deleted in SHOGun DB, too.", keycloakGroupId);
     }
 
     private Group setTransientKeycloakRepresentations(Group group) {

@@ -20,19 +20,17 @@ import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.service.GroupService;
 import de.terrestris.shogun.lib.service.UserService;
-import java.util.List;
-import java.util.Optional;
+import de.terrestris.shogun.lib.util.KeycloakUtil;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/groups")
@@ -41,6 +39,9 @@ public class GroupController extends BaseController<GroupService, Group> {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private KeycloakUtil keycloakUtil;
 
     @GetMapping("/user/{id}")
     @ResponseStatus(HttpStatus.OK)
@@ -74,7 +75,7 @@ public class GroupController extends BaseController<GroupService, Group> {
     @ResponseStatus(HttpStatus.OK)
     public GroupRepresentation findByKeycloakId(@PathVariable("id") String keycloakId) {
         try {
-            return service.findByKeycloakId(keycloakId);
+            return keycloakUtil.getGroupResource(keycloakId).toRepresentation();
         } catch (Exception e) {
             LOG.error("Error while requesting keycloak group with ID {}: \n {}",
                 keycloakId, e.getMessage());

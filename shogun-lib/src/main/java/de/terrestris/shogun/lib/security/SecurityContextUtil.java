@@ -27,7 +27,6 @@ import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UserResource;
-import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.AccessToken;
 import org.keycloak.representations.IDToken;
 import org.keycloak.representations.idm.GroupRepresentation;
@@ -184,26 +183,21 @@ public class SecurityContextUtil {
     }
 
     /**
-     * Return keycloak GroupRepresentaions (groups) for user
-     * @param user
-     * @return
+     * @deprecated
+     * This method was moved to the {@link KeycloakUtil} as its not related to security or authentication.
      */
+    @Deprecated
     public List<GroupRepresentation> getKeycloakGroupsForUser(User user) {
-        UsersResource users = this.keycloakRealm.users();
-        UserResource kcUser = users.get(user.getKeycloakId());
-        return kcUser.groups();
+        return keycloakUtil.getKeycloakUserGroups(user);
     }
 
     /**
-     * Fetch user name of user from keycloak
-     * @param user
-     * @return
+     * @deprecated
+     * This method was moved to the {@link KeycloakUtil} as its not related to security or authentication.
      */
+    @Deprecated
     public String getUserNameFromKeycloak(User user) {
-        UsersResource users = this.keycloakRealm.users();
-        UserResource kcUser = users.get(user.getKeycloakId());
-        UserRepresentation kcUserRepresentation = kcUser.toRepresentation();
-        return String.format("%s %s", kcUserRepresentation.getFirstName(), kcUserRepresentation.getLastName());
+        return keycloakUtil.getUserNameFromKeycloak(user);
     }
 
     /**
