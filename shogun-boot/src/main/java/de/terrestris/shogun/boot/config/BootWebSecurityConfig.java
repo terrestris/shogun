@@ -51,7 +51,8 @@ public class BootWebSecurityConfig extends WebSecurityConfig {
                     .permitAll()
                 .antMatchers(
                     "/actuator/**",
-                    "/cache/**"
+                    "/cache/**",
+                    "/webhooks/**"
                 )
                     .hasRole("ADMIN")
                 .anyRequest()
