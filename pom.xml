@@ -10,7 +10,7 @@
 
   <groupId>de.terrestris</groupId>
   <artifactId>shogun</artifactId>
-  <version>7.1.1-SNAPSHOT</version>
+  <version>7.2.0</version>
   <name>SHOGun</name>
   <packaging>pom</packaging>
 
@@ -28,7 +28,7 @@
     <url>https://github.com/terrestris/shogun</url>
     <connection>scm:git:git@github.com:terrestris/shogun.git</connection>
     <developerConnection>scm:git:git@github.com:terrestris/shogun.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>v7.2.0</tag>
   </scm>
 
   <repositories>
