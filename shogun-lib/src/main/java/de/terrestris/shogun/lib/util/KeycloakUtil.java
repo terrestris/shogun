@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.resource.*;
 import org.keycloak.representations.idm.GroupRepresentation;
+import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -125,7 +126,8 @@ public class KeycloakUtil {
     public List<GroupRepresentation> getGroupByName(String groupName) {
         GroupsResource kcGroupRepresentation = this.keycloakRealm.groups();
         return kcGroupRepresentation.groups().stream()
-            .filter(groupRepresentation -> StringUtils.equalsIgnoreCase(groupName, groupRepresentation.getName())).collect(Collectors.toList());
+            .filter(groupRepresentation -> StringUtils.equalsIgnoreCase(groupName, groupRepresentation.getName()))
+            .collect(Collectors.toList());
     }
 
     public Boolean existsGroup(String groupName) {
@@ -226,6 +228,26 @@ public class KeycloakUtil {
         }
 
         return groups;
+    }
+
+    /**
+     * Get the Keycloak RoleRepresentations from a user instance.
+     *
+     * @param user
+     * @return
+     */
+    public List<RoleRepresentation> getKeycloakUserRoles(User user) {
+        UserResource userResource = this.getUserResource(user);
+        List<RoleRepresentation> roles = new ArrayList<>();
+        try {
+            roles = userResource.roles().getAll().getRealmMappings();
+        } catch (Exception e) {
+            log.warn("Could not get the RoleMappingResource for the user with SHOGun ID {} and " +
+                    "Keycloak ID {}. This may happen if the user is not available in Keycloak.",
+                     user.getId(), user.getKeycloakId());
+            log.trace("Full stack trace: ", e);
+        }
+        return roles;
     }
 
 }
