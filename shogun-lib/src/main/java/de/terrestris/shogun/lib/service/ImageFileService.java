@@ -23,20 +23,16 @@ import de.terrestris.shogun.lib.util.ImageFileUtil;
 import de.terrestris.shogun.properties.UploadProperties;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tika.config.TikaConfig;
-import org.apache.tika.exception.TikaException;
-import org.apache.tika.io.TikaInputStream;
-import org.apache.tika.metadata.Metadata;
-import org.apache.tika.mime.MediaType;
-import org.apache.tomcat.util.http.fileupload.impl.InvalidContentTypeException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.*;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.UUID;
 
@@ -67,9 +63,7 @@ public class ImageFileService extends BaseFileService<ImageFileRepository, Image
                 "nor the thumbnail can be set.");
         }
 
-        ImageFile savedFile = this.create(file);
-
-        return savedFile;
+        return this.create(file);
     }
 
     @Override
