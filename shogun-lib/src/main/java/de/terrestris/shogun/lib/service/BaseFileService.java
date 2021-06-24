@@ -76,6 +76,7 @@ public abstract class BaseFileService<T extends BaseFileRepository<S, Long> & Jp
         List<String> supportedContentTypes = getSupportedContentTypes();
         boolean isMatch = PatternMatchUtils.simpleMatch(supportedContentTypes.toArray(new String[supportedContentTypes.size()]), contentType);
         if (!isMatch) {
+            LOG.warn("Unsupported content type {} for upload", contentType);
             throw new InvalidContentTypeException("Unsupported content type for upload!");
         }
     }

@@ -17,18 +17,13 @@
 package de.terrestris.shogun.lib.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.UUID;
-import javax.persistence.*;
-
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
+
+import javax.persistence.*;
+import java.util.UUID;
 
 @Entity(name = "files")
 @Table(schema = "shogun")
