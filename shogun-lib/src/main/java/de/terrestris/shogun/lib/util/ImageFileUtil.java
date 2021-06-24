@@ -17,7 +17,6 @@
 package de.terrestris.shogun.lib.util;
 
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
@@ -74,7 +73,7 @@ public class ImageFileUtil {
 
         BufferedImage img = ImageFileUtil.toBufferedImage(scaledImgFile);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ImageIO.write(img, FilenameUtils.getExtension(uploadFile.getOriginalFilename()), bos);
+        ImageIO.write(img, "png", bos);
 
         return bos.toByteArray();
     }
