@@ -112,7 +112,7 @@
 
     <!-- Utils -->
     <commons.io.version>2.10.0</commons.io.version>
-    <tika.core.version>1.26</tika.core.version>
+    <tika.core.version>1.27</tika.core.version>
     <reflections.version>0.9.12</reflections.version>
     <evo-inflector.version>1.2.2</evo-inflector.version>
 
