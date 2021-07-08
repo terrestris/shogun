@@ -1,11 +1,4 @@
 spring:
-  profiles:
-    include: base
-    active: base, interceptor
-
----
-spring:
-  profiles: interceptor
   datasource:
     url: jdbc:postgresql://localhost:5555/shogun?currentSchema=interceptor
   flyway:
