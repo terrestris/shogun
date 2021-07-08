@@ -7,3 +7,16 @@ spring:
     defaultSchema: shogun
   session:
     store-type: none
+
+keycloak:
+  auth-server-url: http://localhost:8000/auth
+  realm: SpringBootKeycloak
+
+keycloakauth:
+  username: admin
+  password: shogun
+  master-realm: master
+  admin-client: admin-cli
+
+upload:
+  basePath: /data
