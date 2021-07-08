@@ -20,8 +20,6 @@ header:
       limitations under the License.
 
   paths-ignore:
-    - '**/*.md'
-    - '**/*.sql'
     - '.github'
     - '.editorconfig'
     - '.gitignore'
@@ -37,5 +35,8 @@ header:
     - 'shogun-gs-interceptor/target'
     - 'shogun-lib/target'
     - 'shogun-manager/target'
+    - 'docs'
+    - '**/*.md'
+    - '**/*.sql'
 
   comment: on-failure
