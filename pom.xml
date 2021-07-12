@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.3.5.RELEASE</version>
+    <version>2.5.2</version>
   </parent>
 
   <groupId>de.terrestris</groupId>
@@ -84,8 +84,8 @@
     <jib-maven-plugin.version>3.1.2</jib-maven-plugin.version>
 
     <!-- Spring -->
-    <spring-boot.version>2.3.5.RELEASE</spring-boot.version>
-    <spring-data.version>2.3.5.RELEASE</spring-data.version>
+    <spring-boot.version>2.5.2</spring-boot.version>
+    <spring-data.version>2.5.2</spring-data.version>
 
     <!-- Security -->
     <keycloak.version>14.0.0</keycloak.version>

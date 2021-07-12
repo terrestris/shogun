@@ -1,15 +1,8 @@
 spring:
-  profiles:
-    include: base
-    active: base, boot
-
----
-spring:
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
-  profiles: boot
   datasource:
     url: jdbc:postgresql://localhost:5555/shogun?currentSchema=shogun
   flyway:

@@ -41,8 +41,11 @@
    ```
 
 6. Navigate to the `ApplicationConfig` in the project tree for the `shogun-boot`
-   module and run it (open context menu and select
-   `Run ApplicationConfig.main()`).  
+   module and run it (open context menu and select `Run ApplicationConfig.main()`). 
+   The first start may fail as you need to add the following `Program arguments`:
+   ```
+   --spring.profiles.active=base,boot
+   ```
    You may save this `Run/Debug configuration` via the dialog box to restart the
    application easily.
 
