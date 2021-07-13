@@ -18,217 +18,1675 @@
 scalar JSON
 scalar Geometry
 scalar DateTime
+scalar Long
 
+"""
+The following list contains all supported GraphQL queries of the SHOGun-API.
+"""
 type Query {
+    """
+    Returns all applications.
+
+    Example:
+
+    ```
+    query {
+      allApplications {
+        id
+        name
+      }
+    }
+    ```
+
+    The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
     allApplications: [Application]
+    """
+    Returns the application with the given ID (if any).
+
+    Example:
+
+    ```
+    query {
+      applicationById(id: 19) {
+        id
+        name
+      }
+    }
+    ```
+
+    The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
     applicationById(id: Int): Application
+    """
+    Returns the application with the given ID (if any) and the specified timestamp.
+
+    The timestamp is considered as less or equal (<=) filter and returns the next suitable entity if no exact match
+    can be found.
+
+    Example:
+
+    ```
+    query {
+      applicationByIdAndTime(id: 19, time: "2021-07-28T17:30:00Z") {
+        id
+        name
+      }
+    }
+    ```
+
+    The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
     applicationByIdAndTime(id: Int, time: DateTime): Application
+    """
+    Returns the application with the given ID (if any) and the specified revision (if any).
+
+    Example:
+
+    ```
+    query {
+      applicationByIdAndRevision(id: 25, rev: 27) {
+        entity {
+          id,
+          ... on Application {
+            name
+          }
+        }
+      }
+    }
+    ```
+
+    The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
     applicationByIdAndRevision(id: Int, rev: Int): Revision
+    """
+    Returns all revisions for the application with the given ID (if any).
+
+    Example:
+
+    ```
+    query {
+      applicationRevisionsById(id: 19) {
+        content {
+          entity {
+            id
+            ... on Application {
+              name
+            }
+          }
+        }
+      }
+    }
+    ```
+
+    The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
     applicationRevisionsById(id: Int): Revisions
+    """
+    Returns all applications with the given list of IDs.
+
+    Example:
+
+    ```
+    query {
+      allApplicationsByIds(ids: [19, 9]) {
+        id
+        name
+      }
+    }
+    ```
+
+    The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
     allApplicationsByIds(ids: [Int]): [Application]
 
+    """
+    Returns all files.
+
+    Example:
+
+    ```
+    query {
+      allFiles {
+        id
+        fileName
+      }
+    }
+    ```
+
+    The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
     allFiles: [File]
+    """
+    Returns the file with the given ID (if any).
+
+    Example:
+
+    ```
+    query {
+      fileById(id: 19) {
+        id
+        fileName
+      }
+    }
+    ```
+
+    The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
     fileById(id: Int): File
-    fileByIdAndTime(id: Int, time: DateTime): File
-    fileByIdAndRevision(id: Int, rev: Int): Revision
-    fileRevisionsById(id: Int): Revisions
+    """
+    Returns all files with the given list of IDs.
+
+    Example:
+
+    ```
+    query {
+      allFilesByIds(ids: [19, 9]) {
+        id
+        fileName
+      }
+    }
+    ```
+
+    The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
     allFilesByIds(ids: [Int]): [File]
 
+    """
+    Returns all groups.
+
+    Example:
+
+    ```
+    query {
+      allGroups {
+        id
+        keycloakId
+      }
+    }
+    ```
+
+    The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
     allGroups: [Group]
+    """
+    Returns the group with the given ID (if any).
+
+    Example:
+
+    ```
+    query {
+      groupById(id: 19) {
+        id
+        keycloakId
+      }
+    }
+    ```
+
+    The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
     groupById(id: Int): Group
+    """
+    Returns the group with the given ID (if any) and the specified timestamp.
+
+    The timestamp is considered as less or equal (<=) filter and returns the next suitable entity if no exact match
+    can be found.
+
+    Example:
+
+    ```
+    query {
+      groupByIdAndTime(id: 19, time: "2021-07-28T17:30:00Z") {
+       id
+       keycloakId
+      }
+    }
+    ```
+
+    The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
     groupByIdAndTime(id: Int, time: DateTime): Group
+    """
+    Returns the group with the given ID (if any) and the specified revision (if any).
+
+    Example:
+
+    ```
+    query {
+      groupByIdAndRevision(id: 25, rev: 27) {
+        entity {
+          id,
+          ... on Group {
+            keycloakId
+          }
+        }
+      }
+    }
+    ```
+
+    The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
     groupByIdAndRevision(id: Int, rev: Int): Revision
+    """
+    Returns all revisions for the group with the given ID (if any).
+
+    Example:
+
+    ```
+    query {
+      groupRevisionsById(id: 19) {
+        content {
+          entity {
+            id
+            ... on Group {
+              keycloakId
+            }
+          }
+        }
+      }
+    }
+    ```
+
+    The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
     groupRevisionsById(id: Int): Revisions
+    """
+    Returns all groups with the given list of IDs.
+
+    Example:
+
+    ```
+    query {
+      allGroupsByIds(ids: [19, 9]) {
+        id
+        keycloakId
+      }
+    }
+    ```
+
+    The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
     allGroupsByIds(ids: [Int]): [Group]
 
+    """
+    Returns all imagefiles.
+
+    Example:
+
+    ```
+    query {
+      allImageFiles {
+        id
+        fileName
+      }
+    }
+    ```
+
+    The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
     allImageFiles: [ImageFile]
+    """
+    Returns the imagefile with the given ID (if any).
+
+    Example:
+
+    ```
+    query {
+      imageFileById(id: 19) {
+        id
+        fileName
+      }
+    }
+    ```
+
+    The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
     imageFileById(id: Int): ImageFile
-    imageFileByIdAndTime(id: Int, time: DateTime): ImageFile
-    imageFileByIdAndRevision(id: Int, rev: Int): Revision
-    imageFileRevisionsById(id: Int): Revisions
+    """
+    Returns all imagefiles with the given list of IDs.
+
+    Example:
+
+    ```
+    query {
+      allImageFilesByIds(ids: [19, 9]) {
+        id
+        fileName
+      }
+    }
+    ```
+
+    The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
     allImageFilesByIds(ids: [Int]): [ImageFile]
 
+    """
+    Returns all layers.
+
+    Example:
+
+    ```
+    query {
+      allLayers {
+        id
+        name
+      }
+    }
+    ```
+
+    The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
     allLayers: [Layer]
+    """
+    Returns the layer with the given ID (if any).
+
+    Example:
+
+    ```
+    query {
+      layerById(id: 19) {
+        id
+        name
+      }
+    }
+    ```
+
+    The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
     layerById(id: Int): Layer
+    """
+    Returns the layer with the given ID (if any) and the specified timestamp.
+
+    The timestamp is considered as less or equal (<=) filter and returns the next suitable entity if no exact match
+    can be found.
+
+    Example:
+
+    ```
+    query {
+      layerByIdAndTime(id: 19, time: "2021-07-28T17:30:00Z") {
+        id
+        name
+      }
+    }
+    ```
+
+    The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
     layerByIdAndTime(id: Int, time: DateTime): Layer
+    """
+    Returns the layer with the given ID (if any) and the specified revision (if any).
+
+    Example:
+
+    ```
+    query {
+      layerByIdAndRevision(id: 19, rev: 27) {
+        content {
+          entity {
+            id
+            ... on Layer {
+              name
+            }
+          }
+        }
+      }
+    }
+    ```
+
+    The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
     layerByIdAndRevision(id: Int, rev: Int): Revision
+    """
+    Returns all revisions for the layer with the given ID (if any).
+
+    Example:
+
+    ```
+    query {
+      layerRevisionsById(id: 19) {
+        content {
+          entity {
+            id
+            ... on Layer {
+              name
+            }
+          }
+        }
+      }
+    }
+    ```
+
+    The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
     layerRevisionsById(id: Int): Revisions
+    """
+    Returns all layers with the given list of IDs.
+
+    Example:
+
+    ```
+    query {
+      allLayersByIds(ids: [19, 9]) {
+        id
+        name
+      }
+    }
+    ```
+
+    The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
     allLayersByIds(ids: [Int]): [Layer]
 
+    """
+    Returns all users.
+
+    Example:
+
+    ```
+    query {
+      allUsers {
+        id
+        keycloakId
+      }
+    }
+    ```
+
+    The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
     allUsers: [User]
+    """
+    Returns the user with the given ID (if any).
+
+    Example:
+
+    ```
+    query {
+      userById(id: 19) {
+        id
+        keycloakId
+      }
+    }
+    ```
+
+    The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
     userById(id: Int): User
+    """
+    Returns the user with the given ID (if any) and the specified timestamp.
+
+    The timestamp is considered as less or equal (<=) filter and returns the next suitable entity if no exact match
+    can be found.
+
+    Example:
+
+    ```
+    query {
+      userByIdAndTime(id: 19, time: "2021-07-28T17:30:00Z") {
+        id
+        keycloakId
+      }
+    }
+    ```
+
+    The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
     userByIdAndTime(id: Int, time: DateTime): User
+    """
+    Returns the user with the given ID (if any) and the specified revision (if any).
+
+    Example:
+
+    ```
+    query {
+      userByIdAndRevision(id: 25, rev: 27) {
+        entity {
+          id,
+          ... on User {
+            keycloakId
+          }
+        }
+      }
+    }
+    ```
+
+    The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
     userByIdAndRevision(id: Int, rev: Int): Revision
+    """
+    Returns all revisions for the user with the given ID (if any).
+
+    Example:
+
+    ```
+    query {
+      userRevisionsById(id: 19) {
+        content {
+          entity {
+            id
+            ... on User {
+              keycloakId
+            }
+          }
+        }
+      }
+    }
+    ```
+
+    The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
     userRevisionsById(id: Int): Revisions
+    """
+    Returns all users with the given list of IDs.
+
+    Example:
+
+    ```
+    query {
+      allUsersByIds(ids: [19, 9]) {
+        id
+        keycloakId
+      }
+    }
+    ```
+
+    The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
     allUsersByIds(ids: [Int]): [User]
 }
 
+"""
+The following list contains all supported GraphQL mutations of the SHOGun-API.
+"""
 type Mutation {
+    """
+    Creates a new application.
+
+    Example:
+
+    ```
+    mutation {
+      createApplication(entity: {
+        name: "My application"
+      }) {
+        id
+        name
+      }
+    }
+    ```
+
+    The mutation takes the current user into account and allows the creation only, if the user has the `ADMIN` role or
+    owns the `CREATE` class permission on the `Application` class.
+
+    Returns the created entity.
+    """
     createApplication(entity: MutateApplication): Application!
+    """
+    Updates an existing application.
+
+    Example:
+
+    ```
+    mutation {
+      updateApplication(id: 19, entity: {
+        name: "My renamed application"
+      }) {
+        id
+        name
+      }
+    }
+    ```
+
+    The mutation takes the current user into account and allows the update only, if the user has the `ADMIN` role,
+    owns the `UPDATE` class permission on the `Application` class or owns the `UPDATE` instance permission on the
+    given entity.
+
+    Returns the updated entity.
+    """
     updateApplication(id: Int, entity: MutateApplication): Application!
+    """
+    Deletes an existing application by the given ID.
+
+    Example:
+
+    ```
+    mutation {
+      deleteApplication(id: 25)
+    }
+    ```
+
+    The mutation takes the current user into account and allows the deletion only, if the user has the `ADMIN` role,
+    owns the `DELETE` class permission on the `Application` class or owns the `DELETE` instance permission on the
+    given entity.
+
+    Returns `true` for successful deletion, `false` otherwise.
+    """
     deleteApplication(id: Int): Boolean
 
+    """
+    Creates a new group.
+
+    Example:
+
+    ```
+    mutation {
+      createGroup(entity: {
+        keycloakId: "43bd12d6-ef10-4012-95c4-46f4d8bd2b00"
+      }) {
+        id
+        keycloakId
+      }
+    }
+    ```
+
+    The mutation takes the current user into account and allows the creation only, if the user has the `ADMIN` role or
+    owns the `CREATE` class permission on the `Group` class.
+
+    Returns the created entity.
+    """
     createGroup(entity: MutateGroup): Group!
+    """
+    Updates an existing group.
+
+    Example:
+
+    ```
+    mutation {
+      updateGroup(id: 19, entity: {
+        keycloakId: "53bd12d6-ef10-4012-95c4-46f4d8bd2b00"
+      }) {
+        id
+        keycloakId
+      }
+    }
+    ```
+
+    The mutation takes the current user into account and allows the update only, if the user has the `ADMIN` role,
+    owns the `UPDATE` class permission on the `Group` class or owns the `UPDATE` instance permission on the
+    given entity.
+
+    Returns the updated entity.
+    """
     updateGroup(id: Int, entity: MutateGroup): Group!
+    """
+    Deletes an existing group by the given ID.
+
+    Example:
+
+    ```
+    mutation {
+      deleteGroup(id: 25)
+    }
+    ```
+
+    The mutation takes the current user into account and allows the deletion only, if the user has the `ADMIN` role,
+    owns the `DELETE` class permission on the `Group` class or owns the `DELETE` instance permission on the
+    given entity.
+
+    Returns `true` for successful deletion, `false` otherwise.
+    """
     deleteGroup(id: Int): Boolean
 
+    """
+    Creates a new layer.
+
+    Example:
+
+    ```
+    mutation {
+      createLayer(entity: {
+        name: "My layer",
+        type: "WMS"
+      }) {
+        id
+        name
+      }
+    }
+    ```
+
+    The mutation takes the current user into account and allows the creation only, if the user has the `ADMIN` role or
+    owns the `CREATE` class permission on the `Layer` class.
+
+    Returns the created entity.
+    """
     createLayer(entity: MutateLayer): Layer!
+    """
+    Updates an existing layer.
+
+    Example:
+
+    ```
+    mutation {
+      updateLayer(id: 19, entity: {
+        name: "My renamed layer"
+      }) {
+        id
+        name
+      }
+    }
+    ```
+
+    The mutation takes the current user into account and allows the update only, if the user has the `ADMIN` role,
+    owns the `UPDATE` class permission on the `Layer` class or owns the `UPDATE` instance permission on the
+    given entity.
+
+    Returns the updated entity.
+    """
     updateLayer(id: Int, entity: MutateLayer): Layer!
+    """
+    Deletes an existing layer by the given ID.
+
+    Example:
+
+    ```
+    mutation {
+      deleteLayer(id: 25)
+    }
+    ```
+
+    The mutation takes the current user into account and allows the deletion only, if the user has the `ADMIN` role,
+    owns the `DELETE` class permission on the `Layer` class or owns the `DELETE` instance permission on the
+    given entity.
+
+    Returns `true` for successful deletion, `false` otherwise.
+    """
     deleteLayer(id: Int): Boolean
 
+    """
+    Creates a new user.
+
+    Example:
+
+    ```
+    mutation {
+      createUser(entity: {
+        keycloakId: "43bd12d6-ef10-4012-95c4-46f4d8bd2b00"
+      }) {
+        id
+        keycloakId
+      }
+    }
+    ```
+
+    The mutation takes the current user into account and allows the creation only, if the user has the `ADMIN` role or
+    owns the `CREATE` class permission on the `User` class.
+
+    Returns the created entity.
+    """
     createUser(entity: MutateUser): User!
+    """
+    Updates an existing user.
+
+    Example:
+
+    ```
+    mutation {
+      updateUser(id: 19, entity: {
+        keycloakId: "53bd12d6-ef10-4012-95c4-46f4d8bd2b00"
+      }) {
+        id
+        keycloakId
+      }
+    }
+    ```
+
+    The mutation takes the current user into account and allows the update only, if the user has the `ADMIN` role,
+    owns the `UPDATE` class permission on the `User` class or owns the `UPDATE` instance permission on the
+    given entity.
+
+    Returns the updated entity.
+    """
     updateUser(id: Int, entity: MutateUser): User!
+    """
+    Deletes an existing user by the given ID.
+
+    Example:
+
+    ```
+    mutation {
+      deleteUser(id: 25)
+    }
+    ```
+
+    The mutation takes the current user into account and allows the deletion only, if the user has the `ADMIN` role,
+    owns the `DELETE` class permission on the `User` class or owns the `DELETE` instance permission on the
+    given entity.
+
+    Returns `true` for successful deletion, `false` otherwise.
+    """
     deleteUser(id: Int): Boolean
 }
 
+"""
+The `BaseEntity` is the basic module for all entities handled by SHOGun.
+"""
 interface BaseEntity {
-  id: Int
-  created: DateTime
-  modified: DateTime
+    """
+    The ID of the entity.
+    """
+    id: Int
+    """
+    The timestamp of creation.
+    """
+    created: DateTime
+    """
+    The timestamp of the last modification.
+    """
+    modified: DateTime
 }
 
+"""
+A wrapper type for a list of `Revision`s.
+"""
 type Revisions {
+    """
+    A list of `Revision`s.
+    """
     content: [Revision]
 }
 
+"""
+The `Revision` is a metadata type containing all available informations about the history of the given entity.
+"""
 type Revision {
+    """
+    The version metadata.
+    """
     metadata: RevisionMetadata
+    """
+    The versioned entity.
+    """
     entity: BaseEntity
+    """
+    Whether the revision number is available or not.
+    """
     revisionNumber: RevisionFieldInfo
+    """
+    Whether the revision date is available or not.
+    """
     revisionInstant: RevisionFieldInfo
+    """
+    The ID of the revision.
+    """
     requiredRevisionNumber: Int
+    """
+    The creation date of the revision.
+    """
     requiredRevisionInstant: DateTime
 }
 
+"""
+The metadata of a revision.
+"""
 type RevisionMetadata {
+    """
+    The type of the revision, typically one of `INSERT`, `UPDATE` or `DELETE`.
+    """
     revisionType: String
+    """
+    ID, timestamp and date of the revision.
+    """
     delegate: RevisionDelegate
+    """
+    Whether the revision number is available or not.
+    """
     revisionNumber: RevisionFieldInfo
+    """
+    Whether the revision date is available or not.
+    """
     revisionDate: RevisionFieldInfo
+    """
+    Whether the revision instant is available or not.
+    """
     revisionInstant: RevisionFieldInfo
+    """
+    The ID of the revision.
+    """
     requiredRevisionNumber: Int
+    """
+    The creation date of the revision.
+    """
     requiredRevisionInstant: DateTime
+    """
+    The list of changed fields in this revision.
+    """
     changedFields: [String]
 }
 
+"""
+TODO
+"""
 type RevisionDelegate {
+    """
+    The ID of the revision.
+    """
     id: Int
+    """
+    The creation timestamp of the revision.
+    """
     timestamp: Long
+    """
+    The creation date of the revision.
+    """
     revisionDate: DateTime
 }
 
+"""
+Specifies whether a given field information is available or not.
+"""
 type RevisionFieldInfo {
+    """
+    If true, the value for the given field is *not* present.
+    """
     empty: Boolean
+    """
+    If true, the value for the given field is present (and empty).
+    """
     present: Boolean
 }
 
+"""
+The `Application` contains the configuration for a single GIS instance and will be returned by each associated query
+operation (read).
+"""
 type Application implements BaseEntity {
+    """
+    The ID of the entity.
+    """
     id: Int
+    """
+    The timestamp of creation.
+    """
     created: DateTime
+    """
+    The timestamp of the last modification.
+    """
     modified: DateTime
+    """
+    The name of the application.
+    """
     name: String
-    i18n: JSON
+    """
+    Wheather the application configuration is considered as state or not. A state may be used as snapshot of a given
+    application.
+    """
     stateOnly: Boolean
+    """
+    The configuration to be considered by the client/application which may include all specific configurations required
+    by the project. A typical configuration might look like as follows:
+
+    ```
+    {
+      "mapView": {
+        "center": [10.03, 51.08],
+        "zoom": 7,
+        "projection": "EPSG:25832",
+        "extent": [
+            2.5683045738288137,
+            45.429089001638076,
+            19.382621082401887,
+            57.283993958205926
+        ],
+        "resolutions": [
+            2445.9849047851562,
+            1222.9924523925781,
+            611.4962261962891,
+            305.74811309814453,
+            152.87405654907226,
+            76.43702827453613,
+            38.218514137268066,
+            19.109257068634033,
+            9.554628534317017,
+            4.777314267158508,
+            2.388657133579254,
+            1.194328566789627,
+            0.5971642833948135,
+            0.298582142,
+            0.149291071,
+            0.074645535
+        ]
+      },
+      "description": "This is just a demo application",
+    }
+    ```
+
+    **Please note:** The structure of the `clientConfiguration` has to be defined by each project separately by implementing
+    the `ApplicatonClientConfig`. Otherwise (de-)serializing the body is not possible. A minimal example implementation
+    might look like (shortened):
+
+    ```
+    @Data
+    @JsonDeserialize(as = ProjectApplicationClientConfig.class)
+    @JsonSuperType(type = ApplicationClientConfig.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @ToString
+    @EqualsAndHashCode
+    public class ProjectApplicationClientConfig implements ApplicationClientConfig {
+      private MapView mapView;
+      private String description;
+    }
+    ```
+
+    With `MapView` defined as:
+
+    ```
+    @Data
+    @ToString
+    @EqualsAndHashCode
+    public class MapView implements Serializable {
+      private Integer zoom;
+      private ArrayList<Double> center;
+      private ArrayList<Double> extent;
+      private String projection;
+      private ArrayList<Double> resolutions;
+    }
+    ```
+    """
     clientConfig: JSON
+    """
+    The tree shaped configuration entry of the applications table of contents. A typical entry might look like:
+
+    ```
+    {
+      "title": "root",
+      "children": [{
+        "title": "Folder A",
+        "checked": true,
+        "children": [{
+          "title": "Leaf A.A",
+          "checked": false,
+          "layerId": 1
+        }, {
+          "title": "Leaf A.B",
+          "checked": true,
+          "layerId": 2
+        }]
+      }, {
+        "title": "Folder B",
+        "checked": false,
+        "children": [{
+          "title": "Leaf B.A",
+          "checked": false,
+          "layerId": 3
+        }, {
+          "title": "Leaf B.B",
+          "checked": false,
+          "layerId": 4
+        }]
+      }]
+    }
+    ```
+
+    **Please note:** The structure of the `layerTree` has to be defined by each project separately by implementing the
+    `LayerTree`. Otherwise (de-)serializing the body is not possible. A minimal example implementation might look
+    like (shortened):
+
+    ```
+    @Data
+    @JsonDeserialize(as = ProjectLayerTree.class)
+    @JsonSuperType(type = LayerTree.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @ToString
+    @EqualsAndHashCode
+    public class ProjectLayerTree implements LayerTree {
+      private String title;
+      private Boolean checked;
+      private Integer layerId;
+      private ArrayList<ProjectLayerTree> children;
+    }
+    ```
+    """
     layerTree: JSON
     layerConfig: JSON
+    """
+    The definition of tool configurations. This may be used to set appliction specific configurations for any tools
+    in the given application, e.g. the visibility or the layers the tool should work on. For example:
+
+    ```
+    [{
+      "name": "featureTable",
+      "enabled": true,
+      "wfsLayerId": 135,
+      "wmsLayerId": 347
+    }]
+    ```
+
+    **Please note:** The structure of the `toolConfig` has to be defined by each project separately by implementing the
+    `ToolConfig`. Otherwise (de-)serializing the body is not possible. A minimal example implementation might look
+    like (shortened):
+
+    ```
+    @Data
+    @JsonDeserialize(as = ProjectLayerTree.class)
+    @JsonSuperType(type = LayerTree.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @ToString
+    @EqualsAndHashCode
+    public class ProjectToolConfig implements ToolConfig {
+      private String name;
+      private Boolean enabled;
+      private Integer wfsLayerId;
+      private Integer wmsLayerId;
+    }
+    ```
+    """
     toolConfig: JSON
 }
 
+"""
+The `MutateApplication` type contains all fields which can be set in the given mutation operations (create and update).
+"""
 input MutateApplication {
+    """
+    See `name` of the type `Application`.
+
+    Required.
+    """
     name: String!
-    i18n: JSON
+    """
+    See `stateOnly` of the type `Application`.
+    """
     stateOnly: Boolean
+    """
+    See `clientConfig` of the type `Application`.
+    """
     clientConfig: JSON
+    """
+    See `layerTree` of the type `Application`.
+    """
     layerTree: JSON
+    """
+    See `layerConfig` of the type `Application`.
+    """
     layerConfig: JSON
+    """
+    See `toolConfig` of the type `Application`.
+    """
     toolConfig: JSON
 }
 
+"""
+The `File` type represents an uploaded file.
+"""
 type File implements BaseEntity {
+    """
+    The ID of the entity.
+    """
     id: Int
+    """
+    The timestamp of creation.
+    """
     created: DateTime
+    """
+    The timestamp of the last modification.
+    """
     modified: DateTime
+    """
+    The (auto assigned) UUID of the file.
+    """
     fileUuid: ID
+    """
+    Whether the file is considered as active or not.
+    """
     active: Boolean
+    """
+    The (original) name of the file.
+    """
     fileName: String
+    """
+    The (original) type of the file.
+    """
     fileType: String
 }
 
+"""
+A type to map the Keycloak representation of a group.
+"""
 type GroupRepresentation {
+    """
+    The ID of the keycloak entity.
+    """
     id: ID
+    """
+    The name of the group.
+    """
     name: String
+    """
+    The full path of the group in the context of its parent groups (if any).
+    """
     path: String
+    """
+    A list of all roles associated with the group.
+    """
     realmRoles: [String]
+    """
+    The list of nested sub groups.
+    """
     subGroups: [GroupRepresentation]
 }
 
+"""
+The `Group` type references a SHOGun-group. The group is basically used internally to map permissions. All essential
+details of the group (e.g. name, roles) are stored in Keycloak and the appropriate group is referenced to the
+SHOGun-group via the its ID in keycloak (see `keycloakId`).
+"""
 type Group implements BaseEntity {
+    """
+    The ID of the entity.
+    """
     id: Int
+    """
+    The timestamp of creation.
+    """
     created: DateTime
+    """
+    The timestamp of the last modification.
+    """
     modified: DateTime
+    """
+    The internal Keycloak ID of the group.
+    """
     keycloakId: ID
+    """
+    The group details stored in the associated Keycloak entity.
+    """
     keycloakRepresentation: GroupRepresentation
 }
 
+"""
+The `MutateGroup` type contains all fields which can be set in the given mutation operations (create and update).
+"""
 input MutateGroup {
-    keycloakId: ID
+    """
+    See `keycloakId` of the type `Group`.
+
+    Required.
+    """
+    keycloakId: ID!
 }
 
+"""
+The `ImageFile` type represents an uploaded image file.
+"""
 type ImageFile implements BaseEntity {
+    """
+    The ID of the entity.
+    """
     id: Int
+    """
+    The timestamp of creation.
+    """
     created: DateTime
+    """
+    The timestamp of the last modification.
+    """
     modified: DateTime
+    """
+    The (auto assigned) UUID of the image file.
+    """
     fileUuid: ID
+    """
+    Whether the image file is considered as active or not.
+    """
     active: Boolean
+    """
+    The (original) name of the image file.
+    """
     fileName: String
+    """
+    The (original) type of the image file.
+    """
     fileType: String
+    """
+    The (original) width of the image file.
+    """
     width: Int
+    """
+    The (original) height of the image file.
+    """
     height: Int
 }
 
+"""
+The `Layer` type represents the configuration of a layer (e.g. a WMS or WFS layer) which may be referenced by an
+application.
+"""
 type Layer implements BaseEntity {
+    """
+    The ID of the entity.
+    """
     id: Int
+    """
+    The timestamp of creation.
+    """
     created: DateTime
+    """
+    The timestamp of the last modification.
+    """
     modified: DateTime
+    """
+    The internal name of the layer.
+    """
     name: String
+    """
+    The configuration of the layer which should be used to define client specific aspects of the layer. This may include
+    the name, the visible resolution range, search configurations or similiar. For example:
+
+    ```
+    {
+      "minResolution": 305.74811309814453,
+      "maxResolution": 2500,
+      "hoverable": true,
+      "searchable": true,
+      "searchConfig": {
+        "attributes": [
+          "name"
+        ],
+        "displayTemplate": "{name}",
+        "featureTypeName": "SHOGUN:COUNTRIES"
+      }
+    }
+    ```
+
+    **Please note:** The structure of the `clientConfig` has to be defined by each project separately by implementing
+    the `LayerClientConfig`. Otherwise (de-)serializing the body is not possible. A minimal example implementation
+    might look like (shortened):
+
+    ```
+    @Data
+    @JsonDeserialize(as = ProjectLayerClientConfig.class)
+    @JsonSuperType(type = LayerClientConfig.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @ToString
+    @EqualsAndHashCode
+    public class ProjectLayerClientConfig implements LayerClientConfig {
+      private Double minResolution;
+      private Double maxResolution;
+      private Boolean hoverable;
+      private Boolean searchable;
+      private Map<String, Object> searchConfig;
+    }
+    ```
+    """
     clientConfig: JSON
+    """
+    The configuration of the datasource of the layer, e.g. the URL of the server, the name or the grid configuration.
+    For example:
+
+    ```
+    {
+      "url": "/geoserver/ows",
+      "layerNames": "SHOGUN:COUNTRIES",
+      "tileSize": 256,
+      "tileOrigin": [
+        239323.44497139292,
+        4290144.074117256
+       ],
+      "resolutions": [
+        2445.9849047851562,
+        1222.9924523925781,
+        611.4962261962891,
+        305.74811309814453,
+        152.87405654907226,
+        76.43702827453613,
+        38.218514137268066,
+        19.109257068634033,
+        9.554628534317017,
+        4.777314267158508,
+        2.388657133579254,
+        1.194328566789627,
+        0.5971642833948135
+      ]
+    }
+    ```
+
+    **Please note:** The structure of the `sourceConfig` has to be defined by each project separately by implementing
+    the `LayerSourceConfig`. Otherwise (de-)serializing the body is not possible. A minimal example implementation
+    might look like (shortened):
+
+    ```
+    @Data
+    @JsonDeserialize(as = ProjectLayerSourceConfig.class)
+    @JsonSuperType(type = LayerSourceConfig.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @ToString
+    @EqualsAndHashCode
+    public class ProjectLayerSourceConfig implements LayerSourceConfig {
+      private String url;
+      private String layerNames;
+      private Double tileSize;
+      private ArrayList<Double> tileOrigin;
+      private ArrayList<Double> resolutions;
+    }
+    ```
+    """
     sourceConfig: JSON
+    """
+    Custom features for the layers that aren't available in the datasource. This might be used for custom draw layers
+    or similiar. It's advised to store the features using the GeoJSON format. For example:
+
+    ```
+    {
+      "type": "FeatureCollection",
+      "features": [{
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [100.0, 50.0]
+        },
+        "properties": {
+          "prop0": "geom1",
+          "prop1": 0.0
+        }
+      }, {
+        "type": "Feature",
+        "geometry": {
+          "type": "LineString",
+          "coordinates": [
+             [100.0, 0.0],
+             [101.0, 1.0],
+             [102.0, 0.0],
+             [103.0, 1.0]
+          ]
+        },
+        "properties": {
+          "prop0": "geom2",
+          "prop1": 10.0
+        }
+      }, {
+        "type": "Feature",
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[
+            [100.0, 0.0],
+            [101.0, 0.0],
+            [101.0, 1.0],
+            [100.0, 1.0],
+            [100.0, 0.0]
+          ]]
+        },
+        "properties": {
+          "prop0": "geom3",
+          "prop1": 20.0
+        }
+      }]
+    }
+    ```
+    """
     features: JSON
+    """
+    The type of the layer. Currently one of `TileWMS`, `VectorTile`, `WFS`, `WMS`, `WMTS` or `XYZ`.
+    """
     type: String
 }
 
+"""
+The `MutateLayer` type contains all fields which can be set in the given mutation operations (create and update).
+"""
 input MutateLayer {
+    """
+    See `name` of the type `Layer`.
+
+    Required.
+    """
     name: String!
+    """
+    See `clientConfig` of the type `Layer`.
+    """
     clientConfig: JSON
+    """
+    See `sourceConfig` of the type `Layer`.
+    """
     sourceConfig: JSON
+    """
+    See `features` of the type `Layer`.
+    """
     features: JSON
-    type: String
+    """
+    See `type` of the type `Layer`.
+    """
+    type: String!
 }
 
+"""
+A type to map the Keycloak representation of an user.
+"""
 type UserRepresentation {
+    """
+    The ID of the keycloak entity.
+    """
     id: ID
+    """
+    The username.
+    """
     username: String
+    """
+    Whether the user is enabled or not.
+    """
     enabled: Boolean
+    """
+    The first name of the user.
+    """
     firstName: String
+    """
+    The last name of the user.
+    """
     lastName: String
+    """
+    The mail adress of the user.
+    """
     email: String
+    """
+    The list of roles the user owns.
+    """
     realmRoles: [String]
+    """
+    The list of groups the user belongs to.
+    """
     groups: [String]
 }
 
+"""
+The `User` type references a SHOGun-user. The user is basically used internally to map permissions or the session at
+runtime. All essential details of the user (e.g. mail, roles, groups) are stored in Keycloak and the appropriate user is
+referenced to the SHOGun-user via the its ID in keycloak (see `keycloakId`).
+"""
 type User implements BaseEntity {
+    """
+    The ID of the entity.
+    """
     id: Int
+    """
+    The timestamp of creation.
+    """
     created: DateTime
+    """
+    The timestamp of the last modification.
+    """
     modified: DateTime
+    """
+    The internal Keycloak ID of the user.
+    """
     keycloakId: ID
+    """
+    Custom user details that aren't stored inside the Keycloak representation, for example:
+
+    ```
+    {
+      "phone": 0049123456789,
+      "creditCardNumber": 123456789
+    }
+    ```
+
+    **Please note:** The structure of the `details` has to be defined by each project separately by implementing
+    the `UserDetails`. Otherwise (de-)serializing the body is not possible. A minimal example implementation
+    might look like (shortened):
+
+    ```
+    @Data
+    @JsonDeserialize(as = ProjectUserDetails.class)
+    @JsonSuperType(type = UserDetails.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @ToString
+    @EqualsAndHashCode
+    public class ProjectUserDetails implements UserDetails {
+      private Long phone;
+      private Long creditCardNumber;
+    }
+    ```
+    """
     details: JSON
+    """
+    The configuration of the user which should be used to define client specific aspects of the user. This may include
+    the locale set by the user, the last application visited by the user or similiar. For example:
+
+    ```
+    {
+      "locale": "de",
+      "lastOpenedApplication": 1909
+    }
+    ```
+
+    **Please note:** The structure of the `clientConfig` has to be defined by each project separately by implementing
+    the `UserClientConfig`. Otherwise (de-)serializing the body is not possible. A minimal example implementation
+    might look like (shortened):
+
+    ```
+    @Data
+    @JsonDeserialize(as = ProjectUserClientConfig.class)
+    @JsonSuperType(type = UserClientConfig.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @ToString
+    @EqualsAndHashCode
+    public class ProjectUserClientConfig implements UserClientConfig {
+      private String locale;
+      private Long lastOpenedApplication;
+    }
+    ```
+    """
     clientConfig: JSON
+    """
+    The user details stored in the associated Keycloak entity.
+    """
     keycloakRepresentation: UserRepresentation
 }
 
+"""
+The `MutateLayer` type contains all fields which can be set in the given mutation operations (create and update).
+"""
 input MutateUser {
+    """
+    See `keycloakId` of the type `User`.
+
+    Required.
+    """
     keycloakId: ID!
+    """
+    See `details` of the type `User`.
+    """
     details: JSON
+    """
+    See `clientConfig` of the type `User`.
+    """
     clientConfig: JSON
 }
