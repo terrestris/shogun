@@ -158,6 +158,10 @@
       <groupId>com.graphhopper.external</groupId>
       <artifactId>jackson-datatype-jts</artifactId>
     </dependency>
+    <dependency>
+      <groupId>de.grundid.opendatalab</groupId>
+      <artifactId>geojson-jackson</artifactId>
+    </dependency>
 
     <!-- Keycloak -->
     <dependency>

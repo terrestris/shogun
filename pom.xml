@@ -123,6 +123,7 @@
 
     <!-- JSON/Dataformats -->
     <jackson-datatype-jts.version>1.0-2.7</jackson-datatype-jts.version>
+    <geojson-jackson.version>1.14</geojson-jackson.version>
 
     <!-- GeoServer/Geodata -->
     <geoserver-manager.version>1.7.0</geoserver-manager.version>
@@ -459,6 +460,11 @@
         <groupId>com.graphhopper.external</groupId>
         <artifactId>jackson-datatype-jts</artifactId>
         <version>${jackson-datatype-jts.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>de.grundid.opendatalab</groupId>
+        <artifactId>geojson-jackson</artifactId>
+        <version>${geojson-jackson.version}</version>
       </dependency>
 
       <!-- Keycloak -->
