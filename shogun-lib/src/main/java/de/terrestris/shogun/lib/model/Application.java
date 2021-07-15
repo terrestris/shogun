@@ -81,7 +81,7 @@ public class Application extends BaseEntity {
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
-    private LayerConfig layerConfig;
+    private List<LayerConfig> layerConfig;
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
