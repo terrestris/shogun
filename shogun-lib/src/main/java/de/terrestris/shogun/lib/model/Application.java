@@ -17,28 +17,17 @@
 package de.terrestris.shogun.lib.model;
 
 import de.terrestris.shogun.lib.model.jsonb.ApplicationClientConfig;
-import java.util.Locale;
-import java.util.Map;
-import javax.persistence.Basic;
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Table;
-
 import de.terrestris.shogun.lib.model.jsonb.LayerConfig;
 import de.terrestris.shogun.lib.model.jsonb.LayerToolConfig;
 import de.terrestris.shogun.lib.model.jsonb.LayerTree;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.AuditTable;
 import org.hibernate.envers.Audited;
+
+import javax.persistence.*;
 
 @Entity(name = "applications")
 @Table(schema = "shogun")
@@ -55,12 +44,6 @@ public class Application extends BaseEntity {
 
     @Column
     private String name;
-
-    @Type(type = "jsonb")
-    @Column(columnDefinition = "jsonb")
-    @Basic(fetch = FetchType.LAZY)
-    @ToString.Exclude
-    private Locale i18n;
 
     @Column
     private Boolean stateOnly;
