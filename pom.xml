@@ -102,7 +102,7 @@
 
     <!-- Spring -->
     <spring-boot.version>2.5.3</spring-boot.version>
-    <spring-data.version>2.5.2</spring-data.version>
+    <spring-data.version>2.5.3</spring-data.version>
 
     <!-- Security -->
     <keycloak.version>14.0.0</keycloak.version>
