@@ -16,6 +16,7 @@
  */
 package de.terrestris.shogun.lib.model;
 
+import de.terrestris.shogun.lib.model.jsonb.ApplicationClientConfig;
 import de.terrestris.shogun.lib.model.jsonb.ApplicationToolConfig;
 import de.terrestris.shogun.lib.model.jsonb.LayerConfig;
 import de.terrestris.shogun.lib.model.jsonb.LayerTree;
@@ -28,7 +29,6 @@ import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Locale;
 
 @Entity(name = "applications")
 @Table(schema = "shogun")
