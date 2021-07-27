@@ -16,7 +16,6 @@
  */
 package de.terrestris.shogun.lib.model;
 
-import de.terrestris.shogun.lib.model.jsonb.ApplicationClientConfig;
 import de.terrestris.shogun.lib.model.jsonb.ApplicationToolConfig;
 import de.terrestris.shogun.lib.model.jsonb.LayerConfig;
 import de.terrestris.shogun.lib.model.jsonb.LayerTree;
@@ -46,12 +45,6 @@ public class Application extends BaseEntity {
 
     @Column
     private String name;
-
-    @Type(type = "jsonb")
-    @Column(columnDefinition = "jsonb")
-    @Basic(fetch = FetchType.LAZY)
-    @ToString.Exclude
-    private Locale i18n;
 
     @Column
     private Boolean stateOnly;
