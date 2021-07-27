@@ -48,7 +48,7 @@ public class ShogunGsInterceptorManager extends AbstractShogunManager {
      * @throws Exception The exception
      */
     public List<InterceptorRule> getAllInterceptorRules() throws Exception {
-        HttpGet getRequest = new HttpGet(new URI(String.format("%s%s", this.shogunServiceBaseUrl, basePathInterceptorRule)));
+        HttpGet getRequest = new HttpGet(new URI(String.format("%s%s", this.serviceBaseUrl, basePathInterceptorRule)));
         byte[] resultBytes = performRequest(getRequest);
         if (resultBytes != null) {
             return objectMapper.readValue(resultBytes, new TypeReference<>() {});
@@ -66,7 +66,7 @@ public class ShogunGsInterceptorManager extends AbstractShogunManager {
      * @throws Exception The exception
      */
     public List<InterceptorRule> findAllRulesForServiceAndEvent(OgcEnum.ServiceType service, HttpEnum.EventType event) throws Exception {
-        String urlString = String.format("%s%s/service/%s/event/%s", this.shogunServiceBaseUrl, basePathInterceptorRule, service, event);
+        String urlString = String.format("%s%s/service/%s/event/%s", this.serviceBaseUrl, basePathInterceptorRule, service, event);
         HttpGet getRequest = new HttpGet(new URI(urlString));
         byte[] resultBytes = performRequest(getRequest);
         if (resultBytes != null) {
@@ -83,7 +83,7 @@ public class ShogunGsInterceptorManager extends AbstractShogunManager {
      * @throws Exception The exception
      */
     public void removeAllRulesForEndpoint(String endpoint) throws Exception {
-        String urlString = String.format("%s%s/endpoint/%s", this.shogunServiceBaseUrl, basePathInterceptorRule, endpoint);
+        String urlString = String.format("%s%s/endpoint/%s", this.serviceBaseUrl, basePathInterceptorRule, endpoint);
         HttpDelete httpDelete = new HttpDelete(new URI(urlString));
         byte[] resultBytes = performRequest(httpDelete);
         if (resultBytes == null || resultBytes.length != 1 || resultBytes[0] != 0) {
@@ -100,7 +100,7 @@ public class ShogunGsInterceptorManager extends AbstractShogunManager {
      * @throws Exception The exception
      */
     public boolean addRequestRuleForServiceAndEndpoint(String endpoint, OgcEnum.ServiceType service, RuleType rule) throws Exception {
-        String urlString = String.format("%s%s/endpoint/%s/request/%s/%s", this.shogunServiceBaseUrl, basePathInterceptorRule, endpoint, service, rule);
+        String urlString = String.format("%s%s/endpoint/%s/request/%s/%s", this.serviceBaseUrl, basePathInterceptorRule, endpoint, service, rule);
         HttpPost httpPost = new HttpPost(new URI(urlString));
         byte[] resultBytes = performRequest(httpPost);
         if (resultBytes != null && resultBytes.length == 1 && resultBytes[0] == 1) {
@@ -119,7 +119,7 @@ public class ShogunGsInterceptorManager extends AbstractShogunManager {
      * @throws Exception The exception
      */
     public boolean addResponseRuleForServiceAndEndpoint(String endpoint, OgcEnum.ServiceType service, RuleType rule) throws Exception {
-        String urlString = String.format("%s%s/endpoint/%s/response/%s/%s", this.shogunServiceBaseUrl, basePathInterceptorRule, endpoint, service, rule);
+        String urlString = String.format("%s%s/endpoint/%s/response/%s/%s", this.serviceBaseUrl, basePathInterceptorRule, endpoint, service, rule);
         HttpPost httpPost = new HttpPost(new URI(urlString));
         byte[] resultBytes = performRequest(httpPost);
         if (resultBytes != null && resultBytes.length == 1 && resultBytes[0] == 1) {
@@ -138,7 +138,7 @@ public class ShogunGsInterceptorManager extends AbstractShogunManager {
      * @throws Exception The exception
      */
     public boolean addRuleForEndpoint(String endpoint, OgcEnum.ServiceType service, RuleType rule) throws Exception {
-        String urlString = String.format("%s%s/endpoint/%s/all/%s/%s", this.shogunServiceBaseUrl, basePathInterceptorRule, endpoint, service, rule);
+        String urlString = String.format("%s%s/endpoint/%s/all/%s/%s", this.serviceBaseUrl, basePathInterceptorRule, endpoint, service, rule);
         HttpPost httpPost = new HttpPost(new URI(urlString));
         byte[] resultBytes = performRequest(httpPost);
         if (resultBytes != null && resultBytes.length == 1 && resultBytes[0] == 1) {
@@ -155,7 +155,7 @@ public class ShogunGsInterceptorManager extends AbstractShogunManager {
      * @throws Exception The exception
      */
     public boolean setModifyForAllWmsActions(String endpoint) throws Exception {
-        String urlString = String.format("%s%s/endpoint/%s/modifyAllWms", this.shogunServiceBaseUrl, basePathInterceptorRule, endpoint);
+        String urlString = String.format("%s%s/endpoint/%s/modifyAllWms", this.serviceBaseUrl, basePathInterceptorRule, endpoint);
         HttpPost httpPost = new HttpPost(new URI(urlString));
         byte[] resultBytes = performRequest(httpPost);
         if (resultBytes != null && resultBytes.length == 0) {
@@ -172,7 +172,7 @@ public class ShogunGsInterceptorManager extends AbstractShogunManager {
      * @throws Exception The exception
      */
     public boolean setModifyForAllWfsActions(String endpoint) throws Exception {
-        String urlString = String.format("%s%s/endpoint/%s/modifyAllWfs", this.shogunServiceBaseUrl, basePathInterceptorRule, endpoint);
+        String urlString = String.format("%s%s/endpoint/%s/modifyAllWfs", this.serviceBaseUrl, basePathInterceptorRule, endpoint);
         HttpPost httpPost = new HttpPost(new URI(urlString));
         byte[] resultBytes = performRequest(httpPost);
         if (resultBytes != null && resultBytes.length == 0) {
@@ -189,7 +189,7 @@ public class ShogunGsInterceptorManager extends AbstractShogunManager {
      * @throws Exception The exception
      */
     public boolean setModifyForAllWmsRequests(String endpoint) throws Exception {
-        String urlString = String.format("%s%s/endpoint/%s/modifyAllWmsRequests", this.shogunServiceBaseUrl, basePathInterceptorRule, endpoint);
+        String urlString = String.format("%s%s/endpoint/%s/modifyAllWmsRequests", this.serviceBaseUrl, basePathInterceptorRule, endpoint);
         HttpPost httpPost = new HttpPost(new URI(urlString));
         byte[] resultBytes = performRequest(httpPost);
         if (resultBytes != null && resultBytes.length == 0) {
@@ -206,7 +206,7 @@ public class ShogunGsInterceptorManager extends AbstractShogunManager {
      * @throws Exception The exception
      */
     public boolean setModifyForAllWfsRequests(String endpoint) throws Exception {
-        String urlString = String.format("%s%s/endpoint/%s/modifyAllWfsRequests", this.shogunServiceBaseUrl, basePathInterceptorRule, endpoint);
+        String urlString = String.format("%s%s/endpoint/%s/modifyAllWfsRequests", this.serviceBaseUrl, basePathInterceptorRule, endpoint);
         HttpPost httpPost = new HttpPost(new URI(urlString));
         byte[] resultBytes = performRequest(httpPost);
         if (resultBytes != null && resultBytes.length == 0) {
