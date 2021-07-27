@@ -17,8 +17,8 @@
 package de.terrestris.shogun.lib.model;
 
 import de.terrestris.shogun.lib.model.jsonb.ApplicationClientConfig;
+import de.terrestris.shogun.lib.model.jsonb.ApplicationToolConfig;
 import de.terrestris.shogun.lib.model.jsonb.LayerConfig;
-import de.terrestris.shogun.lib.model.jsonb.LayerToolConfig;
 import de.terrestris.shogun.lib.model.jsonb.LayerTree;
 import lombok.*;
 import org.hibernate.annotations.Cache;
@@ -28,6 +28,7 @@ import org.hibernate.envers.AuditTable;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity(name = "applications")
 @Table(schema = "shogun")
@@ -64,11 +65,11 @@ public class Application extends BaseEntity {
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
-    private LayerConfig layerConfig;
+    private List<LayerConfig> layerConfig;
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
-    private LayerToolConfig toolConfig;
+    private List<ApplicationToolConfig> toolConfig;
 }
