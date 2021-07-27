@@ -52,7 +52,7 @@ public class Layer extends BaseEntity {
     private LayerClientConfig clientConfig;
 
     @Type(type = "jsonb")
-    @Column(columnDefinition = "jsonb", nullable = false)
+    @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
     private LayerSourceConfig sourceConfig;
