@@ -1185,8 +1185,8 @@ type Application implements BaseEntity {
 
     ```
     @Data
-    @JsonDeserialize(as = ProjectLayerTree.class)
-    @JsonSuperType(type = LayerTree.class)
+    @JsonDeserialize(as = ProjectToolConfig.class)
+    @JsonSuperType(type = ToolConfig.class)
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @ToString
     @EqualsAndHashCode
