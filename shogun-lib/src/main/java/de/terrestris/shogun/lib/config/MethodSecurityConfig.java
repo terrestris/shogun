@@ -4,6 +4,7 @@ import de.terrestris.shogun.lib.security.access.BasePermissionEvaluator;
 import de.terrestris.shogun.lib.security.access.entity.BaseEntityPermissionEvaluator;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
@@ -13,6 +14,9 @@ import org.springframework.security.config.annotation.method.configuration.Globa
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class MethodSecurityConfig extends GlobalMethodSecurityConfiguration {
+
+    @Autowired
+    private ApplicationContext appContext;
 
     @Autowired
     private BasePermissionEvaluator basePermissionEvaluator;
@@ -25,6 +29,7 @@ public class MethodSecurityConfig extends GlobalMethodSecurityConfiguration {
         DefaultMethodSecurityExpressionHandler expressionHandler =
                 new DefaultMethodSecurityExpressionHandler();
         expressionHandler.setPermissionEvaluator(basePermissionEvaluator);
+        expressionHandler.setApplicationContext(appContext);
 
         return expressionHandler;
     }
