@@ -1007,7 +1007,7 @@ type Application implements BaseEntity {
     """
     name: String
     """
-    Wheather the application configuration is considered as state or not. A state may be used as snapshot of a given
+    Whether the application configuration is considered as state or not. A state may be used as snapshot of a given
     application.
     """
     stateOnly: Boolean
@@ -1139,7 +1139,7 @@ type Application implements BaseEntity {
     layerTree: JSON
     layerConfig: JSON
     """
-    The definition of tool configurations. This may be used to set appliction specific configurations for any tools
+    The definition of tool configurations. This may be used to set application specific configurations for any tools
     in the given application, e.g. the visibility or the layers the tool should work on. For example:
 
     ```
