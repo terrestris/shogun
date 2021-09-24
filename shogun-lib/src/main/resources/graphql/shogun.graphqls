@@ -1137,6 +1137,34 @@ type Application implements BaseEntity {
     ```
     """
     layerTree: JSON
+    """
+    The definition of layer configurations. This may be used to set application specific configurations for any
+    layers in the given application. For example:
+
+    ```
+    [{
+      "id": 1909,
+      "name": "A custom name"
+    }]
+    ```
+
+    **Please note:** The structure of the `layerConfig` has to be defined by each project separately by implementing the
+    `LayerConfig`. Otherwise (de-)serializing the body is not possible. A minimal example implementation might look
+    like (shortened):
+
+    ```
+    @Data
+    @JsonDeserialize(as = ProjectLayerConfig.class)
+    @JsonSuperType(type = LayerConfig.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @ToString
+    @EqualsAndHashCode
+    public class ProjectLayerConfig implements LayerConfig {
+    private Integer id;
+    private String name;
+    }
+    ```
+    """
     layerConfig: JSON
     """
     The definition of tool configurations. This may be used to set application specific configurations for any tools
