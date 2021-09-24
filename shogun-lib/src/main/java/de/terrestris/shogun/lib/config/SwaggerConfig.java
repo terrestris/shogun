@@ -14,8 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.terrestris.shogun.config;
+package de.terrestris.shogun.lib.config;
 
+import de.terrestris.shogun.lib.annotation.JsonSuperType;
+import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.scanners.TypeAnnotationsScanner;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,7 +49,7 @@ public abstract class SwaggerConfig {
 
     @Bean
     public Docket api() {
-        return new Docket(DocumentationType.SWAGGER_2)
+        Docket docket = new Docket(DocumentationType.SWAGGER_2)
             .select()
             .apis(RequestHandlerSelectors.any())
             .paths(PathSelectors.any())
@@ -51,6 +57,10 @@ public abstract class SwaggerConfig {
             .apiInfo(apiInfo())
             .securityContexts(Collections.singletonList(actuatorSecurityContext()))
             .securitySchemes(Collections.singletonList(basicAuthScheme()));
+
+        directModelSubsitutions(docket);
+
+        return docket;
     }
 
     private SecurityContext actuatorSecurityContext() {
@@ -66,6 +76,24 @@ public abstract class SwaggerConfig {
 
     private SecurityScheme basicAuthScheme() {
         return new BasicAuth("basicAuth");
+    }
+
+    protected void directModelSubsitutions(Docket docket) {
+        var reflections = new Reflections(new ConfigurationBuilder()
+            .setUrls(ClasspathHelper.forJavaClassPath())
+            .setScanners(new SubTypesScanner(), new TypeAnnotationsScanner()));
+
+        for (var cl : reflections.getTypesAnnotatedWith(JsonSuperType.class)) {
+            var annotation = cl.getAnnotation(JsonSuperType.class);
+            var superType = annotation.type();
+
+            if (!annotation.override() && !superType.isInterface()) {
+                throw new IllegalStateException("The super type " + superType.getName() + " is not an interface. " +
+                    "Set override to true if this is intended.");
+            }
+
+            docket.directModelSubstitute(superType, cl);
+        }
     }
 
     protected ApiInfo apiInfo() {

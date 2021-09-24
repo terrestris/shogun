@@ -20,5 +20,4 @@ import de.terrestris.shogun.config.KeycloakConfig;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class BootKeycloakConfig extends KeycloakConfig {
-}
+public class BootKeycloakConfig extends KeycloakConfig { }

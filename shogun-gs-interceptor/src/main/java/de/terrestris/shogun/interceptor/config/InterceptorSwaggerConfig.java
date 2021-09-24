@@ -16,7 +16,7 @@
  */
 package de.terrestris.shogun.interceptor.config;
 
-import de.terrestris.shogun.config.SwaggerConfig;
+import de.terrestris.shogun.lib.config.SwaggerConfig;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.PathSelectors;

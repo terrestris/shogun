@@ -19,6 +19,7 @@ package de.terrestris.shogun.lib.model;
 import de.terrestris.shogun.lib.enumeration.LayerType;
 import de.terrestris.shogun.lib.model.jsonb.LayerClientConfig;
 import de.terrestris.shogun.lib.model.jsonb.LayerSourceConfig;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.geojson.GeoJsonObject;
 import org.hibernate.annotations.Cache;
@@ -43,27 +44,48 @@ import javax.persistence.*;
 public class Layer extends BaseEntity {
 
     @Column(nullable = false)
+    @Schema(
+        description = "The internal name of the layer.",
+        example = "MySHOGunLayer"
+    )
     private String name;
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
+    @Schema(
+        description = "The configuration of the layer which should be used to define client specific aspects of " +
+            "the layer. This may include the name, the visible resolution range, search configurations or similiar."
+    )
     private LayerClientConfig clientConfig;
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
+    @Schema(
+        description = "The configuration of the datasource of the layer, e.g. the URL of the server, the name or " +
+            "the grid configuration.",
+        required = true
+    )
     private LayerSourceConfig sourceConfig;
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
+    @Schema(
+        description = "Custom features for the layers that aren't available in the datasource. This might be used " +
+            "for custom draw layers or similiar. It's advised to store the features using the GeoJSON format."
+    )
     private GeoJsonObject features;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
+    @Schema(
+        description = "The type of the layer. Currently one of `TileWMS`, `VectorTile`, `WFS`, `WMS`, `WMTS` or `XYZ`.",
+        required = true
+    )
     private LayerType type;
 }

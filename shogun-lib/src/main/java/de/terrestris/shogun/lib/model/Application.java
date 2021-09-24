@@ -20,6 +20,7 @@ import de.terrestris.shogun.lib.model.jsonb.ApplicationClientConfig;
 import de.terrestris.shogun.lib.model.jsonb.ApplicationToolConfig;
 import de.terrestris.shogun.lib.model.jsonb.LayerConfig;
 import de.terrestris.shogun.lib.model.jsonb.LayerTree;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -44,32 +45,57 @@ import java.util.List;
 public class Application extends BaseEntity {
 
     @Column
+    @Schema(
+        description = "The name of the application.",
+        required = true,
+        example = "My SHOGun application"
+    )
     private String name;
 
     @Column
+    @Schema(
+        description = "Whether the application configuration is considered as state or not. A state may be used " +
+            "as snapshot of a given application.",
+        example = "false"
+    )
     private Boolean stateOnly;
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
+    @Schema(
+        description = "The configuration to be considered by the client/application which may include all specific " +
+            "configurations required by the project."
+    )
     private ApplicationClientConfig clientConfig;
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
+    @Schema(
+        description = "The tree shaped configuration entry of the applications table of contents."
+    )
     private LayerTree layerTree;
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
+    @Schema(
+        description = "The definition of layer configurations. This may be used to set application specific " +
+            "configurations for any layers in the given application."
+    )
     private List<LayerConfig> layerConfig;
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
+    @Schema(
+        description = "The definition of tool configurations. This may be used to set application specific " +
+            "configurations for any tools in the given application, e.g. the visibility or the layers the tool should work on."
+    )
     private List<ApplicationToolConfig> toolConfig;
 }

@@ -21,6 +21,8 @@ import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -38,9 +40,17 @@ import lombok.ToString;
 public class ImageFile extends File {
 
     @Column
+    @Schema(
+        description = "The (original) width of the image file.",
+        example = "100"
+    )
     private Integer width;
 
     @Column
+    @Schema(
+        description = "The (original) height of the image file.",
+        example = "100"
+    )
     private Integer height;
 
     @JsonIgnore
