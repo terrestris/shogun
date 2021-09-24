@@ -26,6 +26,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -52,21 +54,36 @@ import org.keycloak.representations.idm.UserRepresentation;
 public class User extends BaseEntity {
 
     @Column(unique = true, nullable = false)
+    @Schema(
+        description = "The internal Keycloak ID of the user.",
+        required = true
+    )
     private String keycloakId;
 
     @Transient
+    @Schema(
+        description = "The user details stored in the associated Keycloak entity.",
+        accessMode = Schema.AccessMode.READ_ONLY
+    )
     private UserRepresentation keycloakRepresentation;
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
+    @Schema(
+        description = "Custom user details that aren't stored inside the Keycloak representation."
+    )
     private UserDetails details;
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
+    @Schema(
+        description = "The configuration of the user which should be used to define client specific aspects of " +
+            "the user. This may include the locale set by the user, the last application visited by the user or similiar."
+    )
     private UserClientConfig clientConfig;
 
 }

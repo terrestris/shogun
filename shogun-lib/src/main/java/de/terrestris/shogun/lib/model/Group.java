@@ -21,6 +21,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -46,9 +48,17 @@ import org.keycloak.representations.idm.GroupRepresentation;
 public class Group extends BaseEntity {
 
     @Column(unique = true, nullable = false)
+    @Schema(
+        description = "The internal Keycloak ID of the group.",
+        example = "image/png"
+    )
     private String keycloakId;
 
     @Transient
+    @Schema(
+        description = "The group details stored in the associated Keycloak entity.",
+        accessMode = Schema.AccessMode.READ_ONLY
+    )
     private GroupRepresentation keycloakRepresentation;
 
 }

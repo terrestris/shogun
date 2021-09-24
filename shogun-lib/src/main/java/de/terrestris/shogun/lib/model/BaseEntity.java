@@ -17,8 +17,10 @@
 package de.terrestris.shogun.lib.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.TypeDef;
@@ -47,16 +49,31 @@ public abstract class BaseEntity implements Serializable {
     @GeneratedValue(strategy= GenerationType.SEQUENCE)
     @Column(unique = true, nullable = false)
     @Getter
+    @Schema(
+        description = "The ID of the entity.",
+        accessMode = Schema.AccessMode.READ_ONLY,
+        readOnly = true
+    )
     private Long id;
 
     @CreationTimestamp
     @Column(updatable = false)
     @Getter @Setter
+    @Schema(
+        description = "The timestamp of creation.",
+        accessMode = Schema.AccessMode.READ_ONLY,
+        readOnly = true
+    )
     private OffsetDateTime created;
 
     @UpdateTimestamp
     @Column
     @Getter @Setter
+    @Schema(
+        description = "The timestamp of the last modification.",
+        accessMode = Schema.AccessMode.READ_ONLY,
+        readOnly = true
+    )
     private OffsetDateTime modified;
 
 }

@@ -17,6 +17,7 @@
 package de.terrestris.shogun.lib.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -39,18 +40,34 @@ public class File extends BaseEntity {
     @Column(columnDefinition = "uuid", updatable = false, nullable = false)
     @Type(type="pg-uuid")
     @Getter
+    @Schema(
+        description = "The (auto assigned) UUID of the file.",
+        accessMode = Schema.AccessMode.READ_ONLY
+    )
     private UUID fileUuid = UUID.randomUUID();
 
     @Column
     @Getter @Setter
+    @Schema(
+        description = "Whether the file is considered as active or not.",
+        example = "true"
+    )
     private Boolean active;
 
     @Column(nullable = false)
     @Getter @Setter
+    @Schema(
+        description = "The (original) name of the file.",
+        example = "shogun.png"
+    )
     private String fileName;
 
     @Column(nullable = false)
     @Getter @Setter
+    @Schema(
+        description = "The (original) type of the file.",
+        example = "image/png"
+    )
     private String fileType;
 
     @JsonIgnore
