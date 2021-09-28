@@ -35,7 +35,7 @@ public class CacheLogger implements CacheEventListener<Object, Object> {
      */
     @Override
     public void onEvent(CacheEvent<?, ?> event) {
-        log.info("Key: {} | EventType: {} | Old value: {} | New value: {}",
+        log.debug("Key: {} | EventType: {} | Old value: {} | New value: {}",
             event.getKey(), event.getType(), event.getOldValue(),
             event.getNewValue());
     }
