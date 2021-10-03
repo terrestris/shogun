@@ -2,8 +2,8 @@
 
 ## Requirements
 
-- maven >= 3.5
-- Java 11
+- maven >= 3.8
+- Java 17
 - docker / docker-compose
 - IntelliJ
 - [IntelliJ Lombok plugin](https://plugins.jetbrains.com/plugin/6317-lombok/)

@@ -91,7 +91,7 @@
   <properties>
     <project.encoding>UTF-8</project.encoding>
 
-    <java.version>11</java.version>
+    <java.version>17</java.version>
 
     <!-- Plugins -->
     <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
