@@ -184,7 +184,7 @@ public class KeycloakUtil {
      */
     @Deprecated
     public String getKeycloakUserIdFromAuthentication(Authentication authentication) {
-        return securityContextUtil.getKeycloakUserIdFromAuthentication(authentication);
+        return securityContextUtil.getKeycloakUserUuid(authentication);
     }
 
     /**

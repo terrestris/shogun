@@ -3,11 +3,14 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+  <properties>
+    <java.version>17</java.version>
+  </properties>
 
-    <parent>
+  <parent>
       <groupId>de.terrestris</groupId>
       <artifactId>shogun</artifactId>
-      <version>7.0.1-SNAPSHOT</version>
+      <version>8.0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>shogun-keycloak-oidc-protocol-mapper</artifactId>
