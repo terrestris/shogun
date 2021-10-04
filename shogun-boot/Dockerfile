@@ -15,9 +15,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 FROM terrestris/openjdk-maven-docker:jdk17-bullseye
-WORKDIR /shogun-boot
+WORKDIR /shogun/shogun-boot
 
-RUN mkdir /usr/share/man/man1 && apt-get update && apt-get install -y maven
+RUN apt -y update && apt -y upgrade && apt -y install maven
 
 ENTRYPOINT [ \
   "mvn", \
