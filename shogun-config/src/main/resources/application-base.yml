@@ -15,6 +15,8 @@
 #  limitations under the License.
 server:
   port: 8080
+  # this flag is needed to properly redirect to https:
+  forward-headers-strategy: framework
   servlet:
     context-path: /
     session:
@@ -79,24 +81,25 @@ spring:
     defaultSchema: shogun
   datasource:
     platform: postgres
-    url: jdbc:postgresql://localhost:5555/shogun?currentSchema=shogun
+    url: jdbc:postgresql://shogun-postgis/shogun?currentSchema=shogun
     username: shogun
     password: shogun
   session:
     store-type: redis
   redis:
-    host: localhost
+    host: shogun-redis
     port: 6379
     password: pass
 
 keycloak:
-  auth-server-url: http://localhost:8000/auth
+  auth-server-url: https://${KEYCLOAK_HOST}/keycloak/auth
   realm: SpringBootKeycloak
   resource: shogun-app
   public-client: true
-  ssl-required: external
+  ssl-required: all
   principal-attribute: preferred_username
   enable-basic-auth: true
+  disable-trust-manager: ${KEYCLOAK_DISABLE_TRUST_MANAGER}
 #  security-constraints:
 #    - authRoles:
 #      - user
