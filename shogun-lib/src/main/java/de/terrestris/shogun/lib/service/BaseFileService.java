@@ -19,6 +19,7 @@ package de.terrestris.shogun.lib.service;
 import de.terrestris.shogun.lib.model.File;
 import de.terrestris.shogun.lib.repository.BaseFileRepository;
 import de.terrestris.shogun.properties.UploadProperties;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.FileUtils;
 import org.apache.tika.config.TikaConfig;
 import org.apache.tika.exception.TikaException;
@@ -37,6 +38,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 
+@Log4j2
 public abstract class BaseFileService<T extends BaseFileRepository<S, Long> & JpaSpecificationExecutor<S>, S extends File> extends BaseService<T, S> implements IBaseFileService<T, S> {
 
     @Autowired

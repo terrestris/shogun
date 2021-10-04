@@ -18,6 +18,7 @@ package de.terrestris.shogun.lib.controller;
 
 import de.terrestris.shogun.lib.model.ImageFile;
 import de.terrestris.shogun.lib.service.ImageFileService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.*;
@@ -31,6 +32,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/imagefiles")
 @ConditionalOnExpression("${controller.imagefiles.enabled:true}")
+@Log4j2
 public class ImageFileController extends BaseFileController<ImageFileService, ImageFile> {
 
     @GetMapping("/{fileUuid}/thumbnail")

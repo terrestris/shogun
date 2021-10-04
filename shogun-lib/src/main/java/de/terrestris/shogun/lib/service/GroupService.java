@@ -21,6 +21,7 @@ import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.GroupRepository;
 import de.terrestris.shogun.lib.repository.UserRepository;
 import de.terrestris.shogun.lib.util.KeycloakUtil;
+import lombok.extern.log4j.Log4j2;
 import org.keycloak.admin.client.resource.GroupResource;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -36,6 +37,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Log4j2
 public class GroupService extends BaseService<GroupRepository, Group> {
 
     @Autowired
