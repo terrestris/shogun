@@ -64,23 +64,26 @@ public class JacksonConfigTest {
 
     @Test
     public void assertThatObjectMapperHasCorrectlyConfiguredJtsModule() throws JsonProcessingException {
-        String LINESTRING_25832 = "{" +
-            "\"type\": \"LineString\"," +
-            "\"coordinates\": [" +
-                "[" +
-                    "711957.369742162," +
-                    "5637657.304058334" +
-                "]," +
-                "[" +
-                    "711979.3599907478," +
-                    "5637629.050147795" +
-                "]," +
-                "[" +
-                    "712000.5099907471," +
-                    "5637596.860147787" +
-                "]" +
-            "]" +
-        "}";
+        String LINESTRING_25832 = """
+            {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        711957.369742162,
+                        5637657.304058334
+                    ],
+                    [
+                        711979.3599907478,
+                        5637629.050147795
+                    ],
+                    [
+                        712000.5099907471,
+                        5637596.860147787
+                    ]
+                ]
+            }
+            """;
+
         LineString parsedLineString = objectMapper.readValue(LINESTRING_25832, LineString.class);
         Assertions.assertEquals(parsedLineString.getSRID(), srid, "Coordinate reference system of parsed " +
             "geometry does not match the one configured in JTS Module");
