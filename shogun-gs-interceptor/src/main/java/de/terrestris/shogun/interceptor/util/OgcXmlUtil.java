@@ -18,8 +18,8 @@ package de.terrestris.shogun.interceptor.util;
 
 import de.terrestris.shogun.interceptor.exception.InterceptorException;
 import de.terrestris.shogun.interceptor.servlet.MutableHttpServletRequest;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.Logger;
 import org.springframework.util.StreamUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -42,14 +42,8 @@ import javax.xml.xpath.*;
 import java.io.*;
 import java.nio.charset.Charset;
 
-import static org.apache.logging.log4j.LogManager.getLogger;
-
+@Log4j2
 public class OgcXmlUtil {
-
-    /**
-     * The Logger.
-     */
-    private static final Logger LOG = getLogger(OgcXmlUtil.class);
 
     /**
      * The default charset.
@@ -73,7 +67,7 @@ public class OgcXmlUtil {
             }
             return StreamUtils.copyToString(in, charset);
         } catch (IOException e) {
-            LOG.error("Could not read the InputStream as String: " +
+            log.error("Could not read the InputStream as String: " +
                 e.getMessage());
         }
         return null;
@@ -199,8 +193,8 @@ public class OgcXmlUtil {
             }
             return request;
         } catch (TransformerException | IOException e) {
-            LOG.error("Error on trying to parse an xml body.");
-            LOG.trace("Stack trace:", e);
+            log.error("Error on trying to parse an xml body.");
+            log.trace("Stack trace:", e);
         }
         return null;
     }

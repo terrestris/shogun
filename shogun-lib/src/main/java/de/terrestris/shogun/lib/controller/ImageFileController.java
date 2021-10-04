@@ -37,7 +37,7 @@ public class ImageFileController extends BaseFileController<ImageFileService, Im
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<?> findOneThumbnail(@PathVariable("fileUuid") UUID fileUuid) {
 
-        LOG.debug("Requested to return thumbnail for image file with UUID {}", fileUuid);
+        log.debug("Requested to return thumbnail for image file with UUID {}", fileUuid);
 
         try {
             Optional<ImageFile> entity = service.findOne(fileUuid);
@@ -45,7 +45,7 @@ public class ImageFileController extends BaseFileController<ImageFileService, Im
             if (entity.isPresent()) {
                 ImageFile file = entity.get();
 
-                LOG.info("Successfully got thumbnail for image file with UUID {}", fileUuid);
+                log.info("Successfully got thumbnail for image file with UUID {}", fileUuid);
 
                 final HttpHeaders responseHeaders = new HttpHeaders();
                 responseHeaders.setContentType(MediaType.IMAGE_PNG);
@@ -55,7 +55,7 @@ public class ImageFileController extends BaseFileController<ImageFileService, Im
 
                 return new ResponseEntity<>(file.getThumbnail(), responseHeaders, HttpStatus.OK);
             } else {
-                LOG.error("Could not find entity of type {} with UUID {}",
+                log.error("Could not find entity of type {} with UUID {}",
                     getGenericClassName(), fileUuid);
 
                 throw new ResponseStatusException(
@@ -68,7 +68,7 @@ public class ImageFileController extends BaseFileController<ImageFileService, Im
                 );
             }
         } catch (AccessDeniedException ade) {
-            LOG.info("Access to entity of type {} with UUID {} is denied",
+            log.info("Access to entity of type {} with UUID {} is denied",
                 getGenericClassName(), fileUuid);
 
             throw new ResponseStatusException(
@@ -83,9 +83,9 @@ public class ImageFileController extends BaseFileController<ImageFileService, Im
         } catch (ResponseStatusException rse) {
             throw rse;
         } catch (Exception e) {
-            LOG.error("Error while requesting entity of type {} with UUID {}: \n {}",
+            log.error("Error while requesting entity of type {} with UUID {}: \n {}",
                 getGenericClassName(), fileUuid, e.getMessage());
-            LOG.trace("Full stack trace: ", e);
+            log.trace("Full stack trace: ", e);
 
             throw new ResponseStatusException(
                 HttpStatus.INTERNAL_SERVER_ERROR,

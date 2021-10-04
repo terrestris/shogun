@@ -19,9 +19,9 @@ package de.terrestris.shogun.interceptor.servlet;
 import de.terrestris.shogun.interceptor.enumeration.OgcEnum;
 import de.terrestris.shogun.interceptor.exception.InterceptorException;
 import de.terrestris.shogun.interceptor.util.OgcXmlUtil;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 
 import javax.servlet.ServletInputStream;
@@ -34,8 +34,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static org.apache.logging.log4j.LogManager.getLogger;
-
 /**
  * An implementation of HttpServletRequestWrapper.
  *
@@ -44,14 +42,10 @@ import static org.apache.logging.log4j.LogManager.getLogger;
  * This stackoverflow discussion
  * </a>
  */
+@Log4j2
 public class MutableHttpServletRequest extends HttpServletRequestWrapper {
 
     public static final String DEFAULT_CHARSET = "UTF-8";
-
-    /**
-     * The Logger.
-     */
-    private static final Logger LOG = getLogger(MutableHttpServletRequest.class);
 
     /**
      * Holds custom parameter mapping
@@ -139,12 +133,12 @@ public class MutableHttpServletRequest extends HttpServletRequestWrapper {
      * @return
      */
     public static String getRequestParameterValue(HttpServletRequest httpServletRequest, String parameter) throws IOException, InterceptorException {
-        LOG.trace("Finding the request parameter [" + parameter + "]");
+        log.trace("Finding the request parameter [" + parameter + "]");
 
         String value = StringUtils.EMPTY;
         Map<String, String[]> queryParams = httpServletRequest.getParameterMap();
         if (!queryParams.isEmpty()) {
-            LOG.trace("The request contains query parameters (GET or POST).");
+            log.trace("The request contains query parameters (GET or POST).");
 
             Map<String, String[]> params = new TreeMap<>(
                 String.CASE_INSENSITIVE_ORDER);
@@ -157,7 +151,7 @@ public class MutableHttpServletRequest extends HttpServletRequestWrapper {
         } else {
             String xml = OgcXmlUtil.getRequestBody(httpServletRequest);
             if (!StringUtils.isEmpty(xml)) {
-                LOG.trace("The request contains a POST body.");
+                log.trace("The request contains a POST body.");
                 Document document = OgcXmlUtil.getDocumentFromString(xml);
 
                 if (parameter.equalsIgnoreCase(OgcEnum.Service.SERVICE.toString())) {
@@ -174,11 +168,11 @@ public class MutableHttpServletRequest extends HttpServletRequestWrapper {
                     }
                 }
             } else {
-                LOG.error("No body found in the request.");
+                log.error("No body found in the request.");
             }
         }
 
-        LOG.trace("Found the request parameter value: " + value);
+        log.trace("Found the request parameter value: " + value);
         return value;
     }
 
@@ -334,7 +328,7 @@ public class MutableHttpServletRequest extends HttpServletRequestWrapper {
             cachedInputStream = new ByteArrayOutputStream();
             IOUtils.copy(stream, cachedInputStream);
         } catch (IOException e) {
-            LOG.error("Exception on writing InputStream.", e);
+            log.error("Exception on writing InputStream.", e);
         }
     }
 
@@ -348,7 +342,7 @@ public class MutableHttpServletRequest extends HttpServletRequestWrapper {
             cachedInputStream = new ByteArrayOutputStream();
             IOUtils.copy(stream, cachedInputStream);
         } catch (IOException e) {
-            LOG.error("Exception on writing InputStream.", e);
+            log.error("Exception on writing InputStream.", e);
         }
     }
 

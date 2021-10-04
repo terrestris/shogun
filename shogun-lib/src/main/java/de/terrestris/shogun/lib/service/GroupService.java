@@ -143,7 +143,7 @@ public class GroupService extends BaseService<GroupRepository, Group> {
             group = new Group(keycloakGroupId, null);
             repository.save(group);
 
-            LOG.info("Group with keycloak id {} did not yet exist in the SHOGun DB and was therefore created.", keycloakGroupId);
+            log.info("Group with keycloak id {} did not yet exist in the SHOGun DB and was therefore created.", keycloakGroupId);
             return group;
         }
 
@@ -161,11 +161,11 @@ public class GroupService extends BaseService<GroupRepository, Group> {
         Optional<Group> groupOptional = repository.findByKeycloakId(keycloakGroupId);
         Group group = groupOptional.orElse(null);
         if (group == null) {
-            LOG.debug("Group with keycloak id {} was deleted in Keycloak. It did not exists in SHOGun DB. No action needed.", keycloakGroupId);
+            log.debug("Group with keycloak id {} was deleted in Keycloak. It did not exists in SHOGun DB. No action needed.", keycloakGroupId);
             return;
         }
         repository.delete(group);
-        LOG.info("Group with keycloak id {} was deleted in Keycloak and was therefore deleted in SHOGun DB, too.", keycloakGroupId);
+        log.info("Group with keycloak id {} was deleted in Keycloak and was therefore deleted in SHOGun DB, too.", keycloakGroupId);
     }
 
     private Group setTransientKeycloakRepresentations(Group group) {
@@ -175,10 +175,10 @@ public class GroupService extends BaseService<GroupRepository, Group> {
             GroupRepresentation groupRepresentation = groupResource.toRepresentation();
             group.setKeycloakRepresentation(groupRepresentation);
         } catch (Exception e) {
-            LOG.warn("Could not get the GroupRepresentation for group with SHOGun ID {} and " +
+            log.warn("Could not get the GroupRepresentation for group with SHOGun ID {} and " +
                     "Keycloak ID {}. This may happen if the group is not available in Keycloak.",
                     group.getId(), group.getKeycloakId());
-            LOG.trace("Full stack trace: ", e);
+            log.trace("Full stack trace: ", e);
         }
 
         return group;

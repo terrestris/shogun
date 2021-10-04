@@ -18,8 +18,7 @@ package de.terrestris.shogun.boot.controller;
 
 import de.terrestris.shogun.boot.dto.ApplicationInfo;
 import de.terrestris.shogun.boot.service.ApplicationInfoService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.http.HttpStatus;
@@ -34,9 +33,8 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @RequestMapping("/info")
 @ConditionalOnExpression("${controller.info.enabled:true}")
+@Log4j2
 public class ApplicationInfoController {
-
-    protected final Logger LOG = LogManager.getLogger(getClass());
 
     @Autowired
     private ApplicationInfoService infoService;
@@ -51,8 +49,8 @@ public class ApplicationInfoController {
         try {
             return infoService.getApplicationInfo();
         } catch (Exception e) {
-            LOG.error("Could not determine general application information: {}", e.getMessage());
-            LOG.trace("Full stack trace: ", e);
+            log.error("Could not determine general application information: {}", e.getMessage());
+            log.trace("Full stack trace: ", e);
         }
 
         throw new ResponseStatusException(

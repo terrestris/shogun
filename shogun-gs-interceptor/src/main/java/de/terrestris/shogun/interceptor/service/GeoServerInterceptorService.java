@@ -28,6 +28,7 @@ import de.terrestris.shogun.interceptor.servlet.MutableHttpServletRequest;
 import de.terrestris.shogun.interceptor.util.OgcXmlUtil;
 import de.terrestris.shogun.lib.dto.HttpResponse;
 import de.terrestris.shogun.lib.util.HttpUtil;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpException;
@@ -36,7 +37,6 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
@@ -52,12 +52,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.apache.logging.log4j.LogManager.getLogger;
-
 @Service
+@Log4j2
 public class GeoServerInterceptorService {
-
-    protected static final Logger LOG = getLogger(GeoServerInterceptorService.class);
 
     /**
      * An array of whitelisted Headers to forward within the Interceptor.
@@ -190,7 +187,7 @@ public class GeoServerInterceptorService {
             }
 
         } catch (URISyntaxException | UnsupportedEncodingException e) {
-            LOG.error("Error while sending request: " + e.getMessage());
+            log.error("Error while sending request: " + e.getMessage());
         }
 
         return httpResponse;
@@ -238,7 +235,7 @@ public class GeoServerInterceptorService {
                 "Failed to append query '%s' to URI '%s', returning URI unchanged.",
                 appendQuery, uri
             );
-            LOG.warn(msg);
+            log.warn(msg);
         }
         return newUri;
     }
@@ -251,17 +248,17 @@ public class GeoServerInterceptorService {
         HttpHeaders responseHeaders = new HttpHeaders();
 
         if (headers == null) {
-            LOG.debug("No headers found to forward!");
+            log.debug("No headers found to forward!");
             return responseHeaders;
         }
 
-        LOG.trace("Requested to filter the Headers to respond with:");
+        log.trace("Requested to filter the Headers to respond with:");
 
         for (Entry<String, List<String>> header : headers.entrySet()) {
             String headerKey = header.getKey();
             String headerVal = StringUtils.join(header.getValue(), ",");
 
-            LOG.trace("  * Header: " + headerKey);
+            log.trace("  * Header: " + headerKey);
 
             if (Arrays.asList(FORWARD_RESPONSE_HEADER_KEYS).contains(headerKey)) {
                 // the GeoServer response may contain a subtype in the
@@ -286,9 +283,9 @@ public class GeoServerInterceptorService {
                 }
 
                 responseHeaders.set(headerKey, headerVal);
-                LOG.trace("    > Forwarded");
+                log.trace("    > Forwarded");
             } else {
-                LOG.trace("    > Skipped");
+                log.trace("    > Skipped");
             }
         }
 
@@ -377,7 +374,7 @@ public class GeoServerInterceptorService {
         String value = MutableHttpServletRequest.getRequestParameterValue(mutableRequest, USE_REFLECT_PARAM);
         useReflect = Boolean.parseBoolean(value);
         if (useReflect) {
-            LOG.info("Parameter " + USE_REFLECT_PARAM + "found in request. Will use WMS reflector endpoint of GeoServer.");
+            log.info("Parameter " + USE_REFLECT_PARAM + "found in request. Will use WMS reflector endpoint of GeoServer.");
         }
 
         return useReflect;
@@ -390,7 +387,7 @@ public class GeoServerInterceptorService {
      * @throws IOException
      */
     private OgcMessage getOgcMessage(MutableHttpServletRequest mutableRequest) throws InterceptorException, IOException {
-        LOG.trace("Building the OGC message from the given request.");
+        log.trace("Building the OGC message from the given request.");
         OgcMessage ogcMessage = new OgcMessage();
         String requestService = MutableHttpServletRequest.getRequestParameterValue(
             mutableRequest, OgcEnum.Service.SERVICE.toString());
@@ -406,7 +403,7 @@ public class GeoServerInterceptorService {
                 !StringUtils.isEmpty(MutableHttpServletRequest.getRequestParameterValue(
                     mutableRequest, USE_REFLECT_PARAM))
             ) {
-                LOG.trace("Will use WMS reflector endpoint of GeoServer");
+                log.trace("Will use WMS reflector endpoint of GeoServer");
                 requestService = OgcEnum.ServiceType.WMS.toString();
                 requestOperation = OgcEnum.OperationType.GET_MAP.toString();
             } else {
@@ -418,25 +415,25 @@ public class GeoServerInterceptorService {
 
         if (StringUtils.isNotEmpty(requestService)) {
             ogcMessage.setService(OgcEnum.ServiceType.fromString(requestService));
-            LOG.trace("Successfully set the service: " +
+            log.trace("Successfully set the service: " +
                 OgcEnum.ServiceType.fromString(requestService));
         } else {
-            LOG.debug("No service found.");
+            log.debug("No service found.");
         }
 
         if (StringUtils.isNotEmpty(requestOperation)) {
             ogcMessage.setOperation(OgcEnum.OperationType.fromString(requestOperation));
-            LOG.trace("Successfully set the operation: " +
+            log.trace("Successfully set the operation: " +
                 OgcEnum.OperationType.fromString(requestOperation));
         } else {
-            LOG.debug("No operation found.");
+            log.debug("No operation found.");
         }
 
         if (StringUtils.isNotEmpty(requestEndPoint)) {
             ogcMessage.setEndPoint(requestEndPoint);
-            LOG.trace("Successfully set the endPoint: " + requestEndPoint);
+            log.trace("Successfully set the endPoint: " + requestEndPoint);
         } else {
-            LOG.debug("No endPoint found.");
+            log.debug("No endPoint found.");
         }
 
         InterceptorRule mostSpecificRequestRule = getMostSpecificRule(requestService,
@@ -446,21 +443,21 @@ public class GeoServerInterceptorService {
 
         if (mostSpecificRequestRule != null) {
             ogcMessage.setRequestRule(mostSpecificRequestRule.getRule());
-            LOG.trace("Successfully set the requestRule: " +
+            log.trace("Successfully set the requestRule: " +
                 mostSpecificRequestRule.getRule());
         } else {
-            LOG.debug("No interceptor rule found for the request.");
+            log.debug("No interceptor rule found for the request.");
         }
 
         if (mostSpecificResponseRule != null) {
             ogcMessage.setResponseRule(mostSpecificResponseRule.getRule());
-            LOG.trace("Successfully set the responseRule: " +
+            log.trace("Successfully set the responseRule: " +
                 mostSpecificResponseRule.getRule());
         } else {
-            LOG.debug("No interceptor rule found for the response.");
+            log.debug("No interceptor rule found for the response.");
         }
 
-        LOG.trace("Successfully build the OGC message: " + ogcMessage);
+        log.trace("Successfully build the OGC message: " + ogcMessage);
         return ogcMessage;
     }
 
@@ -489,15 +486,15 @@ public class GeoServerInterceptorService {
         // get all persisted rules for the given service and event
         List<InterceptorRule> interceptorRules = this.interceptorRuleService.findAllRulesForServiceAndEvent(service, HttpEnum.EventType.fromString(ruleEvent));
 
-        LOG.trace("Got " + interceptorRules.size() + " rule(s) from database.");
+        log.trace("Got " + interceptorRules.size() + " rule(s) from database.");
 
-        if (LOG.isTraceEnabled()) {
+        if (log.isTraceEnabled()) {
             for (InterceptorRule interceptorRule : interceptorRules) {
-                LOG.trace("Returned rule is: " + interceptorRule);
+                log.trace("Returned rule is: " + interceptorRule);
             }
         }
 
-        LOG.trace("Evaluating the given rules for the most specific one:");
+        log.trace("Evaluating the given rules for the most specific one:");
 
         // create the predicate for finding the most specific rule out of
         // the given rules (conditions in descending specific order).
@@ -549,8 +546,8 @@ public class GeoServerInterceptorService {
                 """);
 
             throw new InterceptorException("No interceptor rule found.");
-        } else if (LOG.isTraceEnabled()) {
-            LOG.trace("Identified the following rule as most the specific " +
+        } else if (log.isTraceEnabled()) {
+            log.trace("Identified the following rule as most the specific " +
                 "one: " + mostSpecific.get());
         }
 
@@ -576,7 +573,7 @@ public class GeoServerInterceptorService {
             }
         } else {
             geoServerUrl = interceptorProperties.getDefaultOwsUrl();
-            LOG.debug("Using GeoServer OWS URL without namespace: {}", geoServerUrl);
+            log.debug("Using GeoServer OWS URL without namespace: {}", geoServerUrl);
         }
 
         if (StringUtils.isEmpty(geoServerUrl)) {
@@ -585,7 +582,7 @@ public class GeoServerInterceptorService {
         }
 
         if (useWmsReflector && isWMS) {
-            LOG.trace("Will use WMS reflector endpoint");
+            log.trace("Will use WMS reflector endpoint");
             if (StringUtils.endsWithIgnoreCase(geoServerUrl, "ows")) {
                 StringBuilder builder = new StringBuilder();
                 int start = geoServerUrl.lastIndexOf("ows");
@@ -595,7 +592,7 @@ public class GeoServerInterceptorService {
             } else if (StringUtils.endsWithIgnoreCase(geoServerUrl, "wms")) {
                 geoServerUrl += WMS_REFLECT_ENDPOINT;
             }
-            LOG.trace("The modified endpoint is: " + geoServerUrl);
+            log.trace("The modified endpoint is: " + geoServerUrl);
         }
 
         URIBuilder builder = new URIBuilder(geoServerUrl);
@@ -608,16 +605,16 @@ public class GeoServerInterceptorService {
      * @throws InterceptorException
      */
     private URI getGeoServerBaseURI(OgcMessage message, boolean useWmsReflector) throws URISyntaxException, InterceptorException {
-        LOG.debug("Finding the GeoServer base URI by the provided EndPoint: " + message.getEndPoint());
+        log.debug("Finding the GeoServer base URI by the provided EndPoint: " + message.getEndPoint());
 
         // get the namespace from the qualified endPoint name
         String geoServerNamespace = getGeoServerNameSpace(message.getEndPoint());
 
-        LOG.trace("Found the following GeoServer namespace set for endPoint: " + geoServerNamespace);
+        log.trace("Found the following GeoServer namespace set for endPoint: " + geoServerNamespace);
 
         // set the GeoServer base URL
         URI geoServerBaseUri = getGeoServerBaseURIFromNameSpace(geoServerNamespace, useWmsReflector, message.isWms());
-        LOG.debug("The corresponding GeoServer base URI is: " + geoServerBaseUri);
+        log.debug("The corresponding GeoServer base URI is: " + geoServerBaseUri);
         return geoServerBaseUri;
     }
 }

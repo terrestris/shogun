@@ -27,8 +27,7 @@ import de.terrestris.shogun.interceptor.response.WmsResponseInterceptorInterface
 import de.terrestris.shogun.interceptor.response.WpsResponseInterceptorInterface;
 import de.terrestris.shogun.interceptor.servlet.MutableHttpServletRequest;
 import de.terrestris.shogun.lib.dto.HttpResponse;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -36,6 +35,7 @@ import org.springframework.stereotype.Component;
 import java.text.MessageFormat;
 
 @Component
+@Log4j2
 public class OgcMessageDistributor {
 
     private static final String MODIFYING_REQUEST_MSG = "Modifying a {0} {1} request";
@@ -50,7 +50,6 @@ public class OgcMessageDistributor {
         "{0} is not supported";
     private static final String RESPONSE_NOT_SUPPORTED_MSG = "The response type " +
         "{0} is not supported";
-    protected final Logger logger = LogManager.getLogger(getClass());
     @Autowired(required = false)
     @Qualifier("wmsRequestInterceptor")
     private WmsRequestInterceptorInterface wmsRequestInterceptor;
@@ -95,12 +94,12 @@ public class OgcMessageDistributor {
      */
     public HttpResponse distributeToResponseInterceptor(MutableHttpServletRequest mutableRequest, HttpResponse response, OgcMessage message) throws InterceptorException {
         if (message.isResponseAllowed()) {
-            logger.debug("Response is ALLOWED, not intercepting the response.");
+            log.debug("Response is ALLOWED, not intercepting the response.");
             return response;
         } else if (message.isResponseDenied()) {
             throw new InterceptorException("Response is DENIED, blocking the response.");
         } else if (message.isResponseModified()) {
-            logger.debug("Response is to be MODIFIED, intercepting the response.");
+            log.debug("Response is to be MODIFIED, intercepting the response.");
         }
 
         String implErrMsg = MessageFormat.format(RESPONSE_IMPLEMENTATION_NOT_FOUND_MSG,
@@ -116,11 +115,11 @@ public class OgcMessageDistributor {
 
             // check if the wmsResponseInterceptor is available
             if (this.wmsResponseInterceptor == null) {
-                logger.debug(implErrMsg);
+                log.debug(implErrMsg);
                 return response;
             }
 
-            logger.debug(infoMsg);
+            log.debug(infoMsg);
 
             if (message.isWmsGetCapabilities()) {
                 response = this.wmsResponseInterceptor.interceptGetCapabilities(mutableRequest, response);
@@ -142,11 +141,11 @@ public class OgcMessageDistributor {
 
             // check if the wfsResponseInterceptor is available
             if (this.wfsResponseInterceptor == null) {
-                logger.debug(implErrMsg);
+                log.debug(implErrMsg);
                 return response;
             }
 
-            logger.debug(infoMsg);
+            log.debug(infoMsg);
 
             // Note: WFS 2.0.0 operations are not supported yet!
             if (message.isWfsGetCapabilities()) {
@@ -167,11 +166,11 @@ public class OgcMessageDistributor {
 
             // check if the wcsResponseInterceptor is available
             if (this.wcsResponseInterceptor == null) {
-                logger.debug(implErrMsg);
+                log.debug(implErrMsg);
                 return response;
             }
 
-            logger.debug(infoMsg);
+            log.debug(infoMsg);
 
             if (message.isWcsGetCapabilities()) {
                 response = this.wcsResponseInterceptor.interceptGetCapabilities(mutableRequest, response);
@@ -187,11 +186,11 @@ public class OgcMessageDistributor {
 
             // check if the wpsResponseInterceptor is available
             if (this.wpsResponseInterceptor == null) {
-                logger.debug(implErrMsg);
+                log.debug(implErrMsg);
                 return response;
             }
 
-            logger.debug(infoMsg);
+            log.debug(infoMsg);
 
             if (message.isWpsGetCapabilities()) {
                 response = this.wpsResponseInterceptor.interceptGetCapabilities(mutableRequest, response);
@@ -224,12 +223,12 @@ public class OgcMessageDistributor {
     public MutableHttpServletRequest distributeToRequestInterceptor(MutableHttpServletRequest request, OgcMessage message) throws InterceptorException {
 
         if (message.isRequestAllowed()) {
-            logger.debug("Request is ALLOWED, not intercepting the request.");
+            log.debug("Request is ALLOWED, not intercepting the request.");
             return request;
         } else if (message.isRequestDenied()) {
             throw new InterceptorException("Request is DENIED, blocking the request.");
         } else if (message.isRequestModified()) {
-            logger.debug("Request is to be MODIFIED, intercepting the request.");
+            log.debug("Request is to be MODIFIED, intercepting the request.");
         }
 
         String implErrMsg = MessageFormat.format(REQUEST_IMPLEMENTATION_NOT_FOUND_MSG,
@@ -245,11 +244,11 @@ public class OgcMessageDistributor {
 
             // check if the wmsRequestInterceptor is available
             if (this.wmsRequestInterceptor == null) {
-                logger.debug(implErrMsg);
+                log.debug(implErrMsg);
                 return request;
             }
 
-            logger.debug(infoMsg);
+            log.debug(infoMsg);
 
             if (message.isWmsGetCapabilities()) {
                 request = this.wmsRequestInterceptor.interceptGetCapabilities(request);
@@ -271,11 +270,11 @@ public class OgcMessageDistributor {
 
             // check if the wfsRequestInterceptor is available
             if (this.wfsRequestInterceptor == null) {
-                logger.debug(implErrMsg);
+                log.debug(implErrMsg);
                 return request;
             }
 
-            logger.debug(infoMsg);
+            log.debug(infoMsg);
 
             // Note: WFS 2.0.0 operations are not supported yet!
             if (message.isWfsGetCapabilities()) {
@@ -296,11 +295,11 @@ public class OgcMessageDistributor {
 
             // check if the wcsRequestInterceptor is available
             if (this.wcsRequestInterceptor == null) {
-                logger.debug(implErrMsg);
+                log.debug(implErrMsg);
                 return request;
             }
 
-            logger.debug(infoMsg);
+            log.debug(infoMsg);
 
             if (message.isWcsGetCapabilities()) {
                 request = this.wcsRequestInterceptor.interceptGetCapabilities(request);
@@ -316,7 +315,7 @@ public class OgcMessageDistributor {
 
             // check if the wpsRequestInterceptor is available
             if (this.wpsRequestInterceptor == null) {
-                logger.debug(implErrMsg);
+                log.debug(implErrMsg);
                 return request;
             }
 

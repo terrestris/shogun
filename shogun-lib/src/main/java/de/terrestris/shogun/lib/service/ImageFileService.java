@@ -59,7 +59,7 @@ public class ImageFileService extends BaseFileService<ImageFileRepository, Image
             file.setWidth(imageDimensions.width);
             file.setHeight(imageDimensions.height);
         } else {
-            LOG.warn("Could not detect the dimensions of the image. Neither width, height " +
+            log.warn("Could not detect the dimensions of the image. Neither width, height " +
                 "nor the thumbnail can be set.");
         }
 
@@ -94,7 +94,7 @@ public class ImageFileService extends BaseFileService<ImageFileRepository, Image
             file.setWidth(imageDimensions.width);
             file.setHeight(imageDimensions.height);
         } else {
-            LOG.warn("Could not detect the dimensions of the image. Neither width, height " +
+            log.warn("Could not detect the dimensions of the image. Neither width, height " +
                 "nor the thumbnail can be set.");
         }
 
@@ -112,10 +112,10 @@ public class ImageFileService extends BaseFileService<ImageFileRepository, Image
 
         try (OutputStream out = new FileOutputStream(outFile)) {
             IOUtils.copy(in, out);
-            LOG.info("Saved file with id {} to: {}", savedFile.getId(), savedFile.getPath());
+            log.info("Saved file with id {} to: {}", savedFile.getId(), savedFile.getPath());
         } catch (Exception e) {
-            LOG.error("Error while saving file {} to disk: {}", e.getMessage(), savedFile.getId());
-            LOG.info("Rollback creation of file {}.", savedFile.getId());
+            log.error("Error while saving file {} to disk: {}", e.getMessage(), savedFile.getId());
+            log.info("Rollback creation of file {}.", savedFile.getId());
             this.repository.delete(savedFile);
             fileDirectory.delete();
             throw e;
