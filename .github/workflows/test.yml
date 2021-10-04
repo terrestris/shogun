@@ -32,4 +32,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Test SHOGun with Maven
+      env:
+        KEYCLOAK_HOST: localhost
       run: mvn -B test
