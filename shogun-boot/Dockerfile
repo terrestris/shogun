@@ -17,11 +17,13 @@
 FROM terrestris/openjdk-maven-docker:jdk17-bullseye
 WORKDIR /shogun-boot
 
+RUN mkdir /usr/share/man/man1 && apt-get update && apt-get install -y maven
+
 ENTRYPOINT [ \
   "mvn", \
   "spring-boot:run", \
   "-Dspring-boot.run.profiles=base,boot", \
-  "-Dspring-boot.run.jvmArguments=-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:4711", \
+  "-Dspring-boot.run.jvmArguments=-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:4711 -Dspring.config.location=/config/application.yml", \
   "-Djava.security.egd=file:/dev/./urandom", \
   "-Dcom.sun.management.jmxremote", \
   "-Dcom.sun.management.jmxremote.port=9010", \

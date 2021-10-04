@@ -30,7 +30,6 @@
   <packaging>jar</packaging>
 
   <dependencies>
-
     <!-- Spring Boot -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -137,9 +136,27 @@
       <groupId>org.testcontainers</groupId>
       <artifactId>postgresql</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>de.terrestris</groupId>
+      <artifactId>shogun-admin</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+      </resource>
+      <resource>
+        <directory>target/generated-resources</directory>
+        <filtering>false</filtering>
+        <excludes>
+          <exclude>public/admin/index.html</exclude>
+        </excludes>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <artifactId>maven-site-plugin</artifactId>
@@ -185,6 +202,24 @@
             <mainClass>de.terrestris.shogun.boot.config.ApplicationConfig</mainClass>
           </container>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack-admin</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>unpack-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeGroupIds>de.terrestris</includeGroupIds>
+              <includeArtifactIds>shogun-admin</includeArtifactIds>
+              <outputDirectory>target/generated-resources/public/admin</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

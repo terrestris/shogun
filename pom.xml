@@ -138,13 +138,19 @@
     <testcontainers.version>1.16.0</testcontainers.version>
     <junit.jupiter.version>5.7.1</junit.jupiter.version>
     <mockito.version>3.12.4</mockito.version>
+    <maven-dependency-plugin.version>3.2.0</maven-dependency-plugin.version>
   </properties>
 
   <build>
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>io.swagger</groupId>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>${maven-dependency-plugin.version}</version>
+        </plugin>
+        <plugin>
+           <groupId>io.swagger</groupId>
           <artifactId>swagger-codegen-maven-plugin</artifactId>
           <version>${swagger-codegen-maven-plugin.version}</version>
         </plugin>
@@ -536,6 +542,12 @@
         <artifactId>postgresql</artifactId>
         <version>${testcontainers.version}</version>
         <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>de.terrestris</groupId>
+        <artifactId>shogun-admin</artifactId>
+        <version>1.0.1</version>
+        <scope>provided</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>

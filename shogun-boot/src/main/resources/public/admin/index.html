@@ -19,16 +19,19 @@
 <html lang="de">
 <head>
     <meta charset="utf-8">
-    <title>SHOGun-Boot</title>
+    <meta name="viewport" content="user-scalable=no,width=device-width,initial-scale=1,shrink-to-fit=no">
+    <title>SHOGun admin</title>
+    <base href="/">
+    <link rel="icon" href="favicon.ico?0d6ff6714a5fbb916b84">
 </head>
-
 <body>
-    <h1>Hallo SHOGun-Boot</h1>
-    <ul>
-        <li><a href="admin/index.html">Administration client (requires login)</a></li>
-        <li><a href="swagger-ui/index.html">Swagger (requires login)</a></li>
-        <li><a href="graphiql">Graphi QL (requires login)</a></li>
-        <li><a href="websocket.html">WebSocket (requires login)</a></li>
-    </ul>
+<noscript>You need to enable JavaScript to run this app.</noscript>
+<div id="app" class="app" style="height:100%;width:100%"></div>
+<script src="/admin/client-config.js"></script>
+<script>if (!window.shogunApplicationConfig) {
+        console.warn('No SHOGun application config found. Loading fallback.');
+        document.write('<script src="admin/assets/fallbackConfig.js">\x3C/script>')
+      }</script>
+<script src="/admin/js/main.bundle.js?0d6ff6714a5fbb916b84"></script>
 </body>
 </html>
