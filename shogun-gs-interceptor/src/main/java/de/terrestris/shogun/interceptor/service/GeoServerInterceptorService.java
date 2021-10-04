@@ -476,11 +476,14 @@ public class GeoServerInterceptorService {
         final OgcEnum.ServiceType service = OgcEnum.ServiceType.fromString(requestService);
         final OgcEnum.OperationType operation = OgcEnum.OperationType.fromString(requestOperation);
         final String endPoint = requestEndPoint;
-        LOG.trace("Finding the most specific interceptor rule for: \n" +
-            "  * Event: " + ruleEvent + "\n" +
-            "  * Service: " + service + "\n" +
-            "  * Operation: " + operation + "\n" +
-            "  * EndPoint: " + endPoint
+        log.trace("""
+            Finding the most specific interceptor rule for: {}
+              * Event: {}
+              * Service: {}
+              * Operation: {}
+              * EndPoint: {}
+            """,
+            ruleEvent, service, operation, endPoint
         );
 
         // get all persisted rules for the given service and event
@@ -538,10 +541,13 @@ public class GeoServerInterceptorService {
         });
 
         if (interceptorRules.size() == 0) {
-            LOG.error("Got no interceptor rules for this request/response. " +
-                "Usually this should not happen as one has to define at " +
-                "least the basic sets of rules (e.g. ALLOW all WMS " +
-                "requests) when using the interceptor.");
+            log.error("""
+                Got no interceptor rules for this request/response.
+                Usually this should not happen as one has to define at
+                least the basic sets of rules (e.g. ALLOW all WMS
+                requests) when using the interceptor.
+                """);
+
             throw new InterceptorException("No interceptor rule found.");
         } else if (LOG.isTraceEnabled()) {
             LOG.trace("Identified the following rule as most the specific " +
