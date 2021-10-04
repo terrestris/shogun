@@ -201,7 +201,7 @@ Note: All endpoints are accessible by users with the `ADMIN` role only.
 
 ## Release
 
-- Checkout the latest master
+- Checkout the latest `main`
 - Run the release script, e.g.
 
 ```bash
