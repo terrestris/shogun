@@ -20,9 +20,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.matchesPattern;
 
 import java.io.File;
-import org.junit.Test;
 
-public class FlywayMigrations {
+import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
+
+public class FlywayMigrationsTest {
 
     @Test
     public void validateFilenames() {
