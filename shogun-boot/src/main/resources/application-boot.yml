@@ -44,7 +44,7 @@ spring:
 server:
   port: 8080
   servlet:
-    context-path: /shogun-boot
+    context-path: /
 
 support:
   email: noreply@terrestris.de
