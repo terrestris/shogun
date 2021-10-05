@@ -14,6 +14,9 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    env:
+      KEYCLOAK_HOST: 1.2.3.4
+
     steps:
       - uses: actions/checkout@v2
       - name: Set up Java 17
