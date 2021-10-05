@@ -14,8 +14,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-FROM terrestris/openjdk-maven-docker:jdk17-bullseye
-WORKDIR /shogun-boot
+FROM openjdk@sha256:d50104b0b5811b60c198a3e5ced23c783a49e0d4f78b99762fca4bfdbbc59dd2
 
 RUN mkdir /usr/share/man/man1 && apt-get update && apt-get install -y maven
 
