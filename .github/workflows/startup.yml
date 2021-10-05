@@ -38,13 +38,15 @@ jobs:
 
       - name: Clone shogun-docker
         run: git clone https://github.com/terrestris/shogun-docker
+        working-directory: ../
+
+      - name: Set environment variables
+        run: ./setEnvironment.sh
+        working-directory: ../shogun-docker
 
       - name: Start containers
-        run: docker-compose up -d
-        working-directory: ./shogun-docker
-
-      - name: Start spring-boot
-        run: mvn spring-boot:run -Dspring-boot.run.profiles=base,boot > mvn.out.txt &
+        run: docker-compose -f docker-compose.yml -f docker-compose-dev.yml up -d
+        working-directory: ../shogun-docker
 
       - name: Check if application has started
         run: ./scripts/wait.sh
@@ -52,7 +54,7 @@ jobs:
       - name: Docker logs
         if: always()
         run: docker-compose logs
-        working-directory: ./shogun-docker
+        working-directory: ../shogun-docker
 
       - name: Maven output
         if: always()
