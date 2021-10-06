@@ -25,6 +25,7 @@ header:
     - '.gitignore'
     - '.licenserc.yaml'
     - 'LICENSE'
+    - 'shogun-boot/src/main/resources/public/assets'
     - 'shogun-lib/src/main/java/de/terrestris/shogun/lib/envers/DefaultRevisionEntityInformation.java'
     - 'shogun-lib/src/main/java/de/terrestris/shogun/lib/envers/ShogunAnnotationRevisionMetadata.java'
     - 'shogun-lib/src/main/java/de/terrestris/shogun/lib/envers/ShogunEnversRevisionRepositoryFactoryBean.java'
