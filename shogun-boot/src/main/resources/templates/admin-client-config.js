@@ -17,7 +17,7 @@ var shogunApplicationConfig = {
   appPrefix: '/admin',
   path: {
     base: 'https://localhost',
-    configBase: '/config',
+    configBase: '/formconfigs',
     swagger: '/v2/api-docs',
     user: '/users',
     layer: '/layers',
