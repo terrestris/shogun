@@ -56,7 +56,7 @@ public class BootWebSecurityConfig extends WebSecurityConfig {
                     "/actuator/**",
                     "/cache/**",
                     "/webhooks/**",
-                    "/websocket/**",
+                    "/ws/**",
                     "/admin/**"
                 )
                     .hasRole("ADMIN")
@@ -79,7 +79,9 @@ public class BootWebSecurityConfig extends WebSecurityConfig {
                     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                     .ignoringRequestMatchers(csrfRequestMatcher)
                     .ignoringAntMatchers("/graphql")
-                    .ignoringAntMatchers("/actuator/**");
+                    .ignoringAntMatchers("/actuator/**")
+                    .ignoringAntMatchers("/sso/**")
+                    .ignoringAntMatchers("/ws/**");
     }
 
 }
