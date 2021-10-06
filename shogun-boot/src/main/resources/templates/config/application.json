@@ -1,0 +1,56 @@
+{
+  "endpoint": "/applications",
+  "entityType": "application",
+  "entityName": "Application",
+  "navigationTitle": "Applications",
+  "subTitle": "List of applications…",
+  "formConfig": {
+    "name": "application",
+    "fields": [{
+      "dataType": "number",
+      "dataField": "id",
+      "labelI18n": "Identifier",
+      "readOnly": "true"
+    }, {
+      "dataField": "created",
+      "dataType": "date",
+      "readOnly": "true",
+      "component": "DateField",
+      "labelI18n": "Created at",
+      "fieldProps": {
+        "dateFormat": "DD.MM.YYYY HH:mm"
+      }
+    }, {
+      "dataField": "modified",
+      "dataType": "date",
+      "readOnly": "true",
+      "labelI18n": "Last modified at",
+      "component": "DateField",
+      "fieldProps": {
+        "dateFormat": "DD.MM.YYYY HH:mm"
+      }
+    }, {
+      "component": "Input",
+      "dataField": "name",
+      "labelI18n": "Name of the application",
+      "required": "true"
+    }, {
+      "component": "Switch",
+      "dataField": "stateOnly",
+      "labelI18n": "State",
+      "readOnly": "true"
+    }, {
+      "component": "JSONEditor",
+      "dataField": "clientConfig",
+      "labelI18n": "Client-Configuration"
+    }, {
+      "component": "Input",
+      "dataField": "layerTree",
+      "labelI18n": "Layer tree"
+    }, {
+      "component": "JSONEditor",
+      "dataField": "layerConfig",
+      "labelI18n": "Layer configuration"
+    }]
+  }
+}
