@@ -26,6 +26,7 @@ import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.security.access.BasePermissionEvaluator;
 import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionService;
 import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.query.AuditEntity;
@@ -51,6 +52,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Log4j2
 public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpecificationExecutor<S>, S extends BaseEntity> {
 
     @Autowired
@@ -225,11 +227,11 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
     // currently not needed
     public List<S> fetchUntilPageSizeIsReached(List<S> pageResult, List<S> filteredResults, long totalResults, Pageable pageable, Authentication auth) {
         if (pageable.getOffset() >= totalResults) {
-            LOG.info("Last page {} reached. Returning {} filtered results, of {} total", pageable.getPageNumber(), pageResult.size(), totalResults);
+            log.info("Last page {} reached. Returning {} filtered results, of {} total", pageable.getPageNumber(), pageResult.size(), totalResults);
             return filteredResults;
         }
 
-        LOG.info("Filtering {} new elements", pageResult.size());
+        log.info("Filtering {} new elements", pageResult.size());
         List<S> filteredPageResult = pageResult.stream()
             .filter(pr -> basePermissionEvaluator.hasPermission(auth, pr, "READ"))
             .collect(Collectors.toList());
@@ -242,7 +244,7 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
             Pageable nextPage = pageable.next();
             List<S> nextPageResult = repository.findAll(nextPage).getContent();
             filteredResults.addAll(filteredPageResult);
-            LOG.info("Not enough results to fill page, checking for more results in next page {}", nextPage.getPageNumber());
+            log.info("Not enough results to fill page, checking for more results in next page {}", nextPage.getPageNumber());
             return fetchUntilPageSizeIsReached(nextPageResult, filteredResults, totalResults, nextPage, auth);
         }
     }
