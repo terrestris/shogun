@@ -27,10 +27,10 @@ public class ResourceController {
     @Value("${KEYCLOAK_HOST:1.2.3.4}")
     String keycloakHost;
 
-    @GetMapping("/admin/client-config.js")
+    @GetMapping("/admin/admin-client-config.js")
     public ModelAndView getAdminClientConfig(ModelAndView modelAndView) {
         modelAndView.addObject("KEYCLOAK_HOST", keycloakHost);
-        modelAndView.setViewName("client-config.js");
+        modelAndView.setViewName("admin-client-config.js");
 
         return modelAndView;
     }
