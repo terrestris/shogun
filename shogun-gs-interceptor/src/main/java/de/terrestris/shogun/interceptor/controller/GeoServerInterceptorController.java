@@ -19,9 +19,8 @@ package de.terrestris.shogun.interceptor.controller;
 import de.terrestris.shogun.interceptor.exception.InterceptorException;
 import de.terrestris.shogun.interceptor.service.GeoServerInterceptorService;
 import de.terrestris.shogun.lib.dto.HttpResponse;
+import lombok.extern.log4j.Log4j2;
 import org.apache.http.HttpException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -39,10 +38,9 @@ import java.net.URISyntaxException;
 import java.util.Optional;
 
 @RestController
+@Log4j2
 public class GeoServerInterceptorController {
     public static final String ERROR_MESSAGE = "Error while requesting a GeoServer resource: ";
-
-    protected final Logger logger = LogManager.getLogger(getClass());
 
     @Autowired
     protected GeoServerInterceptorService service;
@@ -55,17 +53,17 @@ public class GeoServerInterceptorController {
         HttpResponse httpResponse;
 
         try {
-            logger.trace("Trying to intercept a GeoServer resource.");
+            log.trace("Trying to intercept a GeoServer resource.");
             httpResponse = this.service.interceptGeoServerRequest(request, endpoint);
             responseStatus = httpResponse.getStatusCode();
             responseBody = httpResponse.getBody();
             responseHeaders = httpResponse.getHeaders();
 
-            logger.trace("Successfully intercepted a GeoServer resource.");
+            log.trace("Successfully intercepted a GeoServer resource.");
             return new ResponseEntity<>(responseBody, responseHeaders, responseStatus);
         } catch (NullPointerException | IOException | InterceptorException | HttpException | URISyntaxException e) {
-            logger.error(ERROR_MESSAGE + e.getMessage());
-            logger.trace("Full stack trace: ", e);
+            log.error(ERROR_MESSAGE + e.getMessage());
+            log.trace("Full stack trace: ", e);
             responseHeaders.setContentType(MediaType.APPLICATION_JSON);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ERROR_MESSAGE + e.getMessage(), e);
         }

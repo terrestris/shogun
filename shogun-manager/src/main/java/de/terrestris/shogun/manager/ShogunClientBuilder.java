@@ -100,12 +100,12 @@ public class ShogunClientBuilder {
             throw new IllegalStateException("SHOGun manager type required");
         }
 
-        switch (managerType) {
-            case GEOSERVER_INTERCEPTOR:
-                return new ShogunGsInterceptorManager(adminUser, adminPassword, shogunServiceBaseUrl);
-            default:
+        return switch (managerType) {
+            case GEOSERVER_INTERCEPTOR -> new ShogunGsInterceptorManager(adminUser, adminPassword, shogunServiceBaseUrl);
+            default -> {
                 log.warn("Manager type unknown…");
-                return null;
-        }
+                yield null;
+            }
+        };
     }
 }

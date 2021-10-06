@@ -17,6 +17,7 @@
 package de.terrestris.shogun.lib.util;
 
 import de.terrestris.shogun.lib.dto.HttpResponse;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.*;
@@ -42,8 +43,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -59,12 +58,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.util.*;
 
+@Log4j2
 public class HttpUtil {
 
-    /**
-     * The Logger.
-     */
-    protected final static Logger LOG = LogManager.getLogger(HttpUtil.class);
     /**
      * The timeout for all outgoing HTTP connections.
      */
@@ -1155,7 +1151,7 @@ public class HttpUtil {
             // when using InputStreamBody, the HttpClient lib will use chunked encoding,
             // which is not supported by all servers.
             // by using the ByteArrayBody, the size of the content is known and the lib
-            // will NOT use chunked encoding, but add a content-length header instead.
+            // will NOT use chunked encoding, but add a content-length header instead.Flo
             byte[] data = IOUtils.toByteArray(part.getInputStream());
             final ContentType contentType = ContentType.create(part.getContentType());
 
@@ -1164,7 +1160,7 @@ public class HttpUtil {
             // add the part
             builder.addPart(name, byteArrayBody);
 
-            LOG.debug("Add a form/multipart part with name '" + name + "', content type '" + contentType.getMimeType() + "' and size "
+            log.debug("Add a form/multipart part with name '" + name + "', content type '" + contentType.getMimeType() + "' and size "
                 + part.getSize());
         }
 
@@ -1850,30 +1846,30 @@ public class HttpUtil {
             if (systemProxy != null) {
                 String proxyHostName = systemProxy.getHostName();
                 int proxyPort = systemProxy.getPort();
-                LOG.debug("Using proxy hostname from system proxy: " + proxyHostName);
-                LOG.debug("Using proxy port from system proxy: " + proxyPort);
+                log.debug("Using proxy hostname from system proxy: " + proxyHostName);
+                log.debug("Using proxy port from system proxy: " + proxyPort);
 
                 proxyAuthScope = new AuthScope(systemProxy.getHostName(), systemProxy.getPort());
 
                 if (StringUtils.equalsIgnoreCase(uriScheme, "http")) {
-                    LOG.debug("Using http proxy");
+                    log.debug("Using http proxy");
 
                     if (!StringUtils.isEmpty(httpProxyUser) && !StringUtils.isEmpty(httpProxyPassword)) {
-                        LOG.debug("Using proxy user and password for the http proxy " + proxyHostName);
+                        log.debug("Using proxy user and password for the http proxy " + proxyHostName);
                         proxyCredentials = new UsernamePasswordCredentials(httpProxyUser, httpProxyPassword);
                     }
 
                 } else if (StringUtils.equalsIgnoreCase(uriScheme, "https")) {
-                    LOG.debug("Using https proxy");
+                    log.debug("Using https proxy");
 
                     if (!StringUtils.isEmpty(httpsProxyUser) && !StringUtils.isEmpty(httpsProxyPassword)) {
-                        LOG.debug("Using proxy user and password for the https proxy " + proxyHostName);
+                        log.debug("Using proxy user and password for the https proxy " + proxyHostName);
                         proxyCredentials = new UsernamePasswordCredentials(httpsProxyUser, httpsProxyPassword);
                     }
                 }
             }
         } catch (UnknownHostException e) {
-            LOG.error("Error while detecting system wide proxy: " + e.getMessage());
+            log.error("Error while detecting system wide proxy: " + e.getMessage());
         }
 
         // set the request configuration that will passed to the httpRequest
@@ -1945,7 +1941,7 @@ public class HttpUtil {
             for (Header header : headers) {
                 if (header.getName().equalsIgnoreCase("Transfer-Encoding") &&
                     header.getValue().equalsIgnoreCase("chunked")) {
-                    LOG.trace("Removed the header 'Transfer-Encoding:chunked'" +
+                    log.trace("Removed the header 'Transfer-Encoding:chunked'" +
                         " from a response, as its handled by the http-client");
                 } else {
                     headersMap.set(header.getName(), header.getValue());
@@ -1973,8 +1969,8 @@ public class HttpUtil {
                     httpClient.close();
                 }
             } catch (IOException e) {
-                LOG.error("Error while closing resources: {}", e.getMessage());
-                LOG.trace("Full stack trace: {}", e);
+                log.error("Error while closing resources: {}", e.getMessage());
+                log.trace("Full stack trace: {}", e);
             }
         }
 
@@ -2063,10 +2059,10 @@ public class HttpUtil {
                 }
 
                 if (headerValue.isEmpty()) {
-                    LOG.debug("Skipping request header '" + headerName + "' as it's value is empty (possibly an "
+                    log.debug("Skipping request header '" + headerName + "' as it's value is empty (possibly an "
                         + "unsupported cookie value has been removed)");
                 } else {
-                    LOG.debug("Adding request header: " + headerName + "=" + headerValue);
+                    log.debug("Adding request header: " + headerName + "=" + headerValue);
                     returnHeaderList.add(new BasicHeader(headerName, headerValue));
                 }
             }
@@ -2094,7 +2090,7 @@ public class HttpUtil {
                 headers.add(header);
             }
         }
-        LOG.debug("Removed the content-length and content-type headers as the HTTP Client lib will care "
+        log.debug("Removed the content-length and content-type headers as the HTTP Client lib will care "
             + "about them as soon as the entity is set on the POST object.");
         Header[] headersArray = new Header[headers.size()];
         headersArray = headers.toArray(headersArray);
@@ -2117,7 +2113,7 @@ public class HttpUtil {
             }
             body = bodyLines.toString();
         } catch (IOException e) {
-            LOG.info("Failed to obtain a Reader for a potential body of"
+            log.info("Failed to obtain a Reader for a potential body of"
                 + " this POST, assuming KVP");
         }
 
@@ -2160,7 +2156,7 @@ public class HttpUtil {
             InetSocketAddress address = (InetSocketAddress) proxy.address();
 
             if (address != null) {
-                LOG.debug("Detected a system wide proxy: " +
+                log.debug("Detected a system wide proxy: " +
                     "  * Host: " + address.getHostName() +
                     "  * Port: " + address.getPort()
                 );

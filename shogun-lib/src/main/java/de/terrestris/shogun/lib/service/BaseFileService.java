@@ -19,6 +19,7 @@ package de.terrestris.shogun.lib.service;
 import de.terrestris.shogun.lib.model.File;
 import de.terrestris.shogun.lib.repository.BaseFileRepository;
 import de.terrestris.shogun.properties.UploadProperties;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.FileUtils;
 import org.apache.tika.config.TikaConfig;
 import org.apache.tika.exception.TikaException;
@@ -37,6 +38,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 
+@Log4j2
 public abstract class BaseFileService<T extends BaseFileRepository<S, Long> & JpaSpecificationExecutor<S>, S extends File> extends BaseService<T, S> implements IBaseFileService<T, S> {
 
     @Autowired
@@ -76,7 +78,7 @@ public abstract class BaseFileService<T extends BaseFileRepository<S, Long> & Jp
         List<String> supportedContentTypes = getSupportedContentTypes();
         boolean isMatch = PatternMatchUtils.simpleMatch(supportedContentTypes.toArray(new String[supportedContentTypes.size()]), contentType);
         if (!isMatch) {
-            LOG.warn("Unsupported content type {} for upload", contentType);
+            log.warn("Unsupported content type {} for upload", contentType);
             throw new InvalidContentTypeException("Unsupported content type for upload!");
         }
     }
@@ -97,15 +99,15 @@ public abstract class BaseFileService<T extends BaseFileRepository<S, Long> & Jp
      */
     public byte[] getFileData(S file) throws IOException {
         if (file.getPath() == null) {
-            LOG.trace("… load file from database");
+            log.trace("… load file from database");
             return file.getFile();
         }
         java.io.File dataFile = new java.io.File(uploadProperties.getBasePath() + "/" + file.getPath());
         if (dataFile.exists()) {
-            LOG.trace("… load file from disk");
+            log.trace("… load file from disk");
             return FileUtils.readFileToByteArray(dataFile);
         } else {
-            LOG.error("Could not load File {} from disk", file.getId());
+            log.error("Could not load File {} from disk", file.getId());
             throw new FileNotFoundException("Could not load File " + file.getId() + " from disk");
         }
     }

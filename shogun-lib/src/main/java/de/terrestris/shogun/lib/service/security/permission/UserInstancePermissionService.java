@@ -29,10 +29,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@Log4j2
 public class UserInstancePermissionService extends BaseService<UserInstancePermissionRepository, UserInstancePermission> {
 
     @Autowired
@@ -49,7 +52,7 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
      */
     public List<UserInstancePermission> findFor(User user) {
 
-        LOG.trace("Getting all user instance permissions for user {}", user);
+        log.trace("Getting all user instance permissions for user {}", user);
 
         return repository.findAllByUser(user);
     }
@@ -62,7 +65,7 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
      * @return The (optional) permission.
      */
     public Optional<UserInstancePermission> findFor(BaseEntity entity, User user) {
-        LOG.trace("Getting all user permissions for user with Keycloak ID {} and " +
+        log.trace("Getting all user permissions for user with Keycloak ID {} and " +
             "entity with ID {}", user.getKeycloakId(), entity);
 
         return repository.findByUserIdAndEntityId(user.getId(), entity.getId());
@@ -75,7 +78,7 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
      * @return
      */
     public List<UserInstancePermission> findFor(BaseEntity entity) {
-        LOG.trace("Getting all user permissions for entity with ID {}", entity.getId());
+        log.trace("Getting all user permissions for entity with ID {}", entity.getId());
 
         return repository.findByEntityId(entity.getId());
     }
@@ -89,7 +92,7 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
      */
     public List<UserInstancePermission> findFor(BaseEntity entity, PermissionCollectionType permissionCollectionType) {
 
-        LOG.trace("Getting all user permissions for entity with ID {} and permission " +
+        log.trace("Getting all user permissions for entity with ID {} and permission " +
             "collection type {}", entity.getId(), permissionCollectionType);
 
         List<UserInstancePermission> result = repository
@@ -106,13 +109,13 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
      */
     public List<User> findOwner(BaseEntity entity) {
 
-        LOG.trace("Getting the owners of entity with ID {}", entity.getId());
+        log.trace("Getting the owners of entity with ID {}", entity.getId());
 
         List<UserInstancePermission> userInstancePermission =
             this.findFor(entity, PermissionCollectionType.ADMIN);
 
         if (userInstancePermission.isEmpty()) {
-            LOG.debug("No user instance permission candidate found.");
+            log.debug("No user instance permission candidate found.");
 
             return null;
         }
@@ -223,13 +226,13 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
 
         // Check if there is already an existing permission set on the entity
         if (existingPermission.isPresent()) {
-            LOG.debug("Permission is already set for entity with ID {} and user with " +
+            log.debug("Permission is already set for entity with ID {} and user with " +
                 "Keycloak ID {}: {}", entity.getId(), user.getKeycloakId(), permissionCollection);
 
             // Remove the existing one
             repository.delete(existingPermission.get());
 
-            LOG.debug("Removed the permission");
+            log.debug("Removed the permission");
         }
     }
 
@@ -243,9 +246,9 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
 
         repository.deleteAll(userInstancePermissions);
 
-        LOG.info("Successfully deleted all user instance permissions for entity " +
+        log.info("Successfully deleted all user instance permissions for entity " +
             "with ID {}", persistedEntity.getId());
-        LOG.trace("Deleted entity: {}", persistedEntity);
+        log.trace("Deleted entity: {}", persistedEntity);
     }
 
     /**

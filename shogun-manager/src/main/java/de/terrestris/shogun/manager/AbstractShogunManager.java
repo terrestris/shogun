@@ -140,20 +140,17 @@ public abstract class AbstractShogunManager implements AutoCloseable {
      * @throws IOException
      */
     byte[] performRequest(HttpUriRequest httpUriRequest) throws Exception {
-        CloseableHttpResponse response = httpClient.execute(httpUriRequest, context);
-        try {
+        try (CloseableHttpResponse response = httpClient.execute(httpUriRequest, context)) {
             int statusCode = response.getStatusLine().getStatusCode();
 
-            switch (statusCode) {
-                case HttpStatus.SC_OK: return handleOkResult(response);
-                case HttpStatus.SC_CREATED: return handleCreatedResult();
-                case HttpStatus.SC_NO_CONTENT: return handleDeletedResult();
-                case HttpStatus.SC_FORBIDDEN: return handleForbidden();
-                case HttpStatus.SC_INTERNAL_SERVER_ERROR: throw new Exception("An error occurred while request to GeoServer interceptor.");
-                default: return null;
-            }
-        } finally {
-            response.close();
+            return switch (statusCode) {
+                case HttpStatus.SC_OK -> handleOkResult(response);
+                case HttpStatus.SC_CREATED -> handleCreatedResult();
+                case HttpStatus.SC_NO_CONTENT -> handleDeletedResult();
+                case HttpStatus.SC_FORBIDDEN -> handleForbidden();
+                case HttpStatus.SC_INTERNAL_SERVER_ERROR -> throw new Exception("An error occurred while request to GeoServer interceptor.");
+                default -> null;
+            };
         }
     }
 

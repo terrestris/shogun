@@ -21,6 +21,8 @@ import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.service.GroupService;
 import de.terrestris.shogun.lib.service.UserService;
 import de.terrestris.shogun.lib.util.KeycloakUtil;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -35,6 +37,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/groups")
 @ConditionalOnExpression("${controller.groups.enabled:true}")
+@Log4j2
 public class GroupController extends BaseController<GroupService, Group> {
 
     @Autowired
@@ -55,9 +58,9 @@ public class GroupController extends BaseController<GroupService, Group> {
                 throw new Exception("Could not find user with ID " +  userId);
             }
         } catch (Exception e) {
-            LOG.error("Error while finding groups for user with ID {}: \n {}",
+            log.error("Error while finding groups for user with ID {}: \n {}",
                 userId, e.getMessage());
-            LOG.trace("Full stack trace: ", e);
+            log.trace("Full stack trace: ", e);
 
             throw new ResponseStatusException(
                 HttpStatus.INTERNAL_SERVER_ERROR,
@@ -77,9 +80,9 @@ public class GroupController extends BaseController<GroupService, Group> {
         try {
             return keycloakUtil.getGroupResource(keycloakId).toRepresentation();
         } catch (Exception e) {
-            LOG.error("Error while requesting keycloak group with ID {}: \n {}",
+            log.error("Error while requesting keycloak group with ID {}: \n {}",
                 keycloakId, e.getMessage());
-            LOG.trace("Full stack trace: ", e);
+            log.trace("Full stack trace: ", e);
 
             throw new ResponseStatusException(
                 HttpStatus.INTERNAL_SERVER_ERROR,
@@ -99,9 +102,9 @@ public class GroupController extends BaseController<GroupService, Group> {
         try {
             return service.getGroupMembers(keycloakId);
         } catch (Exception e) {
-            LOG.error("Error while requesting the members of keycloak group with ID {}: \n {}",
+            log.error("Error while requesting the members of keycloak group with ID {}: \n {}",
                 keycloakId, e.getMessage());
-            LOG.trace("Full stack trace: ", e);
+            log.trace("Full stack trace: ", e);
 
             throw new ResponseStatusException(
                 HttpStatus.INTERNAL_SERVER_ERROR,

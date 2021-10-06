@@ -17,16 +17,14 @@
 package de.terrestris.shogun.lib.util;
 
 import de.terrestris.shogun.lib.model.BaseEntity;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
+
 import java.lang.reflect.Field;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
-import static org.apache.logging.log4j.LogManager.getLogger;
-
+@Log4j2
 public class IdHelper {
-
-    private static final Logger logger = getLogger(IdHelper.class);
 
     /**
      * Helper method that uses reflection to set the (inaccessible) id field of
@@ -45,7 +43,7 @@ public class IdHelper {
             try {
                 idField.set(baseEntity, id);
             } catch (IllegalAccessException e) {
-                logger.error("Could not set ID field for persistent object", e);
+                log.error("Could not set ID field for persistent object", e);
             }
             idField.setAccessible(false);
             return null;

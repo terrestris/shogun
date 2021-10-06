@@ -16,8 +16,7 @@
  */
 package de.terrestris.shogun.lib.util;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -25,9 +24,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
+@Log4j2
 public class ValidationUtil {
-
-    protected static final Logger LOG = LogManager.getLogger(ValidationUtil.class);
 
     /**
      * Validates a BindingResult.
@@ -51,7 +49,7 @@ public class ValidationUtil {
         response.put("status", 422);
         response.put("timestamp", new Date().toString());
 
-        LOG.error("Found validation errors in bindingResult for entity {}: {}", bindingResult.getObjectName(),
+        log.error("Found validation errors in bindingResult for entity {}: {}", bindingResult.getObjectName(),
             message.toString());
 
         return ResponseEntity.unprocessableEntity().body(response);

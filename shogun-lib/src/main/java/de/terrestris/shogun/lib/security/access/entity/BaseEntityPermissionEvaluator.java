@@ -25,19 +25,18 @@ import de.terrestris.shogun.lib.service.security.permission.GroupClassPermission
 import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionService;
 import de.terrestris.shogun.lib.service.security.permission.UserClassPermissionService;
 import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
 
-public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implements EntityPermissionEvaluator<E> {
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
-    protected final Logger LOG = LogManager.getLogger(getClass());
+@Log4j2
+public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implements EntityPermissionEvaluator<E> {
 
     @Autowired
     protected UserInstancePermissionService userInstancePermissionService;
@@ -65,33 +64,33 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
 
         // CHECK USER INSTANCE PERMISSIONS
         if (this.hasPermissionByUserInstancePermission(user, entity, permission)) {
-            LOG.trace("Granting {} access by user instance permissions", permission);
+            log.trace("Granting {} access by user instance permissions", permission);
 
             return true;
         }
 
         // CHECK GROUP INSTANCE PERMISSIONS
         if (this.hasPermissionByGroupInstancePermission(user, entity, permission)) {
-            LOG.trace("Granting {} access by group instance permissions", permission);
+            log.trace("Granting {} access by group instance permissions", permission);
 
             return true;
         }
 
         // CHECK USER CLASS PERMISSIONS
         if (this.hasPermissionByUserClassPermission(user, entity, permission)) {
-            LOG.trace("Granting {} access by user class permissions", permission);
+            log.trace("Granting {} access by user class permissions", permission);
 
             return true;
         }
 
         // CHECK GROUP CLASS PERMISSIONS
         if (this.hasPermissionByGroupClassPermission(user, entity, permission)) {
-            LOG.trace("Granting {} access by group class permissions", permission);
+            log.trace("Granting {} access by group class permissions", permission);
 
             return true;
         }
 
-        LOG.trace("Restricting {} access on secured object '{}' with ID {}",
+        log.trace("Restricting {} access on secured object '{}' with ID {}",
             permission, simpleClassName, entity.getId());
 
         return false;
@@ -99,10 +98,10 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
 
     @Override
     public boolean hasPermission(User user, Long entityId, String targetDomainType, PermissionType permission) {
-        LOG.trace("About to find the appropriate repository for target domain {}.", targetDomainType);
+        log.trace("About to find the appropriate repository for target domain {}.", targetDomainType);
 
         if (baseCrudRepositories == null) {
-            LOG.trace("BaseCrudRepositories is null. Permission will be restricted.");
+            log.trace("BaseCrudRepositories is null. Permission will be restricted.");
             return false;
         }
 
@@ -129,7 +128,7 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
             .findFirst();
 
         if (baseCrudRepository.isEmpty()) {
-            LOG.warn("No repository for class {} could be found. Permission will " +
+            log.warn("No repository for class {} could be found. Permission will " +
                 "be restricted", targetDomainType);
             return false;
         }
@@ -137,12 +136,12 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
         Optional<E> entity = baseCrudRepository.get().findById(entityId);
 
         if (entity.isEmpty()) {
-            LOG.warn("No entity for ID {} with class {} could be found. Permission will " +
+            log.warn("No entity for ID {} with class {} could be found. Permission will " +
                 "be restricted", entityId, targetDomainType);
             return false;
         }
 
-        LOG.trace("Found entity for ID {}, permission will be evaluated now…", entityId);
+        log.trace("Found entity for ID {}, permission will be evaluated now…", entityId);
 
         return hasPermission(user, entity.get(), permission);
     }

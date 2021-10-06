@@ -21,6 +21,7 @@ import de.terrestris.shogun.lib.repository.ImageFileRepository;
 import de.terrestris.shogun.lib.util.FileUtil;
 import de.terrestris.shogun.lib.util.ImageFileUtil;
 import de.terrestris.shogun.properties.UploadProperties;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -37,6 +38,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@Log4j2
 public class ImageFileService extends BaseFileService<ImageFileRepository, ImageFile> {
 
     @Autowired
@@ -59,7 +61,7 @@ public class ImageFileService extends BaseFileService<ImageFileRepository, Image
             file.setWidth(imageDimensions.width);
             file.setHeight(imageDimensions.height);
         } else {
-            LOG.warn("Could not detect the dimensions of the image. Neither width, height " +
+            log.warn("Could not detect the dimensions of the image. Neither width, height " +
                 "nor the thumbnail can be set.");
         }
 
@@ -94,7 +96,7 @@ public class ImageFileService extends BaseFileService<ImageFileRepository, Image
             file.setWidth(imageDimensions.width);
             file.setHeight(imageDimensions.height);
         } else {
-            LOG.warn("Could not detect the dimensions of the image. Neither width, height " +
+            log.warn("Could not detect the dimensions of the image. Neither width, height " +
                 "nor the thumbnail can be set.");
         }
 
@@ -112,10 +114,10 @@ public class ImageFileService extends BaseFileService<ImageFileRepository, Image
 
         try (OutputStream out = new FileOutputStream(outFile)) {
             IOUtils.copy(in, out);
-            LOG.info("Saved file with id {} to: {}", savedFile.getId(), savedFile.getPath());
+            log.info("Saved file with id {} to: {}", savedFile.getId(), savedFile.getPath());
         } catch (Exception e) {
-            LOG.error("Error while saving file {} to disk: {}", e.getMessage(), savedFile.getId());
-            LOG.info("Rollback creation of file {}.", savedFile.getId());
+            log.error("Error while saving file {} to disk: {}", e.getMessage(), savedFile.getId());
+            log.info("Rollback creation of file {}.", savedFile.getId());
             this.repository.delete(savedFile);
             fileDirectory.delete();
             throw e;

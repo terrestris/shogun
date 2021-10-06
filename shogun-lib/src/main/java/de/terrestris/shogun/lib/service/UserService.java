@@ -21,6 +21,7 @@ import de.terrestris.shogun.lib.event.OnRegistrationConfirmedEvent;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.UserRepository;
 import de.terrestris.shogun.lib.util.KeycloakUtil;
+import lombok.extern.log4j.Log4j2;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -36,6 +37,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Log4j2
 public class UserService extends BaseService<UserRepository, User> {
 
     @Autowired
@@ -123,7 +125,7 @@ public class UserService extends BaseService<UserRepository, User> {
             // Add admin instance permissions for the user.
             userInstancePermissionService.setPermission(user, user, PermissionCollectionType.ADMIN);
 
-            LOG.info("User with keycloak id {} did not yet exist in the SHOGun DB and was therefore created.", keycloakUserId);
+            log.info("User with keycloak id {} did not yet exist in the SHOGun DB and was therefore created.", keycloakUserId);
             this.setTransientKeycloakRepresentations(user);
             return user;
         }
@@ -151,12 +153,12 @@ public class UserService extends BaseService<UserRepository, User> {
         Optional<User> userOptional = repository.findByKeycloakId(keycloakUserId);
         User user = userOptional.orElse(null);
         if (user == null) {
-            LOG.debug("User with keycloak id {} was deleted in Keycloak. It did not exists in SHOGun DB. No action needed.", keycloakUserId);
+            log.debug("User with keycloak id {} was deleted in Keycloak. It did not exists in SHOGun DB. No action needed.", keycloakUserId);
             return;
         }
         userInstancePermissionService.deleteAllForEntity(user);
         repository.delete(user);
-        LOG.info("User with keycloak id {} was deleted in Keycloak and was therefore deleted in SHOGun DB, too.", keycloakUserId);
+        log.info("User with keycloak id {} was deleted in Keycloak and was therefore deleted in SHOGun DB, too.", keycloakUserId);
     }
 
     private User setTransientKeycloakRepresentations(User user) {
@@ -166,10 +168,10 @@ public class UserService extends BaseService<UserRepository, User> {
             UserRepresentation userRepresentation = userResource.toRepresentation();
             user.setKeycloakRepresentation(userRepresentation);
         } catch (Exception e) {
-            LOG.warn("Could not get the UserRepresentation for user with SHOGun ID {} and " +
+            log.warn("Could not get the UserRepresentation for user with SHOGun ID {} and " +
                     "Keycloak ID {}. This may happen if the user is not available in Keycloak.",
                     user.getId(), user.getKeycloakId());
-            LOG.trace("Full stack trace: ", e);
+            log.trace("Full stack trace: ", e);
         }
 
         return user;
