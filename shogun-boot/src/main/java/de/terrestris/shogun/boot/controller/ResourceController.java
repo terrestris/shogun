@@ -24,7 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class ResourceController {
 
-    @Value("${KEYCLOAK_HOST}")
+    @Value("${KEYCLOAK_HOST:1.2.3.4}")
     String keycloakHost;
 
     @GetMapping("/admin/client-config.js")

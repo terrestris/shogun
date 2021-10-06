@@ -24,7 +24,9 @@ ENTRYPOINT [ \
   "mvn", \
   "spring-boot:run", \
   "-Dspring-boot.run.profiles=base,boot", \
-  "-Dspring-boot.run.jvmArguments=-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:4711 -Dspring.config.location=/config/application.yml", \
+  "-Dspring-boot.run.jvmArguments=-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:4711", \
+  # enable this line when using a custom application.yml
+  # "-Dspring.config.location=/config/application.yml", \
   "-Djava.security.egd=file:/dev/./urandom", \
   "-Dcom.sun.management.jmxremote", \
   "-Dcom.sun.management.jmxremote.port=9010", \
