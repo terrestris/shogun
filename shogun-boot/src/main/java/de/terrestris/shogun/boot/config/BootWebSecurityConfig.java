@@ -42,8 +42,11 @@ public class BootWebSecurityConfig extends WebSecurityConfig {
                     "/auth/**",
                     "/info/**",
                     "/index.html",
+                    "/index.css",
+                    "/assets/**",
                     // Enable anonymous access to swagger docs
                     "/swagger-ui/index.html",
+                    "/swagger-ui/**",
                     "/webjars/springfox-swagger-ui/**",
                     "/swagger-resources/**",
                     "/v2/api-docs"
@@ -52,7 +55,9 @@ public class BootWebSecurityConfig extends WebSecurityConfig {
                 .antMatchers(
                     "/actuator/**",
                     "/cache/**",
-                    "/webhooks/**"
+                    "/webhooks/**",
+                    "/websocket/**",
+                    "/admin/**"
                 )
                     .hasRole("ADMIN")
                 .anyRequest()
