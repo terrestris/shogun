@@ -36,6 +36,18 @@
 </head>
 
 <body>
+
+  <script>
+    function logout() {
+      fetch('/sso/logout', {
+        method: 'POST',
+        credentials: 'same-origin'
+      }).then((response) => {
+        window.location.reload();
+      });
+    }
+  </script>
+
   <header
     class="container d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
     <a href="/" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
@@ -44,7 +56,7 @@
 
     <div class="col-md-3 text-end">
       <button type="button" class="btn btn-outline-success" onclick="location.href='/sso/login';">Login</button>
-      <button type="button" class="btn btn-outline-danger" onclick="location.href='/sso/logout';">Logout</button>
+      <button type="button" class="btn btn-outline-danger" onclick="logout()">Logout</button>
     </div>
   </header>
 
