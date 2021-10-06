@@ -31,7 +31,7 @@ jobs:
           restore-keys: ${{ runner.os }}-maven
 
       - name: Run mvn install
-        run: mvn install
+        run: mvn install --log-file mvn.out.txt
 
       - name: Clone shogun-docker
         run: git clone https://github.com/terrestris/shogun-docker
