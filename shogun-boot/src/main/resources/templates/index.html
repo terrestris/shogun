@@ -1,0 +1,163 @@
+<!doctype html>
+<!--
+  SHOGun, https://terrestris.github.io/shogun/
+
+  Copyright © 2020-present terrestris GmbH & Co. KG
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    https://www.apache.org/licenses/LICENSE-2.0.txt
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Static landing page for the SHOGun demo">
+  <meta name="author" content="The SHOGun contributors">
+
+  <link rel="shortcut icon" type="image/x-icon" href="./assets/img/favicon.ico">
+
+  <title>SHOGun</title>
+
+  <!-- Bootstrap 5.1.1  -->
+  <link href="./assets/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome 5.15.4 -->
+  <link href="./assets/lib/fontawesome/css/all.min.css" rel="stylesheet">
+  <link href="./index.css" rel="stylesheet">
+</head>
+
+<body>
+
+  <script>
+    function logout() {
+      fetch('/sso/logout', {
+        method: 'POST',
+        credentials: 'same-origin'
+      }).then((response) => {
+        window.location.reload();
+      });
+    }
+  </script>
+
+  <header
+    class="container d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+    <a href="/" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
+      <img class="header-image" src="./assets/img/shogun_logo.png">
+    </a>
+
+    <div class="col-md-3 text-end">
+      <button type="button" class="btn btn-outline-success" onclick="location.href='/sso/login';">Login</button>
+      <button type="button" class="btn btn-outline-danger" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="container px-4 py-5">
+
+      <h2 class="pb-2">Welcome to SHOGun</h2>
+
+      <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+        <div class="feature col">
+          <div class="feature-icon bg-primary bg-gradient">
+            <i class="fas fa-plug"></i>
+          </div>
+          <h3>Swagger / OpenAPI</h3>
+          <p>
+            Execute CRUD requests against the SHOGun REST API using the Swagger interface.
+          </p>
+          <a href="./swagger-ui/index.html" class="icon-link">
+            Open
+          </a>
+        </div>
+        <div class="feature col">
+          <div class="feature-icon bg-primary bg-gradient">
+            <i class="fas fa-project-diagram"></i>
+          </div>
+          <h3>GraphiQL</h3>
+          <p>
+            Build and execute GraqhQL mutations and queries against the SHOGun GraphQL API.
+          </p>
+          <a href="./graphiql" class="icon-link">
+            Open <i class="fas fa-lock"></i>
+          </a>
+        </div>
+        <div class="feature col">
+          <div class="feature-icon bg-primary bg-gradient">
+            <i class="fas fa-exchange-alt"></i>
+          </div>
+          <h3>WebSocket</h3>
+          <p>
+            This site contains a simple example for establishing a web socket connection.
+          </p>
+          <a href="./ws/websocket.html" class="icon-link">
+            Open <i class="fas fa-lock"></i>
+          </a>
+        </div>
+      </div>
+      <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+        <div class="feature col">
+          <div class="feature-icon bg-primary bg-gradient">
+            <i class="fas fa-cogs"></i>
+          </div>
+          <h3>Admin client</h3>
+          <p>
+            The built-in admin client can be used to configure the SHOGun entities in a comfortable way.
+          </p>
+          <a href="./admin" class="icon-link">
+            Open <i class="fas fa-lock"></i>
+          </a>
+        </div>
+        <div class="feature col">
+          <div class="feature-icon bg-primary bg-gradient">
+            <i class="fas fa-map"></i>
+          </div>
+          <h3>GIS client</h3>
+          <p>
+            Give me maps! This shows an exemplary map client consuming the application context of SHOGun.
+          </p>
+          <a href="./client" class="icon-link">
+            Open
+          </a>
+        </div>
+        <div class="feature col">
+          <div class="feature-icon bg-primary bg-gradient">
+            <i class="fab fa-github"></i>
+          </div>
+          <h3>GitHub repository</h3>
+          <p>
+            The repository contains the source code, the issue tracker and the overall documentation.
+          </p>
+          <a href="https://github.com/terrestris/shogun" class="icon-link">
+            Open <i class="fas fa-external-link-alt"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="container d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+    <p class="col-md-4 mb-0 text-muted">
+      &copy; 2021 - present <a href="https://www.terrestris.de">terrestris GmbH & Co. KG</a>
+    </p>
+
+    <ul class="nav col-md-4 justify-content-end">
+      <li class="nav-item">
+        <a href="#" class="nav-link px-2 text-muted" th:text="${'Version: ' + version}" />
+      </li>
+    </ul>
+  </footer>
+
+  <script src="./assets/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
