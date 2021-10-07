@@ -14,12 +14,12 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-URL="http://localhost:8080/"
+URL="https://localhost/"
 TIMEOUT=120
 seconds=0
 
 echo 'Waiting up to' $TIMEOUT 'seconds for HTTP 200 from' $URL 
-until [ "$seconds" -gt "$TIMEOUT" ] || $(curl --output /dev/null --silent --max-time $TIMEOUT --head --fail $URL); do
+until [ "$seconds" -gt "$TIMEOUT" ] || $(curl --insecure --location --output /dev/null --silent --max-time $TIMEOUT --head --fail $URL); do
   sleep 5
   seconds=$((seconds+5))
 done
