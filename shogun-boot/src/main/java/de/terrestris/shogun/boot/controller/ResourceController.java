@@ -16,9 +16,12 @@
  */
 package de.terrestris.shogun.boot.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -27,7 +30,18 @@ public class ResourceController {
     @Value("${KEYCLOAK_HOST:1.2.3.4}")
     String keycloakHost;
 
-    @GetMapping("/admin/client-config.js")
+    @Autowired
+    BuildProperties buildProperties;
+
+    @RequestMapping("/")
+    public ModelAndView home(ModelAndView modelAndView) {
+        modelAndView.addObject("version", buildProperties.getVersion());
+        modelAndView.setViewName("index");
+
+        return modelAndView;
+    }
+
+    @GetMapping(value = "/admin/client-config.js", produces = "application/javascript")
     public ModelAndView getAdminClientConfig(ModelAndView modelAndView) {
         modelAndView.addObject("KEYCLOAK_HOST", keycloakHost);
         modelAndView.setViewName("client-config.js");
