@@ -43,7 +43,6 @@ public class BaseFileServiceTest {
 
     private String failMsg = "Validation shouldn't have thrown any exception.";
 
-
     @Test
     public void isValidFileName_shouldAllowRegularFilenames() {
         try {
