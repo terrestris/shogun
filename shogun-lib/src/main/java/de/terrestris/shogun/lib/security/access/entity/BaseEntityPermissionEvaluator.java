@@ -62,6 +62,9 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
     public boolean hasPermission(User user, E entity, PermissionType permission) {
         final String simpleClassName = entity.getClass().getSimpleName();
 
+        log.trace("Evaluating whether user with ID '{}' has permission '{}' on entity '{}' with ID {}",
+            user.getId(), permission, simpleClassName, entity.getId());
+
         // CHECK USER INSTANCE PERMISSIONS
         if (this.hasPermissionByUserInstancePermission(user, entity, permission)) {
             log.trace("Granting {} access by user instance permissions", permission);
