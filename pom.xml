@@ -131,7 +131,7 @@
     <!-- Utils -->
     <commons.io.version>2.11.0</commons.io.version>
     <tika.core.version>1.27</tika.core.version>
-    <reflections.version>0.10</reflections.version>
+    <reflections.version>0.10.1</reflections.version>
     <evo-inflector.version>1.3</evo-inflector.version>
 
     <!-- Testing -->
