@@ -41,10 +41,10 @@ public class ResourceController {
         return modelAndView;
     }
 
-    @GetMapping(value = "/admin/client-config.js", produces = "application/javascript")
+    @GetMapping(value = "/config/admin-client-config.js", produces = "application/javascript")
     public ModelAndView getAdminClientConfig(ModelAndView modelAndView) {
         modelAndView.addObject("KEYCLOAK_HOST", keycloakHost);
-        modelAndView.setViewName("client-config.js");
+        modelAndView.setViewName("admin-client-config.js");
 
         return modelAndView;
     }

@@ -93,6 +93,9 @@
 
     <java.version>17</java.version>
 
+    <!-- SHOGun admin -->
+    <shogun-admin.version>2.0.0</shogun-admin.version>
+
     <!-- Plugins -->
     <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
     <maven-site-plugin.version>3.9.1</maven-site-plugin.version>
@@ -546,7 +549,7 @@
       <dependency>
         <groupId>de.terrestris</groupId>
         <artifactId>shogun-admin</artifactId>
-        <version>2.0.0</version>
+        <version>${shogun-admin.version}</version>
         <scope>provided</scope>
       </dependency>
     </dependencies>
