@@ -72,8 +72,13 @@ public class SecurityContextUtil {
 
         if (user.isPresent()) {
             UserResource userResource = keycloakUtil.getUserResource(user.get());
-            UserRepresentation userRepresentation = userResource.toRepresentation();
-            user.get().setKeycloakRepresentation(userRepresentation);
+            try {
+                UserRepresentation userRepresentation = userResource.toRepresentation();
+                user.get().setKeycloakRepresentation(userRepresentation);
+            } catch (RuntimeException exception) {
+                log.warn("Could not get the user representation details from Keycloak: ", exception.getMessage());
+                log.trace("Full stack trace: ", exception);
+            }
         }
 
         return user;
@@ -211,4 +216,5 @@ public class SecurityContextUtil {
                 StringUtils.endsWithIgnoreCase(grantedAuthority.getAuthority(), "ADMIN")
         );
     }
+
 }
