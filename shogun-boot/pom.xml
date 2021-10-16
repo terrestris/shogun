@@ -83,6 +83,11 @@
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-envers</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-test</artifactId>
+      <scope>test</scope>
+    </dependency>
 
     <!-- Database driver -->
     <dependency>
@@ -140,6 +145,12 @@
     <dependency>
       <groupId>de.terrestris</groupId>
       <artifactId>shogun-admin</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-inline</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
