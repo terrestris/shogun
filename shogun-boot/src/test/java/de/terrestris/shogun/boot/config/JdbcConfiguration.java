@@ -68,7 +68,7 @@ public class JdbcConfiguration {
     @Bean
     public DataSource dataSource(final JdbcDatabaseContainer databaseContainer) {
         HikariConfig hikariConfig = new HikariConfig();
-        String jdbcUrl = String.format("%s&currentSchema=shogun", databaseContainer.getJdbcUrl());
+        String jdbcUrl = String.format("%s?currentSchema=shogun", databaseContainer.getJdbcUrl());
         hikariConfig.setJdbcUrl(jdbcUrl);
         hikariConfig.setUsername(databaseContainer.getUsername());
         hikariConfig.setPassword(databaseContainer.getPassword());
