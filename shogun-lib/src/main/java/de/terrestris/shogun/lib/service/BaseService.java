@@ -123,7 +123,9 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
 
         // Ensure the created timestamp will not be overridden.
         S persistedEntity = persistedEntityOpt.orElseThrow();
-        jsonObject.put("created", persistedEntity.getCreated().toInstant().toString());
+        OffsetDateTime createdTimestamp = persistedEntity.getCreated();
+        String serialized = createdTimestamp != null ? createdTimestamp.toInstant().toString() : null;
+        jsonObject.put("created", serialized);
 
         S updatedEntity = objectMapper.readerForUpdating(persistedEntity).readValue(jsonObject);
 
