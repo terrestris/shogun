@@ -30,12 +30,16 @@ public class ResourceController {
     @Value("${KEYCLOAK_HOST:1.2.3.4}")
     String keycloakHost;
 
-    @Autowired
+    @Autowired(required = false)
     BuildProperties buildProperties;
 
     @RequestMapping("/")
     public ModelAndView home(ModelAndView modelAndView) {
-        modelAndView.addObject("version", buildProperties.getVersion());
+        String buildVersion = "@VERSION@";
+        if (buildProperties != null) {
+            buildVersion = buildProperties.getVersion();
+        }
+        modelAndView.addObject("version", buildVersion);
         modelAndView.setViewName("index");
 
         return modelAndView;
