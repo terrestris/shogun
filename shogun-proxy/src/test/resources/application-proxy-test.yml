@@ -1,6 +1,6 @@
 #  SHOGun, https://terrestris.github.io/shogun/
 #
-#  Copyright © 2020-present terrestris GmbH & Co. KG
+#  Copyright © 2021-present terrestris GmbH & Co. KG
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -13,21 +13,20 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-server:
-  port: 8082
-  servlet:
-    context-path: /shogun-proxy
-
 keycloak:
-  auth-server-url: http://localhost:8000/auth
-  realm: SpringBootKeycloak
-  resource: shogun-app
+  auth-server-url: https://to.be.defined/keycloak/auth
+  realm: SHOGUN
+  resource: test-resource
   public-client: true
+  ssl-required: all
   principal-attribute: preferred_username
-
-## TODO: use auth! / Token!
 keycloakauth:
   username: admin
-  password: shogun
-  master-realm: master
+  password: test
+  master-realm: test
   admin-client: admin-cli
+shogun-proxy:
+  whitelist:
+    - localhost
+    - localhost:8080
+    - ows.terrestris.de
