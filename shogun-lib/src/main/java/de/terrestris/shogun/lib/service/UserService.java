@@ -53,7 +53,7 @@ public class UserService extends BaseService<UserRepository, User> {
     @Transactional(readOnly = true)
     @Override
     public List<User> findAll() {
-        List<User> users = (List<User>) repository.findAll();
+        List<User> users = repository.findAll();
 
         for (User user : users) {
             this.setTransientKeycloakRepresentations(user);
