@@ -16,16 +16,27 @@
  */
 package de.terrestris.shogun.lib.security.access;
 
+import de.terrestris.shogun.lib.enumeration.PermissionType;
 import de.terrestris.shogun.lib.model.Application;
-import de.terrestris.shogun.lib.repository.UserRepository;
+import de.terrestris.shogun.lib.model.BaseEntity;
+import de.terrestris.shogun.lib.model.User;
+import de.terrestris.shogun.lib.security.SecurityContextUtil;
+import de.terrestris.shogun.lib.security.access.entity.ApplicationPermissionEvaluator;
+import de.terrestris.shogun.lib.security.access.entity.BaseEntityPermissionEvaluator;
+import de.terrestris.shogun.lib.security.access.entity.DefaultPermissionEvaluator;
+import de.terrestris.shogun.lib.util.IdHelper;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.core.Authentication;
 
-import static org.junit.Assert.assertEquals;
+import java.util.ArrayList;
+import java.util.Optional;
+
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.*;
 
@@ -33,10 +44,31 @@ import static org.mockito.Mockito.*;
 public class BasePermissionEvaluatorTest {
 
     @Mock
-    private UserRepository userRepositoryMock;
+    private DefaultPermissionEvaluator defaultPermissionEvaluatorMock;
+
+    @Mock
+    private ApplicationPermissionEvaluator applicationPermissionEvaluatorMock;
+
+    @Mock
+    private SecurityContextUtil securityContextUtilMock;
+
+    @Spy
+    private ArrayList<BaseEntityPermissionEvaluator> baseEntityPermissionEvaluatorMock;
 
     @InjectMocks
     private BasePermissionEvaluator permissionEvaluator;
+
+    private String mockUserKeycloakId = "bf5efad6-50f5-448c-b808-60dc0259d70b";
+    private User mockUser;
+
+    @Before
+    public void setup() {
+        mockUser = new User();
+        mockUser.setKeycloakId(mockUserKeycloakId);
+
+        when(defaultPermissionEvaluatorMock.getEntityClassName()).thenReturn(BaseEntity.class);
+        when(applicationPermissionEvaluatorMock.getEntityClassName()).thenReturn(Application.class);
+    }
 
     @Test
     public void hasPermission_ShouldRestrictAccessIfAuthenticationIsNull() {
@@ -80,119 +112,67 @@ public class BasePermissionEvaluatorTest {
         boolean permissionResult = permissionEvaluator.hasPermission(authentication, targetDomainObject, permissionObject);
 
         assertFalse(permissionResult);
-        verify(authentication, times(0)).getPrincipal();
-        verifyNoMoreInteractions(authentication);
     }
 
-    // TODO Fix test
-//    @Test
-//    public void hasPermission_ShouldRestrictAccessIfPrinicipalIsNotAUser() {
-//        Authentication authentication = mock(Authentication.class);
-//        when(authentication.getPrincipal()).thenReturn("Not a User object");
-//
-//        Application targetDomainObject = new Application();
-//        targetDomainObject.setId(1L);
-//        String permissionObject = "READ";
-//
-//        BaseEntityPermissionEvaluator baseEntityPermissionEvaluatorMock = mock(BaseEntityPermissionEvaluator.class);
-//        when(baseEntityPermissionEvaluatorMock.hasPermission(null, targetDomainObject, PermissionType.valueOf(permissionObject))).thenReturn(false);
-//
-//        when(permissionEvaluatorFactoryMock.getEntityPermissionEvaluator(targetDomainObject.getClass())).thenReturn(baseEntityPermissionEvaluatorMock);
-//
-//        boolean permissionResult = permissionEvaluator.hasPermission(authentication, targetDomainObject, permissionObject);
-//
-//        assertFalse(permissionResult);
-//        verify(authentication, times(1)).getPrincipal();
-//        verifyNoMoreInteractions(authentication);
-//    }
+    @Test
+    public void hasPermission_ShouldHandleAnOptionalTargetEntity() throws NoSuchFieldException {
+        Authentication authentication = mock(Authentication.class);
 
-    // TODO Fix test
-//    @Test
-//    public void hasPermission_ShouldRestrictAccessForSecuredTargetDomainObjectWithoutPermissions() throws NoSuchFieldException, IllegalAccessException {
-//        Authentication authenticationMock = mock(Authentication.class);
-//        final User user = new User();
-//        user.setUsername("Test User");
-//        user.setId(1909L);
-//
-//        when(authenticationMock.getPrincipal()).thenReturn(user);
-//
-//        final Long userId = user.getId();
-//
-//        Application targetDomainObject = new Application();
-//        targetDomainObject.setId(1L);
-//        final Class<?> domainObjectClass = targetDomainObject.getClass();
-//
-//        String permissionObject = "READ";
-//        final PermissionType permission = PermissionType.valueOf(permissionObject);
-//
-//        final boolean expectedPermission = false;
-//
-//        BaseEntityPermissionEvaluator baseEntityPermissionEvaluatorMock = mock(BaseEntityPermissionEvaluator.class);
-//        when(baseEntityPermissionEvaluatorMock.hasPermission(user, targetDomainObject, PermissionType.valueOf(permissionObject))).thenReturn(expectedPermission);
-//
-//        when(permissionEvaluatorFactoryMock.getEntityPermissionEvaluator(domainObjectClass)).thenReturn(baseEntityPermissionEvaluatorMock);
-//
-//        when(userRepositoryMock.findById(userId)).thenReturn(Optional.of(user));
-//
-//        boolean permissionResult = permissionEvaluator.hasPermission(authenticationMock, targetDomainObject, permissionObject);
-//
-//        assertEquals(expectedPermission, permissionResult);
-//        verify(baseEntityPermissionEvaluatorMock, times(1)).hasPermission(user, targetDomainObject, permission);
-//        verifyNoMoreInteractions(baseEntityPermissionEvaluatorMock);
-//
-//        verify(permissionEvaluatorFactoryMock, times(1)).getEntityPermissionEvaluator(domainObjectClass);
-//        verifyNoMoreInteractions(permissionEvaluatorFactoryMock);
-//
-//        verify(userRepositoryMock, times(1)).findById(userId);
-//        verifyNoMoreInteractions(userRepositoryMock);
-//
-//        verify(authenticationMock, times(1)).getPrincipal();
-//        verifyNoMoreInteractions(authenticationMock);
-//    }
+        Application targetDomainObject = new Application();
+        IdHelper.setIdForEntity(targetDomainObject, 1L);
+        String permissionObject = "READ";
 
-    // TODO Fix test
-//    @Test
-//    public void hasPermission_ShouldRestrictAccessForSecuredTargetDomainObjectWithPermissions() throws NoSuchFieldException, IllegalAccessException {
-//        Authentication authenticationMock = mock(Authentication.class);
-//        final User user = new User();
-//        user.setUsername("Test User");
-//        user.setId(1909L);
-//
-//        when(authenticationMock.getPrincipal()).thenReturn(user);
-//
-//        final Long userId = user.getId();
-//
-//        Application targetDomainObject = new Application();
-//        targetDomainObject.setId(1L);
-//        final Class<?> domainObjectClass = targetDomainObject.getClass();
-//
-//        String permissionObject = "READ";
-//        final PermissionType permission = PermissionType.valueOf(permissionObject);
-//
-//        final boolean expectedPermission = true;
-//
-//        BaseEntityPermissionEvaluator baseEntityPermissionEvaluatorMock = mock(BaseEntityPermissionEvaluator.class);
-//        when(baseEntityPermissionEvaluatorMock.hasPermission(user, targetDomainObject, PermissionType.valueOf(permissionObject))).thenReturn(expectedPermission);
-//
-//        when(permissionEvaluatorFactoryMock.getEntityPermissionEvaluator(domainObjectClass)).thenReturn(baseEntityPermissionEvaluatorMock);
-//
-//        when(userRepositoryMock.findById(userId)).thenReturn(Optional.of(user));
-//
-//        boolean permissionResult = permissionEvaluator.hasPermission(authenticationMock, targetDomainObject, permissionObject);
-//
-//        assertEquals(expectedPermission, permissionResult);
-//
-//        verify(baseEntityPermissionEvaluatorMock, times(1)).hasPermission(user, targetDomainObject, permission);
-//        verifyNoMoreInteractions(baseEntityPermissionEvaluatorMock);
-//
-//        verify(permissionEvaluatorFactoryMock, times(1)).getEntityPermissionEvaluator(domainObjectClass);
-//        verifyNoMoreInteractions(permissionEvaluatorFactoryMock);
-//
-//        verify(userRepositoryMock, times(1)).findById(userId);
-//        verifyNoMoreInteractions(userRepositoryMock);
-//
-//        verify(authenticationMock, times(1)).getPrincipal();
-//        verifyNoMoreInteractions(authenticationMock);
-//    }
+        when(securityContextUtilMock.getUserFromAuthentication(authentication)).thenReturn(Optional.of(mockUser));
+
+        baseEntityPermissionEvaluatorMock.add(defaultPermissionEvaluatorMock);
+
+        permissionEvaluator.hasPermission(authentication, Optional.of(targetDomainObject), permissionObject);
+
+        verify(defaultPermissionEvaluatorMock, times(1)).hasPermission(mockUser, targetDomainObject, PermissionType.READ);
+
+        reset(securityContextUtilMock);
+        baseEntityPermissionEvaluatorMock.clear();
+    }
+
+    @Test
+    public void hasPermission_ShouldCallTheDefaultPermissionEvaluatorIfNoExplicitImplementationIsAvailable() throws NoSuchFieldException {
+        Authentication authentication = mock(Authentication.class);
+
+        Application targetDomainObject = new Application();
+        IdHelper.setIdForEntity(targetDomainObject, 1L);
+        String permissionObject = "READ";
+
+        when(securityContextUtilMock.getUserFromAuthentication(authentication)).thenReturn(Optional.of(mockUser));
+
+        baseEntityPermissionEvaluatorMock.add(defaultPermissionEvaluatorMock);
+
+        permissionEvaluator.hasPermission(authentication, targetDomainObject, permissionObject);
+
+        verify(defaultPermissionEvaluatorMock, times(1)).hasPermission(mockUser, targetDomainObject, PermissionType.READ);
+
+        reset(securityContextUtilMock);
+        baseEntityPermissionEvaluatorMock.clear();
+    }
+
+    @Test
+    public void hasPermission_ShouldCallTheAppropriatePermissionEvaluatorImplementation() throws NoSuchFieldException {
+        Authentication authentication = mock(Authentication.class);
+
+        Application targetDomainObject = new Application();
+        IdHelper.setIdForEntity(targetDomainObject, 1L);
+        String permissionObject = "READ";
+
+        when(securityContextUtilMock.getUserFromAuthentication(authentication)).thenReturn(Optional.of(mockUser));
+
+        baseEntityPermissionEvaluatorMock.add(defaultPermissionEvaluatorMock);
+        baseEntityPermissionEvaluatorMock.add(applicationPermissionEvaluatorMock);
+
+        permissionEvaluator.hasPermission(authentication, targetDomainObject, permissionObject);
+
+        verify(defaultPermissionEvaluatorMock, times(0)).hasPermission(mockUser, targetDomainObject, PermissionType.READ);
+        verify(applicationPermissionEvaluatorMock, times(1)).hasPermission(mockUser, targetDomainObject, PermissionType.READ);
+
+        reset(securityContextUtilMock);
+    }
 
 }
