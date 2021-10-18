@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>de.terrestris</groupId>
+    <artifactId>shogun</artifactId>
+    <version>8.0.1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>shogun-proxy</artifactId>
+  <name>SHOGun HTTP proxy microservice</name>
+  <packaging>jar</packaging>
+
+  <dependencies>
+    <!-- Spring Boot -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-log4j2</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-redis</artifactId>
+    </dependency>
+
+    <!-- Lombok -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+    </dependency>
+
+    <!-- Commons -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+
+    <!-- SHOGun lib -->
+    <dependency>
+      <groupId>de.terrestris</groupId>
+      <artifactId>shogun-lib</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <!-- SHOGun Config -->
+    <dependency>
+      <groupId>de.terrestris</groupId>
+      <artifactId>shogun-config</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>${maven-site-plugin.version}</version>
+        <extensions>true</extensions>
+      </plugin>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <fork>true</fork>
+          <skip>false</skip>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.hibernate.orm.tooling</groupId>
+        <artifactId>hibernate-enhance-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <configuration>
+              <failOnError>true</failOnError>
+              <enableLazyInitialization>true</enableLazyInitialization>
+            </configuration>
+            <goals>
+              <goal>enhance</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>pl.project13.maven</groupId>
+        <artifactId>git-commit-id-plugin</artifactId>
+        <configuration>
+          <offline>true</offline>
+          <abbrevLength>8</abbrevLength>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>com.google.cloud.tools</groupId>
+        <artifactId>jib-maven-plugin</artifactId>
+        <configuration>
+          <container>
+            <mainClass>de.terrestris.shogun.boot.config.ApplicationConfig</mainClass>
+          </container>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
