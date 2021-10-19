@@ -20,6 +20,8 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.AfterClass;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy;
+import org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -57,7 +59,7 @@ public class JdbcConfiguration {
         if (postgreSQLContainer != null) {
             return postgreSQLContainer;
         }
-        DockerImageName postgis = DockerImageName.parse("docker.terrestris.de/postgis/postgis:11-3.0").asCompatibleSubstituteFor("postgres");
+        DockerImageName postgis = DockerImageName.parse("postgis/postgis:13-3.1-alpine").asCompatibleSubstituteFor("postgres");
         postgreSQLContainer = new PostgreSQLContainer(postgis);
         postgreSQLContainer.start();
         return postgreSQLContainer;
@@ -66,7 +68,7 @@ public class JdbcConfiguration {
     @Bean
     public DataSource dataSource(final JdbcDatabaseContainer databaseContainer) {
         HikariConfig hikariConfig = new HikariConfig();
-        String jdbcUrl = String.format("%s&currentSchema=shogun", databaseContainer.getJdbcUrl());
+        String jdbcUrl = String.format("%s?currentSchema=shogun", databaseContainer.getJdbcUrl());
         hikariConfig.setJdbcUrl(jdbcUrl);
         hikariConfig.setUsername(databaseContainer.getUsername());
         hikariConfig.setPassword(databaseContainer.getPassword());
@@ -93,6 +95,8 @@ public class JdbcConfiguration {
         jpaProperties.put("hibernate.format_sql", env.getProperty("hibernate.format_sql"));
         jpaProperties.put("hibernate.default_schema", env.getProperty("hibernate.default_schema"));
         jpaProperties.put("hibernate.integration.envers.enabled", false);
+        jpaProperties.put("hibernate.implicit_naming_strategy", SpringImplicitNamingStrategy.class.getName());
+        jpaProperties.put("hibernate.physical_naming_strategy", SpringPhysicalNamingStrategy.class.getName());
 
         result.setJpaPropertyMap(jpaProperties);
 

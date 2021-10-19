@@ -22,10 +22,13 @@ spring:
     defaultSchema: shogun
   session:
     store-type: none
+  messages:
+    basename: org/springframework/security/messages, de/terrestris/shogun/lib/messages
 
 keycloak:
   auth-server-url: http://localhost:8000/auth
   realm: SpringBootKeycloak
+  resource: shogun-app
 
 keycloakauth:
   username: admin
