@@ -1,4 +1,9 @@
-# SHOGun
+# ![SHOGun Logo](./docs/assets/img/shogun_logo_thumb.png) SHOGun
+
+![](https://img.shields.io/github/license/terrestris/shogun)
+![build-and-publish](https://github.com/terrestris/shogun/actions/workflows/build-and-publish.yml/badge.svg?branch=main)
+![startup](https://github.com/terrestris/shogun/actions/workflows/startup.yml/badge.svg?branch=main)
+<!-- ![dependabot](https://api.dependabot.com/badges/status?host=github&repo=terrestris/shogun) -->
 
 SHOGun is an application framework written in Java for building scaleable web application backends in the context of 
 geospatial data infrastructures. It can be used directly without any specific customizations or highly customized to 
