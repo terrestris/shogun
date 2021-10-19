@@ -20,13 +20,15 @@ keycloak:
   public-client: true
   ssl-required: all
   principal-attribute: preferred_username
+
 keycloakauth:
   username: admin
   password: test
   master-realm: test
   admin-client: admin-cli
+
 shogun-proxy:
   whitelist:
     - localhost
     - localhost:8080
-    - ows.terrestris.de
+    - terrestris.de
