@@ -26,10 +26,6 @@ public class HttpProxyWebSecurityConfig extends WebSecurityConfig {
     protected void customHttpConfiguration(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
-            .antMatchers(
-                "/csrf/**"
-            )
-                .permitAll()
             .anyRequest()
                 .authenticated();
     }

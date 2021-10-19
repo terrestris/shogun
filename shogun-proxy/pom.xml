@@ -135,7 +135,7 @@
         <artifactId>jib-maven-plugin</artifactId>
         <configuration>
           <container>
-            <mainClass>de.terrestris.shogun.boot.config.ApplicationConfig</mainClass>
+            <mainClass>de.terrestris.shogun.config.HttpProxyConfig</mainClass>
           </container>
         </configuration>
       </plugin>
