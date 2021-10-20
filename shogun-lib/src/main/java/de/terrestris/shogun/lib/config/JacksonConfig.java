@@ -27,8 +27,7 @@ import de.terrestris.shogun.lib.annotation.JsonSuperType;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.scanners.TypeAnnotationsScanner;
+import org.reflections.scanners.Scanners;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.springframework.beans.factory.annotation.Value;
@@ -93,8 +92,11 @@ public class JacksonConfig implements ObjectMapperSupplier {
     private Map<Class<?>, Class<?>> findAnnotatedClasses() {
         var reflections = new Reflections(new ConfigurationBuilder()
             .setUrls(ClasspathHelper.forJavaClassPath())
-            .setScanners(new SubTypesScanner(),
-                new TypeAnnotationsScanner()));
+            .setScanners(
+                Scanners.SubTypes,
+                Scanners.TypesAnnotated
+            )
+        );
 
         Map<Class<?>, Class<?>> implementers = new HashMap<>();
 
