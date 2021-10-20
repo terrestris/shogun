@@ -1238,6 +1238,21 @@ public class HttpUtil {
      * @param uri            uri The URI to forward to.
      * @param request        The original {@link HttpServletRequest}
      * @param forwardHeaders Should headers of request should be forwarded
+     * @return The {@link HttpResponse} resulting from the POST request
+     * @throws URISyntaxException
+     * @throws HttpException
+     */
+    public static HttpResponse forwardPost(URI uri, HttpServletRequest request, boolean forwardHeaders) throws URISyntaxException, HttpException {
+        return HttpUtil.forwardPost(uri, request, forwardHeaders, false);
+    }
+
+    /**
+     * Forward POST to uri based on given request
+     *
+     * @param uri            uri The URI to forward to.
+     * @param request        The original {@link HttpServletRequest}
+     * @param forwardHeaders Should headers of request should be forwarded
+     * @param chunked        Send request in chunks
      * @return
      * @throws URISyntaxException
      * @throws HttpException

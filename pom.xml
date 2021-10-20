@@ -86,6 +86,7 @@
     <module>shogun-gs-interceptor</module>
     <module>shogun-config</module>
     <module>shogun-manager</module>
+    <module>shogun-proxy</module>
   </modules>
 
   <properties>
