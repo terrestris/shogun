@@ -21,6 +21,8 @@ import de.terrestris.shogun.interceptor.enumeration.InterceptorEnum;
 import de.terrestris.shogun.interceptor.enumeration.OgcEnum;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import lombok.*;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cache;
 
 import javax.persistence.*;
 
@@ -30,6 +32,8 @@ import javax.persistence.*;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode(callSuper = true)
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="interceptorrules")
 public class InterceptorRule extends BaseEntity {
 
     /**
