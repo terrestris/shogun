@@ -21,6 +21,10 @@ keycloak:
   ssl-required: all
   principal-attribute: preferred_username
 
+spring:
+  session:
+    store-type: none
+
 keycloakauth:
   username: admin
   password: test
