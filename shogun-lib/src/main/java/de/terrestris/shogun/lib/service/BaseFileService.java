@@ -25,6 +25,7 @@ import org.apache.tika.config.TikaConfig;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
+import org.apache.tika.metadata.TikaCoreProperties;
 import org.apache.tika.mime.MediaType;
 import org.apache.tomcat.util.http.fileupload.InvalidFileNameException;
 import org.apache.tomcat.util.http.fileupload.impl.InvalidContentTypeException;
@@ -36,7 +37,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Log4j2
 public abstract class BaseFileService<T extends BaseFileRepository<S, Long> & JpaSpecificationExecutor<S>, S extends File> extends BaseService<T, S> implements IBaseFileService<T, S> {
@@ -66,7 +70,7 @@ public abstract class BaseFileService<T extends BaseFileRepository<S, Long> & Jp
         String contentType = file.getContentType();
         String name = file.getName();
         Metadata metadata = new Metadata();
-        metadata.set(Metadata.RESOURCE_NAME_KEY, name);
+        metadata.set(TikaCoreProperties.RESOURCE_NAME_KEY, name);
         TikaConfig tika = new TikaConfig();
         MediaType mediaType = tika.getDetector().detect(TikaInputStream.get(file.getBytes()), metadata);
         if (!mediaType.toString().equals(contentType)) {
