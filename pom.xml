@@ -141,7 +141,7 @@
     <!-- Testing -->
     <testcontainers.version>1.16.2</testcontainers.version>
     <junit.jupiter.version>5.7.1</junit.jupiter.version>
-    <mockito.version>3.12.4</mockito.version>
+    <mockito.version>4.0.0</mockito.version>
     <maven-dependency-plugin.version>3.2.0</maven-dependency-plugin.version>
   </properties>
 
