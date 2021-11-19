@@ -34,7 +34,7 @@ jobs:
         run: mvn install --log-file mvn.out.txt
 
       - name: Clone shogun-docker
-        run: git clone --depth 1 https://github.com/terrestris/shogun-docker
+        run: git clone https://github.com/terrestris/shogun-docker
         working-directory: ../
 
       - name: Checkout specific commit to ensure reproducibility
