@@ -42,6 +42,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+// TODO Check @Testcontainers annotation
 @Configuration(proxyBeanMethods = false)
 @PropertySource("jdbc.properties")
 @EnableTransactionManagement

@@ -71,9 +71,6 @@ spring:
           envers:
             # Set this to false to disable auditing entity changes
             enabled: true
-  jackson:
-    serialization:
-      fail-on-empty-beans: false
   flyway:
     enabled: true
     baselineOnMigrate: true

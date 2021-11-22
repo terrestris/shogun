@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
 @ConditionalOnExpression("${keycloak.enabled:true}")
 @Log4j2
 @Component
+// TODO Move to service
 public class KeycloakUtil {
 
     @Autowired

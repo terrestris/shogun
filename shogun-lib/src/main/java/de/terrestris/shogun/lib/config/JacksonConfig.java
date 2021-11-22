@@ -75,9 +75,10 @@ public class JacksonConfig implements ObjectMapperSupplier {
             objectMapper.registerModule(javaTimeModule);
             objectMapper.configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false);
 
-            objectMapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false);
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+            JacksonConfig.mapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false);
+            JacksonConfig.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            JacksonConfig.mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+            JacksonConfig.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 
             for (var entry : findAnnotatedClasses().entrySet()) {
                 objectMapper.addMixIn(entry.getKey(), entry.getValue());

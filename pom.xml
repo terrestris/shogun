@@ -2,7 +2,7 @@
 <!--
   SHOGun, https://terrestris.github.io/shogun/
 
-  Copyright © 2020-present terrestris GmbH & Co. KG
+  Copyright © 2021-present terrestris GmbH & Co. KG
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -215,6 +215,26 @@
               <configuration>
                 <classifier>exec</classifier>
               </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>${jacoco-plugin.version}</version>
+          <executions>
+            <execution>
+              <id>default-prepare-agent</id>
+              <goals>
+                <goal>prepare-agent</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>default-report</id>
+              <phase>prepare-package</phase>
+              <goals>
+                <goal>report</goal>
+              </goals>
             </execution>
           </executions>
         </plugin>
@@ -481,6 +501,13 @@
         <groupId>com.graphql-java</groupId>
         <artifactId>graphql-java-extended-scalars</artifactId>
         <version>${graphql-java-extended-scalars.version}</version>
+      </dependency>
+
+      <!-- WebSocket -->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-websocket</artifactId>
+        <version>${spring-boot.version}</version>
       </dependency>
 
       <!-- Logging -->

@@ -18,6 +18,8 @@ package de.terrestris.shogun.boot.controller;
 
 import de.terrestris.shogun.boot.dto.ApplicationInfo;
 import de.terrestris.shogun.boot.service.ApplicationInfoService;
+import de.terrestris.shogun.boot.websocket.NotificationMessage;
+import de.terrestris.shogun.boot.websocket.SocketService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -39,6 +41,9 @@ public class ApplicationInfoController {
     @Autowired
     private ApplicationInfoService infoService;
 
+    @Autowired
+    private SocketService socketService;
+
     /**
      * Application info endpoint.
      *
@@ -47,6 +52,7 @@ public class ApplicationInfoController {
     @GetMapping("/app")
     public ApplicationInfo info() {
         try {
+            socketService.sendMessageToAdminUsers(new NotificationMessage("peter"));
             return infoService.getApplicationInfo();
         } catch (Exception e) {
             log.error("Could not determine general application information: {}", e.getMessage());
