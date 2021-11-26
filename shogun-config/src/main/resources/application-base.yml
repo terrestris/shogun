@@ -47,10 +47,10 @@ spring:
             mode: ENABLE_SELECTIVE
       org:
         hibernate:
-          # See https://docs.jboss.org/envers/docs/#configuration
+          # See https://docs.jboss.org/hibernate/orm/current/userguide/html_single/Hibernate_User_Guide.html#envers-configuration
           envers:
             default_schema: shogun_rev
-            audit_table_prefix: _rev
+            audit_table_suffix: _rev
             global_with_modified_flag: true
       hibernate:
         javax:
