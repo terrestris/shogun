@@ -16,6 +16,7 @@
  */
 package de.terrestris.shogun.boot.controller;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -25,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
  * https://stackoverflow.com/questions/40769200/configure-spring-boot-for-spa-frontend
  */
 @Controller
+@ConditionalOnExpression("${controller.singlepageapp.enabled:true}")
 public class SinglePageAppController {
 
     @GetMapping("/**/{path:[^\\.]*}")
