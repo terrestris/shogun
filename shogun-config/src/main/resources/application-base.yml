@@ -132,6 +132,10 @@ controller:
     enabled: true
   users:
     enabled: true
+  resource:
+    enabled: true
+  singlepageapp:
+    enabled: true
 
 upload:
   file:
