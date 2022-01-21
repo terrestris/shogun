@@ -174,8 +174,8 @@ public class KeycloakUtil {
 
     public boolean isUserInGroup(User user, Group group) {
         UserResource kcUser = this.getUserResource(user);
-        GroupResource kcGroup = this.getGroupResource(group);
-        return kcUser.groups().contains(kcGroup);
+        return kcUser.groups().stream()
+            .anyMatch(gr -> gr.getId().equals(group.getKeycloakId()));
     }
 
     /**
