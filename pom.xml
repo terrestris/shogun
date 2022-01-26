@@ -109,7 +109,7 @@
     <spring-data.version>2.5.6</spring-data.version>
 
     <!-- Security -->
-    <keycloak.version>15.0.2</keycloak.version>
+    <keycloak.version>16.1.1</keycloak.version>
 
     <!-- Database -->
     <hibernate-extra-types.version>2.14.0</hibernate-extra-types.version>
