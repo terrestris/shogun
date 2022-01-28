@@ -34,6 +34,11 @@ public class SinglePageAppController {
         if (request.getRequestURI().startsWith("/admin")) {
             return "forward:/admin/index.html";
         }
+
+        if (request.getRequestURI().startsWith("/client")) {
+            return "forward:/client/index.html";
+        }
+
         return "forward:/";
     }
 
