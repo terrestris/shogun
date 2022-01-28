@@ -144,6 +144,11 @@
       <groupId>de.terrestris</groupId>
       <artifactId>shogun-admin</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>de.terrestris</groupId>
+      <artifactId>shogun-baseclient</artifactId>
+    </dependency>
   </dependencies>
 
   <build>

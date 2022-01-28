@@ -97,6 +97,9 @@
     <!-- SHOGun admin -->
     <shogun-admin.version>4.0.0</shogun-admin.version>
 
+    <!-- SHOGun gis client -->
+    <shogun-baseclient.version>2.0.2-SNAPSHOT</shogun-baseclient.version>
+
     <!-- Plugins -->
     <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
     <maven-site-plugin.version>3.10.0</maven-site-plugin.version>
@@ -525,6 +528,20 @@
         <version>${reflections.version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>de.terrestris</groupId>
+        <artifactId>shogun-admin</artifactId>
+        <version>${shogun-admin.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>de.terrestris</groupId>
+        <artifactId>shogun-baseclient</artifactId>
+        <version>${shogun-baseclient.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
       <!-- Testing -->
       <dependency>
         <groupId>org.springframework</groupId>
@@ -555,12 +572,6 @@
         <artifactId>postgresql</artifactId>
         <version>${testcontainers.version}</version>
         <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>de.terrestris</groupId>
-        <artifactId>shogun-admin</artifactId>
-        <version>${shogun-admin.version}</version>
-        <scope>provided</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
