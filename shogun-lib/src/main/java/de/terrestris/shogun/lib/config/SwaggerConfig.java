@@ -16,28 +16,33 @@
  */
 package de.terrestris.shogun.lib.config;
 
+import com.fasterxml.classmate.TypeResolver;
 import de.terrestris.shogun.lib.annotation.JsonSuperType;
 import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.scanners.TypeAnnotationsScanner;
+import org.reflections.scanners.Scanners;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.schema.AlternateTypeRules;
 import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 
-import java.util.Collections;
+import java.util.*;
 import java.util.function.Predicate;
 
 @Configuration
 @EnableAutoConfiguration
 public abstract class SwaggerConfig {
+
+    @Autowired
+    private TypeResolver typeResolver;
 
     protected String title = "SHOGun REST API";
     protected String description = "This is the REST API description of SHOGun";
@@ -81,18 +86,70 @@ public abstract class SwaggerConfig {
     protected void directModelSubsitutions(Docket docket) {
         var reflections = new Reflections(new ConfigurationBuilder()
             .setUrls(ClasspathHelper.forJavaClassPath())
-            .setScanners(new SubTypesScanner(), new TypeAnnotationsScanner()));
+            .setScanners(
+                Scanners.SubTypes,
+                Scanners.TypesAnnotated
+            )
+        );
 
+        Map<Class<?>, Class<?>> substitutions = new HashMap<>();
+
+        // TODO Check types for graphql as well
         for (var cl : reflections.getTypesAnnotatedWith(JsonSuperType.class)) {
             var annotation = cl.getAnnotation(JsonSuperType.class);
             var superType = annotation.type();
 
-            if (!annotation.override() && !superType.isInterface()) {
-                throw new IllegalStateException("The super type " + superType.getName() + " is not an interface. " +
-                    "Set override to true if this is intended.");
+            if (!substitutions.containsKey(superType)) {
+                substitutions.put(superType, cl);
+                continue;
             }
 
+            var previous = substitutions.get(superType);
+
+            var currentOverride = annotation.override();
+            var previousOverride = previous.getAnnotation(JsonSuperType.class).override();
+
+            if (currentOverride && previousOverride) {
+                throw new IllegalStateException("Found two types (" + cl.getName() + ", " + previous.getName() + ") " +
+                    "that both want to (de-)serialize to the type " + superType.getName() + " and both have set " +
+                    "override to true. Override must be set for a single type only.");
+            }
+
+            if (!currentOverride && !previousOverride) {
+                throw new IllegalStateException("Found two types (" + cl.getName() + ", " + previous.getName() + ") " +
+                    "that both want to (de-)serialize to the type " + superType.getName() + ". Any existing type " +
+                    "should get extended.");
+            }
+
+            if (previousOverride) {
+                continue;
+            }
+
+            if (annotation.override()) {
+                substitutions.remove(previous);
+                substitutions.put(superType, cl);
+            }
+        }
+
+        for (var entry : substitutions.entrySet()) {
+            Class<?> superType = entry.getKey();
+            Class<?> cl = entry.getValue();
+
             docket.directModelSubstitute(superType, cl);
+            docket.alternateTypeRules(
+                AlternateTypeRules.newRule(
+                    typeResolver.resolve(List.class, superType),
+                    typeResolver.resolve(List.class, cl)
+                ),
+                AlternateTypeRules.newRule(
+                    typeResolver.resolve(Set.class, superType),
+                    typeResolver.resolve(Set.class, cl)
+                ),
+                AlternateTypeRules.newRule(
+                    typeResolver.resolve(Collection.class, superType),
+                    typeResolver.resolve(Collection.class, cl)
+                )
+            );
         }
     }
 

@@ -37,7 +37,7 @@ Configuration:
       - name: io.netty
         level: info
       - name: springfox.documentation
-        level: info
+        level: debug
       - name: org.thymeleaf
         level: info
       - name: org.hibernate

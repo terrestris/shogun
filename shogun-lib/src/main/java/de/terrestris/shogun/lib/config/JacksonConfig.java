@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.vladmihalcea.hibernate.type.util.ObjectMapperSupplier;
 import de.terrestris.shogun.lib.annotation.JsonSuperType;
+import lombok.extern.log4j.Log4j2;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.reflections.Reflections;
@@ -38,6 +39,7 @@ import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 
+@Log4j2
 @Configuration
 public class JacksonConfig implements ObjectMapperSupplier {
 
@@ -105,23 +107,52 @@ public class JacksonConfig implements ObjectMapperSupplier {
             var annotation = cl.getAnnotation(JsonSuperType.class);
             var superType = annotation.type();
 
-            if (!annotation.override() && !superType.isInterface()) {
-                throw new IllegalStateException("The super type " + superType.getName() + " is not an interface. " +
-                    "Set override to true if this is intended.");
-            }
-
             if (!implementers.containsKey(superType)) {
                 implementers.put(superType, cl);
-            } else {
-                var previous = implementers.get(superType);
-                if (previous.isAssignableFrom(cl)) {
-                    implementers.put(superType, cl);
-                } else if (!cl.isAssignableFrom(previous)) {
-                    throw new IllegalStateException("Found 2 incompatible types that both want to deserialize to the type "
-                        + superType.getName() + ". Any existing type should get extended.");
-                }
+                log.debug("(De-)serializing supertype " + superType + " with type " + cl);
+                continue;
+            }
+
+            var previous = implementers.get(superType);
+            if (previous.isAssignableFrom(cl)) {
+                implementers.put(superType, cl);
+                log.debug("(De-)serializing supertype " + superType + " with type " + cl);
+                continue;
+            }
+
+            var currentOverride = annotation.override();
+            var previousOverride = previous.getAnnotation(JsonSuperType.class).override();
+
+            log.warn("Found two conflicting (de-)serialization candidates (" + cl.getName() + ", " +
+                previous.getName() + ") for supertype " + superType + ". Checking for a conflict resolution " +
+                "(via the override field)");
+
+            if (currentOverride && previousOverride) {
+                throw new IllegalStateException("Found two types (" + cl.getName() + ", " + previous.getName() + ") " +
+                    "that both want to (de-)serialize to the type " + superType.getName() + " and both have set " +
+                    "override to true. Override must be set for a single type only.");
+            }
+
+            if (!currentOverride && !previousOverride) {
+                throw new IllegalStateException("Found two types (" + cl.getName() + ", " + previous.getName() + ") " +
+                    "that both want to (de-)serialize to the type " + superType.getName() + ". Any existing type " +
+                    "should get extended.");
+            }
+
+            if (previousOverride) {
+                log.info("Existing type (" + previous.getName() + ") for (de-)serialization of " + superType.getName() +
+                    " will be used as override is set to true");
+                continue;
+            }
+
+            if (annotation.override()) {
+                implementers.remove(previous);
+                implementers.put(superType, cl);
+                log.info("Removing the existing type for (de-)serialization of " + superType.getName() + " (" +
+                    previous.getName() + ") in favour of " + cl.getName() + " as override is set to true");
             }
         }
+
         return implementers;
     }
 

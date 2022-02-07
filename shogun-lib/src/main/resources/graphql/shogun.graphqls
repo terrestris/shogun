@@ -1,20 +1,20 @@
-"""
-  SHOGun, https://terrestris.github.io/shogun/
-
-  Copyright © 2020-present terrestris GmbH & Co. KG
-
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-    https://www.apache.org/licenses/LICENSE-2.0.txt
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-"""
+#"""
+#  SHOGun, https://terrestris.github.io/shogun/
+#
+#  Copyright © 2020-present terrestris GmbH & Co. KG
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#    https://www.apache.org/licenses/LICENSE-2.0.txt
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#"""
 scalar JSON
 scalar Geometry
 scalar DateTime
@@ -1375,6 +1375,32 @@ type ImageFile implements BaseEntity {
     height: Int
 }
 
+type DefaultLayerPropertyConfig {
+    propertyName: String
+    displayName: String
+    visible: Boolean
+}
+
+type DefaultLayerClientConfig {
+    minResolution: Float
+    maxResolution: Float
+    hoverable: Boolean
+    searchable: Boolean
+    searchConfig: JSON
+    propertyConfig: [DefaultLayerPropertyConfig]
+    crossOrigin: String
+}
+
+type DefaultLayerSourceConfig {
+    url: String
+    layerNames: String
+    legendUrl: String
+    tileSize: Int
+    tileOrigin: [Float]
+    resolutions: [Float]
+    attribution: String
+}
+
 """
 The `Layer` type represents the configuration of a layer (e.g. a WMS or WFS layer) which may be referenced by an
 application.
@@ -1398,7 +1424,7 @@ type Layer implements BaseEntity {
     name: String
     """
     The configuration of the layer which should be used to define client specific aspects of the layer. This may include
-    the name, the visible resolution range, search configurations or similiar. For example:
+    the name, the visible resolution range, search configurations or similar. For example:
 
     ```
     {
@@ -1436,7 +1462,7 @@ type Layer implements BaseEntity {
     }
     ```
     """
-    clientConfig: JSON
+    clientConfig: DefaultLayerClientConfig
     """
     The configuration of the datasource of the layer, e.g. the URL of the server, the name or the grid configuration.
     For example:
@@ -1488,10 +1514,10 @@ type Layer implements BaseEntity {
     }
     ```
     """
-    sourceConfig: JSON
+    sourceConfig: DefaultLayerSourceConfig
     """
     Custom features for the layers that aren't available in the datasource. This might be used for custom draw layers
-    or similiar. It's advised to store the features using the GeoJSON format. For example:
+    or similar. It's advised to store the features using the GeoJSON format. For example:
 
     ```
     {
@@ -1666,7 +1692,7 @@ type User implements BaseEntity {
     details: JSON
     """
     The configuration of the user which should be used to define client specific aspects of the user. This may include
-    the locale set by the user, the last application visited by the user or similiar. For example:
+    the locale set by the user, the last application visited by the user or similar. For example:
 
     ```
     {

@@ -30,7 +30,8 @@ public class BootWebSecurityConfig extends WebSecurityConfig {
     RequestMatcher csrfRequestMatcher = httpServletRequest -> {
         String refererHeader = httpServletRequest.getHeader("Referer");
 
-        return refererHeader != null && refererHeader.endsWith("swagger-ui/index.html");
+        return refererHeader != null && (refererHeader.endsWith("swagger-ui/index.html") ||
+            refererHeader.startsWith("https://localhost:9090"));
     };
 
     @Override
@@ -49,8 +50,7 @@ public class BootWebSecurityConfig extends WebSecurityConfig {
                     "/swagger-ui/**",
                     "/webjars/springfox-swagger-ui/**",
                     "/swagger-resources/**",
-                    "/v2/api-docs",
-                    "/client/**"
+                    "/v2/api-docs"
                 )
                     .permitAll()
                 .antMatchers(
@@ -77,6 +77,7 @@ public class BootWebSecurityConfig extends WebSecurityConfig {
                     .permitAll()
             .and()
                 .csrf()
+//                    .disable();
                     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                     .ignoringRequestMatchers(csrfRequestMatcher)
                     .ignoringAntMatchers("/graphql")
