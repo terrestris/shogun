@@ -18,6 +18,7 @@ package de.terrestris.shogun.lib.listener;
 
 import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.service.UserService;
+import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import lombok.extern.log4j.Log4j2;
 import org.keycloak.KeycloakPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,9 @@ public class LoginListener implements ApplicationListener<InteractiveAuthenticat
     @Autowired
     protected UserService userService;
 
+    @Autowired
+    private UserProviderService userProviderService;
+
     @Override
     @Transactional
     public synchronized void onApplicationEvent(InteractiveAuthenticationSuccessEvent event) {
@@ -51,6 +55,6 @@ public class LoginListener implements ApplicationListener<InteractiveAuthenticat
         String keycloakUserId = SecurityContextUtil.getKeycloakUserIdFromAuthentication(authentication);
 
         // Add missing user to shogun db
-        userService.findOrCreateByKeyCloakId(keycloakUserId);
+        userProviderService.findOrCreateByProviderId(keycloakUserId);
     }
 }

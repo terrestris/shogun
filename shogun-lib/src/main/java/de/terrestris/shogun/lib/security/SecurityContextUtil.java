@@ -25,7 +25,6 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
-import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.representations.AccessToken;
 import org.keycloak.representations.IDToken;
@@ -45,8 +44,6 @@ import java.util.stream.Collectors;
 @Log4j2
 public class SecurityContextUtil {
 
-    public static final String groupUuidsClaimName = "groups_uuid";
-
     @Autowired
     protected UserRepository userRepository;
 
@@ -54,10 +51,7 @@ public class SecurityContextUtil {
     protected GroupRepository groupRepository;
 
     @Autowired
-    protected RealmResource keycloakRealm;
-
-    @Autowired
-    KeycloakUtil keycloakUtil;
+//    KeycloakUtil keycloakUtil;
 
     @Transactional(readOnly = true)
     public Optional<User> getUserBySession() {
@@ -134,75 +128,6 @@ public class SecurityContextUtil {
         } else {
             return null;
         }
-    }
-
-    /**
-     * Get SHOGun groups for user based on actual assignment in keycloak
-     * @param user The SHOGun user
-     * @return List of SHOGun groups
-     */
-    public List<Group> getGroupsForUser(User user) {
-        List<GroupRepresentation> userGroups = this.getKeycloakGroupsForUser(user);
-        if (userGroups == null) {
-            return null;
-        }
-
-        // return list of Groups that are in SHOGun DB
-        return userGroups.stream().
-            map(GroupRepresentation::getId).
-            map(keycloakGroupId -> groupRepository.findByKeycloakId(keycloakGroupId).get()).
-            collect(Collectors.toList());
-    }
-
-    /**
-     * Get SHOGun groups for currently logged in user based on actual assignment in keycloak
-     * @return List of SHOGun for currently logged in user
-     */
-    public List<Group> getGroupsForUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication.getPrincipal() instanceof KeycloakPrincipal) {
-            KeycloakPrincipal<?> keycloakPrincipal = (KeycloakPrincipal<KeycloakSecurityContext>) authentication.getPrincipal();
-            KeycloakSecurityContext keycloakSecurityContext = keycloakPrincipal.getKeycloakSecurityContext();
-            IDToken idToken = keycloakSecurityContext.getIdToken();
-            AccessToken token = keycloakSecurityContext.getToken();
-
-            ArrayList<String> idTokenGroups = (idToken == null) ? null : (ArrayList<String>) idToken.getOtherClaims().get(groupUuidsClaimName);
-            ArrayList<String> tokenGroups = (token == null) ? null : (ArrayList<String>) token.getOtherClaims().get(groupUuidsClaimName);
-
-            Set<String> keycloakGroupIds = new HashSet<>();
-            if (idTokenGroups != null && !idTokenGroups.isEmpty()) {
-                keycloakGroupIds.addAll(idTokenGroups);
-            }
-            if (tokenGroups != null && !tokenGroups.isEmpty()) {
-                keycloakGroupIds.addAll(tokenGroups);
-            }
-            if (!keycloakGroupIds.isEmpty()) {
-                return keycloakGroupIds.stream().
-                    map(keycloakGroupId -> groupRepository.findByKeycloakId(keycloakGroupId).orElseThrow()).
-                    collect(Collectors.toList());
-            }
-        }
-
-        // default: use already existing
-        return getGroupsForUser(getUserBySession().get());
-    }
-
-    /**
-     * @deprecated
-     * This method was moved to the {@link KeycloakUtil} as its not related to security or authentication.
-     */
-    @Deprecated
-    public List<GroupRepresentation> getKeycloakGroupsForUser(User user) {
-        return keycloakUtil.getKeycloakUserGroups(user);
-    }
-
-    /**
-     * @deprecated
-     * This method was moved to the {@link KeycloakUtil} as its not related to security or authentication.
-     */
-    @Deprecated
-    public String getUserNameFromKeycloak(User user) {
-        return keycloakUtil.getUserNameFromKeycloak(user);
     }
 
     /**

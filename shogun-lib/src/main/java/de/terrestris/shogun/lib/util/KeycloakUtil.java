@@ -30,6 +30,7 @@ import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -40,6 +41,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+// TODO Check for keycloak object key length instead?
+@ConditionalOnExpression("${keycloak.enabled:true}")
 @Log4j2
 @Component
 public class KeycloakUtil {
@@ -52,9 +55,6 @@ public class KeycloakUtil {
 
     @Autowired
     protected GroupRepository groupRepository;
-
-    @Autowired
-    private KeycloakUtil keycloakUtil;
 
     @Autowired
     private SecurityContextUtil securityContextUtil;

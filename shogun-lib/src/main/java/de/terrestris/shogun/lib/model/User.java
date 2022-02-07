@@ -58,6 +58,7 @@ public class User extends BaseEntity {
         description = "The internal Keycloak ID of the user.",
         required = true
     )
+    // TODO Rename to authProviderId
     private String keycloakId;
 
     @Transient

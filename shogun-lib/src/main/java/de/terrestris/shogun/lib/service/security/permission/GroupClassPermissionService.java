@@ -26,13 +26,13 @@ import de.terrestris.shogun.lib.repository.security.permission.GroupClassPermiss
 import de.terrestris.shogun.lib.repository.security.permission.PermissionCollectionRepository;
 import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.service.BaseService;
-import de.terrestris.shogun.lib.util.KeycloakUtil;
-import java.util.List;
-import java.util.Optional;
-
+import de.terrestris.shogun.lib.service.security.provider.GroupProviderService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Log4j2
@@ -42,10 +42,10 @@ public class GroupClassPermissionService extends BaseService<GroupClassPermissio
     protected SecurityContextUtil securityContextUtil;
 
     @Autowired
-    protected KeycloakUtil keycloakUtil;
+    protected PermissionCollectionRepository permissionCollectionRepository;
 
     @Autowired
-    protected PermissionCollectionRepository permissionCollectionRepository;
+    private GroupProviderService groupProviderService;
 
     /**
      * Returns all {@link GroupClassPermission} for the given query arguments.
@@ -138,7 +138,8 @@ public class GroupClassPermissionService extends BaseService<GroupClassPermissio
             "entity with ID {} in the context of group with Keycloak ID {}", user.getKeycloakId(),
             entity.getId(), group.getKeycloakId());
 
-        boolean isUserMemberInGroup = keycloakUtil.isUserInGroup(user, group);
+        List<Group> userGroups = groupProviderService.findByUser(user);
+        boolean isUserMemberInGroup = userGroups.contains(group);
 
         if (!isUserMemberInGroup) {
             log.trace("The user is not a member of the given group, no permissions available.");
