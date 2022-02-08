@@ -17,7 +17,6 @@
 package de.terrestris.shogun.lib.security;
 
 import de.terrestris.shogun.lib.model.User;
-import de.terrestris.shogun.lib.repository.GroupRepository;
 import de.terrestris.shogun.lib.repository.UserRepository;
 import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import lombok.extern.log4j.Log4j2;
@@ -43,9 +42,6 @@ public class SecurityContextUtil {
 
     @Autowired
     protected UserRepository userRepository;
-
-    @Autowired
-    protected GroupRepository groupRepository;
 
     @Autowired
     private UserProviderService userProviderService;

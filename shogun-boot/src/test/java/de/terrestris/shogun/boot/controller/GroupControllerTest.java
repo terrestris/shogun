@@ -49,9 +49,7 @@ public class GroupControllerTest extends BaseControllerTest<GroupController, Gro
         entities.add(entity2);
         entities.add(entity3);
 
-        List<Group> persistedEntities = (List<Group>) repository.saveAll(entities);
-
-        testData = persistedEntities;
+        testData = (List<Group>) repository.saveAll(entities);
     }
 
 }

@@ -20,7 +20,6 @@ import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.service.GroupService;
 import de.terrestris.shogun.lib.service.UserService;
-import de.terrestris.shogun.lib.service.security.provider.GroupProviderService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -40,9 +39,6 @@ public class GroupController extends BaseController<GroupService, Group> {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    GroupProviderService groupProviderService;
 
     @GetMapping("/user/{id}")
     @ResponseStatus(HttpStatus.OK)
@@ -77,7 +73,7 @@ public class GroupController extends BaseController<GroupService, Group> {
     @ResponseStatus(HttpStatus.OK)
     public List<User> getGroupMembers(@PathVariable("id") String keycloakId) {
         try {
-            return groupProviderService.getGroupMembers(keycloakId);
+            return service.getGroupMembers(keycloakId);
         } catch (Exception e) {
             log.error("Error while requesting the members of keycloak group with ID {}: \n {}",
                 keycloakId, e.getMessage());

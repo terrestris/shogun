@@ -20,8 +20,8 @@ import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
 import de.terrestris.shogun.lib.event.OnRegistrationConfirmedEvent;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.UserRepository;
-import de.terrestris.shogun.lib.service.GroupService;
 import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
+import de.terrestris.shogun.lib.service.security.provider.GroupProviderService;
 import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import de.terrestris.shogun.lib.util.KeycloakUtil;
 import lombok.extern.log4j.Log4j2;
@@ -52,7 +52,7 @@ public class KeycloakUserProviderService implements UserProviderService {
     ApplicationEventPublisher eventPublisher;
 
     @Autowired
-    GroupService groupService;
+    GroupProviderService groupProviderService;
 
     @Autowired
     protected UserInstancePermissionService userInstancePermissionService;
@@ -95,7 +95,7 @@ public class KeycloakUserProviderService implements UserProviderService {
         keycloakUserGroups
             .stream()
             .map(GroupRepresentation::getId)
-            .forEach(groupService::findOrCreateByKeycloakId);
+            .forEach(groupProviderService::findOrCreateByProviderId);
 
         this.setTransientRepresentations(user);
 

@@ -52,11 +52,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
@@ -134,9 +130,7 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
         keycloakRepresentation.setRealmRoles(realmRoles);
         adminUser.setKeycloakRepresentation(keycloakRepresentation);
 
-        User persistedAdminUser = userRepository.save(adminUser);
-
-        this.adminUser = persistedAdminUser;
+        this.adminUser = userRepository.save(adminUser);
     }
 
     public void initUser() {
@@ -152,9 +146,7 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
         keycloakRepresentation.setRealmRoles(realmRoles);
         user.setKeycloakRepresentation(keycloakRepresentation);
 
-        User persistedUser = userRepository.save(user);
-
-        this.user = persistedUser;
+        this.user = userRepository.save(user);
     }
 
     public void cleanupPermissions() {
@@ -181,11 +173,10 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
         KeycloakSecurityContext securityContext = new KeycloakSecurityContext(null, null, null, idToken);
         KeycloakPrincipal<KeycloakSecurityContext> principal = new KeycloakPrincipal<>(mockUser.getKeycloakRepresentation().getUsername(), securityContext);
 
-        Set<String> roles = mockUser.getKeycloakRepresentation().getRealmRoles().stream().collect(Collectors.toSet());
+        Set<String> roles = new HashSet<>(mockUser.getKeycloakRepresentation().getRealmRoles());
         SimpleKeycloakAccount account = new SimpleKeycloakAccount(principal, roles, null);
-        Authentication authentication = new KeycloakAuthenticationToken(account, false);
 
-        return authentication;
+        return new KeycloakAuthenticationToken(account, false);
     }
 
     @BeforeEach

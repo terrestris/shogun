@@ -137,4 +137,20 @@ public class KeycloakGroupProviderService implements GroupProviderService {
         }
     }
 
+    @Transactional
+    public Group findOrCreateByProviderId(String keycloakGroupId) {
+        Optional<Group> groupOptional = repository.findByKeycloakId(keycloakGroupId);
+        Group group = groupOptional.orElse(null);
+
+        if (group == null) {
+            group = new Group(keycloakGroupId, null);
+            repository.save(group);
+
+            log.info("Group with keycloak id {} did not yet exist in the SHOGun DB and was therefore created.", keycloakGroupId);
+            return group;
+        }
+
+        return group;
+    }
+
 }
