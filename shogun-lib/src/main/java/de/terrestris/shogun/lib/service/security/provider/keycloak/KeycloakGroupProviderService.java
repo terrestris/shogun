@@ -1,3 +1,19 @@
+/* SHOGun, https://terrestris.github.io/shogun/
+ *
+ * Copyright © 2022-present terrestris GmbH & Co. KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   https://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.terrestris.shogun.lib.service.security.provider.keycloak;
 
 import de.terrestris.shogun.lib.model.Group;
@@ -16,7 +32,6 @@ import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -36,7 +51,7 @@ public class KeycloakGroupProviderService implements GroupProviderService {
     KeycloakUtil keycloakUtil;
 
     @Autowired
-    GroupRepository repository;
+    public GroupRepository repository;
 
     @Autowired
     UserRepository userRepository;
@@ -108,7 +123,7 @@ public class KeycloakGroupProviderService implements GroupProviderService {
             collect(Collectors.toList());
     }
 
-    public Group setTransientRepresentations(Group group) {
+    public void setTransientRepresentations(Group group) {
         GroupResource groupResource = keycloakUtil.getGroupResource(group);
 
         try {
@@ -120,7 +135,6 @@ public class KeycloakGroupProviderService implements GroupProviderService {
                 group.getId(), group.getKeycloakId());
             log.trace("Full stack trace: ", e);
         }
-
-        return group;
     }
+
 }

@@ -108,7 +108,7 @@ public class GroupClassPermissionService extends BaseService<GroupClassPermissio
             "entity class {}", user.getKeycloakId(), className);
 
         // Get all groups of the user from Keycloak
-        List<Group> groups = securityContextUtil.getGroupsForUser(user);
+        List<Group> groups = groupProviderService.findByUser(user);
         Optional<GroupClassPermission> gcp = Optional.empty();
         for (Group g : groups) {
             Optional<GroupClassPermission> permissionsForGroup = repository

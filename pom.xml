@@ -151,6 +151,8 @@
     <junit.jupiter.version>5.7.1</junit.jupiter.version>
     <mockito.version>4.4.0</mockito.version>
     <maven-dependency-plugin.version>3.3.0</maven-dependency-plugin.version>
+    <maven-project-info-reports-plugin.version>3.2.1</maven-project-info-reports-plugin.version>
+    <git.commit.id.abbrev>unknown</git.commit.id.abbrev>
   </properties>
 
   <build>
@@ -284,11 +286,6 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-site-plugin</artifactId>
             <version>${maven-site-plugin.version}</version>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-project-info-reports-plugin</artifactId>
-            <version>${maven-project-info-reports-plugin.version}</version>
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>

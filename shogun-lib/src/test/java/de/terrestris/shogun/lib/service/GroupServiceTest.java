@@ -18,6 +18,7 @@ package de.terrestris.shogun.lib.service;
 
 import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.repository.GroupRepository;
+import de.terrestris.shogun.lib.service.security.provider.keycloak.KeycloakGroupProviderService;
 import de.terrestris.shogun.lib.util.KeycloakUtil;
 import org.junit.Before;
 import org.mockito.InjectMocks;
@@ -37,9 +38,13 @@ public class GroupServiceTest extends BaseServiceTest<GroupService, Group> {
     @InjectMocks
     GroupService service;
 
+    @InjectMocks
+    KeycloakGroupProviderService groupProviderService;
+
     @Before
     public void init() {
         when(keycloakUtilMock.getGroupResource(any(Group.class))).thenReturn(null);
+        service.groupProviderService = groupProviderService;
 
         super.setRepository(repositoryMock);
         super.setService(service);

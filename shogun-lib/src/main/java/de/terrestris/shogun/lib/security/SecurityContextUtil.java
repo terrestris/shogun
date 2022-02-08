@@ -16,20 +16,16 @@
  */
 package de.terrestris.shogun.lib.security;
 
-import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.GroupRepository;
 import de.terrestris.shogun.lib.repository.UserRepository;
-import de.terrestris.shogun.lib.util.KeycloakUtil;
+import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
-import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.representations.AccessToken;
 import org.keycloak.representations.IDToken;
-import org.keycloak.representations.idm.GroupRepresentation;
-import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -37,8 +33,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Component
 @Log4j2
@@ -51,7 +48,7 @@ public class SecurityContextUtil {
     protected GroupRepository groupRepository;
 
     @Autowired
-//    KeycloakUtil keycloakUtil;
+    private UserProviderService userProviderService;
 
     @Transactional(readOnly = true)
     public Optional<User> getUserBySession() {
@@ -64,16 +61,7 @@ public class SecurityContextUtil {
 
         Optional<User> user = userRepository.findByKeycloakId(keycloakUserId);
 
-        if (user.isPresent()) {
-            UserResource userResource = keycloakUtil.getUserResource(user.get());
-            try {
-                UserRepresentation userRepresentation = userResource.toRepresentation();
-                user.get().setKeycloakRepresentation(userRepresentation);
-            } catch (RuntimeException exception) {
-                log.warn("Could not get the user representation details from Keycloak: ", exception.getMessage());
-                log.trace("Full stack trace: ", exception);
-            }
-        }
+        user.ifPresent(value -> userProviderService.setTransientRepresentations(value));
 
         return user;
     }

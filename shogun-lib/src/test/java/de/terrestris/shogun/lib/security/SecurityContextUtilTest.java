@@ -18,6 +18,9 @@ package de.terrestris.shogun.lib.security;
 
 import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.repository.GroupRepository;
+import de.terrestris.shogun.lib.service.GroupService;
+import de.terrestris.shogun.lib.service.security.provider.GroupProviderService;
+import de.terrestris.shogun.lib.service.security.provider.keycloak.KeycloakGroupProviderService;
 import org.junit.After;
 import org.junit.Test;
 import org.keycloak.KeycloakPrincipal;
@@ -37,7 +40,7 @@ import org.springframework.security.core.userdetails.User;
 
 import java.util.*;
 
-import static de.terrestris.shogun.lib.security.SecurityContextUtil.groupUuidsClaimName;
+import static de.terrestris.shogun.lib.service.security.provider.keycloak.KeycloakGroupProviderService.groupUuidsClaimName;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -51,6 +54,12 @@ public class SecurityContextUtilTest {
     private final SecurityContextUtil securityContextUtilMock = mock(SecurityContextUtil.class);
 
     private final SecurityContextUtil securityContextUtil = new SecurityContextUtil();
+
+    @Mock
+    private final GroupService groupService = mock(GroupService.class);
+
+    @Mock
+    private final KeycloakGroupProviderService groupProviderService = new KeycloakGroupProviderService();
 
     @After
     public void logoutMockUser() {
@@ -100,8 +109,9 @@ public class SecurityContextUtilTest {
     @Test
     public void getGroupsForUser() {
         loginMockUser("USER");
-        when(securityContextUtilMock.getUserBySession()).thenReturn(Optional.empty());
-        assertNotNull(securityContextUtilMock.getGroupsForUser());
+        Optional<de.terrestris.shogun.lib.model.User> user = Optional.of(new de.terrestris.shogun.lib.model.User());
+        when(securityContextUtilMock.getUserBySession()).thenReturn(user);
+        assertNotNull(groupProviderService.getGroupsForUser());
     }
 
     @Test
@@ -126,9 +136,9 @@ public class SecurityContextUtilTest {
         final GroupRepository groupRepository = mock(GroupRepository.class);
         when(groupRepository.findByKeycloakId(anyString())).thenReturn(Optional.of(new Group()));
 
-        securityContextUtil.groupRepository = groupRepository;
+        groupProviderService.repository = groupRepository;
 
-        List<Group> groupsForUser = securityContextUtil.getGroupsForUser();
+        List<Group> groupsForUser = groupProviderService.getGroupsForUser();
         assertNotNull(groupsForUser);
         assertEquals("Number of mocked group instances matches number of returned group instances.", 2, groupsForUser.size());
     }
