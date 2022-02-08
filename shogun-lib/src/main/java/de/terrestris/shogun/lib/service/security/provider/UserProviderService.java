@@ -17,11 +17,18 @@
 package de.terrestris.shogun.lib.service.security.provider;
 
 import de.terrestris.shogun.lib.model.User;
+import org.springframework.security.core.Authentication;
+
+import java.util.Optional;
 
 public interface UserProviderService {
 
     User findOrCreateByProviderId(String keycloakUserId);
 
     User setTransientRepresentations(User user);
+
+    Optional<User> getUserBySession();
+
+    Optional<User> getUserFromAuthentication(Authentication authentication);
 
 }

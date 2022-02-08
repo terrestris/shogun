@@ -21,13 +21,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
 import de.terrestris.shogun.lib.model.BaseEntity;
+import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.BaseCrudRepository;
 import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionService;
 import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
+import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.query.AuditEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
@@ -45,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@Log4j2
 public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpecificationExecutor<S>, S extends BaseEntity> {
 
     @Autowired
@@ -57,10 +62,16 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
     protected AuditReader auditReader;
 
     @Autowired
+    @Lazy
     protected UserInstancePermissionService userInstancePermissionService;
 
     @Autowired
+    @Lazy
     protected GroupInstancePermissionService groupInstancePermissionService;
+
+    @Autowired
+    @Lazy
+    protected UserProviderService userProviderService;
 
     @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
     @Transactional(readOnly = true)
@@ -109,7 +120,11 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
     public S create(S entity) {
         S persistedEntity = repository.save(entity);
 
-        userInstancePermissionService.setPermission(persistedEntity, PermissionCollectionType.ADMIN);
+        Optional<User> userBySession = userProviderService.getUserBySession();
+        if (userBySession.isEmpty()) {
+            throw new RuntimeException("Could not detect the logged in user.");
+        }
+        userInstancePermissionService.setPermission(persistedEntity, userBySession.get(), PermissionCollectionType.ADMIN);
 
         return persistedEntity;
     }

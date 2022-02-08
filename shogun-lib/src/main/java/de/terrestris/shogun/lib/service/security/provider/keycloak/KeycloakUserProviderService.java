@@ -25,17 +25,23 @@ import de.terrestris.shogun.lib.service.security.provider.GroupProviderService;
 import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import de.terrestris.shogun.lib.util.KeycloakUtil;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
+import org.keycloak.KeycloakPrincipal;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+
+import static de.terrestris.shogun.lib.util.KeycloakUtil.getKeycloakUserIdFromAuthentication;
 
 /**
  * NOTE: Make sure not to use services here, else the security checks will not run on them due to circular
@@ -121,4 +127,39 @@ public class KeycloakUserProviderService implements UserProviderService {
 
         return user;
     }
+
+    @Override
+    public Optional<User> getUserBySession() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String keycloakUserId = getKeycloakUserIdFromAuthentication(authentication);
+
+        if (StringUtils.isEmpty(keycloakUserId)) {
+            return Optional.empty();
+        }
+
+        Optional<User> user = userRepository.findByKeycloakId(keycloakUserId);
+
+        user.ifPresent(this::setTransientRepresentations);
+
+        return user;
+    }
+
+    /**
+     * Returns the current user object from the database.
+     *
+     * @param authentication
+     * @return
+     */
+    @Override
+    public Optional<User> getUserFromAuthentication(Authentication authentication) {
+        final Object principal = authentication.getPrincipal();
+        if (!(principal instanceof KeycloakPrincipal)) {
+            return Optional.empty();
+        }
+        // get user info from authentication object
+        String keycloakUserId = getKeycloakUserIdFromAuthentication(authentication);
+        return userRepository.findByKeycloakId(keycloakUserId);
+    }
+
+
 }

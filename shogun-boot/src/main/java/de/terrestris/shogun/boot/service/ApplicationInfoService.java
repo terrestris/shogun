@@ -19,6 +19,7 @@ package de.terrestris.shogun.boot.service;
 import de.terrestris.shogun.boot.dto.ApplicationInfo;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.security.SecurityContextUtil;
+import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -40,6 +41,9 @@ public class ApplicationInfoService {
     @Autowired
     protected SecurityContextUtil securityContextUtil;
 
+    @Autowired
+    private UserProviderService userProviderService;
+
     /**
      * Returns general application information such as the version.
      *
@@ -58,7 +62,7 @@ public class ApplicationInfoService {
             log.trace("Full stack trace: ", e);
         }
 
-        Optional<User> userOpt = securityContextUtil.getUserBySession();
+        Optional<User> userOpt = userProviderService.getUserBySession();
         ApplicationInfo applicationInfo = new ApplicationInfo();
 
         if (userOpt.isPresent()) {

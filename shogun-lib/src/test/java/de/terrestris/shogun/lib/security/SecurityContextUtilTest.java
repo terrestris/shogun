@@ -19,22 +19,19 @@ package de.terrestris.shogun.lib.security;
 import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.repository.GroupRepository;
 import de.terrestris.shogun.lib.service.GroupService;
-import de.terrestris.shogun.lib.service.security.provider.GroupProviderService;
+import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import de.terrestris.shogun.lib.service.security.provider.keycloak.KeycloakGroupProviderService;
+import de.terrestris.shogun.lib.service.security.provider.keycloak.KeycloakUserProviderService;
 import org.junit.After;
 import org.junit.Test;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.IDToken;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 
@@ -43,7 +40,8 @@ import java.util.*;
 import static de.terrestris.shogun.lib.service.security.provider.keycloak.KeycloakGroupProviderService.groupUuidsClaimName;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test for {@link SecurityContextUtil}
@@ -60,6 +58,9 @@ public class SecurityContextUtilTest {
 
     @Mock
     private final KeycloakGroupProviderService groupProviderService = new KeycloakGroupProviderService();
+
+    @Mock
+    private final UserProviderService userProviderService = new KeycloakUserProviderService();
 
     @After
     public void logoutMockUser() {
@@ -110,7 +111,7 @@ public class SecurityContextUtilTest {
     public void getGroupsForUser() {
         loginMockUser("USER");
         Optional<de.terrestris.shogun.lib.model.User> user = Optional.of(new de.terrestris.shogun.lib.model.User());
-        when(securityContextUtilMock.getUserBySession()).thenReturn(user);
+        when(userProviderService.getUserBySession()).thenReturn(user);
         assertNotNull(groupProviderService.getGroupsForUser());
     }
 

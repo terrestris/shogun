@@ -24,7 +24,8 @@ import org.junit.Before;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-import static org.mockito.ArgumentMatchers.any;
+import java.util.Optional;
+
 import static org.mockito.Mockito.when;
 
 public class UserServiceTest extends BaseServiceTest<UserService, User> {
@@ -38,13 +39,12 @@ public class UserServiceTest extends BaseServiceTest<UserService, User> {
     @InjectMocks
     UserService service;
 
-    @InjectMocks
-    KeycloakUserProviderService userProviderService;
+    @Mock
+    KeycloakUserProviderService userProviderService = new KeycloakUserProviderService();
 
     @Before
     public void init() {
-        when(keycloakUtilMock.getUserResource(any(User.class))).thenReturn(null);
-        service.userProviderService = userProviderService;
+        when(userProviderService.getUserBySession()).thenReturn(Optional.of(new User()));
 
         super.setRepository(repositoryMock);
         super.setService(service);
