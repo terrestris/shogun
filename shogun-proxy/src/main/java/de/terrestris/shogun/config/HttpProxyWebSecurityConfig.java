@@ -20,10 +20,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
 @Configuration
-public class HttpProxyWebSecurityConfig extends WebSecurityConfig {
+public class HttpProxyWebSecurityConfig implements WebSecurityConfig {
 
     @Override
-    protected void customHttpConfiguration(HttpSecurity http) throws Exception {
+    public void customHttpConfiguration(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
             .anyRequest()

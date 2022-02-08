@@ -37,6 +37,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * NOTE: Make sure not to use services here, else the security checks will not run on them due to circular
+ * references.
+ */
 @ConditionalOnExpression("${keycloak.enabled:true}")
 @Log4j2
 @Component

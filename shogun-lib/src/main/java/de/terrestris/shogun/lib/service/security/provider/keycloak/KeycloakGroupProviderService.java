@@ -40,6 +40,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * NOTE: Make sure not to use services here, else the security checks will not run on them due to circular
+ * references.
+ */
 @ConditionalOnExpression("${keycloak.enabled:true}")
 @Log4j2
 @Component

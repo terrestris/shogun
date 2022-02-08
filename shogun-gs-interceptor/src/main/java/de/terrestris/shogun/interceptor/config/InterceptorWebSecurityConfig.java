@@ -24,7 +24,7 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 @Configuration
-public class InterceptorWebSecurityConfig extends WebSecurityConfig {
+public class InterceptorWebSecurityConfig implements WebSecurityConfig {
 
     RequestMatcher csrfRequestMatcher = httpServletRequest -> {
         String refererHeader = httpServletRequest.getHeader("Referer");
@@ -32,7 +32,7 @@ public class InterceptorWebSecurityConfig extends WebSecurityConfig {
     };
 
     @Override
-    protected void customHttpConfiguration(HttpSecurity http) throws Exception {
+    public void customHttpConfiguration(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
             .antMatchers(

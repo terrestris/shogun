@@ -25,12 +25,14 @@ import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
  * Credits to https://stackoverflow.com/questions/57787768/issues-running-example-keycloak-spring-boot-app
  */
+@ConditionalOnExpression("${keycloak.enabled:true}")
 @Configuration
 public abstract class KeycloakConfig {
 

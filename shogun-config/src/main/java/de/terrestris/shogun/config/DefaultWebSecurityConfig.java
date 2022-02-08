@@ -14,27 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.terrestris.shogun.boot.config;
+package de.terrestris.shogun.config;
 
-import de.terrestris.shogun.config.WebSecurityConfig;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 
-@Configuration
-@EnableWebSecurity
-public class BootWebSecurityConfig extends WebSecurityConfig {
+public interface DefaultWebSecurityConfig extends WebSecurityConfig {
 
-    RequestMatcher csrfRequestMatcher = httpServletRequest -> {
-        String refererHeader = httpServletRequest.getHeader("Referer");
-
-        return refererHeader != null && refererHeader.endsWith("swagger-ui/index.html");
-    };
-
-    @Override
-    protected void customHttpConfiguration(HttpSecurity http) throws Exception {
+    default void customHttpConfiguration(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
                 .antMatchers(
@@ -66,7 +53,7 @@ public class BootWebSecurityConfig extends WebSecurityConfig {
                 .httpBasic()
             .and()
                 .formLogin()
-                    .defaultSuccessUrl("/index.html")
+                .defaultSuccessUrl("/index.html")
                     .permitAll()
             .and()
                 .rememberMe()
