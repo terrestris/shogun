@@ -135,11 +135,11 @@ public class SecurityContextUtilTest {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         final GroupRepository groupRepository = mock(GroupRepository.class);
-        when(groupRepository.findByKeycloakId(anyString())).thenReturn(Optional.of(new Group()));
+        when(groupRepository.findByAuthProviderId(anyString())).thenReturn(Optional.of(new Group()));
 
         groupProviderService.repository = groupRepository;
 
-        List<Group> groupsForUser = groupProviderService.getGroupsForUser();
+        List<Group<?>> groupsForUser = (List) groupProviderService.getGroupsForUser();
         assertNotNull(groupsForUser);
         assertEquals("Number of mocked group instances matches number of returned group instances.", 2, groupsForUser.size());
     }

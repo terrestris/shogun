@@ -62,7 +62,7 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
      */
     public Optional<UserInstancePermission> findFor(BaseEntity entity, User user) {
         log.trace("Getting all user permissions for user with Keycloak ID {} and " +
-            "entity with ID {}", user.getKeycloakId(), entity);
+            "entity with ID {}", user.getAuthProviderId(), entity);
 
         return repository.findByUserIdAndEntityId(user.getId(), entity.getId());
     }
@@ -206,7 +206,7 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
         // Check if there is already an existing permission set on the entity
         if (existingPermission.isPresent()) {
             log.debug("Permission is already set for entity with ID {} and user with " +
-                "Keycloak ID {}: {}", entity.getId(), user.getKeycloakId(), permissionCollection);
+                "Keycloak ID {}: {}", entity.getId(), user.getAuthProviderId(), permissionCollection);
 
             // Remove the existing one
             repository.delete(existingPermission.get());

@@ -51,7 +51,7 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
     public List<UserClassPermission> findFor(User user) {
 
         log.trace("Getting all user class permissions for user with Keycloak ID {}",
-            user.getKeycloakId());
+            user.getAuthProviderId());
 
         return repository.findAllByUser(user);
     }
@@ -66,7 +66,7 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
         String className = clazz.getCanonicalName();
 
         log.trace("Getting all user class permissions for user with Keycloak ID {} and " +
-            "entity class {}", user.getKeycloakId(), className);
+            "entity class {}", user.getAuthProviderId(), className);
 
         return repository.findByUserIdAndClassName(user.getId(), className);
     }
@@ -81,7 +81,7 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
      */
     public Optional<UserClassPermission> findFor(BaseEntity entity, User user) {
         log.trace("Getting all user class permissions for user with Keycloak ID {} and " +
-            "entity class {}", user.getKeycloakId(), entity.getClass().getCanonicalName());
+            "entity class {}", user.getAuthProviderId(), entity.getClass().getCanonicalName());
 
         return repository.findByUserIdAndClassName(user.getId(), entity.getClass().getCanonicalName());
     }

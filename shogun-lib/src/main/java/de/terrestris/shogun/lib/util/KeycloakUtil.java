@@ -61,9 +61,9 @@ public class KeycloakUtil {
     @Autowired
     private SecurityContextUtil securityContextUtil;
 
-    public UserResource getUserResource(User user) {
+    public UserResource getUserResource(User<UserRepresentation> user) {
         UsersResource kcUsers = this.keycloakRealm.users();
-        return kcUsers.get(user.getKeycloakId());
+        return kcUsers.get(user.getAuthProviderId());
     }
 
     public UserResource getUserResource(String id) {
@@ -71,9 +71,9 @@ public class KeycloakUtil {
         return kcUsers.get(id);
     }
 
-    public GroupResource getGroupResource(Group group) {
+    public GroupResource getGroupResource(Group<GroupRepresentation> group) {
         GroupsResource kcGroups = this.keycloakRealm.groups();
-        return kcGroups.group(group.getKeycloakId());
+        return kcGroups.group(group.getAuthProviderId());
     }
 
     public GroupResource getGroupResource(String id) {
@@ -81,14 +81,14 @@ public class KeycloakUtil {
         return kcGroups.group(id);
     }
 
-    public void addUserToGroup(User user, Group group) {
+    public void addUserToGroup(User<UserRepresentation> user, Group<GroupRepresentation> group) {
         UserResource kcUser = this.getUserResource(user);
         GroupResource kcGroup = this.getGroupResource(group);
 
         kcUser.joinGroup(kcGroup.toRepresentation().getId());
     }
 
-    public void addUserToGroup(User user, GroupRepresentation kcGroup) {
+    public void addUserToGroup(User<UserRepresentation> user, GroupRepresentation kcGroup) {
         UserResource kcUser = this.getUserResource(user);
 
         kcUser.joinGroup(kcGroup.getId());
@@ -168,10 +168,10 @@ public class KeycloakUtil {
         return keycloakRealm.roles();
     }
 
-    public boolean isUserInGroup(User user, Group group) {
+    public boolean isUserInGroup(User<UserRepresentation> user, Group<GroupRepresentation> group) {
         UserResource kcUser = this.getUserResource(user);
         return kcUser.groups().stream()
-            .anyMatch(gr -> gr.getId().equals(group.getKeycloakId()));
+            .anyMatch(gr -> gr.getId().equals(group.getAuthProviderId()));
     }
 
     /**
@@ -179,9 +179,9 @@ public class KeycloakUtil {
      * @param user
      * @return
      */
-    public String getUserNameFromKeycloak(User user) {
+    public String getUserNameFromKeycloak(User<UserRepresentation> user) {
         UsersResource users = this.keycloakRealm.users();
-        UserResource kcUser = users.get(user.getKeycloakId());
+        UserResource kcUser = users.get(user.getAuthProviderId());
         UserRepresentation kcUserRepresentation = kcUser.toRepresentation();
         return String.format("%s %s", kcUserRepresentation.getFirstName(), kcUserRepresentation.getLastName());
     }
@@ -191,7 +191,7 @@ public class KeycloakUtil {
      * Renamed to `getKeycloakUserGroups`.
      */
     @Deprecated
-    public List<GroupRepresentation> getUserGroups(User user) {
+    public List<GroupRepresentation> getUserGroups(User<UserRepresentation> user) {
         return this.getKeycloakUserGroups(user);
     }
 
@@ -201,7 +201,7 @@ public class KeycloakUtil {
      * @param user
      * @return
      */
-    public List<GroupRepresentation> getKeycloakUserGroups(User user) {
+    public List<GroupRepresentation> getKeycloakUserGroups(User<UserRepresentation> user) {
         UserResource userResource = this.getUserResource(user);
         List<GroupRepresentation> groups = new ArrayList<>();
 
@@ -210,7 +210,7 @@ public class KeycloakUtil {
         } catch (Exception e) {
             log.warn("Could not get the GroupRepresentations for the groups of user with SHOGun ID {} and " +
                     "Keycloak ID {}. This may happen if the user is not available in Keycloak.",
-                     user.getId(), user.getKeycloakId());
+                     user.getId(), user.getAuthProviderId());
             log.trace("Full stack trace: ", e);
         }
 
@@ -223,7 +223,7 @@ public class KeycloakUtil {
      * @param user
      * @return
      */
-    public List<RoleRepresentation> getKeycloakUserRoles(User user) {
+    public List<RoleRepresentation> getKeycloakUserRoles(User<UserRepresentation> user) {
         UserResource userResource = this.getUserResource(user);
         List<RoleRepresentation> roles = new ArrayList<>();
         try {
@@ -231,7 +231,7 @@ public class KeycloakUtil {
         } catch (Exception e) {
             log.warn("Could not get the RoleMappingResource for the user with SHOGun ID {} and " +
                     "Keycloak ID {}. This may happen if the user is not available in Keycloak.",
-                     user.getId(), user.getKeycloakId());
+                     user.getId(), user.getAuthProviderId());
             log.trace("Full stack trace: ", e);
         }
         return roles;

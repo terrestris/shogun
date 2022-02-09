@@ -65,7 +65,7 @@ public class BasePermissionEvaluatorTest {
     @Before
     public void setup() {
         mockUser = new User();
-        mockUser.setKeycloakId(mockUserKeycloakId);
+        mockUser.setAuthProviderId(mockUserKeycloakId);
 
         when(defaultPermissionEvaluatorMock.getEntityClassName()).thenReturn(BaseEntity.class);
         when(applicationPermissionEvaluatorMock.getEntityClassName()).thenReturn(Application.class);

@@ -50,7 +50,7 @@ import static de.terrestris.shogun.lib.util.KeycloakUtil.getKeycloakUserIdFromAu
 @ConditionalOnExpression("${keycloak.enabled:true}")
 @Log4j2
 @Component
-public class KeycloakUserProviderService implements UserProviderService {
+public class KeycloakUserProviderService implements UserProviderService<UserRepresentation> {
 
     @Autowired
     KeycloakUtil keycloakUtil;
@@ -77,13 +77,13 @@ public class KeycloakUserProviderService implements UserProviderService {
      */
 //    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#keycloakUserId, 'CREATE')")
     @Transactional
-    public User findOrCreateByProviderId(String keycloakUserId) {
-        Optional<User> userOptional = userRepository.findByKeycloakId(keycloakUserId);
-        User user = userOptional.orElse(null);
+    public User<UserRepresentation> findOrCreateByProviderId(String keycloakUserId) {
+        Optional<User<UserRepresentation>> userOptional = (Optional) userRepository.findByAuthProviderId(keycloakUserId);
+        User<UserRepresentation> user = userOptional.orElse(null);
 
         // User is not yet it SHOGun DB
         if (user == null) {
-            user = new User(keycloakUserId, null, null, null);
+            user = new User<>(keycloakUserId, null, null, null);
             userRepository.save(user);
 
             // If the user doesn't exist, we assume it's the first login after registration.
@@ -112,16 +112,16 @@ public class KeycloakUserProviderService implements UserProviderService {
         return user;
     }
 
-    public User setTransientRepresentations(User user) {
+    public User<UserRepresentation> setTransientRepresentations(User<UserRepresentation> user) {
         UserResource userResource = keycloakUtil.getUserResource(user);
 
         try {
             UserRepresentation userRepresentation = userResource.toRepresentation();
-            user.setKeycloakRepresentation(userRepresentation);
+            user.setProviderDetails(userRepresentation);
         } catch (Exception e) {
             log.warn("Could not get the UserRepresentation for user with SHOGun ID {} and " +
                     "Keycloak ID {}. This may happen if the user is not available in Keycloak.",
-                user.getId(), user.getKeycloakId());
+                user.getId(), user.getAuthProviderId());
             log.trace("Full stack trace: ", e);
         }
 
@@ -129,7 +129,7 @@ public class KeycloakUserProviderService implements UserProviderService {
     }
 
     @Override
-    public Optional<User> getUserBySession() {
+    public Optional<User<UserRepresentation>> getUserBySession() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String keycloakUserId = getKeycloakUserIdFromAuthentication(authentication);
 
@@ -137,7 +137,7 @@ public class KeycloakUserProviderService implements UserProviderService {
             return Optional.empty();
         }
 
-        Optional<User> user = userRepository.findByKeycloakId(keycloakUserId);
+        Optional<User<UserRepresentation>> user = (Optional) userRepository.findByAuthProviderId(keycloakUserId);
 
         user.ifPresent(this::setTransientRepresentations);
 
@@ -151,14 +151,14 @@ public class KeycloakUserProviderService implements UserProviderService {
      * @return
      */
     @Override
-    public Optional<User> getUserFromAuthentication(Authentication authentication) {
+    public Optional<User<UserRepresentation>> getUserFromAuthentication(Authentication authentication) {
         final Object principal = authentication.getPrincipal();
         if (!(principal instanceof KeycloakPrincipal)) {
             return Optional.empty();
         }
         // get user info from authentication object
         String keycloakUserId = getKeycloakUserIdFromAuthentication(authentication);
-        return userRepository.findByKeycloakId(keycloakUserId);
+        return (Optional) userRepository.findByAuthProviderId(keycloakUserId);
     }
 
 

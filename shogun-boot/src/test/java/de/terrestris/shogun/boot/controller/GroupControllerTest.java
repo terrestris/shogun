@@ -39,9 +39,9 @@ public class GroupControllerTest extends BaseControllerTest<GroupController, Gro
         Group entity2 = new Group();
         Group entity3 = new Group();
 
-        entity1.setKeycloakId(UUID.randomUUID().toString());
-        entity2.setKeycloakId(UUID.randomUUID().toString());
-        entity3.setKeycloakId(UUID.randomUUID().toString());
+        entity1.setAuthProviderId(UUID.randomUUID().toString());
+        entity2.setAuthProviderId(UUID.randomUUID().toString());
+        entity3.setAuthProviderId(UUID.randomUUID().toString());
 
         ArrayList<Group> entities = new ArrayList<>();
 

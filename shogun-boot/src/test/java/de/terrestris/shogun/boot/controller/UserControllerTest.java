@@ -54,9 +54,9 @@ public class UserControllerTest extends BaseControllerTest<UserController, UserR
         User entity2 = new User();
         User entity3 = new User();
 
-        entity1.setKeycloakId(UUID.randomUUID().toString());
-        entity2.setKeycloakId(UUID.randomUUID().toString());
-        entity3.setKeycloakId(UUID.randomUUID().toString());
+        entity1.setAuthProviderId(UUID.randomUUID().toString());
+        entity2.setAuthProviderId(UUID.randomUUID().toString());
+        entity3.setAuthProviderId(UUID.randomUUID().toString());
 
         ArrayList<User> entities = new ArrayList<>();
 

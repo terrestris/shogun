@@ -65,7 +65,7 @@ public class DefaultPermissionEvaluatorTest {
     @Before
     public void setup() {
         mockUser = new User();
-        mockUser.setKeycloakId(mockUserKeycloakId);
+        mockUser.setAuthProviderId(mockUserKeycloakId);
     }
 
     @Test

@@ -47,7 +47,7 @@ import java.util.stream.Collectors;
 @ConditionalOnExpression("${keycloak.enabled:true}")
 @Log4j2
 @Component
-public class KeycloakGroupProviderService implements GroupProviderService {
+public class KeycloakGroupProviderService implements GroupProviderService<UserRepresentation, GroupRepresentation> {
 
     public static final String groupUuidsClaimName = "groups_uuid";
 
@@ -61,15 +61,15 @@ public class KeycloakGroupProviderService implements GroupProviderService {
     UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public List<Group> findByUser(User user) {
-        List<Group> groups = new ArrayList<>();
+    public List<Group<GroupRepresentation>> findByUser(User<UserRepresentation> user) {
+        List<Group<GroupRepresentation>> groups = new ArrayList<>();
 
         List<GroupRepresentation> keycloakGroups = keycloakUtil.getKeycloakUserGroups(user);
 
         for (GroupRepresentation keycloakGroup : keycloakGroups) {
-            Optional<Group> group = repository.findByKeycloakId(keycloakGroup.getId());
+            Optional<Group<GroupRepresentation>> group = (Optional) repository.findByAuthProviderId(keycloakGroup.getId());
             if (group.isPresent()) {
-                group.get().setKeycloakRepresentation(keycloakGroup);
+                group.get().setProviderDetails(keycloakGroup);
                 groups.add(group.get());
             }
         }
@@ -77,15 +77,15 @@ public class KeycloakGroupProviderService implements GroupProviderService {
         return groups;
     }
 
-    public List<User> getGroupMembers(String id) {
+    public List<User<UserRepresentation>> getGroupMembers(String id) {
         GroupResource groupResource = keycloakUtil.getGroupResource(id);
         List<UserRepresentation> groupMembers = groupResource.members();
 
-        ArrayList<User> users = new ArrayList<>();
+        ArrayList<User<UserRepresentation>> users = new ArrayList<>();
         for (UserRepresentation groupMember : groupMembers) {
-            Optional<User> user = userRepository.findByKeycloakId(groupMember.getId());
+            Optional<User<UserRepresentation>> user = (Optional) userRepository.findByAuthProviderId(groupMember.getId());
             if (user.isPresent()) {
-                user.get().setKeycloakRepresentation(groupMember);
+                user.get().setProviderDetails(groupMember);
                 users.add(user.get());
             }
         }
@@ -97,7 +97,7 @@ public class KeycloakGroupProviderService implements GroupProviderService {
      * Get SHOGun groups for currently logged in user based on actual assignment in keycloak
      * @return List of SHOGun for currently logged in user
      */
-    public List<Group> getGroupsForUser() {
+    public List<Group<GroupRepresentation>> getGroupsForUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication.getPrincipal() instanceof KeycloakPrincipal)) {
             // TODO Check what happens for an anon user
@@ -122,32 +122,32 @@ public class KeycloakGroupProviderService implements GroupProviderService {
             keycloakGroupIds.addAll(tokenGroups);
         }
 
-        return keycloakGroupIds.stream().
-            map(keycloakGroupId -> repository.findByKeycloakId(keycloakGroupId).orElseThrow()).
+        return (List) keycloakGroupIds.stream().
+            map(keycloakGroupId -> repository.findByAuthProviderId(keycloakGroupId).orElseThrow()).
             collect(Collectors.toList());
     }
 
-    public void setTransientRepresentations(Group group) {
+    public void setTransientRepresentations(Group<GroupRepresentation> group) {
         GroupResource groupResource = keycloakUtil.getGroupResource(group);
 
         try {
             GroupRepresentation groupRepresentation = groupResource.toRepresentation();
-            group.setKeycloakRepresentation(groupRepresentation);
+            group.setProviderDetails(groupRepresentation);
         } catch (Exception e) {
             log.warn("Could not get the GroupRepresentation for group with SHOGun ID {} and " +
                     "Keycloak ID {}. This may happen if the group is not available in Keycloak.",
-                group.getId(), group.getKeycloakId());
+                group.getId(), group.getAuthProviderId());
             log.trace("Full stack trace: ", e);
         }
     }
 
     @Transactional
-    public Group findOrCreateByProviderId(String keycloakGroupId) {
-        Optional<Group> groupOptional = repository.findByKeycloakId(keycloakGroupId);
-        Group group = groupOptional.orElse(null);
+    public Group<GroupRepresentation> findOrCreateByProviderId(String keycloakGroupId) {
+        Optional<Group<GroupRepresentation>> groupOptional = (Optional) repository.findByAuthProviderId(keycloakGroupId);
+        Group<GroupRepresentation> group = groupOptional.orElse(null);
 
         if (group == null) {
-            group = new Group(keycloakGroupId, null);
+            group = new Group<>(keycloakGroupId, null);
             repository.save(group);
 
             log.info("Group with keycloak id {} did not yet exist in the SHOGun DB and was therefore created.", keycloakGroupId);

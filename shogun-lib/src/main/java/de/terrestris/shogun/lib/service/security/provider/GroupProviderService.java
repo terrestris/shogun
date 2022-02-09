@@ -21,16 +21,16 @@ import de.terrestris.shogun.lib.model.User;
 
 import java.util.List;
 
-public interface GroupProviderService {
+public interface GroupProviderService<UserType, GroupType> {
 
-    List<Group> findByUser(User user);
+    List<Group<GroupType>> findByUser(User<UserType> user);
 
-    List<User> getGroupMembers(String keycloakId);
+    List<User<UserType>> getGroupMembers(String providerId);
 
-    void setTransientRepresentations(Group group);
+    void setTransientRepresentations(Group<GroupType> group);
 
-    List<Group> getGroupsForUser();
+    List<Group<GroupType>> getGroupsForUser();
 
-    Group findOrCreateByProviderId(String keycloakGroupId);
+    Group<GroupType> findOrCreateByProviderId(String providerGroupId);
 
 }

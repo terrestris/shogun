@@ -109,7 +109,7 @@ public class GroupService extends BaseService<GroupRepository, Group> {
     @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#keycloakGroupId, 'DELETE')")
     public void deleteByKeycloakId(String keycloakGroupId) {
-        Optional<Group> groupOptional = repository.findByKeycloakId(keycloakGroupId);
+        Optional<Group> groupOptional = repository.findByAuthProviderId(keycloakGroupId);
         Group group = groupOptional.orElse(null);
         if (group == null) {
             log.debug("Group with keycloak id {} was deleted in Keycloak. It did not exists in SHOGun DB. No action needed.", keycloakGroupId);

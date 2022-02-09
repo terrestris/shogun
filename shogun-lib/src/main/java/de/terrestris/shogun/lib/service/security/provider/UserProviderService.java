@@ -21,14 +21,14 @@ import org.springframework.security.core.Authentication;
 
 import java.util.Optional;
 
-public interface UserProviderService {
+public interface UserProviderService<T> {
 
-    User findOrCreateByProviderId(String keycloakUserId);
+    User<T> findOrCreateByProviderId(String providerUserId);
 
-    User setTransientRepresentations(User user);
+    User<T> setTransientRepresentations(User<T> user);
 
-    Optional<User> getUserBySession();
+    Optional<User<T>> getUserBySession();
 
-    Optional<User> getUserFromAuthentication(Authentication authentication);
+    Optional<User<T>> getUserFromAuthentication(Authentication authentication);
 
 }

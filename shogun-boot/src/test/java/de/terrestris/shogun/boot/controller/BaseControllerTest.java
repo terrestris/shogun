@@ -118,9 +118,9 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
     }
 
     public void initAdminUser() {
-        User adminUser = new User();
+        User<UserRepresentation> adminUser = new User();
         String keycloakId = "bf5efad6-50f5-448c-b808-60dc0259d70b";
-        adminUser.setKeycloakId(keycloakId);
+        adminUser.setAuthProviderId(keycloakId);
         UserRepresentation keycloakRepresentation = new UserRepresentation();
         keycloakRepresentation.setEmail("admin@shogun.de");
         keycloakRepresentation.setEnabled(true);
@@ -128,15 +128,15 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
         ArrayList<String> realmRoles = new ArrayList<>();
         realmRoles.add("ROLE_ADMIN");
         keycloakRepresentation.setRealmRoles(realmRoles);
-        adminUser.setKeycloakRepresentation(keycloakRepresentation);
+        adminUser.setProviderDetails(keycloakRepresentation);
 
         this.adminUser = userRepository.save(adminUser);
     }
 
     public void initUser() {
-        User user = new User();
+        User<UserRepresentation> user = new User();
         String keycloakId = "01e680f5-e8a4-460f-8897-12b4cf893739";
-        user.setKeycloakId(keycloakId);
+        user.setAuthProviderId(keycloakId);
         UserRepresentation keycloakRepresentation = new UserRepresentation();
         keycloakRepresentation.setEmail("user@shogun.de");
         keycloakRepresentation.setEnabled(true);
@@ -144,7 +144,7 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
         ArrayList<String> realmRoles = new ArrayList<>();
         realmRoles.add("ROLE_USER");
         keycloakRepresentation.setRealmRoles(realmRoles);
-        user.setKeycloakRepresentation(keycloakRepresentation);
+        user.setProviderDetails(keycloakRepresentation);
 
         this.user = userRepository.save(user);
     }
@@ -152,7 +152,7 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
     public void cleanupPermissions() {
         userInstancePermissionRepository.deleteAll();
         userClassPermissionRepository.deleteAll();
-    };
+    }
 
     public void deinitAdminUser() {
         userRepository.delete(this.adminUser);
@@ -166,14 +166,14 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
         repository.deleteAll();
     }
 
-    public Authentication getMockAuthentication(User mockUser) {
+    public Authentication getMockAuthentication(User<UserRepresentation> mockUser) {
         IDToken idToken = new IDToken();
-        idToken.setSubject(mockUser.getKeycloakId());
+        idToken.setSubject(mockUser.getAuthProviderId());
 
         KeycloakSecurityContext securityContext = new KeycloakSecurityContext(null, null, null, idToken);
-        KeycloakPrincipal<KeycloakSecurityContext> principal = new KeycloakPrincipal<>(mockUser.getKeycloakRepresentation().getUsername(), securityContext);
+        KeycloakPrincipal<KeycloakSecurityContext> principal = new KeycloakPrincipal<>(mockUser.getProviderDetails().getUsername(), securityContext);
 
-        Set<String> roles = new HashSet<>(mockUser.getKeycloakRepresentation().getRealmRoles());
+        Set<String> roles = new HashSet<>(mockUser.getProviderDetails().getRealmRoles());
         SimpleKeycloakAccount account = new SimpleKeycloakAccount(principal, roles, null);
 
         return new KeycloakAuthenticationToken(account, false);

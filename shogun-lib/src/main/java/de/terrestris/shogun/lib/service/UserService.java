@@ -16,15 +16,11 @@
  */
 package de.terrestris.shogun.lib.service;
 
-import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
-import de.terrestris.shogun.lib.event.OnRegistrationConfirmedEvent;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.UserRepository;
 import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import lombok.extern.log4j.Log4j2;
-import org.keycloak.representations.idm.GroupRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
@@ -83,7 +79,7 @@ public class UserService extends BaseService<UserRepository, User> {
     @PostAuthorize("hasRole('ROLE_ADMIN') or hasPermission(returnObject.orElse(null), 'READ')")
     @Transactional(readOnly = true)
     public Optional<User> findByKeyCloakId(String keycloakId) {
-        Optional<User> user = repository.findByKeycloakId(keycloakId);
+        Optional<User> user = repository.findByAuthProviderId(keycloakId);
 
         if (user.isPresent()) {
             userProviderService.setTransientRepresentations(user.get());
@@ -100,7 +96,7 @@ public class UserService extends BaseService<UserRepository, User> {
     @Transactional
 //    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#keycloakUserId, 'DELETE')")
     public void deleteByKeycloakId(String keycloakUserId) {
-        Optional<User> userOptional = repository.findByKeycloakId(keycloakUserId);
+        Optional<User> userOptional = repository.findByAuthProviderId(keycloakUserId);
         User user = userOptional.orElse(null);
         if (user == null) {
             log.debug("User with keycloak id {} was deleted in Keycloak. It did not exists in SHOGun DB. No action needed.", keycloakUserId);
