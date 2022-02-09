@@ -54,7 +54,7 @@ jobs:
         working-directory: ../shogun-docker
 
       - name: Inspect network
-        run: docker network ls
+        run: docker network inspect shogun-docker_default
         working-directory: ../shogun-docker
 
       - name: Check if application has started
