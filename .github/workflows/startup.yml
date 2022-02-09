@@ -53,6 +53,10 @@ jobs:
         run: docker-compose -f docker-compose.yml -f docker-compose-dev.yml up -d
         working-directory: ../shogun-docker
 
+      - name: Inspect network
+        run: docker network ls
+        working-directory: ../shogun-docker
+
       - name: Check if application has started
         run: ./scripts/wait.sh
 
