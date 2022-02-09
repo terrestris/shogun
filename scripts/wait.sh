@@ -15,7 +15,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 URL="https://localhost/"
-TIMEOUT=120
+TIMEOUT=240
 seconds=0
 
 echo 'Waiting up to' $TIMEOUT 'seconds for HTTP 200 from' $URL 
