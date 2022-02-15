@@ -49,7 +49,8 @@ public class BootWebSecurityConfig extends WebSecurityConfig {
                     "/swagger-ui/**",
                     "/webjars/springfox-swagger-ui/**",
                     "/swagger-resources/**",
-                    "/v2/api-docs"
+                    "/v2/api-docs",
+                    "/client/**"
                 )
                     .permitAll()
                 .antMatchers(

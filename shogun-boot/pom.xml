@@ -144,6 +144,11 @@
       <groupId>de.terrestris</groupId>
       <artifactId>shogun-admin</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>de.terrestris</groupId>
+      <artifactId>shogun-baseclient</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
@@ -220,6 +225,18 @@
               <includeGroupIds>de.terrestris</includeGroupIds>
               <includeArtifactIds>shogun-admin</includeArtifactIds>
               <outputDirectory>target/generated-resources/public/admin</outputDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>unpack-baseclient</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>unpack-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeGroupIds>de.terrestris</includeGroupIds>
+              <includeArtifactIds>shogun-baseclient</includeArtifactIds>
+              <outputDirectory>target/generated-resources/public/client</outputDirectory>
             </configuration>
           </execution>
         </executions>
