@@ -1398,7 +1398,7 @@ type Layer implements BaseEntity {
     name: String
     """
     The configuration of the layer which should be used to define client specific aspects of the layer. This may include
-    the name, the visible resolution range, search configurations or similiar. For example:
+    the name, the visible resolution range, search configurations or similar. For example:
 
     ```
     {
@@ -1491,7 +1491,7 @@ type Layer implements BaseEntity {
     sourceConfig: JSON
     """
     Custom features for the layers that aren't available in the datasource. This might be used for custom draw layers
-    or similiar. It's advised to store the features using the GeoJSON format. For example:
+    or similar. It's advised to store the features using the GeoJSON format. For example:
 
     ```
     {
@@ -1666,7 +1666,7 @@ type User implements BaseEntity {
     details: JSON
     """
     The configuration of the user which should be used to define client specific aspects of the user. This may include
-    the locale set by the user, the last application visited by the user or similiar. For example:
+    the locale set by the user, the last application visited by the user or similar. For example:
 
     ```
     {
