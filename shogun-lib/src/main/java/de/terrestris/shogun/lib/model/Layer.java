@@ -56,7 +56,7 @@ public class Layer extends BaseEntity {
     @ToString.Exclude
     @Schema(
         description = "The configuration of the layer which should be used to define client specific aspects of " +
-            "the layer. This may include the name, the visible resolution range, search configurations or similiar."
+            "the layer. This may include the name, the visible resolution range, search configurations or similar."
     )
     private LayerClientConfig clientConfig;
 
