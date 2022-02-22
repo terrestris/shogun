@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.schema.AlternateTypeRules;
@@ -39,6 +40,7 @@ import java.util.function.Predicate;
 
 @Configuration
 @EnableAutoConfiguration
+@Profile(value = {"!test"})
 public abstract class SwaggerConfig {
 
     @Autowired
