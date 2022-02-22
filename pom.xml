@@ -98,7 +98,7 @@
     <shogun-admin.version>4.0.0</shogun-admin.version>
 
     <!-- SHOGun gis client -->
-    <shogun-baseclient.version>2.0.2-SNAPSHOT</shogun-baseclient.version>
+    <shogun-baseclient.version>2.0.1</shogun-baseclient.version>
 
     <!-- Plugins -->
     <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
