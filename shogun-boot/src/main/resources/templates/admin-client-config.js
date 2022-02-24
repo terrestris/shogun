@@ -17,11 +17,11 @@ var shogunApplicationConfig = {
   appPrefix: '/admin',
   path: {
     base: 'https://localhost',
-    configBase: '/formconfigs',
     swagger: '/v2/api-docs',
     user: '/users',
     layer: '/layers',
     imageFile: '/imagefiles',
+    application: '/applications',
     appInfo: '/info/app',
     auth: {
       login: '/auth/login',
@@ -39,9 +39,6 @@ var shogunApplicationConfig = {
     evictCache: '/cache/evict',
     metrics: '/actuator/metrics'
   },
-  models: [
-    'Application'
-  ],
   dashboard: {
     news: {
       visible: false
@@ -64,16 +61,16 @@ var shogunApplicationConfig = {
       applications: {
         visible: true,
         schemas: {
-          clientConfig: 'IhkApplicationClientConfig',
-          layerTree: 'SHOGunLayerTree',
-          layerConfig: 'LayerConfig'
+          clientConfig: 'DefaultApplicationClientConfig',
+          layerTree: 'DefaultLayerTree',
+          layerConfig: 'DefaultApplicationLayerConfig'
         }
       },
       layers: {
         visible: true,
         schemas: {
-          clientConfig: 'SHOGunLayerClientConfig',
-          sourceConfig: 'SHOGunLayerSourceConfig',
+          clientConfig: 'DefaultLayerClientConfig',
+          sourceConfig: 'DefaultLayerSourceConfig',
           features: 'GeoJsonObject'
         }
       },
