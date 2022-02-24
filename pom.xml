@@ -95,7 +95,7 @@
     <java.version>17</java.version>
 
     <!-- SHOGun admin -->
-    <shogun-admin.version>4.0.0</shogun-admin.version>
+    <shogun-admin.version>0.0.14</shogun-admin.version>
 
     <!-- SHOGun gis client -->
     <shogun-baseclient.version>2.0.1</shogun-baseclient.version>
