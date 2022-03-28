@@ -28,8 +28,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Set;
-
 @Log4j2
 @RestController
 @RequestMapping("/webhooks")
@@ -39,53 +37,66 @@ public class WebhookController {
 
     @PostMapping(value = "/keycloak")
     public void handleKeyCloakEvent(@RequestBody KeycloakEventDto event) {
-        Set<String> relevantResourceTypes = Set.of(
-            "GROUP_MEMBERSHIP",
-            "GROUP",
-            "USER"
-        );
-
         log.debug("Keycloak webhook called with event: {}", event);
         String resourceType = event.getResourceType();
         String eventType = event.getType();
-        if (relevantResourceTypes.contains(resourceType)) {
-            String resourcePath = event.getResourcePath();
-            if (StringUtils.isNotEmpty(resourcePath)) {
-                String[] split = resourcePath.split("/");
-                if (StringUtils.equals(resourceType, "GROUP_MEMBERSHIP")) {
+
+        String resourcePath = event.getResourcePath();
+        if (StringUtils.isEmpty(resourcePath)) {
+            return;
+        }
+
+        String[] split = resourcePath.split("/");
+
+        switch (resourceType) {
+            case "GROUP_MEMBERSHIP" -> applicationEventPublisher.publishEvent(new KeycloakEvent(
+                this,
+                KeycloakEventType.USER_GROUP_MEMBERSHIP_CHANGED,
+                split[1]
+            ));
+            case "USER" -> {
+                if (StringUtils.equals(eventType, "CREATE")) {
                     applicationEventPublisher.publishEvent(new KeycloakEvent(
                         this,
-                        KeycloakEventType.USER_GROUP_MEMBERSHIP_CHANGED,
+                        KeycloakEventType.USER_CREATED,
                         split[1]
                     ));
-                } else if (StringUtils.equals(resourceType, "USER")) {
-                    if (StringUtils.equals(eventType, "CREATE")) {
-                        applicationEventPublisher.publishEvent(new KeycloakEvent(
-                            this,
-                            KeycloakEventType.USER_CREATED,
-                            split[1]
-                        ));
-                    } else if (StringUtils.equals(eventType, "DELETE")) {
-                        applicationEventPublisher.publishEvent(new KeycloakEvent(
-                            this,
-                            KeycloakEventType.USER_DELETED,
-                            split[1]
-                        ));
-                    }
-                } else if (StringUtils.equals(resourceType, "GROUP")) {
-                    if (StringUtils.equals(eventType, "CREATE")) {
-                        applicationEventPublisher.publishEvent(new KeycloakEvent(
-                            this,
-                            KeycloakEventType.GROUP_CREATED,
-                            split[1]
-                        ));
-                    } else if (StringUtils.equals(eventType, "DELETE")) {
-                        applicationEventPublisher.publishEvent(new KeycloakEvent(
-                            this,
-                            KeycloakEventType.GROUP_DELETED,
-                            split[1]
-                        ));
-                    }
+                } else if (StringUtils.equals(eventType, "DELETE")) {
+                    applicationEventPublisher.publishEvent(new KeycloakEvent(
+                        this,
+                        KeycloakEventType.USER_DELETED,
+                        split[1]
+                    ));
+                }
+            }
+            case "GROUP" -> {
+                if (StringUtils.equals(eventType, "CREATE")) {
+                    applicationEventPublisher.publishEvent(new KeycloakEvent(
+                        this,
+                        KeycloakEventType.GROUP_CREATED,
+                        split[1]
+                    ));
+                } else if (StringUtils.equals(eventType, "DELETE")) {
+                    applicationEventPublisher.publishEvent(new KeycloakEvent(
+                        this,
+                        KeycloakEventType.GROUP_DELETED,
+                        split[1]
+                    ));
+                }
+            }
+            case "REALM_ROLE_MAPPING", "CLIENT_ROLE_MAPPING" -> {
+                if (split[0].equals("users")) {
+                    applicationEventPublisher.publishEvent(new KeycloakEvent(
+                        this,
+                        KeycloakEventType.USER_ROLES_CHANGED,
+                        split[1]
+                    ));
+                } else if (split[0].equals("groups")) {
+                    applicationEventPublisher.publishEvent(new KeycloakEvent(
+                        this,
+                        KeycloakEventType.GROUP_ROLES_CHANGED,
+                        split[1]
+                    ));
                 }
             }
         }
