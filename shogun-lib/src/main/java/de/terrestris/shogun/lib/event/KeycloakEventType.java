@@ -18,9 +18,11 @@
 package de.terrestris.shogun.lib.event;
 
 public enum KeycloakEventType {
+    USER_CREATED,
+    USER_ROLES_CHANGED,
+    USER_DELETED,
+    USER_GROUP_MEMBERSHIP_CHANGED,
     GROUP_CREATED,
     GROUP_DELETED,
-    USER_GROUP_MEMBERSHIP_CHANGED,
-    USER_CREATED,
-    USER_DELETED
+    GROUP_ROLES_CHANGED
 }
