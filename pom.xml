@@ -109,7 +109,7 @@
 
     <!-- Spring -->
     <spring-boot.version>2.6.6</spring-boot.version>
-    <spring-data.version>2.5.6</spring-data.version>
+    <spring-data.version>2.6.3</spring-data.version>
 
     <!-- Security -->
     <keycloak.version>15.0.2</keycloak.version>
