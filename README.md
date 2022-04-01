@@ -13,7 +13,7 @@ meet the demands of flexible project requirements.
 
 SHOGun…
 
-* …is written in Java and supports Java >= 11.
+* …is written in Java and supports Java >= 17.
 * …is based on top of Spring / Spring Boot.
 * …provides a set of configuration entities to manage the contents of a geospatial data infrastructure (e.g. layers, 
 applications, users or groups).
