@@ -55,7 +55,8 @@ public class JacksonConfigTest {
         var registeredModules = objectMapper.getRegisteredModuleIds();
         boolean hasJtsModuleRegistered = false;
         for (Object module : registeredModules) {
-            if (StringUtils.equalsIgnoreCase((CharSequence) module, "com.bedatadriven.jackson.datatype.jts.JtsModule")) {
+            System.out.println(module);
+            if (StringUtils.equalsIgnoreCase((CharSequence) module, "JtsModule")) {
                 hasJtsModuleRegistered = true;
             }
         }
