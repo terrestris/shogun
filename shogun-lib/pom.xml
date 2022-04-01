@@ -155,7 +155,7 @@
       <artifactId>jackson-databind</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.graphhopper.external</groupId>
+      <groupId>de.terrestris.jackson</groupId>
       <artifactId>jackson-datatype-jts</artifactId>
     </dependency>
     <dependency>
