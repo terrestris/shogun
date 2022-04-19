@@ -22,7 +22,7 @@
   <parent>
     <groupId>de.terrestris</groupId>
     <artifactId>shogun</artifactId>
-    <version>9.3.2-SNAPSHOT</version>
+    <version>9.3.2</version>
   </parent>
 
   <groupId>de.terrestris</groupId>
