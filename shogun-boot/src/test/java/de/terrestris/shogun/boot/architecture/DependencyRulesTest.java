@@ -78,17 +78,20 @@ public class DependencyRulesTest {
     @ArchTest
     static final ArchRule permission_evaluators_should_not_access_services =
         noClasses()
-            .that().resideInAPackage("..security.access..")
-            .and().doNotImplement(EntityPermissionEvaluator.class) // required to exclude BaseEntityPermissionEvaluator
+            .that().implement(EntityPermissionEvaluator.class)
+            // required to exclude BaseEntityPermissionEvaluator
+            .and().doNotHaveFullyQualifiedName("de.terrestris.shogun.lib.security.access.entity.BaseEntityPermissionEvaluator")
             .should().accessClassesThat().areAnnotatedWith(Service.class);
 
     @ArchTest
     static final ArchRule permission_evaluators_should_not_depend_on_services =
         noClasses()
-            .that().resideInAPackage("..security.access..")
-            .and().doNotImplement(EntityPermissionEvaluator.class) // required to exclude BaseEntityPermissionEvaluator
+            .that().implement(EntityPermissionEvaluator.class)
+            // required to exclude BaseEntityPermissionEvaluator
+            .and().doNotHaveFullyQualifiedName("de.terrestris.shogun.lib.security.access.entity.BaseEntityPermissionEvaluator")
             .should().dependOnClassesThat().areAnnotatedWith(Service.class);
 
+//      todo: enable when UserProviderService / GroupProviderService are available
 //    @ArchTest
 //    static final ArchRule group_provider_services_should_not_access_services =
 //        noClasses()
@@ -100,7 +103,6 @@ public class DependencyRulesTest {
 //        noClasses()
 //            .that().implement(UserProviderService.class)
 //            .should().accessClassesThat().areAnnotatedWith(Service.class);
-//      todo: enable for shogun 10.0.0
 
 }
 
