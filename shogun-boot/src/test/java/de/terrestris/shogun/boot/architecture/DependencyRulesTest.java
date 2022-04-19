@@ -16,36 +16,91 @@
  */
 package de.terrestris.shogun.boot.architecture;
 
+import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
-import com.tngtech.archunit.junit.*;
+import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
+import de.terrestris.shogun.lib.security.access.entity.EntityPermissionEvaluator;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RestController;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
-@AnalyzeClasses(packages = "de.terrestris")
+@AnalyzeClasses(packages = "de.terrestris", importOptions = { ImportOption.DoNotIncludeTests.class })
 public class DependencyRulesTest {
 
     @ArchTest
     static final ArchRule services_should_not_access_controllers =
-        noClasses().that().resideInAPackage("..service..")
-            .should().accessClassesThat().resideInAPackage("..controller..");
-
-    @ArchTest
-    static final ArchRule permission_evaluators_should_not_access_services =
-        noClasses().that().resideInAPackage("de.terrestris.progemis.security.entity")
-            .should().accessClassesThat().resideInAPackage("..service..");
+        noClasses()
+            .that().areAnnotatedWith(Service.class)
+            .should().accessClassesThat().areAnnotatedWith(RestController.class)
+            .orShould().accessClassesThat().areAnnotatedWith(Controller.class);
 
     @ArchTest
     static final ArchRule services_should_not_depend_on_controllers =
-        noClasses().that().resideInAPackage("..service..")
-            .should().dependOnClassesThat().resideInAPackage("..controller..");
+        noClasses()
+            .that().areAnnotatedWith(Service.class)
+            .should().dependOnClassesThat().areAnnotatedWith(RestController.class)
+            .orShould().dependOnClassesThat().areAnnotatedWith(Controller.class);
+
+    @ArchTest
+    static final ArchRule repositories_should_not_access_controllers =
+        noClasses()
+            .that().areAnnotatedWith(Repository.class)
+            .should().accessClassesThat().areAnnotatedWith(RestController.class)
+            .orShould().accessClassesThat().areAnnotatedWith(Controller.class);
+
+
+    @ArchTest
+    static final ArchRule repositories_should_not_depend_on_controllers =
+        noClasses()
+            .that().areAnnotatedWith(Repository.class)
+            .should().dependOnClassesThat().areAnnotatedWith(RestController.class)
+            .orShould().dependOnClassesThat().areAnnotatedWith(Controller.class);
+
+    @ArchTest
+    static final ArchRule components_should_not_access_controllers =
+        noClasses()
+            .that().areAnnotatedWith(Component.class)
+            .should().accessClassesThat().areAnnotatedWith(RestController.class)
+            .orShould().accessClassesThat().areAnnotatedWith(Controller.class);
+
+    @ArchTest
+    static final ArchRule components_should_not_depend_on_controllers =
+        noClasses()
+            .that().areAnnotatedWith(Component.class)
+            .should().dependOnClassesThat().areAnnotatedWith(RestController.class)
+            .orShould().dependOnClassesThat().areAnnotatedWith(Controller.class);
+
+    @ArchTest
+    static final ArchRule permission_evaluators_should_not_access_services =
+        noClasses()
+            .that().resideInAPackage("..security.access..")
+            .and().doNotImplement(EntityPermissionEvaluator.class) // required to exclude BaseEntityPermissionEvaluator
+            .should().accessClassesThat().areAnnotatedWith(Service.class);
 
     @ArchTest
     static final ArchRule permission_evaluators_should_not_depend_on_services =
-        noClasses().that().resideInAPackage("de.terrestris.progemis.security.entity")
-            .should().dependOnClassesThat().resideInAPackage("..service..");
-            // todo: replace progemis
-            // todo: more specific selector than resideInAPackage
+        noClasses()
+            .that().resideInAPackage("..security.access..")
+            .and().doNotImplement(EntityPermissionEvaluator.class) // required to exclude BaseEntityPermissionEvaluator
+            .should().dependOnClassesThat().areAnnotatedWith(Service.class);
+
+//    @ArchTest
+//    static final ArchRule group_provider_services_should_not_access_services =
+//        noClasses()
+//            .that().implement(GroupProviderService.class)
+//            .should().accessClassesThat().areAnnotatedWith(Service.class);
+//
+//    @ArchTest
+//    static final ArchRule user_provider_services_should_not_access_services =
+//        noClasses()
+//            .that().implement(UserProviderService.class)
+//            .should().accessClassesThat().areAnnotatedWith(Service.class);
+//      todo: enable for shogun 10.0.0
 
 }
 
