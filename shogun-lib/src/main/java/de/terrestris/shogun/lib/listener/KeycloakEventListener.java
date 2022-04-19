@@ -35,7 +35,7 @@ public class KeycloakEventListener {
     @EventListener
     public void onKeycloakEvent(KeycloakEvent event) {
         switch (event.getEventType()) {
-            case USER_CREATED, USER_GROUP_MEMBERSHIP_CHANGED -> userService.findOrCreateByKeyCloakId(event.getKeycloakId());
+            case USER_CREATED -> userService.findOrCreateByKeyCloakId(event.getKeycloakId());
             case GROUP_CREATED -> groupService.findOrCreateByKeycloakId(event.getKeycloakId());
         }
     }
