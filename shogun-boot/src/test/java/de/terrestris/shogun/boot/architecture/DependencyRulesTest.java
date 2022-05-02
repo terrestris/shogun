@@ -21,6 +21,8 @@ import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 import de.terrestris.shogun.lib.security.access.entity.EntityPermissionEvaluator;
+import de.terrestris.shogun.lib.service.security.provider.GroupProviderService;
+import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
@@ -91,18 +93,17 @@ public class DependencyRulesTest {
             .and().doNotHaveFullyQualifiedName("de.terrestris.shogun.lib.security.access.entity.BaseEntityPermissionEvaluator")
             .should().dependOnClassesThat().areAnnotatedWith(Service.class);
 
-//      todo: enable when UserProviderService / GroupProviderService are available
-//    @ArchTest
-//    static final ArchRule group_provider_services_should_not_access_services =
-//        noClasses()
-//            .that().implement(GroupProviderService.class)
-//            .should().accessClassesThat().areAnnotatedWith(Service.class);
-//
-//    @ArchTest
-//    static final ArchRule user_provider_services_should_not_access_services =
-//        noClasses()
-//            .that().implement(UserProviderService.class)
-//            .should().accessClassesThat().areAnnotatedWith(Service.class);
+    @ArchTest
+    static final ArchRule group_provider_services_should_not_access_services =
+        noClasses()
+            .that().implement(GroupProviderService.class)
+            .should().accessClassesThat().areAnnotatedWith(Service.class);
+
+    @ArchTest
+    static final ArchRule user_provider_services_should_not_access_services =
+        noClasses()
+            .that().implement(UserProviderService.class)
+            .should().accessClassesThat().areAnnotatedWith(Service.class);
 
 }
 
