@@ -23,24 +23,24 @@ import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
 import de.terrestris.shogun.lib.model.security.permission.UserClassPermission;
 import de.terrestris.shogun.lib.repository.security.permission.PermissionCollectionRepository;
 import de.terrestris.shogun.lib.repository.security.permission.UserClassPermissionRepository;
-import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.service.BaseService;
-import java.util.List;
-import java.util.Optional;
-
+import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Log4j2
 public class UserClassPermissionService extends BaseService<UserClassPermissionRepository, UserClassPermission> {
 
     @Autowired
-    protected SecurityContextUtil securityContextUtil;
+    protected PermissionCollectionRepository permissionCollectionRepository;
 
     @Autowired
-    protected PermissionCollectionRepository permissionCollectionRepository;
+    private UserProviderService userProviderService;
 
     /**
      * Returns all {@link UserClassPermission} for the given query arguments.
@@ -51,7 +51,7 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
     public List<UserClassPermission> findFor(User user) {
 
         log.trace("Getting all user class permissions for user with Keycloak ID {}",
-            user.getKeycloakId());
+            user.getAuthProviderId());
 
         return repository.findAllByUser(user);
     }
@@ -66,7 +66,7 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
         String className = clazz.getCanonicalName();
 
         log.trace("Getting all user class permissions for user with Keycloak ID {} and " +
-            "entity class {}", user.getKeycloakId(), className);
+            "entity class {}", user.getAuthProviderId(), className);
 
         return repository.findByUserIdAndClassName(user.getId(), className);
     }
@@ -81,7 +81,7 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
      */
     public Optional<UserClassPermission> findFor(BaseEntity entity, User user) {
         log.trace("Getting all user class permissions for user with Keycloak ID {} and " +
-            "entity class {}", user.getKeycloakId(), entity.getClass().getCanonicalName());
+            "entity class {}", user.getAuthProviderId(), entity.getClass().getCanonicalName());
 
         return repository.findByUserIdAndClassName(user.getId(), entity.getClass().getCanonicalName());
     }
@@ -109,7 +109,7 @@ public class UserClassPermissionService extends BaseService<UserClassPermissionR
      * @param permissionCollectionType The permission to set.
      */
     public void setPermission(Class<? extends BaseEntity> clazz, PermissionCollectionType permissionCollectionType) {
-        Optional<User> activeUser = securityContextUtil.getUserBySession();
+        Optional<User> activeUser = userProviderService.getUserBySession();
 
         if (activeUser.isEmpty()) {
             throw new RuntimeException("Could not detect the logged in user.");

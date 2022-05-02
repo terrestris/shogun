@@ -45,8 +45,16 @@ jobs:
         run: ./setEnvironment.sh
         working-directory: ../shogun-docker
 
+      - name: Show environment variables
+        run: cat .env
+        working-directory: ../shogun-docker
+
       - name: Start containers
         run: docker-compose -f docker-compose.yml -f docker-compose-dev.yml up -d
+        working-directory: ../shogun-docker
+
+      - name: Inspect network
+        run: docker network inspect shogun-docker_default
         working-directory: ../shogun-docker
 
       - name: Check if application has started

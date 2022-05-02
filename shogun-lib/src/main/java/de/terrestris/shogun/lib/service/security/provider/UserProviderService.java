@@ -1,6 +1,6 @@
 /* SHOGun, https://terrestris.github.io/shogun/
  *
- * Copyright © 2020-present terrestris GmbH & Co. KG
+ * Copyright © 2022-present terrestris GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.terrestris.shogun.lib.repository;
+package de.terrestris.shogun.lib.service.security.provider;
 
-import de.terrestris.shogun.lib.model.Group;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.QueryHints;
-import org.springframework.stereotype.Repository;
+import de.terrestris.shogun.lib.model.User;
+import org.springframework.security.core.Authentication;
 
-import javax.persistence.QueryHint;
 import java.util.Optional;
 
-@Repository
-public interface GroupRepository extends BaseCrudRepository<Group, Long>, JpaSpecificationExecutor<Group> {
+public interface UserProviderService<T> {
 
-    @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
-    Optional<Group> findByAuthProviderId(String authProviderId);
+    User<T> findOrCreateByProviderId(String providerUserId);
+
+    User<T> setTransientRepresentations(User<T> user);
+
+    Optional<User<T>> getUserBySession();
+
+    Optional<User<T>> getUserFromAuthentication(Authentication authentication);
 
 }

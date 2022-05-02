@@ -16,23 +16,33 @@
  */
 package de.terrestris.shogun.lib.service.security.permission;
 
+import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.model.security.permission.UserClassPermission;
 import de.terrestris.shogun.lib.repository.security.permission.UserClassPermissionRepository;
 import de.terrestris.shogun.lib.service.BaseServiceTest;
+import de.terrestris.shogun.lib.service.security.provider.keycloak.KeycloakUserProviderService;
 import org.junit.Before;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+
+import java.util.Optional;
+
+import static org.mockito.Mockito.when;
 
 public class UserClassPermissionServiceTest extends BaseServiceTest<UserClassPermissionService, UserClassPermission> {
 
     @Mock
     UserClassPermissionRepository repositoryMock;
 
+    @Mock
+    KeycloakUserProviderService userProviderService = new KeycloakUserProviderService();
+
     @InjectMocks
     UserClassPermissionService service;
 
     @Before
     public void init() {
+        when(userProviderService.getUserBySession()).thenReturn(Optional.of(new User()));
         super.setRepository(repositoryMock);
         super.setService(service);
         super.setEntityClass(UserClassPermission.class);

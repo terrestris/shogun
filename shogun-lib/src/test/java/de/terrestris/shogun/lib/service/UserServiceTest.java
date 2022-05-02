@@ -18,15 +18,14 @@ package de.terrestris.shogun.lib.service;
 
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.UserRepository;
+import de.terrestris.shogun.lib.service.security.provider.keycloak.KeycloakUserProviderService;
 import de.terrestris.shogun.lib.util.KeycloakUtil;
 import org.junit.Before;
-import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.security.access.prepost.PostAuthorize;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
+import java.util.Optional;
+
 import static org.mockito.Mockito.when;
 
 public class UserServiceTest extends BaseServiceTest<UserService, User> {
@@ -40,9 +39,12 @@ public class UserServiceTest extends BaseServiceTest<UserService, User> {
     @InjectMocks
     UserService service;
 
+    @Mock
+    KeycloakUserProviderService userProviderService = new KeycloakUserProviderService();
+
     @Before
     public void init() {
-        when(keycloakUtilMock.getUserResource(any(User.class))).thenReturn(null);
+        when(userProviderService.getUserBySession()).thenReturn(Optional.of(new User()));
 
         super.setRepository(repositoryMock);
         super.setService(service);

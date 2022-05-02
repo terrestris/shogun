@@ -20,10 +20,11 @@ import de.terrestris.shogun.lib.enumeration.PermissionType;
 import de.terrestris.shogun.lib.model.Application;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.User;
-import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.security.access.entity.ApplicationPermissionEvaluator;
 import de.terrestris.shogun.lib.security.access.entity.BaseEntityPermissionEvaluator;
 import de.terrestris.shogun.lib.security.access.entity.DefaultPermissionEvaluator;
+import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
+import de.terrestris.shogun.lib.service.security.provider.keycloak.KeycloakUserProviderService;
 import de.terrestris.shogun.lib.util.IdHelper;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,7 +51,7 @@ public class BasePermissionEvaluatorTest {
     private ApplicationPermissionEvaluator applicationPermissionEvaluatorMock;
 
     @Mock
-    private SecurityContextUtil securityContextUtilMock;
+    private UserProviderService userProviderService = new KeycloakUserProviderService();
 
     @Spy
     private ArrayList<BaseEntityPermissionEvaluator> baseEntityPermissionEvaluatorMock;
@@ -64,7 +65,7 @@ public class BasePermissionEvaluatorTest {
     @Before
     public void setup() {
         mockUser = new User();
-        mockUser.setKeycloakId(mockUserKeycloakId);
+        mockUser.setAuthProviderId(mockUserKeycloakId);
 
         when(defaultPermissionEvaluatorMock.getEntityClassName()).thenReturn(BaseEntity.class);
         when(applicationPermissionEvaluatorMock.getEntityClassName()).thenReturn(Application.class);
@@ -122,7 +123,7 @@ public class BasePermissionEvaluatorTest {
         IdHelper.setIdForEntity(targetDomainObject, 1L);
         String permissionObject = "READ";
 
-        when(securityContextUtilMock.getUserFromAuthentication(authentication)).thenReturn(Optional.of(mockUser));
+        when(userProviderService.getUserFromAuthentication(authentication)).thenReturn(Optional.of(mockUser));
 
         baseEntityPermissionEvaluatorMock.add(defaultPermissionEvaluatorMock);
 
@@ -130,7 +131,7 @@ public class BasePermissionEvaluatorTest {
 
         verify(defaultPermissionEvaluatorMock, times(1)).hasPermission(mockUser, targetDomainObject, PermissionType.READ);
 
-        reset(securityContextUtilMock);
+        reset(userProviderService);
         baseEntityPermissionEvaluatorMock.clear();
     }
 
@@ -142,7 +143,7 @@ public class BasePermissionEvaluatorTest {
         IdHelper.setIdForEntity(targetDomainObject, 1L);
         String permissionObject = "READ";
 
-        when(securityContextUtilMock.getUserFromAuthentication(authentication)).thenReturn(Optional.of(mockUser));
+        when(userProviderService.getUserFromAuthentication(authentication)).thenReturn(Optional.of(mockUser));
 
         baseEntityPermissionEvaluatorMock.add(defaultPermissionEvaluatorMock);
 
@@ -150,7 +151,7 @@ public class BasePermissionEvaluatorTest {
 
         verify(defaultPermissionEvaluatorMock, times(1)).hasPermission(mockUser, targetDomainObject, PermissionType.READ);
 
-        reset(securityContextUtilMock);
+        reset(userProviderService);
         baseEntityPermissionEvaluatorMock.clear();
     }
 
@@ -162,7 +163,7 @@ public class BasePermissionEvaluatorTest {
         IdHelper.setIdForEntity(targetDomainObject, 1L);
         String permissionObject = "READ";
 
-        when(securityContextUtilMock.getUserFromAuthentication(authentication)).thenReturn(Optional.of(mockUser));
+        when(userProviderService.getUserFromAuthentication(authentication)).thenReturn(Optional.of(mockUser));
 
         baseEntityPermissionEvaluatorMock.add(defaultPermissionEvaluatorMock);
         baseEntityPermissionEvaluatorMock.add(applicationPermissionEvaluatorMock);
@@ -172,7 +173,7 @@ public class BasePermissionEvaluatorTest {
         verify(defaultPermissionEvaluatorMock, times(0)).hasPermission(mockUser, targetDomainObject, PermissionType.READ);
         verify(applicationPermissionEvaluatorMock, times(1)).hasPermission(mockUser, targetDomainObject, PermissionType.READ);
 
-        reset(securityContextUtilMock);
+        reset(userProviderService);
     }
 
 }

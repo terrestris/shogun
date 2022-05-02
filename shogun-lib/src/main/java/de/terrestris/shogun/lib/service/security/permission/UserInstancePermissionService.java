@@ -23,23 +23,19 @@ import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
 import de.terrestris.shogun.lib.model.security.permission.UserInstancePermission;
 import de.terrestris.shogun.lib.repository.security.permission.PermissionCollectionRepository;
 import de.terrestris.shogun.lib.repository.security.permission.UserInstancePermissionRepository;
-import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.service.BaseService;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 @Service
 @Log4j2
 public class UserInstancePermissionService extends BaseService<UserInstancePermissionRepository, UserInstancePermission> {
-
-    @Autowired
-    protected SecurityContextUtil securityContextUtil;
 
     @Autowired
     protected PermissionCollectionRepository permissionCollectionRepository;
@@ -66,7 +62,7 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
      */
     public Optional<UserInstancePermission> findFor(BaseEntity entity, User user) {
         log.trace("Getting all user permissions for user with Keycloak ID {} and " +
-            "entity with ID {}", user.getKeycloakId(), entity);
+            "entity with ID {}", user.getAuthProviderId(), entity);
 
         return repository.findByUserIdAndEntityId(user.getId(), entity.getId());
     }
@@ -140,23 +136,6 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
     }
 
     /**
-     * Sets the given {@link PermissionCollectionType} for the given entity and the currently
-     * logged in user.
-     *
-     * @param persistedEntity The entity to set the permission for.
-     * @param permissionCollectionType The permission to set.
-     */
-    public void setPermission(BaseEntity persistedEntity, PermissionCollectionType permissionCollectionType) {
-        Optional<User> activeUser = securityContextUtil.getUserBySession();
-
-        if (activeUser.isEmpty()) {
-            throw new RuntimeException("Could not detect the logged in user.");
-        }
-
-        setPermission(persistedEntity, activeUser.get(), permissionCollectionType);
-    }
-
-    /**
      * Sets the given {@link PermissionCollectionType} for the given entity and user.
      *
      * @param persistedEntity The entity to set the permission for.
@@ -227,7 +206,7 @@ public class UserInstancePermissionService extends BaseService<UserInstancePermi
         // Check if there is already an existing permission set on the entity
         if (existingPermission.isPresent()) {
             log.debug("Permission is already set for entity with ID {} and user with " +
-                "Keycloak ID {}: {}", entity.getId(), user.getKeycloakId(), permissionCollection);
+                "Keycloak ID {}: {}", entity.getId(), user.getAuthProviderId(), permissionCollection);
 
             // Remove the existing one
             repository.delete(existingPermission.get());

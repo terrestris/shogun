@@ -22,6 +22,7 @@ import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.security.access.entity.BaseEntityPermissionEvaluator;
 import de.terrestris.shogun.lib.security.access.entity.DefaultPermissionEvaluator;
+import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.PermissionEvaluator;
@@ -44,6 +45,9 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
 
     @Autowired
     protected SecurityContextUtil securityContextUtil;
+
+    @Autowired
+    private UserProviderService userProviderService;
 
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject,
@@ -69,7 +73,7 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
         }
 
         // fetch user from securityUtil
-        Optional<User> userOpt = securityContextUtil.getUserFromAuthentication(authentication);
+        Optional<User> userOpt = userProviderService.getUserFromAuthentication(authentication);
         User user = userOpt.orElse(null);
 
         final BaseEntity persistentObject;
@@ -108,7 +112,7 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
         }
 
         // fetch user from securityUtil
-        Optional<User> userOpt = securityContextUtil.getUserFromAuthentication(authentication);
+        Optional<User> userOpt = userProviderService.getUserFromAuthentication(authentication);
         User user = userOpt.orElse(null);
 
         final PermissionType permission = PermissionType.valueOf((String) permissionObject);

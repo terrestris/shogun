@@ -20,10 +20,7 @@ import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.service.GroupService;
 import de.terrestris.shogun.lib.service.UserService;
-import de.terrestris.shogun.lib.util.KeycloakUtil;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.log4j.Log4j2;
-import org.keycloak.representations.idm.GroupRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -42,9 +39,6 @@ public class GroupController extends BaseController<GroupService, Group> {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private KeycloakUtil keycloakUtil;
 
     @GetMapping("/user/{id}")
     @ResponseStatus(HttpStatus.OK)
@@ -74,28 +68,7 @@ public class GroupController extends BaseController<GroupService, Group> {
         }
     }
 
-    @GetMapping("/keycloak/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public GroupRepresentation findByKeycloakId(@PathVariable("id") String keycloakId) {
-        try {
-            return keycloakUtil.getGroupResource(keycloakId).toRepresentation();
-        } catch (Exception e) {
-            log.error("Error while requesting keycloak group with ID {}: \n {}",
-                keycloakId, e.getMessage());
-            log.trace("Full stack trace: ", e);
-
-            throw new ResponseStatusException(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                messageSource.getMessage(
-                    "BaseController.INTERNAL_SERVER_ERROR",
-                    null,
-                    LocaleContextHolder.getLocale()
-                ),
-                e
-            );
-        }
-    }
-
+    // TODO Fix security issue: filter out groups the user is not allowed to see
     @GetMapping("/keycloak/{id}/members")
     @ResponseStatus(HttpStatus.OK)
     public List<User> getGroupMembers(@PathVariable("id") String keycloakId) {

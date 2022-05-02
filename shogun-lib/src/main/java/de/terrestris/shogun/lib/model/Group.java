@@ -16,23 +16,14 @@
  */
 package de.terrestris.shogun.lib.model;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.AuditTable;
 import org.hibernate.envers.Audited;
-import org.keycloak.representations.idm.GroupRepresentation;
+
+import javax.persistence.*;
 
 @Entity(name = "groups")
 @Table(schema = "shogun")
@@ -45,20 +36,20 @@ import org.keycloak.representations.idm.GroupRepresentation;
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class Group extends BaseEntity {
+public class Group<T> extends BaseEntity {
 
     @Column(unique = true, nullable = false)
     @Schema(
         description = "The internal Keycloak ID of the group.",
         example = "image/png"
     )
-    private String keycloakId;
+    private String authProviderId;
 
     @Transient
     @Schema(
         description = "The group details stored in the associated Keycloak entity.",
         accessMode = Schema.AccessMode.READ_ONLY
     )
-    private GroupRepresentation keycloakRepresentation;
+    private T providerDetails;
 
 }

@@ -26,13 +26,13 @@ import de.terrestris.shogun.lib.repository.security.permission.GroupClassPermiss
 import de.terrestris.shogun.lib.repository.security.permission.PermissionCollectionRepository;
 import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.service.BaseService;
-import de.terrestris.shogun.lib.util.KeycloakUtil;
-import java.util.List;
-import java.util.Optional;
-
+import de.terrestris.shogun.lib.service.security.provider.GroupProviderService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Log4j2
@@ -42,10 +42,10 @@ public class GroupClassPermissionService extends BaseService<GroupClassPermissio
     protected SecurityContextUtil securityContextUtil;
 
     @Autowired
-    protected KeycloakUtil keycloakUtil;
+    protected PermissionCollectionRepository permissionCollectionRepository;
 
     @Autowired
-    protected PermissionCollectionRepository permissionCollectionRepository;
+    private GroupProviderService groupProviderService;
 
     /**
      * Returns all {@link GroupClassPermission} for the given query arguments.
@@ -56,7 +56,7 @@ public class GroupClassPermissionService extends BaseService<GroupClassPermissio
     public List<GroupClassPermission> findFor(Group group) {
 
         log.trace("Getting all group class permissions for group with Keycloak ID {}",
-            group.getKeycloakId());
+            group.getAuthProviderId());
 
         return repository.findAllByGroup(group);
     }
@@ -72,7 +72,7 @@ public class GroupClassPermissionService extends BaseService<GroupClassPermissio
         String className = entity.getClass().getCanonicalName();
 
         log.trace("Getting all group class permissions for group with Keycloak ID {} and " +
-            "entity class {}", group.getKeycloakId(), className);
+            "entity class {}", group.getAuthProviderId(), className);
 
         return repository.findByGroupIdAndClassName(group.getId(), className);
     }
@@ -88,7 +88,7 @@ public class GroupClassPermissionService extends BaseService<GroupClassPermissio
         String className = clazz.getCanonicalName();
 
         log.trace("Getting all group class permissions for group with Keycloak ID {} and " +
-            "entity class {}", group.getKeycloakId(), className);
+            "entity class {}", group.getAuthProviderId(), className);
 
         return repository.findByGroupIdAndClassName(group.getId(), className);
     }
@@ -105,10 +105,10 @@ public class GroupClassPermissionService extends BaseService<GroupClassPermissio
         String className = clazz.getCanonicalName();
 
         log.trace("Getting all group class permissions for user with Keycloak ID {} and " +
-            "entity class {}", user.getKeycloakId(), className);
+            "entity class {}", user.getAuthProviderId(), className);
 
         // Get all groups of the user from Keycloak
-        List<Group> groups = securityContextUtil.getGroupsForUser(user);
+        List<Group> groups = groupProviderService.findByUser(user);
         Optional<GroupClassPermission> gcp = Optional.empty();
         for (Group g : groups) {
             Optional<GroupClassPermission> permissionsForGroup = repository
@@ -135,10 +135,11 @@ public class GroupClassPermissionService extends BaseService<GroupClassPermissio
     public Optional<GroupClassPermission> findFor(BaseEntity entity, Group group, User user) {
 
         log.trace("Getting all group class permissions for user with Keycloak ID {} and " +
-            "entity with ID {} in the context of group with Keycloak ID {}", user.getKeycloakId(),
-            entity.getId(), group.getKeycloakId());
+            "entity with ID {} in the context of group with Keycloak ID {}", user.getAuthProviderId(),
+            entity.getId(), group.getAuthProviderId());
 
-        boolean isUserMemberInGroup = keycloakUtil.isUserInGroup(user, group);
+        List<Group> userGroups = groupProviderService.findByUser(user);
+        boolean isUserMemberInGroup = userGroups.contains(group);
 
         if (!isUserMemberInGroup) {
             log.trace("The user is not a member of the given group, no permissions available.");
@@ -230,7 +231,7 @@ public class GroupClassPermissionService extends BaseService<GroupClassPermissio
         // Check if there is already an existing permission set on the entity
         if (existingPermission.isPresent()) {
             log.debug("Permission is already set for class {} and group with " +
-                "Keycloak ID {}: {}", clazz, group.getKeycloakId(), permissionCollection);
+                "Keycloak ID {}: {}", clazz, group.getAuthProviderId(), permissionCollection);
 
             // Remove the existing one
             repository.delete(existingPermission.get());
