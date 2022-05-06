@@ -94,9 +94,6 @@
 
     <java.version>17</java.version>
 
-    <!-- SHOGun admin -->
-    <shogun-admin.version>0.0.14</shogun-admin.version>
-
     <!-- SHOGun gis client -->
     <shogun-baseclient.version>2.0.1</shogun-baseclient.version>
 
@@ -526,13 +523,6 @@
         <groupId>org.reflections</groupId>
         <artifactId>reflections</artifactId>
         <version>${reflections.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>de.terrestris</groupId>
-        <artifactId>shogun-admin</artifactId>
-        <version>${shogun-admin.version}</version>
-        <scope>provided</scope>
       </dependency>
 
       <dependency>
