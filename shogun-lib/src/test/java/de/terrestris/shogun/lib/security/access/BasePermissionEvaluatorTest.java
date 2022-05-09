@@ -150,23 +150,4 @@ public class BasePermissionEvaluatorTest {
         baseEntityPermissionEvaluatorMock.clear();
     }
 
-    @Test
-    public void hasPermission_ShouldCallTheAppropriatePermissionEvaluatorImplementation() throws NoSuchFieldException {
-        Authentication authentication = mock(Authentication.class);
-
-        Application targetDomainObject = new Application();
-        IdHelper.setIdForEntity(targetDomainObject, 1L);
-        String permissionObject = "READ";
-
-        when(userProviderService.getUserFromAuthentication(authentication)).thenReturn(Optional.of(mockUser));
-
-        baseEntityPermissionEvaluatorMock.add(defaultPermissionEvaluatorMock);
-
-        permissionEvaluator.hasPermission(authentication, targetDomainObject, permissionObject);
-
-        verify(defaultPermissionEvaluatorMock, times(0)).hasPermission(mockUser, targetDomainObject, PermissionType.READ);
-
-        reset(userProviderService);
-    }
-
 }
