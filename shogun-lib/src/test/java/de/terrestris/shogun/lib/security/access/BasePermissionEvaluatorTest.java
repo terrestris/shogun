@@ -20,7 +20,6 @@ import de.terrestris.shogun.lib.enumeration.PermissionType;
 import de.terrestris.shogun.lib.model.Application;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.User;
-import de.terrestris.shogun.lib.security.access.entity.ApplicationPermissionEvaluator;
 import de.terrestris.shogun.lib.security.access.entity.BaseEntityPermissionEvaluator;
 import de.terrestris.shogun.lib.security.access.entity.DefaultPermissionEvaluator;
 import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
@@ -48,9 +47,6 @@ public class BasePermissionEvaluatorTest {
     private DefaultPermissionEvaluator defaultPermissionEvaluatorMock;
 
     @Mock
-    private ApplicationPermissionEvaluator applicationPermissionEvaluatorMock;
-
-    @Mock
     private UserProviderService userProviderService = new KeycloakUserProviderService();
 
     @Spy
@@ -68,7 +64,6 @@ public class BasePermissionEvaluatorTest {
         mockUser.setAuthProviderId(mockUserKeycloakId);
 
         when(defaultPermissionEvaluatorMock.getEntityClassName()).thenReturn(BaseEntity.class);
-        when(applicationPermissionEvaluatorMock.getEntityClassName()).thenReturn(Application.class);
     }
 
     @Test
@@ -153,27 +148,6 @@ public class BasePermissionEvaluatorTest {
 
         reset(userProviderService);
         baseEntityPermissionEvaluatorMock.clear();
-    }
-
-    @Test
-    public void hasPermission_ShouldCallTheAppropriatePermissionEvaluatorImplementation() throws NoSuchFieldException {
-        Authentication authentication = mock(Authentication.class);
-
-        Application targetDomainObject = new Application();
-        IdHelper.setIdForEntity(targetDomainObject, 1L);
-        String permissionObject = "READ";
-
-        when(userProviderService.getUserFromAuthentication(authentication)).thenReturn(Optional.of(mockUser));
-
-        baseEntityPermissionEvaluatorMock.add(defaultPermissionEvaluatorMock);
-        baseEntityPermissionEvaluatorMock.add(applicationPermissionEvaluatorMock);
-
-        permissionEvaluator.hasPermission(authentication, targetDomainObject, permissionObject);
-
-        verify(defaultPermissionEvaluatorMock, times(0)).hasPermission(mockUser, targetDomainObject, PermissionType.READ);
-        verify(applicationPermissionEvaluatorMock, times(1)).hasPermission(mockUser, targetDomainObject, PermissionType.READ);
-
-        reset(userProviderService);
     }
 
 }
