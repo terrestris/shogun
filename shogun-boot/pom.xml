@@ -142,11 +142,6 @@
 
     <dependency>
       <groupId>de.terrestris</groupId>
-      <artifactId>shogun-admin</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>de.terrestris</groupId>
       <artifactId>shogun-baseclient</artifactId>
     </dependency>
   </dependencies>
@@ -156,13 +151,6 @@
       <resource>
         <directory>src/main/resources</directory>
         <filtering>false</filtering>
-      </resource>
-      <resource>
-        <directory>target/generated-resources</directory>
-        <filtering>false</filtering>
-        <excludes>
-          <exclude>public/admin/index.html</exclude>
-        </excludes>
       </resource>
     </resources>
     <plugins>
@@ -215,18 +203,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
-          <execution>
-            <id>unpack-admin</id>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>unpack-dependencies</goal>
-            </goals>
-            <configuration>
-              <includeGroupIds>de.terrestris</includeGroupIds>
-              <includeArtifactIds>shogun-admin</includeArtifactIds>
-              <outputDirectory>target/generated-resources/public/admin</outputDirectory>
-            </configuration>
-          </execution>
           <execution>
             <id>unpack-baseclient</id>
             <phase>generate-resources</phase>
