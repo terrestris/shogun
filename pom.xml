@@ -149,7 +149,6 @@
     <mockito.version>4.4.0</mockito.version>
     <maven-dependency-plugin.version>3.3.0</maven-dependency-plugin.version>
     <maven-project-info-reports-plugin.version>3.2.1</maven-project-info-reports-plugin.version>
-    <git.commit.id.abbrev>unknown</git.commit.id.abbrev>
   </properties>
 
   <build>
@@ -204,6 +203,7 @@
                 <additionalProperties>
                   <encoding.source>${project.encoding}</encoding.source>
                   <encoding.reporting>${project.encoding}</encoding.reporting>
+                  <!--suppress UnresolvedMavenProperty -->
                   <commithash>${git.commit.id.abbrev}</commithash>
                 </additionalProperties>
               </configuration>
