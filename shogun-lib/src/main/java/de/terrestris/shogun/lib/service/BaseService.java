@@ -48,6 +48,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @Log4j2
 public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpecificationExecutor<S>, S extends BaseEntity> {
@@ -89,6 +90,11 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
     @Transactional(readOnly = true)
     public Optional<S> findOne(Long id) {
         return repository.findById(id);
+    }
+
+    @PostAuthorize("hasRole('ROLE_ADMIN') or hasPermission(returnObject.orElse(null), 'READ')")
+    public Optional<S> findOne(UUID uuid) {
+        return repository.findByUuid(uuid);
     }
 
     @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")

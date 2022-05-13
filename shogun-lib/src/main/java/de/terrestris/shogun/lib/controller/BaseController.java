@@ -35,6 +35,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 // TODO Specify and type extension of BaseService
 @Log4j2
@@ -85,6 +86,67 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
                             LocaleContextHolder.getLocale()
                     ),
                     e
+            );
+        }
+    }
+
+    @GetMapping("/uuid/{uuid}")
+    @ResponseStatus(HttpStatus.OK)
+    public S findOne(@PathVariable("uuid") UUID uuid) {
+        log.trace("Requested to return entity of type {} with UUID {}",
+            getGenericClassName(), uuid);
+
+        try {
+            Optional<S> entity = service.findOne(uuid);
+
+            if (entity.isPresent()) {
+                S persistedEntity = entity.get();
+
+                log.trace("Successfully got entity of type {} with UUID {}",
+                    getGenericClassName(), uuid);
+
+                return persistedEntity;
+            } else {
+                log.error("Could not find entity of type {} with UUID {}",
+                    getGenericClassName(), uuid);
+
+                throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    messageSource.getMessage(
+                        "BaseController.NOT_FOUND",
+                        null,
+                        LocaleContextHolder.getLocale()
+                    )
+                );
+            }
+        } catch (AccessDeniedException ade) {
+            log.warn("Access to entity of type {} with UUID {} is denied",
+                getGenericClassName(), uuid);
+
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                messageSource.getMessage(
+                    "BaseController.NOT_FOUND",
+                    null,
+                    LocaleContextHolder.getLocale()
+                ),
+                ade
+            );
+        } catch (ResponseStatusException rse) {
+            throw rse;
+        } catch (Exception e) {
+            log.error("Error while requesting entity of type {} with UUID {}: \n {}",
+                getGenericClassName(), uuid, e.getMessage());
+            log.trace("Full stack trace: ", e);
+
+            throw new ResponseStatusException(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                messageSource.getMessage(
+                    "BaseController.INTERNAL_SERVER_ERROR",
+                    null,
+                    LocaleContextHolder.getLocale()
+                ),
+                e
             );
         }
     }

@@ -37,15 +37,6 @@ import java.util.UUID;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class File extends BaseEntity {
 
-    @Column(columnDefinition = "uuid", updatable = false, nullable = false)
-    @Type(type="pg-uuid")
-    @Getter
-    @Schema(
-        description = "The (auto assigned) UUID of the file.",
-        accessMode = Schema.AccessMode.READ_ONLY
-    )
-    private UUID fileUuid = UUID.randomUUID();
-
     @Column
     @Getter @Setter
     @Schema(
