@@ -24,6 +24,7 @@ import lombok.*;
 import org.geojson.GeoJsonObject;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.AuditTable;
 import org.hibernate.envers.Audited;
@@ -32,6 +33,7 @@ import javax.persistence.*;
 
 @Entity(name = "layers")
 @Table(schema = "shogun")
+@DynamicUpdate
 @Audited
 @AuditTable(value = "layers_rev", schema = "shogun_rev")
 @Cacheable

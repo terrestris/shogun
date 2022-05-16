@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.envers.AuditTable;
 import org.hibernate.envers.Audited;
 
@@ -27,6 +28,7 @@ import javax.persistence.*;
 
 @Entity(name = "groups")
 @Table(schema = "shogun")
+@DynamicUpdate
 @Audited
 @AuditTable(value = "groups_rev", schema = "shogun_rev")
 @Cacheable
