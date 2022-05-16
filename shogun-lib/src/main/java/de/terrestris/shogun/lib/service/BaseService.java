@@ -18,7 +18,8 @@ package de.terrestris.shogun.lib.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.github.fge.jsonpatch.JsonPatchException;
+import com.github.fge.jsonpatch.mergepatch.JsonMergePatch;
 import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.User;
@@ -27,7 +28,6 @@ import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermiss
 import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
 import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.query.AuditEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +46,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -155,12 +154,10 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'UPDATE')")
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public S updatePartial(Long entityId, S entity, Map<String, Object> values) throws IOException {
-        if (ObjectUtils.notEqual(entityId, entity.getId())) {
-            throw new IOException("ID's of passed entity and parameter do not match. No partial update possible");
-        }
-        JsonNode jsonObject = objectMapper.valueToTree(values);
-        S updatedEntity = objectMapper.readerForUpdating(entity).readValue(jsonObject);
+    public S updatePartial(S entity, JsonMergePatch patch) throws IOException, JsonPatchException {
+        JsonNode patched = patch.apply(objectMapper.convertValue(entity, JsonNode.class));
+        S updatedEntity = (S) objectMapper.treeToValue(patched, getBaseEntityClass());
+
         return repository.save(updatedEntity);
     }
 
