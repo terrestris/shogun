@@ -133,17 +133,11 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
     public S update(Long id, S entity) throws IOException {
         Optional<S> persistedEntityOpt = repository.findById(id);
 
-        ObjectNode jsonObject = objectMapper.valueToTree(entity);
-
         // Ensure the created timestamp will not be overridden.
         S persistedEntity = persistedEntityOpt.orElseThrow();
-        OffsetDateTime createdTimestamp = persistedEntity.getCreated();
-        String serialized = createdTimestamp != null ? createdTimestamp.toInstant().toString() : null;
-        jsonObject.put("created", serialized);
+        entity.setCreated(persistedEntity.getCreated());
 
-        S updatedEntity = objectMapper.readerForUpdating(persistedEntity).readValue(jsonObject);
-
-        return repository.save(updatedEntity);
+        return repository.save(entity);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'UPDATE')")
