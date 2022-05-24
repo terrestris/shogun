@@ -16,37 +16,36 @@
  */
 package de.terrestris.shogun.lib.model.jsonb.application;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.terrestris.shogun.lib.annotation.JsonSuperType;
-import de.terrestris.shogun.lib.model.jsonb.ApplicationClientConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.io.Serializable;
+
 @Data
-@JsonDeserialize(as = DefaultApplicationClientConfig.class)
-@JsonSuperType(type = ApplicationClientConfig.class)
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @ToString
 @EqualsAndHashCode
-public class DefaultApplicationClientConfig implements ApplicationClientConfig {
+public class DefaultApplicationTheme implements Serializable {
 
     @Schema(
-        description = "The configuration of the map view.",
-        required = true
+        description = "The primary color."
     )
-    private DefaultMapView mapView;
+    private String primaryColor;
 
     @Schema(
-        description = "The description of the application."
+        description = "The secondary color."
     )
-    private String description;
+    private String secondaryColor;
 
     @Schema(
-        description = "The configuration of the applications theme."
+        description = "The complementary color (e.g. text color, icon color on buttons, …)."
     )
-    private DefaultApplicationTheme theme;
+    private String complementaryColor;
+
+    @Schema(
+        description = "The path to the logo."
+    )
+    private String logoPath;
 
 }
