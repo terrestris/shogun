@@ -54,16 +54,15 @@ public class CacheService {
         }
         if (entityManager == null) {
             throw new Exception("Could not get the entity manager.");
-        } else {
-            EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
-            SessionFactory sessionFactory = entityManagerFactory.unwrap(SessionFactory.class);
-            Cache cache = sessionFactory.getCache();
-            for (String r : region) {
-                if (StringUtils.isEmpty(r)) {
-                    continue;
-                }
-                cache.evictRegion(r);
+        }
+        EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
+        SessionFactory sessionFactory = entityManagerFactory.unwrap(SessionFactory.class);
+        Cache cache = sessionFactory.getCache();
+        for (String r : region) {
+            if (StringUtils.isEmpty(r)) {
+                continue;
             }
+            cache.evictRegion(r);
         }
     }
 }
