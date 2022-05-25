@@ -61,7 +61,7 @@ public class CacheController {
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             log.error("Could not evict the cache: {}", e.getMessage());
-            log.trace("Full stack trace:", e);
+            log.trace("Full stack trace: ", e);
 
             throw new ResponseStatusException(
                 HttpStatus.INTERNAL_SERVER_ERROR,
