@@ -33,7 +33,7 @@ public class CacheService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public void evictAllCacheRegions() throws Exception {
+    public void evictCache() throws Exception {
 
         if (entityManager == null) {
            throw new Exception("Could not get the entity manager.");

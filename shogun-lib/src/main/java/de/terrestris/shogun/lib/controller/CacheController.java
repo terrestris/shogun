@@ -51,7 +51,7 @@ public class CacheController {
 
         try {
             if (regions == null || regions.isEmpty()) {
-                service.evictAllCacheRegions();
+                service.evictCache();
                 log.info("Successfully evicted all cache regions.");
             } else {
                 service.evictCacheRegions(regions.toArray(new String[]{}));
