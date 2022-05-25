@@ -16,11 +16,9 @@
  */
 package de.terrestris.shogun.lib.service.security.provider.keycloak;
 
-import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
 import de.terrestris.shogun.lib.event.OnRegistrationConfirmedEvent;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.UserRepository;
-import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
 import de.terrestris.shogun.lib.service.security.provider.GroupProviderService;
 import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import de.terrestris.shogun.lib.util.KeycloakUtil;
@@ -64,9 +62,6 @@ public class KeycloakUserProviderService implements UserProviderService<UserRepr
     @Autowired
     GroupProviderService groupProviderService;
 
-    @Autowired
-    protected UserInstancePermissionService userInstancePermissionService;
-
     /**
      * Finds a User by the passed keycloak ID. If it does not exists in the SHOGun DB it gets created.
      *
@@ -88,9 +83,6 @@ public class KeycloakUserProviderService implements UserProviderService<UserRepr
 
             // If the user doesn't exist, we assume it's the first login after registration.
             eventPublisher.publishEvent(new OnRegistrationConfirmedEvent(user));
-
-            // Add admin instance permissions for the user.
-            userInstancePermissionService.setPermission(user, user, PermissionCollectionType.ADMIN);
 
             log.info("User with keycloak id {} did not yet exist in the SHOGun DB and was therefore created.", keycloakUserId);
 
