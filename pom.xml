@@ -149,6 +149,7 @@
     <mockito.version>4.4.0</mockito.version>
     <maven-dependency-plugin.version>3.3.0</maven-dependency-plugin.version>
     <maven-project-info-reports-plugin.version>3.2.1</maven-project-info-reports-plugin.version>
+    <archunit.version>0.23.1</archunit.version>
   </properties>
 
   <build>
@@ -561,6 +562,12 @@
         <groupId>org.testcontainers</groupId>
         <artifactId>postgresql</artifactId>
         <version>${testcontainers.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.tngtech.archunit</groupId>
+        <artifactId>archunit-junit5</artifactId>
+        <version>${archunit.version}</version>
         <scope>test</scope>
       </dependency>
     </dependencies>

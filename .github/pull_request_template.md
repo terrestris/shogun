@@ -15,6 +15,7 @@
 - [ ] Bugfix
 - [ ] Feature
 - [ ] Dependency updates
+- [ ] Tests
 - [ ] Code style update (formatting, renaming)
 - [ ] Refactoring (no functional changes, no api changes)
 - [ ] Build related changes
