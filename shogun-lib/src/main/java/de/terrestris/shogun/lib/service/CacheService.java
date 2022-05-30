@@ -62,7 +62,12 @@ public class CacheService {
             if (StringUtils.isEmpty(r)) {
                 continue;
             }
-            cache.evictRegion(r);
+            try {
+                cache.evictRegion(r);
+            } catch (NullPointerException e) {
+                log.error("Could not find cache region {}. Region was not cleared.", r);
+                log.trace("Full stack trace", e);
+            }
         }
     }
 }
