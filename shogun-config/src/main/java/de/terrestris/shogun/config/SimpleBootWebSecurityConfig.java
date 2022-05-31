@@ -14,9 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.terrestris.shogun.boot.config;
+package de.terrestris.shogun.config;
 
-import de.terrestris.shogun.config.DefaultWebSecurityConfig;
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
