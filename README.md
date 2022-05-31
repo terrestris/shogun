@@ -90,6 +90,14 @@ If you already have a local development setup, just proceed as follows:
 
 ### Development hints
 
+#### Local install
+
+Install a new version of shogun to your local maven repository with
+
+    ```bash
+    mvn clean install
+    ```
+
 #### Application restart
 
 To apply any changes made, a restart of the application is required. A restart can easily be accomplished by 
