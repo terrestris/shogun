@@ -35,7 +35,7 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 @Configuration
 @EnableWebSecurity
 @KeycloakConfiguration
-public class KeycloakBootWebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter implements DefaultWebSecurityConfig {
+public class KeycloakWebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter implements DefaultWebSecurityConfig {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) {
