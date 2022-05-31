@@ -26,8 +26,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @Log4j2
 @RestController
@@ -42,19 +45,23 @@ public class CacheController {
     protected MessageSource messageSource;
 
     @PostMapping("/evict")
-    public ResponseEntity<?> evictCache() {
+    public ResponseEntity<?> evictCache(@RequestParam(required = false) List<String> regions) {
 
         log.info("Requested to evict the cache.");
 
         try {
-            service.evictCache();
-
-            log.info("Successfully evicted the cache.");
+            if (regions == null || regions.isEmpty()) {
+                service.evictCache();
+                log.info("Successfully evicted all cache regions.");
+            } else {
+                service.evictCacheRegions(regions.toArray(new String[]{}));
+                log.info("Successfully evicted cache regions {}", regions);
+            }
 
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             log.error("Could not evict the cache: {}", e.getMessage());
-            log.trace("Full stack trace: {}", e);
+            log.trace("Full stack trace: ", e);
 
             throw new ResponseStatusException(
                 HttpStatus.INTERNAL_SERVER_ERROR,

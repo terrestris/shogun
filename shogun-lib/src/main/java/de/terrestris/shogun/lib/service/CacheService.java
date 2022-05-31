@@ -16,14 +16,18 @@
  */
 package de.terrestris.shogun.lib.service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
+import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Cache;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
+
 @Service
+@Log4j2
 public class CacheService {
 
     @PersistenceContext
@@ -42,5 +46,28 @@ public class CacheService {
         Cache cache = sessionFactory.getCache();
 
         cache.evictAllRegions();
+    }
+
+    public void evictCacheRegions(String... region) throws Exception {
+        if (region == null) {
+            return;
+        }
+        if (entityManager == null) {
+            throw new Exception("Could not get the entity manager.");
+        }
+        EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
+        SessionFactory sessionFactory = entityManagerFactory.unwrap(SessionFactory.class);
+        Cache cache = sessionFactory.getCache();
+        for (String r : region) {
+            if (StringUtils.isEmpty(r)) {
+                continue;
+            }
+            try {
+                cache.evictRegion(r);
+            } catch (NullPointerException e) {
+                log.error("Could not find cache region {}. Region was not cleared.", r);
+                log.trace("Full stack trace", e);
+            }
+        }
     }
 }
