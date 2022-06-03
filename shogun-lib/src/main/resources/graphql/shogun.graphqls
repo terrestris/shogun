@@ -201,7 +201,7 @@ type Query {
     query {
       allGroups {
         id
-        keycloakId
+        authProviderId
       }
     }
     ```
@@ -218,7 +218,7 @@ type Query {
     query {
       groupById(id: 19) {
         id
-        keycloakId
+        authProviderId
       }
     }
     ```
@@ -238,7 +238,7 @@ type Query {
     query {
       groupByIdAndTime(id: 19, time: "2021-07-28T17:30:00Z") {
        id
-       keycloakId
+       authProviderId
       }
     }
     ```
@@ -257,7 +257,7 @@ type Query {
         entity {
           id,
           ... on Group {
-            keycloakId
+            authProviderId
           }
         }
       }
@@ -279,7 +279,7 @@ type Query {
           entity {
             id
             ... on Group {
-              keycloakId
+              authProviderId
             }
           }
         }
@@ -299,7 +299,7 @@ type Query {
     query {
       allGroupsByIds(ids: [19, 9]) {
         id
-        keycloakId
+        authProviderId
       }
     }
     ```
@@ -487,7 +487,7 @@ type Query {
     query {
       allUsers {
         id
-        keycloakId
+        authProviderId
       }
     }
     ```
@@ -504,7 +504,7 @@ type Query {
     query {
       userById(id: 19) {
         id
-        keycloakId
+        authProviderId
       }
     }
     ```
@@ -524,7 +524,7 @@ type Query {
     query {
       userByIdAndTime(id: 19, time: "2021-07-28T17:30:00Z") {
         id
-        keycloakId
+        authProviderId
       }
     }
     ```
@@ -543,7 +543,7 @@ type Query {
         entity {
           id,
           ... on User {
-            keycloakId
+            authProviderId
           }
         }
       }
@@ -565,7 +565,7 @@ type Query {
           entity {
             id
             ... on User {
-              keycloakId
+              authProviderId
             }
           }
         }
@@ -585,7 +585,7 @@ type Query {
     query {
       allUsersByIds(ids: [19, 9]) {
         id
-        keycloakId
+        authProviderId
       }
     }
     ```
@@ -671,10 +671,10 @@ type Mutation {
     ```
     mutation {
       createGroup(entity: {
-        keycloakId: "43bd12d6-ef10-4012-95c4-46f4d8bd2b00"
+        authProviderId: "43bd12d6-ef10-4012-95c4-46f4d8bd2b00"
       }) {
         id
-        keycloakId
+        authProviderId
       }
     }
     ```
@@ -693,10 +693,10 @@ type Mutation {
     ```
     mutation {
       updateGroup(id: 19, entity: {
-        keycloakId: "53bd12d6-ef10-4012-95c4-46f4d8bd2b00"
+        authProviderId: "53bd12d6-ef10-4012-95c4-46f4d8bd2b00"
       }) {
         id
-        keycloakId
+        authProviderId
       }
     }
     ```
@@ -800,10 +800,10 @@ type Mutation {
     ```
     mutation {
       createUser(entity: {
-        keycloakId: "43bd12d6-ef10-4012-95c4-46f4d8bd2b00"
+        authProviderId: "43bd12d6-ef10-4012-95c4-46f4d8bd2b00"
       }) {
         id
-        keycloakId
+        authProviderId
       }
     }
     ```
@@ -822,10 +822,10 @@ type Mutation {
     ```
     mutation {
       updateUser(id: 19, entity: {
-        keycloakId: "53bd12d6-ef10-4012-95c4-46f4d8bd2b00"
+        authProviderId: "53bd12d6-ef10-4012-95c4-46f4d8bd2b00"
       }) {
         id
-        keycloakId
+        authProviderId
       }
     }
     ```
@@ -1268,11 +1268,11 @@ type File implements BaseEntity {
 }
 
 """
-A type to map the Keycloak representation of a group.
+A type to map the provider details of a group.
 """
 type GroupRepresentation {
     """
-    The ID of the keycloak entity.
+    The ID of the provider entity.
     """
     id: ID
     """
@@ -1295,8 +1295,8 @@ type GroupRepresentation {
 
 """
 The `Group` type references a SHOGun-group. The group is basically used internally to map permissions. All essential
-details of the group (e.g. name, roles) are stored in Keycloak and the appropriate group is referenced to the
-SHOGun-group via the its ID in keycloak (see `keycloakId`).
+details of the group (e.g. name, roles) are stored in the authentication provider and the appropriate group is referenced to the
+SHOGun-group via the its authentication provider ID (see `authProviderId`).
 """
 type Group implements BaseEntity {
     """
@@ -1312,13 +1312,13 @@ type Group implements BaseEntity {
     """
     modified: DateTime
     """
-    The internal Keycloak ID of the group.
+    The internal authentication provider ID of the group (e.g. Keycloak id).
     """
-    keycloakId: ID
+    authProviderId: ID
     """
-    The group details stored in the associated Keycloak entity.
+    The group details stored in the associated authentication provider entity.
     """
-    keycloakRepresentation: GroupRepresentation
+    providerDetails: GroupRepresentation
 }
 
 """
@@ -1326,11 +1326,11 @@ The `MutateGroup` type contains all fields which can be set in the given mutatio
 """
 input MutateGroup {
     """
-    See `keycloakId` of the type `Group`.
+    See `authProviderId` of the type `Group`.
 
     Required.
     """
-    keycloakId: ID!
+    authProviderId: ID!
 }
 
 """
@@ -1577,11 +1577,11 @@ input MutateLayer {
 }
 
 """
-A type to map the Keycloak representation of an user.
+A type to map the authentication provider details of an user.
 """
 type UserRepresentation {
     """
-    The ID of the keycloak entity.
+    The ID of the entity.
     """
     id: ID
     """
@@ -1601,7 +1601,7 @@ type UserRepresentation {
     """
     lastName: String
     """
-    The mail adress of the user.
+    The mail address of the user.
     """
     email: String
     """
@@ -1616,8 +1616,8 @@ type UserRepresentation {
 
 """
 The `User` type references a SHOGun-user. The user is basically used internally to map permissions or the session at
-runtime. All essential details of the user (e.g. mail, roles, groups) are stored in Keycloak and the appropriate user is
-referenced to the SHOGun-user via the its ID in keycloak (see `keycloakId`).
+runtime. All essential details of the user (e.g. mail, roles, groups) are stored in the selected authentication provider and the appropriate user is
+referenced to the SHOGun-user via the its authentication provider ID (see `authProviderId`).
 """
 type User implements BaseEntity {
     """
@@ -1633,11 +1633,11 @@ type User implements BaseEntity {
     """
     modified: DateTime
     """
-    The internal Keycloak ID of the user.
+    The internal authentication provider ID of the user (e.g. keycloakId).
     """
-    keycloakId: ID
+    authProviderId: ID
     """
-    Custom user details that aren't stored inside the Keycloak representation, for example:
+    Custom user details that aren't stored inside the authentication provider details, for example:
 
     ```
     {
@@ -1694,9 +1694,9 @@ type User implements BaseEntity {
     """
     clientConfig: JSON
     """
-    The user details stored in the associated Keycloak entity.
+    The user details stored in the associated provider details entity.
     """
-    keycloakRepresentation: UserRepresentation
+    providerDetails: UserRepresentation
 }
 
 """
@@ -1704,11 +1704,11 @@ The `MutateLayer` type contains all fields which can be set in the given mutatio
 """
 input MutateUser {
     """
-    See `keycloakId` of the type `User`.
+    See `authProviderId` of the type `User`.
 
     Required.
     """
-    keycloakId: ID!
+    authProviderId: ID!
     """
     See `details` of the type `User`.
     """
