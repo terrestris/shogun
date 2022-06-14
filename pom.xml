@@ -350,6 +350,11 @@
           </exclusion>
         </exclusions>
       </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        <version>${spring-boot.version}</version>
+      </dependency>
 
       <!-- Swagger -->
       <dependency>
@@ -485,20 +490,8 @@
       <!-- Keycloak -->
       <dependency>
         <groupId>org.keycloak</groupId>
-        <artifactId>keycloak-spring-boot-starter</artifactId>
-        <version>${keycloak.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.keycloak</groupId>
         <artifactId>keycloak-admin-client</artifactId>
         <version>${keycloak.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.keycloak.bom</groupId>
-        <artifactId>keycloak-adapter-bom</artifactId>
-        <version>${keycloak.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
       </dependency>
 
       <!-- evo-inflector -->

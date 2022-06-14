@@ -73,16 +73,6 @@
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-redis</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.keycloak</groupId>
-      <artifactId>keycloak-spring-boot-starter</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-starter-logging</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
 
     <!-- Lombok -->
     <dependency>

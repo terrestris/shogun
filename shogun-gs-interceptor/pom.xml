@@ -112,11 +112,6 @@
       <artifactId>geoserver-manager</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>org.keycloak</groupId>
-      <artifactId>keycloak-spring-boot-starter</artifactId>
-    </dependency>
-
     <!-- SHOGun Lib -->
     <dependency>
       <groupId>de.terrestris</groupId>
