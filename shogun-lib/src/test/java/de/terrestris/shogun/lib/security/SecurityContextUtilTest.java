@@ -16,18 +16,12 @@
  */
 package de.terrestris.shogun.lib.security;
 
-import de.terrestris.shogun.lib.model.Group;
-import de.terrestris.shogun.lib.repository.GroupRepository;
 import de.terrestris.shogun.lib.service.GroupService;
 import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import de.terrestris.shogun.lib.service.security.provider.keycloak.KeycloakGroupProviderService;
 import de.terrestris.shogun.lib.service.security.provider.keycloak.KeycloakUserProviderService;
 import org.junit.After;
 import org.junit.Test;
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.KeycloakSecurityContext;
-import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
-import org.keycloak.representations.IDToken;
 import org.mockito.Mock;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -35,11 +29,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
-import static de.terrestris.shogun.lib.service.security.provider.keycloak.KeycloakGroupProviderService.groupUuidsClaimName;
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -113,35 +107,6 @@ public class SecurityContextUtilTest {
         Optional<de.terrestris.shogun.lib.model.User> user = Optional.of(new de.terrestris.shogun.lib.model.User());
         when(userProviderService.getUserBySession()).thenReturn(user);
         assertNotNull(groupProviderService.getGroupsForUser());
-    }
-
-    @Test
-    public void getGroupsForUser_usesClaimIfAvailable() {
-        final KeycloakPrincipal<?> keycloakPrincipal = mock(KeycloakPrincipal.class);
-        final IDToken idToken = mock(IDToken.class);
-        final Map<String, Object> otherClaims = new HashMap<>();
-        final KeycloakSecurityContext keycloakSecurityContext = mock(KeycloakSecurityContext.class);
-        final KeycloakAuthenticationToken authentication = mock(KeycloakAuthenticationToken.class);
-        otherClaims.put(groupUuidsClaimName, new ArrayList<>(Arrays.asList(
-            "Test group 1",
-            "Test group 2"
-        )));
-
-        when(idToken.getOtherClaims()).thenReturn(otherClaims);
-        when(keycloakPrincipal.getKeycloakSecurityContext()).thenReturn(keycloakSecurityContext);
-        when(keycloakPrincipal.getKeycloakSecurityContext().getIdToken()).thenReturn(idToken);
-        when(authentication.getPrincipal()).thenReturn(keycloakPrincipal);
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        final GroupRepository groupRepository = mock(GroupRepository.class);
-        when(groupRepository.findByAuthProviderId(anyString())).thenReturn(Optional.of(new Group()));
-
-        groupProviderService.repository = groupRepository;
-
-        List<Group<?>> groupsForUser = (List) groupProviderService.getGroupsForUser();
-        assertNotNull(groupsForUser);
-        assertEquals("Number of mocked group instances matches number of returned group instances.", 2, groupsForUser.size());
     }
 
 }

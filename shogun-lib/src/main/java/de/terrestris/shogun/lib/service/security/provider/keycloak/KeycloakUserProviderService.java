@@ -24,7 +24,6 @@ import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import de.terrestris.shogun.lib.util.KeycloakUtil;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
-import org.keycloak.KeycloakPrincipal;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -33,6 +32,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -144,14 +144,12 @@ public class KeycloakUserProviderService implements UserProviderService<UserRepr
      */
     @Override
     public Optional<User<UserRepresentation>> getUserFromAuthentication(Authentication authentication) {
-        final Object principal = authentication.getPrincipal();
-        if (!(principal instanceof KeycloakPrincipal)) {
+        if (!(authentication instanceof JwtAuthenticationToken)) {
             return Optional.empty();
         }
-        // get user info from authentication object
+
         String keycloakUserId = getKeycloakUserIdFromAuthentication(authentication);
         return (Optional) userRepository.findByAuthProviderId(keycloakUserId);
     }
-
 
 }
