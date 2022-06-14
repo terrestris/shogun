@@ -90,29 +90,24 @@ spring:
     host: shogun-redis
     port: 6379
     password: pass
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://${KEYCLOAK_HOST:shogun-keycloak}/auth/realms/SpringBootKeycloak
+          jwk-set-uri: https://${KEYCLOAK_HOST:shogun-keycloak}/auth/realms/SpringBootKeycloak/protocol/openid-connect/certs
 
 keycloak:
   enabled: true
-  auth-server-url: https://${KEYCLOAK_HOST:shogun-keycloak}/keycloak/auth
-  realm: SpringBootKeycloak
-  resource: shogun-app
-  public-client: true
-  ssl-required: all
-  principal-attribute: preferred_username
-  enable-basic-auth: true
-  disable-trust-manager: ${KEYCLOAK_DISABLE_TRUST_MANAGER}
-#  security-constraints:
-#    - authRoles:
-#      - user
-#    - securityCollections:
-#      - pattern:
-#        - /customers/*
-
-keycloakauth:
+  server-url: https://${KEYCLOAK_HOST:shogun-keycloak}/auth
   username: admin
   password: shogun
   master-realm: master
-  admin-client: admin-cli
+  admin-client-id: admin-cli
+  realm: SpringBootKeycloak
+  client-id: shogun-app
+  principal-attribute: preferred_username
+  disableHostnameVerification: true
 
 controller:
   applications:

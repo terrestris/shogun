@@ -26,15 +26,13 @@ shogun-proxy:
   - ows.terrestris.de
 
 keycloak:
-  auth-server-url: http://localhost:8000/auth
-  realm: SpringBootKeycloak
-  resource: shogun-app
-  public-client: true
-  principal-attribute: preferred_username
-
-## TODO: use auth! / Token!
-keycloakauth:
+  enabled: true
+  server-url: https://${KEYCLOAK_HOST:shogun-keycloak}/auth
   username: admin
   password: shogun
   master-realm: master
-  admin-client: admin-cli
+  admin-client-id: admin-cli
+  realm: SpringBootKeycloak
+  client-id: shogun-app
+  principal-attribute: preferred_username
+  disableHostnameVerification: true

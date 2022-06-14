@@ -23,13 +23,28 @@ import org.springframework.stereotype.Component;
 
 @Data
 @Configuration
-@ConfigurationProperties(prefix = "keycloakauth")
+@ConfigurationProperties(prefix = "keycloak")
 @Component
-public class KeycloakAuthProperties {
+public class KeycloakProperties {
+
+    private Boolean enabled;
+
+    private String serverUrl;
 
     private String username;
+
     private String password;
+
     private String masterRealm;
-    private String adminClient;
+
+    private String adminClientId;
+
+    private String realm;
+
+    private String clientId;
+
+    private String principalAttribute;
+
+    private Boolean disableHostnameVerification;
 
 }
