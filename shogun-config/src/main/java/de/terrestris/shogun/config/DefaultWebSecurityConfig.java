@@ -17,12 +17,16 @@
 package de.terrestris.shogun.config;
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 public interface DefaultWebSecurityConfig extends WebSecurityConfig {
 
     default void customHttpConfiguration(HttpSecurity http) throws Exception {
         http
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
             .authorizeRequests()
                 .antMatchers(
                     "/",
