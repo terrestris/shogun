@@ -63,7 +63,7 @@ public abstract class SwaggerConfig {
             .build()
             .apiInfo(apiInfo())
             .securityContexts(Collections.singletonList(actuatorSecurityContext()))
-            .securitySchemes(Collections.singletonList(basicAuthScheme()));
+            .securitySchemes(Collections.singletonList(apiKey()));
 
         directModelSubsitutions(docket);
 
@@ -72,17 +72,17 @@ public abstract class SwaggerConfig {
 
     private SecurityContext actuatorSecurityContext() {
         return SecurityContext.builder()
-            .securityReferences(Collections.singletonList(basicAuthReference()))
+            .securityReferences(Collections.singletonList(bearerTokenAuth()))
             .forPaths(setSecurityContextPaths()::test)
             .build();
     }
 
-    private SecurityReference basicAuthReference() {
-        return new SecurityReference("basicAuth", new AuthorizationScope[0]);
+    private SecurityScheme apiKey() {
+        return new ApiKey("apiKey", "Authorization", "header");
     }
 
-    private SecurityScheme basicAuthScheme() {
-        return new BasicAuth("basicAuth");
+    private SecurityReference bearerTokenAuth() {
+        return new SecurityReference("apiKey", new AuthorizationScope[0]);
     }
 
     protected void directModelSubsitutions(Docket docket) {
