@@ -125,6 +125,10 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <fork>true</fork>
+          <skip>false</skip>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.hibernate.orm.tooling</groupId>
@@ -140,6 +144,14 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>pl.project13.maven</groupId>
+        <artifactId>git-commit-id-plugin</artifactId>
+        <configuration>
+          <offline>true</offline>
+          <abbrevLength>8</abbrevLength>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>com.google.cloud.tools</groupId>

@@ -15,7 +15,7 @@
 #  limitations under the License.
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5555/shogun?currentSchema=interceptor
+    url: jdbc:postgresql://shogun-postgis:5432/shogun?currentSchema=interceptor
   flyway:
     defaultSchema: interceptor
     schemas: interceptor, public
