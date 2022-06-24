@@ -32,7 +32,7 @@ keycloak:
   password: shogun
   master-realm: master
   admin-client-id: admin-cli
-  realm: SpringBootKeycloak
-  client-id: shogun-app
+  realm: SHOGun
+  client-id: shogun-boot
   principal-attribute: preferred_username
   disableHostnameVerification: true

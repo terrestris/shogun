@@ -88,8 +88,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: https://${KEYCLOAK_HOST:shogun-keycloak}/auth/realms/SpringBootKeycloak
-          jwk-set-uri: https://${KEYCLOAK_HOST:shogun-keycloak}/auth/realms/SpringBootKeycloak/protocol/openid-connect/certs
+          issuer-uri: https://${KEYCLOAK_HOST:shogun-keycloak}/auth/realms/SHOGun
+          jwk-set-uri: https://${KEYCLOAK_HOST:shogun-keycloak}/auth/realms/SHOGun/protocol/openid-connect/certs
 
 keycloak:
   enabled: true
@@ -98,8 +98,8 @@ keycloak:
   password: shogun
   master-realm: master
   admin-client-id: admin-cli
-  realm: SpringBootKeycloak
-  client-id: shogun-app
+  realm: SHOGun
+  client-id: shogun-boot
   principal-attribute: preferred_username
   disableHostnameVerification: true
 

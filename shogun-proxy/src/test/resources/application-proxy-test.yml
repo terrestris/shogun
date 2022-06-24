@@ -20,8 +20,8 @@ keycloak:
   password: shogun
   master-realm: master
   admin-client-id: admin-cli
-  realm: SpringBootKeycloak
-  client-id: shogun-app
+  realm: SHOGun
+  client-id: shogun-boot
   principal-attribute: preferred_username
   disableHostnameVerification: true
 
@@ -32,8 +32,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: https://localhost/auth/realms/SpringBootKeycloak
-          jwk-set-uri: https://localhost/auth/realms/SpringBootKeycloak/protocol/openid-connect/certs
+          issuer-uri: https://localhost/auth/realms/SHOGun
+          jwk-set-uri: https://localhost/auth/realms/SHOGun/protocol/openid-connect/certs
 
 shogun-proxy:
   whitelist:
