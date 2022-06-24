@@ -34,6 +34,7 @@ public interface DefaultWebSecurityConfig extends WebSecurityConfig {
                     "/info/**",
                     "/index.html",
                     "/index.css",
+                    "/favicon.ico",
                     "/assets/**",
                     // Enable anonymous access to swagger docs
                     "/swagger-ui/index.html",
@@ -47,8 +48,7 @@ public interface DefaultWebSecurityConfig extends WebSecurityConfig {
                     "/actuator/**",
                     "/cache/**",
                     "/webhooks/**",
-                    "/ws/**",
-                    "/admin/**"
+                    "/ws/**"
                 )
                     .hasRole("ADMIN")
                 .anyRequest()
