@@ -94,9 +94,6 @@
 
     <java.version>17</java.version>
 
-    <!-- SHOGun gis client -->
-    <shogun-baseclient.version>2.0.1</shogun-baseclient.version>
-
     <!-- Plugins -->
     <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
     <maven-site-plugin.version>3.12.0</maven-site-plugin.version>
@@ -517,13 +514,6 @@
         <groupId>org.reflections</groupId>
         <artifactId>reflections</artifactId>
         <version>${reflections.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>de.terrestris</groupId>
-        <artifactId>shogun-baseclient</artifactId>
-        <version>${shogun-baseclient.version}</version>
-        <scope>provided</scope>
       </dependency>
 
       <!-- Testing -->
