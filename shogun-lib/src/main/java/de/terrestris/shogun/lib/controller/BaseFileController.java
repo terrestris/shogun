@@ -151,7 +151,7 @@ public abstract class BaseFileController<T extends BaseFileService<?, S>, S exte
 
     @PostMapping(value = "/upload", consumes = "multipart/form-data")
     @ResponseStatus(HttpStatus.CREATED)
-    public S add(MultipartFile uploadedFile) {
+    public S add(@RequestPart(value = "file") MultipartFile uploadedFile) {
         log.debug("Requested to upload a multipart-file");
 
         try {
@@ -194,7 +194,7 @@ public abstract class BaseFileController<T extends BaseFileService<?, S>, S exte
 
     @PostMapping(value = "/uploadToFileSystem", consumes = "multipart/form-data")
     @ResponseStatus(HttpStatus.CREATED)
-    public S addToFileSystem(MultipartFile uploadedFile) {
+    public S addToFileSystem(@RequestPart(value = "file") MultipartFile uploadedFile) {
         log.debug("Requested to upload a multipart-file and to save it to the file system");
 
         try {
