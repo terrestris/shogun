@@ -72,7 +72,6 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
             return false;
         }
 
-        // fetch user from securityUtil
         Optional<User> userOpt = userProviderService.getUserFromAuthentication(authentication);
         User user = userOpt.orElse(null);
 
@@ -111,7 +110,6 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
             return false;
         }
 
-        // fetch user from securityUtil
         Optional<User> userOpt = userProviderService.getUserFromAuthentication(authentication);
         User user = userOpt.orElse(null);
 

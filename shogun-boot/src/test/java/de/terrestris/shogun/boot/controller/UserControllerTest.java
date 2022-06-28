@@ -100,8 +100,7 @@ public class UserControllerTest extends BaseControllerTest<UserController, UserR
                     .content(objectMapper.writeValueAsString(insertNode))
                     .with(csrf())
             )
-            .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-            .andExpect(MockMvcResultMatchers.redirectedUrl("/sso/login"));
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
 
         List<User> persistedEntities = repository.findAll();
         assertEquals(5, persistedEntities.size());
@@ -194,8 +193,7 @@ public class UserControllerTest extends BaseControllerTest<UserController, UserR
                     .delete(String.format("%s/%s", basePath, testData.get(0).getId()))
                     .with(csrf())
             )
-            .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-            .andExpect(MockMvcResultMatchers.redirectedUrl("/sso/login"));
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
 
         List<User> persistedEntities = repository.findAll();
         assertEquals(5, persistedEntities.size());

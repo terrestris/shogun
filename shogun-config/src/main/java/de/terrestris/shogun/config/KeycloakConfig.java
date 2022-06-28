@@ -16,11 +16,9 @@
  */
 package de.terrestris.shogun.config;
 
-import de.terrestris.shogun.properties.KeycloakAuthProperties;
+import de.terrestris.shogun.properties.KeycloakProperties;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
-import org.keycloak.adapters.springboot.KeycloakSpringBootProperties;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.RealmResource;
@@ -37,15 +35,7 @@ import org.springframework.context.annotation.Configuration;
 public abstract class KeycloakConfig {
 
     @Autowired
-    private KeycloakSpringBootProperties keycloakSpringBootProperties;
-
-    @Autowired
-    private KeycloakAuthProperties keycloakAuthProperties;
-
-    @Bean
-    public KeycloakSpringBootConfigResolver keycloakConfigResolver() {
-        return new KeycloakSpringBootConfigResolver();
-    }
+    private KeycloakProperties keycloakProperties;
 
     @Bean
     public Keycloak keycloakAdminClient() {
@@ -54,18 +44,19 @@ public abstract class KeycloakConfig {
             .build();
 
         return KeycloakBuilder.builder()
-            .serverUrl(keycloakSpringBootProperties.getAuthServerUrl())
-            .realm(keycloakAuthProperties.getMasterRealm())
-            .username(keycloakAuthProperties.getUsername())
-            .password(keycloakAuthProperties.getPassword())
-            .clientId(keycloakAuthProperties.getAdminClient())
+            .serverUrl(keycloakProperties.getServerUrl())
+            .realm(keycloakProperties.getMasterRealm())
+            .username(keycloakProperties.getUsername())
+            .password(keycloakProperties.getPassword())
+            .clientId(keycloakProperties.getAdminClientId())
             .resteasyClient(restClient)
             .build();
     }
 
     @Bean
     public RealmResource getRealm(@Autowired Keycloak kc) {
-        return kc.realm(keycloakSpringBootProperties.getRealm());
+        return kc.realm(keycloakProperties.getRealm());
     }
+
 
 }

@@ -17,12 +17,16 @@
 package de.terrestris.shogun.config;
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 public interface DefaultWebSecurityConfig extends WebSecurityConfig {
 
     default void customHttpConfiguration(HttpSecurity http) throws Exception {
         http
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
             .authorizeRequests()
                 .antMatchers(
                     "/",
@@ -30,6 +34,7 @@ public interface DefaultWebSecurityConfig extends WebSecurityConfig {
                     "/info/**",
                     "/index.html",
                     "/index.css",
+                    "/favicon.ico",
                     "/assets/**",
                     // Enable anonymous access to swagger docs
                     "/swagger-ui/index.html",
@@ -43,24 +48,11 @@ public interface DefaultWebSecurityConfig extends WebSecurityConfig {
                     "/actuator/**",
                     "/cache/**",
                     "/webhooks/**",
-                    "/ws/**",
-                    "/admin/**"
+                    "/ws/**"
                 )
                     .hasRole("ADMIN")
                 .anyRequest()
                     .authenticated()
-            .and()
-                .httpBasic()
-            .and()
-                .formLogin()
-                .defaultSuccessUrl("/index.html")
-                    .permitAll()
-            .and()
-                .rememberMe()
-                    .key("SuPeRuNiQuErEmEmBeRmEKeY")
-            .and()
-                .logout()
-                    .permitAll()
             .and()
                 .csrf()
                     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())

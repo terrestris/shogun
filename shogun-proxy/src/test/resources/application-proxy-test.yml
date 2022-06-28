@@ -14,22 +14,26 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 keycloak:
-  auth-server-url: https://to.be.defined/keycloak/auth
-  realm: SHOGUN
-  resource: test-resource
-  public-client: true
-  ssl-required: all
+  enabled: true
+  server-url: https://localhost/auth
+  username: admin
+  password: shogun
+  master-realm: master
+  admin-client-id: admin-cli
+  realm: SHOGun
+  client-id: shogun-boot
   principal-attribute: preferred_username
+  disableHostnameVerification: true
 
 spring:
   session:
     store-type: none
-
-keycloakauth:
-  username: admin
-  password: test
-  master-realm: test
-  admin-client: admin-cli
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://localhost/auth/realms/SHOGun
+          jwk-set-uri: https://localhost/auth/realms/SHOGun/protocol/openid-connect/certs
 
 shogun-proxy:
   whitelist:

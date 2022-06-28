@@ -26,7 +26,7 @@ spring:
   messages:
     basename: org/springframework/security/messages, de/terrestris/shogun/lib/messages
   mail:
-    host: mail.terrestris.de
+    host: ${MAIL_HOST}
     port: 587
     protocol: smtp
     username: noreply

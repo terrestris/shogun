@@ -19,8 +19,6 @@ server:
   forward-headers-strategy: framework
   servlet:
     context-path: /
-    session:
-      timeout: 86400
   error:
     whitelabel:
       enabled: true
@@ -85,34 +83,25 @@ spring:
     username: shogun
     password: shogun
   session:
-    store-type: redis
-  redis:
-    host: shogun-redis
-    port: 6379
-    password: pass
+    store-type: none
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://${KEYCLOAK_HOST:shogun-keycloak}/auth/realms/SHOGun
+          jwk-set-uri: https://${KEYCLOAK_HOST:shogun-keycloak}/auth/realms/SHOGun/protocol/openid-connect/certs
 
 keycloak:
   enabled: true
-  auth-server-url: https://${KEYCLOAK_HOST:shogun-keycloak}/keycloak/auth
-  realm: SpringBootKeycloak
-  resource: shogun-app
-  public-client: true
-  ssl-required: all
-  principal-attribute: preferred_username
-  enable-basic-auth: true
-  disable-trust-manager: ${KEYCLOAK_DISABLE_TRUST_MANAGER}
-#  security-constraints:
-#    - authRoles:
-#      - user
-#    - securityCollections:
-#      - pattern:
-#        - /customers/*
-
-keycloakauth:
+  server-url: https://${KEYCLOAK_HOST:shogun-keycloak}/auth
   username: admin
   password: shogun
   master-realm: master
-  admin-client: admin-cli
+  admin-client-id: admin-cli
+  realm: SHOGun
+  client-id: shogun-boot
+  principal-attribute: preferred_username
+  disableHostnameVerification: true
 
 controller:
   applications:

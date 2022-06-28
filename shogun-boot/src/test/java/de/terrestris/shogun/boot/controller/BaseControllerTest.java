@@ -34,17 +34,15 @@ import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissi
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.KeycloakSecurityContext;
-import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
-import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.IDToken;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.servlet.server.Encoding;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -52,7 +50,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
@@ -166,17 +166,25 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
         repository.deleteAll();
     }
 
-    public Authentication getMockAuthentication(User<UserRepresentation> mockUser) {
+    public JwtAuthenticationToken getMockAuthentication(User<UserRepresentation> mockUser) {
         IDToken idToken = new IDToken();
         idToken.setSubject(mockUser.getAuthProviderId());
 
-        KeycloakSecurityContext securityContext = new KeycloakSecurityContext(null, null, null, idToken);
-        KeycloakPrincipal<KeycloakSecurityContext> principal = new KeycloakPrincipal<>(mockUser.getProviderDetails().getUsername(), securityContext);
-
         Set<String> roles = new HashSet<>(mockUser.getProviderDetails().getRealmRoles());
-        SimpleKeycloakAccount account = new SimpleKeycloakAccount(principal, roles, null);
 
-        return new KeycloakAuthenticationToken(account, false);
+        Set<SimpleGrantedAuthority> authorities = mockUser.getProviderDetails().getRealmRoles().stream()
+            .map(role -> new SimpleGrantedAuthority(role))
+            .collect(Collectors.toSet());
+
+        Jwt jwt = new Jwt(
+            "dummyToken",
+            Instant.now(),
+            Instant.now().plusSeconds(30),
+            Map.of("alg", "none"),
+            Map.of ("sub", mockUser.getAuthProviderId())
+        );
+
+        return new JwtAuthenticationToken(jwt, authorities);
     }
 
     @BeforeEach
@@ -204,8 +212,7 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
                 MockMvcRequestBuilders
                     .get(basePath)
             )
-            .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-            .andExpect(MockMvcResultMatchers.redirectedUrl("/sso/login"));
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 
     @Test
@@ -260,8 +267,7 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
                 MockMvcRequestBuilders
                     .get(String.format("%s/%s", basePath, testData.get(0).getId()))
             )
-            .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-            .andExpect(MockMvcResultMatchers.redirectedUrl("/sso/login"));
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 
     @Test
@@ -321,8 +327,7 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
                     .content(objectMapper.writeValueAsString(insertNode))
                     .with(csrf())
             )
-            .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-            .andExpect(MockMvcResultMatchers.redirectedUrl("/sso/login"));
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
 
         List<S> persistedEntities = repository.findAll();
         assertEquals(3, persistedEntities.size());
@@ -418,8 +423,7 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
                     .content(objectMapper.writeValueAsString(updateNode))
                     .with(csrf())
             )
-            .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-            .andExpect(MockMvcResultMatchers.redirectedUrl("/sso/login"));
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 
     @Test
@@ -502,8 +506,7 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
                     .delete(String.format("%s/%s", basePath, testData.get(0).getId()))
                     .with(csrf())
             )
-            .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-            .andExpect(MockMvcResultMatchers.redirectedUrl("/sso/login"));
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
 
         List<S> persistedEntities = repository.findAll();
         assertEquals(3, persistedEntities.size());

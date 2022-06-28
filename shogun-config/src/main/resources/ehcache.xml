@@ -86,7 +86,6 @@
   <cache alias="files" uses-template="default" />
   <cache alias="groups" uses-template="default" />
   <cache alias="layers" uses-template="default" />
-  <cache alias="topics" uses-template="default" />
   <cache alias="users" uses-template="default" />
 
 </config>

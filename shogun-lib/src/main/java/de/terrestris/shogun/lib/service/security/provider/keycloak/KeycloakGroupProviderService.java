@@ -23,22 +23,24 @@ import de.terrestris.shogun.lib.repository.UserRepository;
 import de.terrestris.shogun.lib.service.security.provider.GroupProviderService;
 import de.terrestris.shogun.lib.util.KeycloakUtil;
 import lombok.extern.log4j.Log4j2;
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.admin.client.resource.GroupResource;
-import org.keycloak.representations.AccessToken;
-import org.keycloak.representations.IDToken;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static de.terrestris.shogun.lib.util.KeycloakUtil.getKeycloakUserIdFromAuthentication;
 
 /**
  * NOTE: Make sure not to use services here, else the security checks will not run on them due to circular
@@ -99,31 +101,22 @@ public class KeycloakGroupProviderService implements GroupProviderService<UserRe
      */
     public List<Group<GroupRepresentation>> getGroupsForUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!(authentication.getPrincipal() instanceof KeycloakPrincipal)) {
-            // TODO Check what happens for an anon user
+
+        if (!(authentication instanceof JwtAuthenticationToken)) {
             return Collections.emptyList();
         }
 
-        KeycloakPrincipal<?> keycloakPrincipal = (KeycloakPrincipal<KeycloakSecurityContext>) authentication.getPrincipal();
-        KeycloakSecurityContext keycloakSecurityContext = keycloakPrincipal.getKeycloakSecurityContext();
-        // TODO This should happen everywhere!
-        IDToken idToken = keycloakSecurityContext.getIdToken();
-        AccessToken token = keycloakSecurityContext.getToken();
+        String keycloakUserId = getKeycloakUserIdFromAuthentication(authentication);
+        Optional<User> user = userRepository.findByAuthProviderId(keycloakUserId);
 
-        ArrayList<String> idTokenGroups = (idToken == null) ? null : (ArrayList<String>) idToken.getOtherClaims().get(groupUuidsClaimName);
-        ArrayList<String> tokenGroups = (token == null) ? null : (ArrayList<String>) token.getOtherClaims().get(groupUuidsClaimName);
-
-        Set<String> keycloakGroupIds = new HashSet<>();
-        if (idTokenGroups != null && !idTokenGroups.isEmpty()) {
-            keycloakGroupIds.addAll(idTokenGroups);
+        if (user.isEmpty()) {
+            return Collections.emptyList();
         }
 
-        if (tokenGroups != null && !tokenGroups.isEmpty()) {
-            keycloakGroupIds.addAll(tokenGroups);
-        }
+        List<GroupRepresentation> groupRepresentations = keycloakUtil.getKeycloakUserGroups(user.get());
 
-        return (List) keycloakGroupIds.stream().
-            map(keycloakGroupId -> repository.findByAuthProviderId(keycloakGroupId).orElseThrow()).
+        return (List) groupRepresentations.stream().
+            map(groupRepresentation -> repository.findByAuthProviderId(groupRepresentation.getId()).orElseThrow()).
             collect(Collectors.toList());
     }
 

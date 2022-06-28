@@ -178,7 +178,7 @@ but for a manual setup please follow these steps:
    [above](#quick-startup).
 
 8. Integrate your app into the Keycloak clients list as new redirect URI for
-   `shogun-app` (e.g. `http://localhost:8080/shogun-example-app/*`).
+   `shogun-boot` (e.g. `http://localhost:8080/shogun-example-app/*`).
 
 ## GeoServer interceptor
 

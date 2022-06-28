@@ -57,20 +57,8 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-security</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-data-redis</artifactId>
-    </dependency>
 
     <!-- Spring -->
-    <dependency>
-      <groupId>org.springframework.session</groupId>
-      <artifactId>spring-session-data-redis</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.data</groupId>
-      <artifactId>spring-data-redis</artifactId>
-    </dependency>
     <dependency>
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-envers</artifactId>
@@ -112,11 +100,6 @@
       <artifactId>geoserver-manager</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>org.keycloak</groupId>
-      <artifactId>keycloak-spring-boot-starter</artifactId>
-    </dependency>
-
     <!-- SHOGun Lib -->
     <dependency>
       <groupId>de.terrestris</groupId>
@@ -142,6 +125,10 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <fork>true</fork>
+          <skip>false</skip>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.hibernate.orm.tooling</groupId>
@@ -157,6 +144,14 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>pl.project13.maven</groupId>
+        <artifactId>git-commit-id-plugin</artifactId>
+        <configuration>
+          <offline>true</offline>
+          <abbrevLength>8</abbrevLength>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>com.google.cloud.tools</groupId>

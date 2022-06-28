@@ -15,7 +15,7 @@
 #  limitations under the License.
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5555/shogun?currentSchema=interceptor
+    url: jdbc:postgresql://shogun-postgis:5432/shogun?currentSchema=interceptor
   flyway:
     defaultSchema: interceptor
     schemas: interceptor, public
@@ -33,15 +33,13 @@ interceptor:
       url: http://localhost:1234/geoserver/SHOGUN
 
 keycloak:
-  auth-server-url: http://localhost:8000/auth
-  realm: SpringBootKeycloak
-  resource: shogun-app
-  public-client: true
-  principal-attribute: preferred_username
-
-## TODO: use auth! / Token!
-keycloakauth:
+  enabled: true
+  server-url: https://${KEYCLOAK_HOST:shogun-keycloak}/auth
   username: admin
   password: shogun
   master-realm: master
-  admin-client: admin-cli
+  admin-client-id: admin-cli
+  realm: SHOGun
+  client-id: shogun-boot
+  principal-attribute: preferred_username
+  disableHostnameVerification: true

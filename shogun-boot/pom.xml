@@ -57,10 +57,6 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-data-redis</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-devtools</artifactId>
       <optional>true</optional>
     </dependency>
@@ -68,16 +64,12 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+    </dependency>
 
     <!-- Spring -->
-    <dependency>
-      <groupId>org.springframework.session</groupId>
-      <artifactId>spring-session-data-redis</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.data</groupId>
-      <artifactId>spring-data-redis</artifactId>
-    </dependency>
     <dependency>
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-envers</artifactId>
@@ -138,18 +130,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.keycloak</groupId>
-      <artifactId>keycloak-spring-boot-starter</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>postgresql</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>de.terrestris</groupId>
-      <artifactId>shogun-baseclient</artifactId>
     </dependency>
   </dependencies>
 
@@ -205,24 +187,6 @@
             <mainClass>de.terrestris.shogun.boot.config.ApplicationConfig</mainClass>
           </container>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>unpack-baseclient</id>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>unpack-dependencies</goal>
-            </goals>
-            <configuration>
-              <includeGroupIds>de.terrestris</includeGroupIds>
-              <includeArtifactIds>shogun-baseclient</includeArtifactIds>
-              <outputDirectory>target/generated-resources/public/client</outputDirectory>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>

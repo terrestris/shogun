@@ -21,11 +21,11 @@ import de.terrestris.shogun.lib.service.UserService;
 import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import de.terrestris.shogun.lib.util.KeycloakUtil;
 import lombok.extern.log4j.Log4j2;
-import org.keycloak.KeycloakPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,10 +46,9 @@ public class LoginListener implements ApplicationListener<InteractiveAuthenticat
     @Transactional
     public synchronized void onApplicationEvent(InteractiveAuthenticationSuccessEvent event) {
         Authentication authentication = event.getAuthentication();
-        Object principal = authentication.getPrincipal();
 
-        if (!(principal instanceof KeycloakPrincipal)) {
-            log.error("No KeycloakPrincipal found, can not create the user.");
+        if (!(authentication instanceof JwtAuthenticationToken)) {
+            log.error("No JwtAuthenticationToken found, can not create the user.");
             return;
         }
 

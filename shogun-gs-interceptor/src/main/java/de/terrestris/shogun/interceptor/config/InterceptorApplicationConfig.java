@@ -19,7 +19,7 @@ package de.terrestris.shogun.interceptor.config;
 import de.terrestris.shogun.interceptor.config.properties.InterceptorProperties;
 import de.terrestris.shogun.interceptor.config.properties.NamespaceProperties;
 import de.terrestris.shogun.lib.envers.ShogunEnversRevisionRepositoryFactoryBean;
-import de.terrestris.shogun.properties.KeycloakAuthProperties;
+import de.terrestris.shogun.properties.KeycloakProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -37,7 +37,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableConfigurationProperties({
     InterceptorProperties.class,
     NamespaceProperties.class,
-    KeycloakAuthProperties.class
+    KeycloakProperties.class
 })
 public class InterceptorApplicationConfig {
 

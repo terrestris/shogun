@@ -16,50 +16,51 @@
  */
 package de.terrestris.shogun.config;
 
-import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
-import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
-import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
+import de.terrestris.shogun.converter.KeycloakJwtAuthenticationConverter;
+import de.terrestris.shogun.properties.KeycloakProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
-import org.springframework.security.core.session.SessionRegistryImpl;
-import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
-import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+
+import javax.annotation.PostConstruct;
+import javax.net.ssl.HttpsURLConnection;
 
 @ConditionalOnExpression("${keycloak.enabled:true}")
 @Configuration
 @EnableWebSecurity
-@KeycloakConfiguration
-public class KeycloakWebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter implements DefaultWebSecurityConfig {
+public class KeycloakWebSecurityConfig extends WebSecurityConfigurerAdapter implements DefaultWebSecurityConfig {
 
     @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) {
-        SimpleAuthorityMapper grantedAuthorityMapper = new SimpleAuthorityMapper();
-        grantedAuthorityMapper.setPrefix("ROLE_");
+    private KeycloakProperties keycloakProperties;
 
-        grantedAuthorityMapper.setConvertToUpperCase(true);
+    @Value("${KEYCLOAK_HOST:shogun-keycloak}")
+    private String keycloakHost;
 
-        KeycloakAuthenticationProvider keycloakAuthenticationProvider = keycloakAuthenticationProvider();
-        keycloakAuthenticationProvider.setGrantedAuthoritiesMapper(grantedAuthorityMapper);
-        auth.authenticationProvider(keycloakAuthenticationProvider);
-    }
-
-    @Bean
-    @Override
-    protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
-        return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
+    @PostConstruct
+    public void init() {
+        if (keycloakProperties.getDisableHostnameVerification()) {
+            HttpsURLConnection.setDefaultHostnameVerifier((hostname, sslSession) ->
+                (hostname.equals("localhost") || hostname.equals(keycloakHost)));
+        }
     }
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        super.configure(http);
-
         customHttpConfiguration(http);
+
+        KeycloakJwtAuthenticationConverter authConverter = new KeycloakJwtAuthenticationConverter(
+            keycloakProperties.getClientId(),
+            keycloakProperties.getPrincipalAttribute()
+        );
+
+        http
+            .oauth2ResourceServer()
+                .jwt()
+                .jwtAuthenticationConverter(authConverter);
     }
 
 }
