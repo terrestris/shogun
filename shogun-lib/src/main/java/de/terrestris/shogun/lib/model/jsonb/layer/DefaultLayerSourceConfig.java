@@ -77,7 +77,7 @@ public class DefaultLayerSourceConfig implements LayerSourceConfig {
     private String attribution;
 
     @Schema(
-        description = "Whether the background of the map should be drawn transparent.",
+        description = "Whether the layer should be drawn with transparency.",
         example = "true"
     )
     private Boolean transparent;
