@@ -1464,7 +1464,8 @@ type Layer implements BaseEntity {
         2.388657133579254,
         1.194328566789627,
         0.5971642833948135
-      ]
+      ],
+        "transparent": true
     }
     ```
 
@@ -1485,6 +1486,7 @@ type Layer implements BaseEntity {
       private Double tileSize;
       private ArrayList<Double> tileOrigin;
       private ArrayList<Double> resolutions;
+      private Boolean transparent;
     }
     ```
     """

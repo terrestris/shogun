@@ -75,5 +75,11 @@ public class DefaultLayerSourceConfig implements LayerSourceConfig {
         example = "© by terrestris GmbH & Co. KG"
     )
     private String attribution;
+
+    @Schema(
+        description = "Whether the background of the map should be drawn transparent.",
+        example = "true"
+    )
+    private Boolean transparent;
 }
 
