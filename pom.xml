@@ -141,7 +141,7 @@
     <log4j2.version>2.17.2</log4j2.version>
 
     <!-- Testing -->
-    <testcontainers.version>1.17.2</testcontainers.version>
+    <testcontainers.version>1.17.3</testcontainers.version>
     <junit.jupiter.version>5.7.1</junit.jupiter.version>
     <mockito.version>4.4.0</mockito.version>
     <maven-dependency-plugin.version>3.3.0</maven-dependency-plugin.version>
