@@ -81,6 +81,6 @@ public class DefaultLayerSourceConfig implements LayerSourceConfig {
         description = "Request parameters to be passed to the service when querying a layer.",
         example = "requestParams: {transparent: true}"
     )
-    private Map requestParams;
+    private HashMap<String, Object> requestParams;
 }
 
