@@ -1486,7 +1486,7 @@ type Layer implements BaseEntity {
       private Double tileSize;
       private ArrayList<Double> tileOrigin;
       private ArrayList<Double> resolutions;
-      private Map requestParams;
+      private HashMap<String, Object> requestParams;
     }
     ```
     """
