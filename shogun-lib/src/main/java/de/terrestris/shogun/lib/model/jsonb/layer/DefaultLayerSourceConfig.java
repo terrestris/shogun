@@ -26,7 +26,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.HashMap;
 
 @Data
 @JsonDeserialize(as = DefaultLayerSourceConfig.class)
@@ -79,7 +79,7 @@ public class DefaultLayerSourceConfig implements LayerSourceConfig {
 
     @Schema(
         description = "Request parameters to be passed to the service when querying a layer.",
-        example = "requestParams: {transparent: true}"
+        example = "{\"transparent\": true}"
     )
     private HashMap<String, Object> requestParams;
 }
