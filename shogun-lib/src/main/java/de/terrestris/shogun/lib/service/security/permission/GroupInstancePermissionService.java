@@ -113,6 +113,9 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
         // Get all groups of the user from Keycloak
         List<Group> groups = groupProviderService.findByUser(user);
         Optional<GroupInstancePermission> gip = Optional.empty();
+        if (groups == null) {
+            return gip;
+        }
         for (Group g : groups) {
             Optional<GroupInstancePermission> permissionsForGroup = repository
                 .findByGroupIdAndEntityId(g.getId(), entity.getId());
@@ -121,7 +124,6 @@ public class GroupInstancePermissionService extends BaseService<GroupInstancePer
                 break;
             }
         }
-
         return gip;
     }
 
