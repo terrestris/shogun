@@ -102,6 +102,7 @@ keycloak:
   client-id: shogun-boot
   principal-attribute: preferred_username
   disableHostnameVerification: true
+  internal-server-url: shogun-keycloak
 
 controller:
   applications:

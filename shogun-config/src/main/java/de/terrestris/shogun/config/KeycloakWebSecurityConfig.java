@@ -25,6 +25,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import javax.annotation.PostConstruct;
 import javax.net.ssl.HttpsURLConnection;
@@ -50,17 +52,56 @@ public class KeycloakWebSecurityConfig extends WebSecurityConfigurerAdapter impl
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        customHttpConfiguration(http);
-
         KeycloakJwtAuthenticationConverter authConverter = new KeycloakJwtAuthenticationConverter(
             keycloakProperties.getClientId(),
             keycloakProperties.getPrincipalAttribute()
         );
 
         http
-            .oauth2ResourceServer()
-                .jwt()
-                .jwtAuthenticationConverter(authConverter);
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            .authorizeRequests()
+                .antMatchers(
+                    "/",
+                    "/auth/**",
+                    "/info/**",
+                    "/index.html",
+                    "/index.css",
+                    "/favicon.ico",
+                    "/assets/**",
+                    // Enable anonymous access to swagger docs
+                    "/swagger-ui/index.html",
+                    "/swagger-ui/**",
+                    "/webjars/springfox-swagger-ui/**",
+                    "/swagger-resources/**",
+                    "/v2/api-docs"
+                )
+                    .permitAll()
+                .antMatchers(
+                    "/actuator/**",
+                    "/cache/**",
+                    "/ws/**"
+                )
+                    .hasRole("ADMIN")
+                .antMatchers("/webhooks/**")
+                    .access("authenticated or hasIpAddress('%s')"
+                        .formatted(keycloakProperties.getInternalServerUrl()))
+                .anyRequest()
+                    .authenticated()
+            .and()
+                .csrf()
+                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                    .ignoringRequestMatchers(csrfRequestMatcher)
+                    .ignoringAntMatchers("/graphql")
+                    .ignoringAntMatchers("/actuator/**")
+                    .ignoringAntMatchers("/sso/**")
+                    .ignoringAntMatchers("/webhooks/**")
+                    .ignoringAntMatchers("/ws/**")
+            .and()
+                .oauth2ResourceServer()
+                    .jwt()
+                    .jwtAuthenticationConverter(authConverter);
     }
 
 }

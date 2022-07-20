@@ -47,4 +47,6 @@ public class KeycloakProperties {
 
     private Boolean disableHostnameVerification;
 
+    private String internalServerUrl;
+
 }
