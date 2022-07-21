@@ -50,6 +50,13 @@ public class KeycloakWebSecurityConfig extends WebSecurityConfigurerAdapter impl
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
+        // allows access to `/webhooks/keycloak` for request from internal keycloak container
+        http
+            .authorizeRequests()
+                .antMatchers("/webhooks/keycloak/**")
+                    .access("authenticated or hasIpAddress('%s')"
+                        .formatted(keycloakProperties.getInternalServerUrl()));
+
         customHttpConfiguration(http);
 
         KeycloakJwtAuthenticationConverter authConverter = new KeycloakJwtAuthenticationConverter(
@@ -58,9 +65,12 @@ public class KeycloakWebSecurityConfig extends WebSecurityConfigurerAdapter impl
         );
 
         http
-            .oauth2ResourceServer()
-                .jwt()
-                .jwtAuthenticationConverter(authConverter);
+            .csrf()
+                .ignoringAntMatchers("/webhooks/**")
+            .and()
+                .oauth2ResourceServer()
+                    .jwt()
+                    .jwtAuthenticationConverter(authConverter);
     }
 
 }
