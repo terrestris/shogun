@@ -52,52 +52,22 @@ public class KeycloakWebSecurityConfig extends WebSecurityConfigurerAdapter impl
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
+        http
+            .authorizeRequests()
+                .antMatchers("/webhooks/keycloak/**")
+                    .access("authenticated or hasIpAddress('%s')"
+                        .formatted(keycloakProperties.getInternalServerUrl()));
+
+        customHttpConfiguration(http);
+
         KeycloakJwtAuthenticationConverter authConverter = new KeycloakJwtAuthenticationConverter(
             keycloakProperties.getClientId(),
             keycloakProperties.getPrincipalAttribute()
         );
 
         http
-            .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            )
-            .authorizeRequests()
-                .antMatchers(
-                    "/",
-                    "/auth/**",
-                    "/info/**",
-                    "/index.html",
-                    "/index.css",
-                    "/favicon.ico",
-                    "/assets/**",
-                    // Enable anonymous access to swagger docs
-                    "/swagger-ui/index.html",
-                    "/swagger-ui/**",
-                    "/webjars/springfox-swagger-ui/**",
-                    "/swagger-resources/**",
-                    "/v2/api-docs"
-                )
-                    .permitAll()
-                .antMatchers(
-                    "/actuator/**",
-                    "/cache/**",
-                    "/ws/**"
-                )
-                    .hasRole("ADMIN")
-                .antMatchers("/webhooks/**")
-                    .access("authenticated or hasIpAddress('%s')"
-                        .formatted(keycloakProperties.getInternalServerUrl()))
-                .anyRequest()
-                    .authenticated()
-            .and()
-                .csrf()
-                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                    .ignoringRequestMatchers(csrfRequestMatcher)
-                    .ignoringAntMatchers("/graphql")
-                    .ignoringAntMatchers("/actuator/**")
-                    .ignoringAntMatchers("/sso/**")
-                    .ignoringAntMatchers("/webhooks/**")
-                    .ignoringAntMatchers("/ws/**")
+            .csrf()
+                .ignoringAntMatchers("/webhooks/**")
             .and()
                 .oauth2ResourceServer()
                     .jwt()
