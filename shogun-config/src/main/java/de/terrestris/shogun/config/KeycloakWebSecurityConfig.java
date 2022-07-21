@@ -52,6 +52,7 @@ public class KeycloakWebSecurityConfig extends WebSecurityConfigurerAdapter impl
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
+        // allows access to `/webhooks/keycloak` for request from internal keycloak container
         http
             .authorizeRequests()
                 .antMatchers("/webhooks/keycloak/**")
