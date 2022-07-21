@@ -47,6 +47,7 @@ public interface DefaultWebSecurityConfig extends WebSecurityConfig {
                 .antMatchers(
                     "/actuator/**",
                     "/cache/**",
+                    "/webhooks/**",
                     "/ws/**"
                 )
                     .hasRole("ADMIN")
