@@ -22,6 +22,7 @@ import de.terrestris.shogun.lib.model.jsonb.LayerConfig;
 import de.terrestris.shogun.lib.model.jsonb.LayerTree;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
@@ -30,6 +31,7 @@ import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity(name = "applications")
 @Table(schema = "shogun")
@@ -37,11 +39,11 @@ import java.util.List;
 @AuditTable(value = "applications_rev", schema = "shogun_rev")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="applications")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
 public class Application extends BaseEntity {
 
     @Column
@@ -98,4 +100,17 @@ public class Application extends BaseEntity {
             "configurations for any tools in the given application, e.g. the visibility or the layers the tool should work on."
     )
     private List<ApplicationToolConfig> toolConfig;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Application that = (Application) o;
+        return getId() != null && Objects.equals(getId(), that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

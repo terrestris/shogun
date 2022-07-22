@@ -21,17 +21,19 @@ import de.terrestris.shogun.interceptor.enumeration.InterceptorEnum;
 import de.terrestris.shogun.interceptor.enumeration.OgcEnum;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import lombok.*;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@EqualsAndHashCode(callSuper = true)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="interceptorrules")
 public class InterceptorRule extends BaseEntity {
@@ -76,4 +78,17 @@ public class InterceptorRule extends BaseEntity {
      * coverage or namespace), e.g. SHOGUN:SHINJI.
      */
     private String endPoint;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        InterceptorRule that = (InterceptorRule) o;
+        return getId() != null && Objects.equals(getId(), that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

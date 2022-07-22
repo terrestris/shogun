@@ -22,6 +22,7 @@ import de.terrestris.shogun.lib.model.jsonb.LayerSourceConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.geojson.GeoJsonObject;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
@@ -29,6 +30,7 @@ import org.hibernate.envers.AuditTable;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity(name = "layers")
 @Table(schema = "shogun")
@@ -36,11 +38,11 @@ import javax.persistence.*;
 @AuditTable(value = "layers_rev", schema = "shogun_rev")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "layers")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
 public class Layer extends BaseEntity {
 
     @Column(nullable = false)
@@ -88,4 +90,17 @@ public class Layer extends BaseEntity {
         required = true
     )
     private LayerType type;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Layer layer = (Layer) o;
+        return getId() != null && Objects.equals(getId(), layer.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

@@ -18,12 +18,14 @@ package de.terrestris.shogun.lib.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.AuditTable;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity(name = "groups")
 @Table(schema = "shogun")
@@ -31,11 +33,11 @@ import javax.persistence.*;
 @AuditTable(value = "groups_rev", schema = "shogun_rev")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "groups")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
 public class Group<T> extends BaseEntity {
 
     @Column(unique = true, nullable = false)
@@ -52,4 +54,16 @@ public class Group<T> extends BaseEntity {
     )
     private T providerDetails;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Group<?> group = (Group<?>) o;
+        return getId() != null && Objects.equals(getId(), group.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }
