@@ -22,15 +22,13 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.*;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
+import java.util.UUID;
 
 @MappedSuperclass
 @Audited
@@ -55,6 +53,14 @@ public abstract class BaseEntity implements Serializable {
         readOnly = true
     )
     private Long id;
+
+    @Column(columnDefinition = "uuid")
+    @Type(type="pg-uuid")
+    @Getter @Setter
+    @Schema(
+        description = "The UUID of the entity."
+    )
+    private UUID uuid = UUID.randomUUID();
 
     @CreationTimestamp
     @Column(updatable = false)

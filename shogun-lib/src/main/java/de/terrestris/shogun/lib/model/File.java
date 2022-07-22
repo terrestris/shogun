@@ -21,13 +21,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 @Entity(name = "files")
 @Table(schema = "shogun")
+@DynamicUpdate
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "files")
 @AllArgsConstructor
@@ -36,15 +36,6 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class File extends BaseEntity {
-
-    @Column(columnDefinition = "uuid", updatable = false, nullable = false)
-    @Type(type="pg-uuid")
-    @Getter
-    @Schema(
-        description = "The (auto assigned) UUID of the file.",
-        accessMode = Schema.AccessMode.READ_ONLY
-    )
-    private UUID fileUuid = UUID.randomUUID();
 
     @Column
     @Getter @Setter

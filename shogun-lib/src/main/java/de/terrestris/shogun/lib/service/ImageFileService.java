@@ -101,7 +101,7 @@ public class ImageFileService extends BaseFileService<ImageFileRepository, Image
         }
 
         ImageFile savedFile = this.create(file);
-        UUID fileUuid = savedFile.getFileUuid();
+        UUID fileUuid = savedFile.getUuid();
 
         // Setup path and directory
         String path = fileUuid + "/" + fileName;

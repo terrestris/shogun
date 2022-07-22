@@ -23,11 +23,16 @@ import org.springframework.data.repository.history.RevisionRepository;
 
 import javax.persistence.QueryHint;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @NoRepositoryBean
 public interface BaseCrudRepository<T, ID> extends RevisionRepository<T, ID, Integer>, CrudRepository<T, ID>, ShogunRevisionRepository<T, ID, Integer> {
 
     @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
     List<T> findAll();
+
+    @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
+    Optional<T> findByUuid(UUID uuid);
 
 }

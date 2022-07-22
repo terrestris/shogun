@@ -23,15 +23,15 @@ import de.terrestris.shogun.properties.UploadProperties;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tomcat.util.http.fileupload.impl.InvalidContentTypeException;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.UUID;
 
@@ -95,7 +95,7 @@ public class FileService extends BaseFileService<FileRepository, File> {
 
         File savedFile = this.create(file);
 
-        UUID fileUuid = savedFile.getFileUuid();
+        UUID fileUuid = savedFile.getUuid();
 
         // Setup path and directory
         String path = fileUuid + "/" + fileName;

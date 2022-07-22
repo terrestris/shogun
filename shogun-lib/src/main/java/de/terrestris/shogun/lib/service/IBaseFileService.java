@@ -17,7 +17,7 @@
 package de.terrestris.shogun.lib.service;
 
 import de.terrestris.shogun.lib.model.File;
-import de.terrestris.shogun.lib.repository.BaseFileRepository;
+import de.terrestris.shogun.lib.repository.BaseCrudRepository;
 import org.apache.tika.exception.TikaException;
 import org.apache.tomcat.util.http.fileupload.InvalidFileNameException;
 import org.apache.tomcat.util.http.fileupload.impl.InvalidContentTypeException;
@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface IBaseFileService<T extends BaseFileRepository<S, Long> & JpaSpecificationExecutor<S>, S extends File> {
+public interface IBaseFileService<T extends BaseCrudRepository<S, Long> & JpaSpecificationExecutor<S>, S extends File> {
 
     Optional<S> findOne(UUID fileUuid);
 
