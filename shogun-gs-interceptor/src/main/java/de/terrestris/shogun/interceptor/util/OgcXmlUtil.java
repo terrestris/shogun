@@ -29,6 +29,7 @@ import org.xml.sax.SAXException;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -83,6 +84,11 @@ public class OgcXmlUtil {
         try {
             InputSource source = new InputSource(new StringReader(xml));
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+            // limit resolution of external entities, see https://rules.sonarsource.com/c/type/Vulnerability/RSPEC-2755
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+
             DocumentBuilder builder = factory.newDocumentBuilder();
             document = builder.parse(source);
         } catch (ParserConfigurationException | SAXException | IOException e) {
@@ -186,7 +192,12 @@ public class OgcXmlUtil {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ) {
             Result outputTarget = new StreamResult(outputStream);
-            TransformerFactory.newInstance().newTransformer().transform(xmlSource, outputTarget);
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+
+            // limit resolution of external entities, see https://rules.sonarsource.com/c/type/Vulnerability/RSPEC-2755
+            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+            transformerFactory.newTransformer().transform(xmlSource, outputTarget);
 
             try (InputStream is = new ByteArrayInputStream(outputStream.toByteArray())) {
                 request.setInputStream(is);
