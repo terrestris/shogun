@@ -114,7 +114,8 @@ public class FileService extends BaseFileService<FileRepository, File> {
             log.error("Error when saving file {} to disk: " + e.getMessage(), savedFile.getId());
             log.info("Rollback creation of file {}.", savedFile.getId());
             this.repository.delete(savedFile);
-            fileDirectory.delete();
+            var deleted = fileDirectory.delete();
+            log.info("Cleanup successful: {}.", deleted);
             throw e;
         }
 

@@ -16,6 +16,7 @@
  */
 package de.terrestris.shogun.lib.envers;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.envers.DefaultRevisionEntity;
 import org.springframework.data.history.RevisionMetadata;
 import org.springframework.util.Assert;
@@ -118,5 +119,10 @@ public final class ShogunRevisionMetadata implements RevisionMetadata<Integer> {
     @Override
     public String toString() {
         return "CustomRevisionMetadata{" + "entity=" + entity + ", revisionType=" + revisionType + '}';
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).append(entity).append(revisionType).append(changedFields).toHashCode();
     }
 }

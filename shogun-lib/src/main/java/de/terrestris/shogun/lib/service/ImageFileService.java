@@ -106,7 +106,8 @@ public class ImageFileService extends BaseFileService<ImageFileRepository, Image
         // Setup path and directory
         String path = fileUuid + "/" + fileName;
         java.io.File fileDirectory = new java.io.File(uploadBasePath + "/" + fileUuid);
-        fileDirectory.mkdirs();
+        boolean createdDirs = fileDirectory.mkdirs();
+        log.debug("Created new directory: {}", createdDirs);
 
         // Write multipart file data to target directory
         java.io.File outFile = new java.io.File(fileDirectory, fileName);
@@ -119,7 +120,8 @@ public class ImageFileService extends BaseFileService<ImageFileRepository, Image
             log.error("Error while saving file {} to disk: {}", e.getMessage(), savedFile.getId());
             log.info("Rollback creation of file {}.", savedFile.getId());
             this.repository.delete(savedFile);
-            fileDirectory.delete();
+            boolean deleted = fileDirectory.delete();
+            log.info("Cleanup successful: {}", deleted);
             throw e;
         }
 

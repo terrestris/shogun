@@ -88,44 +88,45 @@ public abstract class AbstractShogunManager implements AutoCloseable {
 //        SSLConnectionSocketFactory connectionFactory = new SSLConnectionSocketFactory(sslContext, allowAllHosts);
 
         // Initialize connection pool
-        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
-        cm.setMaxTotal(MAX_NUMBER_CONNECTION);
-        cm.setDefaultMaxPerRoute(MAX_DEFAULT_PER_ROUTE);
+        try (PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager()) {
+            cm.setMaxTotal(MAX_NUMBER_CONNECTION);
+            cm.setDefaultMaxPerRoute(MAX_DEFAULT_PER_ROUTE);
 
-        CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-        credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(adminUser, adminPassword));
+            CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+            credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(adminUser, adminPassword));
 
-        URI uri;
-        try {
-            uri = new URI(shogunBaseUrl);
-        } catch (URISyntaxException e) {
-           log.error("Could not parse SHOGun URL as URI. Since this is a required step, SHOGun manager will not be initialized");
-           return;
+            URI uri;
+            try {
+                uri = new URI(shogunBaseUrl);
+            } catch (URISyntaxException e) {
+                log.error("Could not parse SHOGun URL as URI. Since this is a required step, SHOGun manager will not be initialized");
+                return;
+            }
+
+            // Apply basic auth
+            HttpHost targetHost = new HttpHost(uri.getHost(), uri.getPort());
+            AuthCache authCache = new BasicAuthCache();
+            authCache.put(targetHost, new BasicScheme());
+
+            // Add AuthCache to the execution context
+            context = HttpClientContext.create();
+            context.setCredentialsProvider(credentialsProvider);
+            context.setAuthCache(authCache);
+
+            /*
+             * Set referer for SHOGun manager
+             */
+            List<Header> defaultHeaders = new ArrayList<>();
+            defaultHeaders.add(new BasicHeader(HttpHeaders.REFERER, SHOGUN_MANAGER_REFERER));
+
+            httpClient = HttpClientBuilder
+                .create()
+                .setConnectionManager(cm)
+                .setDefaultCredentialsProvider(credentialsProvider)
+                .setDefaultHeaders(defaultHeaders)
+    //            .setSSLSocketFactory(connectionFactory) // TODO : maybe this is needed in the future
+                .build();
         }
-
-        // Apply basic auth
-        HttpHost targetHost = new HttpHost(uri.getHost(), uri.getPort());
-        AuthCache authCache = new BasicAuthCache();
-        authCache.put(targetHost, new BasicScheme());
-
-        // Add AuthCache to the execution context
-        context = HttpClientContext.create();
-        context.setCredentialsProvider(credentialsProvider);
-        context.setAuthCache(authCache);
-
-        /*
-         * Set referer for SHOGun manager
-         */
-        List<Header> defaultHeaders = new ArrayList<>();
-        defaultHeaders.add(new BasicHeader(HttpHeaders.REFERER, SHOGUN_MANAGER_REFERER));
-
-        httpClient = HttpClientBuilder
-            .create()
-            .setConnectionManager(cm)
-            .setDefaultCredentialsProvider(credentialsProvider)
-            .setDefaultHeaders(defaultHeaders)
-//            .setSSLSocketFactory(connectionFactory) // TODO : maybe this is needed in the future
-            .build();
 
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JtsModule());
