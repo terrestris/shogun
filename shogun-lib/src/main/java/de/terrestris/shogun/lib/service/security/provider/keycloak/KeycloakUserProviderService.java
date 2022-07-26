@@ -131,9 +131,14 @@ public class KeycloakUserProviderService implements UserProviderService<UserRepr
 
         Optional<User<UserRepresentation>> user = (Optional) userRepository.findByAuthProviderId(keycloakUserId);
 
-        user.ifPresent(this::setTransientRepresentations);
-
-        return user;
+        if (user.isPresent()) {
+            this.setTransientRepresentations(user.get());
+            return user;
+        } else {
+            log.warn("There is no shogun entity for user {}. Creating entity now.", keycloakUserId);
+            User<UserRepresentation> createdUser = findOrCreateByProviderId(keycloakUserId);
+            return Optional.of(createdUser);
+        }
     }
 
     /**
