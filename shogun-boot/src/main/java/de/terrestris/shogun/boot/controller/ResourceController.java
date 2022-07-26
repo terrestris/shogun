@@ -35,7 +35,7 @@ public class ResourceController {
     @Autowired(required = false)
     BuildProperties buildProperties;
 
-    @RequestMapping("/")
+    @GetMapping("/")
     public ModelAndView home(ModelAndView modelAndView) {
         String buildVersion = "@VERSION@";
         if (buildProperties != null) {
