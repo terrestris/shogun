@@ -84,7 +84,7 @@ public class GroupService extends BaseService<GroupRepository, Group> {
     }
 
     /**
-     * Finds a Group by the passed keycloak ID. If it does not exists in the SHOGun DB it gets created.
+     * Finds a Group by the passed keycloak ID. If it does not exist in the SHOGun DB it gets created.
      *
      * @param keycloakGroupId
      * @return

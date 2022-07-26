@@ -63,14 +63,15 @@ public class KeycloakUserProviderService implements UserProviderService<UserRepr
     GroupProviderService groupProviderService;
 
     /**
-     * Finds a User by the passed keycloak ID. If it does not exists in the SHOGun DB it gets created.
+     * Finds a User by the passed keycloak ID. If it does not exist in the SHOGun DB it gets created.
      *
      * The groups of the user are also checked and created if needed.
      *
-     * @param keycloakUserId
+     * @param keycloakUserId UUID of keycloak user to find or create.
      * @return
      */
-//    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#keycloakUserId, 'CREATE')")
+    // disabled because there is no authentication for events invoked by keycloak via /webhooks
+    // @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#keycloakUserId, 'CREATE')")
     @Transactional
     public User<UserRepresentation> findOrCreateByProviderId(String keycloakUserId) {
         Optional<User<UserRepresentation>> userOptional = (Optional) userRepository.findByAuthProviderId(keycloakUserId);

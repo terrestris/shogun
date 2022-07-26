@@ -20,8 +20,8 @@ package de.terrestris.shogun.lib.listener;
 import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
 import de.terrestris.shogun.lib.event.KeycloakEvent;
 import de.terrestris.shogun.lib.event.OnRegistrationConfirmedEvent;
-import de.terrestris.shogun.lib.service.GroupService;
 import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
+import de.terrestris.shogun.lib.service.security.provider.GroupProviderService;
 import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -31,10 +31,10 @@ import org.springframework.stereotype.Component;
 public class KeycloakEventListener {
 
     @Autowired
-    UserProviderService userProviderService;
+    private UserProviderService userProviderService;
 
     @Autowired
-    GroupService groupService;
+    private GroupProviderService groupProviderService;
 
     @Autowired
     protected UserInstancePermissionService userInstancePermissionService;
@@ -43,7 +43,7 @@ public class KeycloakEventListener {
     public void onKeycloakEvent(KeycloakEvent event) {
         switch (event.getEventType()) {
             case USER_CREATED -> userProviderService.findOrCreateByProviderId(event.getKeycloakId());
-            case GROUP_CREATED -> groupService.findOrCreateByKeycloakId(event.getKeycloakId());
+            case GROUP_CREATED -> groupProviderService.findOrCreateByProviderId(event.getKeycloakId());
         }
     }
 

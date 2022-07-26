@@ -134,6 +134,8 @@ public class KeycloakGroupProviderService implements GroupProviderService<UserRe
         }
     }
 
+    // disabled because there is no authentication for events invoked by keycloak via /webhooks
+    // @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#keycloakGroupId, 'CREATE')")
     @Transactional
     public Group<GroupRepresentation> findOrCreateByProviderId(String keycloakGroupId) {
         Optional<Group<GroupRepresentation>> groupOptional = (Optional) repository.findByAuthProviderId(keycloakGroupId);
