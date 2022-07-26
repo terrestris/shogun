@@ -20,7 +20,7 @@
   <parent>
     <artifactId>shogun</artifactId>
     <groupId>de.terrestris</groupId>
-    <version>13.0.1-SNAPSHOT</version>
+    <version>13.1.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
