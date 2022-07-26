@@ -17,26 +17,24 @@
 package de.terrestris.shogun.lib.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.*;
+import org.hibernate.Hibernate;
+
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import java.util.Objects;
 
 @Entity(name = "imagefiles")
 @Table(schema = "shogun")
 @Cacheable
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
 public class ImageFile extends File {
 
     @Column
@@ -57,4 +55,17 @@ public class ImageFile extends File {
     @ToString.Exclude
     @Column(length = Integer.MAX_VALUE)
     private byte[] thumbnail;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        ImageFile imageFile = (ImageFile) o;
+        return getId() != null && Objects.equals(getId(), imageFile.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

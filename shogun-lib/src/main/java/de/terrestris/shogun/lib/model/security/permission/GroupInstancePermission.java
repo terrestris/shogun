@@ -17,19 +17,18 @@
 package de.terrestris.shogun.lib.model.security.permission;
 
 import de.terrestris.shogun.lib.model.Group;
-import javax.persistence.Cacheable;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.AuditTable;
 import org.hibernate.envers.Audited;
+
+import javax.persistence.Cacheable;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import java.util.Objects;
 
 @Entity(name = "groupinstancepermissions")
 @Table(schema = "shogun")
@@ -37,15 +36,27 @@ import org.hibernate.envers.Audited;
 @AuditTable(value = "groupinstancepermissions_rev", schema = "shogun_rev")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "groupinstancepermissions")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
 public class GroupInstancePermission extends InstancePermission {
 
     @ManyToOne(optional = false)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Group group;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        GroupInstancePermission that = (GroupInstancePermission) o;
+        return getId() != null && Objects.equals(getId(), that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

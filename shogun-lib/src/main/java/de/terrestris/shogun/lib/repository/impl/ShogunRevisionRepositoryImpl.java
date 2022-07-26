@@ -63,14 +63,14 @@ public class ShogunRevisionRepositoryImpl<T, ID, N extends Number & Comparable<N
         List<Revision<N, T>> revisionList = new ArrayList<>(resultList.size());
 
         for (Object[] objects : resultList) {
-            revisionList.add(createRevision(new QueryResult<>(objects)));
+            revisionList.add(createShogunRevision(new QueryResult<>(objects)));
         }
 
         return Revisions.of(revisionList);
     }
 
     @SuppressWarnings("unchecked")
-    private Revision<N, T> createRevision(QueryResult<T> queryResult) {
+    private Revision<N, T> createShogunRevision(QueryResult<T> queryResult) {
         return Revision.of((RevisionMetadata<N>) queryResult.createRevisionMetadata(), queryResult.entity);
     }
 

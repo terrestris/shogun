@@ -77,7 +77,7 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
 
         final BaseEntity persistentObject;
         if (targetDomainObject instanceof Optional) {
-            persistentObject = ((Optional<BaseEntity>) targetDomainObject).get();
+            persistentObject = ((Optional<BaseEntity>) targetDomainObject).orElseThrow();
         } else {
             persistentObject = (BaseEntity) targetDomainObject;
         }

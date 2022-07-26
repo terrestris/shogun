@@ -16,30 +16,29 @@
  */
 package de.terrestris.shogun.lib.model.security.permission;
 
-import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
-
-
 import de.terrestris.shogun.lib.model.BaseEntity;
-import javax.persistence.Column;
-import javax.persistence.FetchType;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.OneToOne;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.envers.Audited;
 
+import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToOne;
+
+import java.util.Objects;
+
+import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
+
 @MappedSuperclass
 @Audited
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@EqualsAndHashCode(callSuper = true)
 public abstract class ClassPermission extends BaseEntity {
 
     @Column
@@ -55,6 +54,19 @@ public abstract class ClassPermission extends BaseEntity {
     )
     @Fetch(FetchMode.JOIN)
     @Audited(targetAuditMode = NOT_AUDITED)
+    @ToString.Exclude
     private PermissionCollection permissions;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        ClassPermission that = (ClassPermission) o;
+        return getId() != null && Objects.equals(getId(), that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

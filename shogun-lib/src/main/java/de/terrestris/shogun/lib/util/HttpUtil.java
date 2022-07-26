@@ -88,7 +88,7 @@ public class HttpUtil {
      * @return
      * @throws URISyntaxException
      */
-    public static final URI getApplicationURIFromRequest(HttpServletRequest request)
+    public static URI getApplicationURIFromRequest(HttpServletRequest request)
         throws URISyntaxException {
 
         URI appURI = null;
@@ -1123,6 +1123,7 @@ public class HttpUtil {
         // when entity is set on the httpPost instance in the postMultiPart method
         headersToForward = removeHeaders(headersToForward, new String[]{"content-length", "content-type"});
 
+        assert request != null;
         Collection<Part> parts = request.getParts();
 
         return HttpUtil.postMultiPart(uri, parts, headersToForward);
@@ -1264,6 +1265,7 @@ public class HttpUtil {
             headersToForward = HttpUtil.getHeadersFromRequest(request);
         }
 
+        assert request != null;
         String ctString = request.getContentType();
         ContentType ct = ContentType.parse(ctString);
         String body = getRequestBody(request);
@@ -1831,11 +1833,10 @@ public class HttpUtil {
      * @param credentials    Instance implementing {@link Credentials} interface holding a set of credentials
      * @param requestHeaders Additional HTTP headers added to the request
      * @return The HTTP response as Response object.
-     * @throws URISyntaxException
      * @throws HttpException
      */
     private static HttpResponse send(HttpRequestBase httpRequest, Credentials credentials,
-                                     Header[] requestHeaders) throws URISyntaxException, HttpException {
+                                     Header[] requestHeaders) throws HttpException {
 
         CloseableHttpClient httpClient = null;
         CloseableHttpResponse httpResponse = null;
@@ -1895,45 +1896,42 @@ public class HttpUtil {
             .setProxy(systemProxy)
             .build();
 
-        // set (preemptive) authentication if credentials are given
-        if (credentials != null || (proxyAuthScope != null && proxyCredentials != null)) {
-
-            CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-
-            if (proxyAuthScope != null && proxyCredentials != null) {
-                credentialsProvider.setCredentials(
-                    proxyAuthScope,
-                    proxyCredentials
-                );
-            }
-
-            if (credentials != null) {
-                credentialsProvider.setCredentials(
-                    new AuthScope(uri.getHost(), uri.getPort()),
-                    credentials
-                );
-            }
-
-            HttpHost targetHost = new HttpHost(uri.getHost(), uri.getPort(),
-                uri.getScheme());
-
-            AuthCache authCache = new BasicAuthCache();
-            authCache.put(targetHost, new BasicScheme());
-
-            httpContext.setCredentialsProvider(credentialsProvider);
-            httpContext.setAuthCache(authCache);
-
-            httpClient = HttpClients.custom()
-                .setDefaultCredentialsProvider(credentialsProvider)
-                .build();
-
-        } else {
-
-            httpClient = HttpClients.createDefault();
-
-        }
-
         try {
+            // set (preemptive) authentication if credentials are given
+            if (credentials != null || (proxyAuthScope != null && proxyCredentials != null)) {
+
+                CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+
+                if (proxyAuthScope != null && proxyCredentials != null) {
+                    credentialsProvider.setCredentials(
+                        proxyAuthScope,
+                        proxyCredentials
+                    );
+                }
+
+                if (credentials != null) {
+                    credentialsProvider.setCredentials(
+                        new AuthScope(uri.getHost(), uri.getPort()),
+                        credentials
+                    );
+                }
+
+                HttpHost targetHost = new HttpHost(uri.getHost(), uri.getPort(),
+                    uri.getScheme());
+
+                AuthCache authCache = new BasicAuthCache();
+                authCache.put(targetHost, new BasicScheme());
+
+                httpContext.setCredentialsProvider(credentialsProvider);
+                httpContext.setAuthCache(authCache);
+
+                httpClient = HttpClients.custom()
+                    .setDefaultCredentialsProvider(credentialsProvider)
+                    .build();
+
+            } else {
+                httpClient = HttpClients.createDefault();
+            }
 
             HttpHeaders headersMap = new HttpHeaders();
 
@@ -1985,7 +1983,7 @@ public class HttpUtil {
                 }
             } catch (IOException e) {
                 log.error("Error while closing resources: {}", e.getMessage());
-                log.trace("Full stack trace: {}", e);
+                log.trace("Full stack trace:", e);
             }
         }
 
@@ -2062,13 +2060,10 @@ public class HttpUtil {
             while (headerValues.hasMoreElements()) {
                 String headerValue = headerValues.nextElement();
                 // as cookies are sent in headers, we'll also have to check for unsupported cookies here
-                if (headerName.toLowerCase().equals("cookie")) {
+                if (headerName.equalsIgnoreCase("cookie")) {
                     String[] cookies = headerValue.split(";");
                     List<String> newCookieList = new ArrayList<>();
-                    for (int i = 0; i < cookies.length; i++) {
-                        final String cookieFromArray = cookies[i];
-                        newCookieList.add(cookieFromArray);
-                    }
+                    Collections.addAll(newCookieList, cookies);
                     // rewrite the cookie value
                     headerValue = StringUtils.join(newCookieList, ";");
                 }
@@ -2121,7 +2116,7 @@ public class HttpUtil {
     private static String getRequestBody(HttpServletRequest request) {
         String body = null;
         try (BufferedReader requestReader = request.getReader()) {
-            StringBuffer bodyLines = new StringBuffer();
+            StringBuilder bodyLines = new StringBuilder();
             String bodyLine;
             while ((bodyLine = requestReader.readLine()) != null) {
                 bodyLines.append(bodyLine);
@@ -2166,8 +2161,7 @@ public class HttpUtil {
 
         List<Proxy> proxyList = ProxySelector.getDefault().select(uri);
 
-        for (Iterator<Proxy> iterator = proxyList.iterator(); iterator.hasNext(); ) {
-            Proxy proxy = iterator.next();
+        for (Proxy proxy : proxyList) {
             InetSocketAddress address = (InetSocketAddress) proxy.address();
 
             if (address != null) {
