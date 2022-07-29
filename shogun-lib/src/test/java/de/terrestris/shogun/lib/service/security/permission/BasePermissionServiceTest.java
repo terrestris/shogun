@@ -1,0 +1,220 @@
+/* SHOGun, https://terrestris.github.io/shogun/
+ *
+ * Copyright © 2020-present terrestris GmbH & Co. KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   https://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package de.terrestris.shogun.lib.service.security.permission;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import de.terrestris.shogun.lib.model.security.permission.BasePermission;
+import de.terrestris.shogun.lib.repository.security.permission.BasePermissionRepository;
+import de.terrestris.shogun.lib.util.IdHelper;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
+@RunWith(MockitoJUnitRunner.class)
+public abstract class BasePermissionServiceTest<U extends BasePermissionService, S extends BasePermission> implements IBasePermissionServiceTest {
+
+    protected Class<S> entityClass;
+
+    @Mock
+    ObjectMapper objectMapperMock;
+
+    @Mock
+    ObjectReader objectReaderMock;
+
+    @Mock
+    private UserInstancePermissionService userInstancePermissionServiceMock;
+
+    @Mock
+    private GroupInstancePermissionService groupInstancePermissionServiceMock;
+
+    private BasePermissionRepository basePermissionRepositoryMock;
+
+    protected U service;
+
+    @Test
+    public void class_isAnnotatedAsService() {
+        assertNotNull(service.getClass().getAnnotation(Service.class));
+    }
+
+    @Test
+    public void findAll_IsAnnotatedAsExpected() throws NoSuchMethodException {
+        PostFilter findAllPostFilter =
+            service.getClass().getMethod("findAll").getAnnotation(PostFilter.class);
+
+        assertNotNull(findAllPostFilter);
+        assertTrue(findAllPostFilter.value().contains("hasRole"));
+        assertTrue(findAllPostFilter.value().contains("hasPermission"));
+    }
+
+    @Test
+    public void findAll_ShouldCallCorrectRepositoryMethodAndShouldReturnListOfGivenBasePermission() {
+        S mockEntity1 = mock(entityClass);
+        S mockEntity2 = mock(entityClass);
+        S mockEntity3 = mock(entityClass);
+
+        ArrayList<S> entityList = new ArrayList<>();
+
+        entityList.add(mockEntity1);
+        entityList.add(mockEntity2);
+        entityList.add(mockEntity3);
+
+        when(basePermissionRepositoryMock.findAll()).thenReturn(entityList);
+
+        List returnValue = service.findAll();
+
+        verify(basePermissionRepositoryMock, times(1)).findAll();
+        assertEquals(returnValue, entityList);
+    }
+
+    @Test
+    public void findOne_IsAnnotatedAsExpected() throws NoSuchMethodException {
+        PostAuthorize findOnePostAuthorize =
+            service.getClass().getMethod("findOne", Long.class).getAnnotation(PostAuthorize.class);
+
+        assertNotNull(findOnePostAuthorize);
+        assertTrue(findOnePostAuthorize.value().contains("hasRole"));
+        assertTrue(findOnePostAuthorize.value().contains("hasPermission"));
+    }
+
+    @Test
+    public void findOne_ShouldCallCorrectRepositoryMethodAndShouldReturnSingleResultOfGivenBasePermission() {
+        Optional<S> mockEntity = Optional.of(mock(entityClass));
+
+        when(basePermissionRepositoryMock.findById(1909L)).thenReturn(mockEntity);
+
+        Optional returnValue = service.findOne(1909L);
+
+        verify(basePermissionRepositoryMock, times(1)).findById(1909L);
+        assertEquals(returnValue, mockEntity);
+
+        Optional anotherReturnValue = service.findOne(1904L);
+
+        verify(basePermissionRepositoryMock, times(1)).findById(1904L);
+        assertNotEquals(anotherReturnValue, mockEntity);
+    }
+
+    @Test
+    public void create_IsAnnotatedAsExpected() throws NoSuchMethodException {
+        PreAuthorize createPreAuthorize =
+            service.getClass().getMethod("create", BasePermission.class).getAnnotation(PreAuthorize.class);
+
+        assertNotNull(createPreAuthorize);
+        assertTrue(createPreAuthorize.value().contains("hasRole"));
+        assertTrue(createPreAuthorize.value().contains("hasPermission"));
+    }
+
+    @Test
+    public void create_ShouldCallCorrectRepositoryMethodAndShouldReturnTheCreatedEntityOfGivenBasePermission() throws NoSuchFieldException {
+        S mockEntity = mock(entityClass, CALLS_REAL_METHODS);
+        IdHelper.setIdForEntity(mockEntity, 1909L);
+
+        S entityToSave = mock(entityClass);
+
+        when(basePermissionRepositoryMock.save(entityToSave)).thenReturn(mockEntity);
+
+        S returnValue = (S) service.create(entityToSave);
+
+        verify(basePermissionRepositoryMock, times(1)).save(entityToSave);
+        assertNotEquals(returnValue.getId(), entityToSave.getId());
+    }
+
+    @Test
+    public void update_IsAnnotatedAsExpected() throws NoSuchMethodException {
+        PreAuthorize updatePreAuthorize =
+            service.getClass().getMethod("update", Long.class, BasePermission.class).getAnnotation(PreAuthorize.class);
+
+        assertNotNull(updatePreAuthorize);
+        assertTrue(updatePreAuthorize.value().contains("hasRole"));
+        assertTrue(updatePreAuthorize.value().contains("hasPermission"));
+    }
+
+    @Test
+    public void update_ShouldCallCorrectRepositoryMethodAndShouldReturnTheCreatedEntityOfGivenBasePermission() throws IOException, NoSuchFieldException {
+        S mockEntity = mock(entityClass, CALLS_REAL_METHODS);
+        OffsetDateTime date = OffsetDateTime.now();
+        IdHelper.setIdForEntity(mockEntity, 1909L);
+        mockEntity.setCreated(date);
+        mockEntity.setModified(date);
+
+        JsonNode returnNode = JsonNodeFactory.instance.objectNode();
+        ((ObjectNode) returnNode).put("id", 1909);
+        ((ObjectNode) returnNode).put("created", date.toString());
+        ((ObjectNode) returnNode).put("modified", date.toString());
+
+        when(basePermissionRepositoryMock.findById(1909L)).thenReturn(Optional.of(mockEntity));
+        when(basePermissionRepositoryMock.save(mockEntity)).thenReturn(mockEntity);
+
+        when(objectMapperMock.valueToTree(mockEntity)).thenReturn(returnNode);
+        when(objectMapperMock.readerForUpdating(mockEntity)).thenReturn(objectReaderMock);
+        when(objectReaderMock.readValue(returnNode)).thenReturn(mockEntity);
+
+        S returnValue = (S) service.update(1909L, mockEntity);
+
+        verify(basePermissionRepositoryMock, times(1)).findById(1909L);
+        verify(basePermissionRepositoryMock, times(1)).save(mockEntity);
+        assertEquals(returnValue, mockEntity);
+    }
+
+    @Test
+    public void delete_IsAnnotatedAsExpected() throws NoSuchMethodException {
+        PreAuthorize deletePreAuthorize =
+            service.getClass().getMethod("delete", BasePermission.class).getAnnotation(PreAuthorize.class);
+
+        assertNotNull(deletePreAuthorize);
+        assertTrue(deletePreAuthorize.value().contains("hasRole"));
+        assertTrue(deletePreAuthorize.value().contains("hasPermission"));
+    }
+
+    @Test
+    public void delete_ShouldCallCorrectRepositoryMethod() {
+        S mockEntity = mock(entityClass);
+
+        service.delete(mockEntity);
+
+        verify(basePermissionRepositoryMock, times(1)).delete(mockEntity);
+    }
+
+    protected void setService(U service) {
+        this.service = service;
+    }
+
+    protected void setRepository(BasePermissionRepository repository) {
+        this.basePermissionRepositoryMock = repository;
+    }
+
+    protected void setEntityClass(Class<S> entityClass) {
+        this.entityClass = entityClass;
+    }
+}
