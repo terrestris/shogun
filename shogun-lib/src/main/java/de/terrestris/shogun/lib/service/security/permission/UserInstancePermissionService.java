@@ -25,6 +25,8 @@ import de.terrestris.shogun.lib.repository.security.permission.PermissionCollect
 import de.terrestris.shogun.lib.repository.security.permission.UserInstancePermissionRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -45,6 +47,7 @@ public class UserInstancePermissionService extends BasePermissionService<UserIns
      * @param user The user to find the permission for.
      * @return The permissions
      */
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#user, 'READ')")
     public List<UserInstancePermission> findFor(User user) {
 
         log.trace("Getting all user instance permissions for user {}", user);
@@ -59,6 +62,7 @@ public class UserInstancePermissionService extends BasePermissionService<UserIns
      * @param user The user to find the permission for.
      * @return The (optional) permission.
      */
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'READ')")
     public Optional<UserInstancePermission> findFor(BaseEntity entity, User user) {
         log.trace("Getting all user permissions for user with Keycloak ID {} and " +
             "entity with ID {}", user.getAuthProviderId(), entity);
@@ -72,6 +76,7 @@ public class UserInstancePermissionService extends BasePermissionService<UserIns
      * @param entity entity to get user permissions for
      * @return
      */
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'READ')")
     public List<UserInstancePermission> findFor(BaseEntity entity) {
         log.trace("Getting all user permissions for entity with ID {}", entity.getId());
 
@@ -85,6 +90,7 @@ public class UserInstancePermissionService extends BasePermissionService<UserIns
      * @param permissionCollectionType The permissionCollectionType to find the permission for.
      * @return The (optional) permission.
      */
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'READ')")
     public List<UserInstancePermission> findFor(BaseEntity entity, PermissionCollectionType permissionCollectionType) {
 
         log.trace("Getting all user permissions for entity with ID {} and permission " +
@@ -102,6 +108,8 @@ public class UserInstancePermissionService extends BasePermissionService<UserIns
      * @param entity The entity to find the owner for.
      * @return The (optional) user.
      */
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'READ')")
+    // todo: filter list of users (postfilter?)
     public List<User> findOwner(BaseEntity entity) {
 
         log.trace("Getting the owners of entity with ID {}", entity.getId());
@@ -128,6 +136,7 @@ public class UserInstancePermissionService extends BasePermissionService<UserIns
      * @param user The user to use in filter
      * @return {@link PermissionCollection} for {@link BaseEntity} and {@link User}
      */
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'READ')")
     public PermissionCollection findPermissionCollectionFor(BaseEntity entity, User user) {
         Optional<UserInstancePermission> userInstancePermission = this.findFor(entity, user);
 
@@ -141,6 +150,7 @@ public class UserInstancePermissionService extends BasePermissionService<UserIns
      * @param user The user to set the permission for.
      * @param permissionCollectionType The permission to set.
      */
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#persistedEntity, 'UPDATE')")
     public void setPermission(BaseEntity persistedEntity, User user, PermissionCollectionType permissionCollectionType) {
         Optional<PermissionCollection> permissionCollection = permissionCollectionRepository
             .findByName(permissionCollectionType);
@@ -171,6 +181,9 @@ public class UserInstancePermissionService extends BasePermissionService<UserIns
         User user,
         PermissionCollectionType permissionCollectionType
     ) {
+        // todo: call setPermission for each entity in persistedEntityList
+        // persistedEntityList.forEach(e -> setPermission(e, user, permissionCollectionType));
+
         Optional<PermissionCollection> permissionCollection = permissionCollectionRepository
             .findByName(permissionCollectionType);
 
@@ -199,6 +212,7 @@ public class UserInstancePermissionService extends BasePermissionService<UserIns
      * @param permissionCollection The permission collection to clear.
      * @param entity The entity to clear the permission for.
      */
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#persistedEntity, 'DELETE')")
     private void clearExistingPermission(User user, PermissionCollection permissionCollection, BaseEntity entity) {
         Optional<UserInstancePermission> existingPermission = findFor(entity, user);
 
@@ -219,6 +233,7 @@ public class UserInstancePermissionService extends BasePermissionService<UserIns
      *
      * @param persistedEntity The entity to clear the permissions for.
      */
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#persistedEntity, 'DELETE')")
     public void deleteAllFor(BaseEntity persistedEntity) {
         List<UserInstancePermission> userInstancePermissions = this.findFor(persistedEntity);
 
@@ -245,6 +260,7 @@ public class UserInstancePermissionService extends BasePermissionService<UserIns
         return new PermissionCollection();
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#persistedEntity, 'DELETE')")
     public void deleteFor(BaseEntity persistedEntity, User user) {
         Optional<UserInstancePermission> userInstancePermission = this.findFor(persistedEntity, user);
 

@@ -20,11 +20,12 @@ import de.terrestris.shogun.lib.enumeration.PermissionType;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
+import de.terrestris.shogun.lib.model.security.permission.UserInstancePermission;
 import de.terrestris.shogun.lib.repository.BaseCrudRepository;
+import de.terrestris.shogun.lib.repository.security.permission.UserInstancePermissionRepository;
 import de.terrestris.shogun.lib.service.security.permission.GroupClassPermissionService;
 import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionService;
 import de.terrestris.shogun.lib.service.security.permission.UserClassPermissionService;
-import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,9 @@ import java.util.Set;
 public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implements EntityPermissionEvaluator<E> {
 
     @Autowired
-    protected UserInstancePermissionService userInstancePermissionService;
+    protected UserInstancePermissionRepository userInstancePermissionRepository;
+    // todo: check if there are other permission evaluators using services
+    // todo: remove DependencyRulesTest exclusion for PermissionEvaluators
 
     @Autowired
     protected GroupInstancePermissionService groupInstancePermissionService;
@@ -154,8 +157,7 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
         if (permission.equals(PermissionType.CREATE) && entity.getId() == null) {
             userPermissionCol = new PermissionCollection();
         } else {
-            userPermissionCol = userInstancePermissionService
-                .findPermissionCollectionFor(entity, user);
+            userPermissionCol = getPermissionCollection(userInstancePermissionRepository.findByUserIdAndEntityId(user.getId(), entity.getId()));
         }
         final Set<PermissionType> userInstancePermissions = userPermissionCol.getPermissions();
 
@@ -201,5 +203,14 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
         // if the group has the ADMIN permission
         return groupClassPermissions.contains(permission) ||
             groupClassPermissions.contains(PermissionType.ADMIN);
+    }
+
+    // todo: move to util
+    private PermissionCollection getPermissionCollection(Optional<UserInstancePermission> classPermission) {
+        if (classPermission.isPresent()) {
+            return classPermission.get().getPermissions();
+        }
+
+        return new PermissionCollection();
     }
 }
