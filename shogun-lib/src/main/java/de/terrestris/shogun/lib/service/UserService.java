@@ -102,7 +102,7 @@ public class UserService extends BaseService<UserRepository, User> {
             log.debug("User with keycloak id {} was deleted in Keycloak. It did not exists in SHOGun DB. No action needed.", keycloakUserId);
             return;
         }
-        userInstancePermissionService.deleteAllForEntity(user);
+        userInstancePermissionService.deleteAllFor(user);
         repository.delete(user);
         log.info("User with keycloak id {} was deleted in Keycloak and was therefore deleted in SHOGun DB, too.", keycloakUserId);
     }
