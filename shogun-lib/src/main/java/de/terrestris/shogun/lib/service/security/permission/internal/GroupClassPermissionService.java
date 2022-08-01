@@ -1,20 +1,4 @@
-/* SHOGun, https://terrestris.github.io/shogun/
- *
- * Copyright © 2020-present terrestris GmbH & Co. KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   https://www.apache.org/licenses/LICENSE-2.0.txt
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package de.terrestris.shogun.lib.service.security.permission;
+package de.terrestris.shogun.lib.service.security.permission.internal;
 
 import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
 import de.terrestris.shogun.lib.model.BaseEntity;
@@ -32,8 +16,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-@Service
 @Log4j2
+@Service
 public class GroupClassPermissionService extends BasePermissionService<GroupClassPermissionRepository, GroupClassPermission> {
 
     @Autowired
@@ -45,7 +29,7 @@ public class GroupClassPermissionService extends BasePermissionService<GroupClas
     /**
      * Returns all {@link GroupClassPermission} for the given query arguments.
      *
-     * @param group The group to find the permissions for.
+     * @param entity The base entity to find the permissions for.
      * @return The permissions.
      */
     public List<GroupClassPermission> findFor(BaseEntity entity) {
@@ -73,7 +57,7 @@ public class GroupClassPermissionService extends BasePermissionService<GroupClas
      * Find group class permission for class of entity and given group
      *
      * @param entity The entity to find the permission for.
-     * @param group The group to find the permission for.
+     * @param group  The group to find the permission for.
      * @return The (optional) permission.
      */
     public Optional<GroupClassPermission> findFor(BaseEntity entity, Group group) {
@@ -106,7 +90,7 @@ public class GroupClassPermissionService extends BasePermissionService<GroupClas
      * all groups of the given user will be considered.
      *
      * @param clazz The class to find the permission for.
-     * @param user The user to find the permission for.
+     * @param user  The user to find the permission for.
      * @return The (optional) permission.
      */
     public Optional<GroupClassPermission> findFor(Class<? extends BaseEntity> clazz, User user) {
@@ -140,14 +124,14 @@ public class GroupClassPermissionService extends BasePermissionService<GroupClas
      * it will be considered if the user is currently a member of the given group.
      *
      * @param entity The entity to find the permission for.
-     * @param group The group to find the permission for.
-     * @param user The user to find the permission for.
+     * @param group  The group to find the permission for.
+     * @param user   The user to find the permission for.
      * @return The (optional) permission.
      */
     public Optional<GroupClassPermission> findFor(BaseEntity entity, Group group, User user) {
 
         log.trace("Getting all group class permissions for user with Keycloak ID {} and " +
-            "entity with ID {} in the context of group with Keycloak ID {}", user.getAuthProviderId(),
+                "entity with ID {} in the context of group with Keycloak ID {}", user.getAuthProviderId(),
             entity.getId(), group.getAuthProviderId());
 
         List<Group> userGroups = groupProviderService.findByUser(user);
@@ -166,7 +150,7 @@ public class GroupClassPermissionService extends BasePermissionService<GroupClas
      * Returns the {@link PermissionCollection} for the given query arguments.
      *
      * @param entity The entity to find the collection for.
-     * @param group The group to find the collection for.
+     * @param group  The group to find the collection for.
      * @return The collection (may be empty).
      */
     public PermissionCollection findPermissionCollectionFor(BaseEntity entity, Group group) {
@@ -180,7 +164,7 @@ public class GroupClassPermissionService extends BasePermissionService<GroupClas
      * the class of the given entity and all groups of the given user will be considered.
      *
      * @param entity The entity to find the permission for.
-     * @param user The user to find the permission for.
+     * @param user   The user to find the permission for.
      * @return The (optional) permission.
      */
     public PermissionCollection findPermissionCollectionFor(BaseEntity entity, User user) {
@@ -195,8 +179,8 @@ public class GroupClassPermissionService extends BasePermissionService<GroupClas
      * it will be considered if the user is currently a member of the given group.
      *
      * @param entity The entity to find the collection for.
-     * @param group The group to find the collection for.
-     * @param user The user to find the collection for.
+     * @param group  The group to find the collection for.
+     * @param user   The user to find the collection for.
      * @return The collection (may be empty).
      */
     public PermissionCollection findPermissionCollectionFor(BaseEntity entity, Group group, User user) {
@@ -208,8 +192,8 @@ public class GroupClassPermissionService extends BasePermissionService<GroupClas
     /**
      * Sets the {@link PermissionCollection} for the given target combination.
      *
-     * @param clazz The class to set the permission for.
-     * @param group The group to set the permission for.
+     * @param clazz                    The class to set the permission for.
+     * @param group                    The group to set the permission for.
      * @param permissionCollectionType The permission collection type (e.g. READ, READ_WRITE) to set.
      */
     public void setPermission(Class<? extends BaseEntity> clazz, Group group, PermissionCollectionType permissionCollectionType) {
@@ -233,9 +217,9 @@ public class GroupClassPermissionService extends BasePermissionService<GroupClas
     /**
      * Clears the given {@link PermissionCollection} for the given target combination.
      *
-     * @param group The group to clear the permission for.
+     * @param group                The group to clear the permission for.
      * @param permissionCollection The permission collection to clear.
-     * @param clazz The clazz to clear the permission for.
+     * @param clazz                The clazz to clear the permission for.
      */
     private void clearExistingPermission(Group group, PermissionCollection permissionCollection, Class<? extends BaseEntity> clazz) {
         Optional<GroupClassPermission> existingPermission = findFor(clazz, group);

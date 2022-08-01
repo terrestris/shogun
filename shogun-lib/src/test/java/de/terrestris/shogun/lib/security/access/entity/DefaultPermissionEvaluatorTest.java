@@ -21,11 +21,10 @@ import de.terrestris.shogun.lib.enumeration.PermissionType;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
-import de.terrestris.shogun.lib.model.security.permission.UserInstancePermission;
-import de.terrestris.shogun.lib.service.security.permission.GroupClassPermissionService;
-import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionService;
-import de.terrestris.shogun.lib.service.security.permission.UserClassPermissionService;
-import de.terrestris.shogun.lib.repository.security.permission.UserInstancePermissionRepository;
+import de.terrestris.shogun.lib.service.security.permission.internal.GroupClassPermissionService;
+import de.terrestris.shogun.lib.service.security.permission.internal.GroupInstancePermissionService;
+import de.terrestris.shogun.lib.service.security.permission.internal.UserClassPermissionService;
+import de.terrestris.shogun.lib.service.security.permission.internal.UserInstancePermissionService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,7 +34,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -47,7 +45,7 @@ import static org.mockito.Mockito.*;
 public class DefaultPermissionEvaluatorTest {
 
     @Mock
-    private UserInstancePermissionRepository userInstancePermissionRepository;
+    private UserInstancePermissionService userInstancePermissionService;
 
     @Mock
     private GroupInstancePermissionService groupInstancePermissionService;
@@ -76,8 +74,7 @@ public class DefaultPermissionEvaluatorTest {
 
         Set<PermissionType> allPermissions = new HashSet<>(Arrays.asList(PermissionType.values()));
 
-        // todo: fix tests for switch to repositories
-        when(userInstancePermissionRepository.findByUserIdAndEntityId(mockUser.getId(), entityToCheck.getId())).thenReturn((Optional<UserInstancePermission>) Optional.of(new PermissionCollection()));
+        when(userInstancePermissionService.findPermissionCollectionFor(entityToCheck, mockUser)).thenReturn(new PermissionCollection());
         when(groupInstancePermissionService.findPermissionCollectionFor(entityToCheck, mockUser)).thenReturn(new PermissionCollection());
         when(userClassPermissionService.findPermissionCollectionFor(entityToCheck, mockUser)).thenReturn(new PermissionCollection());
         when(groupClassPermissionService.findPermissionCollectionFor(entityToCheck, mockUser)).thenReturn(new PermissionCollection());
@@ -99,7 +96,7 @@ public class DefaultPermissionEvaluatorTest {
 
         PermissionCollection permissionCollection = buildPermissionCollection(readPermission);
 
-        when(userInstancePermissionRepository.findPermissionCollectionFor(entityToCheck, mockUser)).thenReturn(permissionCollection);
+        when(userInstancePermissionService.findPermissionCollectionFor(entityToCheck, mockUser)).thenReturn(permissionCollection);
         when(groupInstancePermissionService.findPermissionCollectionFor(entityToCheck, mockUser)).thenReturn(permissionCollection);
         when(userClassPermissionService.findPermissionCollectionFor(entityToCheck, mockUser)).thenReturn(permissionCollection);
         when(groupClassPermissionService.findPermissionCollectionFor(entityToCheck, mockUser)).thenReturn(permissionCollection);

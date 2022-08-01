@@ -1,4 +1,4 @@
-package de.terrestris.shogun.lib.service.security.permission;
+package de.terrestris.shogun.lib.service.security.permission.internal;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,7 +29,7 @@ public abstract class BasePermissionService<T extends BasePermissionRepository<S
     @PostFilter("hasRole('ROLE_ADMIN')")
     @Transactional(readOnly = true)
     public List<S> findAll() {
-        return (List<S>) repository.findAll();
+        return repository.findAll();
     }
 
     @PostFilter("hasRole('ROLE_ADMIN')")

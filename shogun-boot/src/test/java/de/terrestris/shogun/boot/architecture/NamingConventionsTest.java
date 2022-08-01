@@ -35,7 +35,8 @@ public class NamingConventionsTest {
     static final ArchRule services_should_be_named_correctly =
         classes()
             .that().areAnnotatedWith(Service.class)
-            .should().haveSimpleNameEndingWith("Service");
+            // allow names such as UserInstancePermissionServiceSecured
+            .should().haveSimpleNameContaining("Service");
 
     @ArchTest
     static final ArchRule controllers_should_be_named_correctly =

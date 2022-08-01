@@ -19,12 +19,14 @@ import de.terrestris.shogun.lib.model.security.permission.UserInstancePermission
 import de.terrestris.shogun.lib.service.BaseService;
 import de.terrestris.shogun.lib.service.GroupService;
 import de.terrestris.shogun.lib.service.UserService;
-import de.terrestris.shogun.lib.service.security.permission.GroupClassPermissionService;
-import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionService;
-import de.terrestris.shogun.lib.service.security.permission.UserClassPermissionService;
-import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
+import de.terrestris.shogun.lib.service.security.permission.*;
+
 import java.util.List;
 import java.util.Optional;
+
+import de.terrestris.shogun.lib.service.security.permission.internal.GroupClassPermissionService;
+import de.terrestris.shogun.lib.service.security.permission.internal.GroupInstancePermissionService;
+import de.terrestris.shogun.lib.service.security.permission.internal.UserClassPermissionService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -55,7 +57,7 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
     protected GroupService groupService;
 
     @Autowired
-    protected UserInstancePermissionService userInstancePermissionService;
+    protected UserInstancePermissionServiceSecured userInstancePermissionService;
 
     @Autowired
     protected UserClassPermissionService userClassPermissionService;

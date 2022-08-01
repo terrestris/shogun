@@ -16,6 +16,7 @@
  */
 package de.terrestris.shogun.boot.architecture;
 
+import com.tngtech.archunit.base.DescribedPredicate;
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
@@ -23,13 +24,14 @@ import com.tngtech.archunit.lang.ArchRule;
 import de.terrestris.shogun.lib.security.access.entity.EntityPermissionEvaluator;
 import de.terrestris.shogun.lib.service.security.provider.GroupProviderService;
 import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
 
 @AnalyzeClasses(packages = "de.terrestris", importOptions = { ImportOption.DoNotIncludeTests.class })
 public class DependencyRulesTest {
@@ -92,6 +94,13 @@ public class DependencyRulesTest {
             // required to exclude BaseEntityPermissionEvaluator
             .and().doNotHaveFullyQualifiedName("de.terrestris.shogun.lib.security.access.entity.BaseEntityPermissionEvaluator")
             .should().dependOnClassesThat().areAnnotatedWith(Service.class);
+
+    @ArchTest
+    static final ArchRule permission_evaluators_should_not_access_secured_services =
+        noClasses()
+            .that().implement(EntityPermissionEvaluator.class)
+            .should().accessClassesThat().areAnnotatedWith(PreAuthorize.class)
+            .orShould().accessClassesThat().haveSimpleNameEndingWith("Secured");
 
     @ArchTest
     static final ArchRule group_provider_services_should_not_access_services =
