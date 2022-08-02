@@ -5,8 +5,8 @@
 ![startup](https://github.com/terrestris/shogun/actions/workflows/startup.yml/badge.svg?branch=main)
 <!-- ![dependabot](https://api.dependabot.com/badges/status?host=github&repo=terrestris/shogun) -->
 
-SHOGun is an application framework written in Java for building scaleable web application backends in the context of 
-geospatial data infrastructures. It can be used directly without any specific customizations or highly customized to 
+SHOGun is an application framework written in Java for building scaleable web application backends in the context of
+geospatial data infrastructures. It can be used directly without any specific customizations or highly customized to
 meet the demands of flexible project requirements.
 
 ## In a nutshell
@@ -15,9 +15,9 @@ SHOGun…
 
 * …is written in Java and supports Java >= 17.
 * …is based on top of Spring / Spring Boot.
-* …provides a set of configuration entities to manage the contents of a geospatial data infrastructure (e.g. layers, 
+* …provides a set of configuration entities to manage the contents of a geospatial data infrastructure (e.g. layers,
 applications, users or groups).
-* …provides (secured) web interfaces (REST & GraphQL) for accessing and manipulating these entities (e.g. for creating 
+* …provides (secured) web interfaces (REST & GraphQL) for accessing and manipulating these entities (e.g. for creating
 an application configuration).
 * …separates its functionalities into isolated microservices (e.g. for proxying OGC requests) and is highly scalable.
 
@@ -29,7 +29,7 @@ For the development of SHOGun the following tools are required locally:
 
 - maven >= 3.8
 - Java 17
-- docker and docker-compose
+- docker and docker compose
 - IntelliJ (recommended)
 - [IntelliJ Lombok plugin](https://plugins.jetbrains.com/plugin/6317-lombok/)
 
@@ -57,21 +57,21 @@ To set up a local development setup, please proceed as follows:
 
 4. *Optional:* You may also want to import the `shogun-docker` project.
    If so, import the folder as a module:
-   
+
    - `File` -> `New` -> `Module from Existing Sources…`
    - Navigate to checkout of `shogun-docker` and choose the directory
 
 5. If not already done, the annotation processing of the Lombok plugin must be
-   enabled.  
+   enabled.
    Check the settings for `Lombok` (Enable Lombok plugin for this project) and
    `Annotation Processors` (Enable annotation processing).
 
-6. Set up the shogun-docker requirements as described in [here](https://github.com/terrestris/shogun-docker). 
+6. Set up the shogun-docker requirements as described in [here](https://github.com/terrestris/shogun-docker).
 
 7. Startup the containers (in the `shogun-docker` checkout directory):
 
    ```bash
-   docker-compose -f docker-compose.yml -f docker-compose-dev.yml up
+   docker compose up
    ```
 
 8. The application is now available at [https://localhost/](https://localhost/).
@@ -83,7 +83,7 @@ If you already have a local development setup, just proceed as follows:
 1. Startup the containers (in the `shogun-docker` checkout directory):
 
    ```bash
-   docker-compose -f docker-compose.yml -f docker-compose-dev.yml up
+   docker compose up
    ```
 
 2. The application is now available at [https://localhost/](https://localhost/).
@@ -92,7 +92,7 @@ If you already have a local development setup, just proceed as follows:
 
 #### Local install
 
-Install a new version of shogun to your local maven repository with
+Install a new version of SHOGun to your local maven repository with
 
   ```bash
   mvn clean install
@@ -100,11 +100,11 @@ Install a new version of shogun to your local maven repository with
 
 #### Application restart
 
-To apply any changes made, a restart of the application is required. A restart can easily be accomplished by 
+To apply any changes made, a restart of the application is required. A restart can easily be accomplished by
 restarting the appropriate container, e.g.:
 
    ```bash
-   docker restart shogun-docker_shogun-boot_1
+   docker restart shogun-boot
    ```
 
 #### Remote debugger
@@ -116,69 +116,7 @@ To create a remote debugger, a new run configuration in IntelliJ has to be creat
   - Name: `shogun-boot remote debugger`
   - Host: `localhost`
   - Port: `4711` (may be adjusted to the given module/service)
-  - Use module classpath: `shogun-boot` (or any other module) 
-
-## Create a new SHOGun app
-
-There is a SHOGun example app repository at [https://github.com/terrestris/shogun-example-app](https://github.com/terrestris/shogun-example-app)
-but for a manual setup please follow these steps:
-
-1. To manually set up a new project based on SHOGun you need to create a new
-   maven project and check out the shogun-docker project. Replace the `artifactId`
-   (`shogun-example-app`) with the specific project name:
-
-   ```bash
-   mvn -B archetype:generate -DgroupId=de.terrestris -DartifactId=shogun-example-app -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4
-   ```
-
-2. Use the current SHOGun project object model version as inheritance, e.g. in
-   version 5.0.0:
-
-   ```xml
-   <parent>
-    <groupId>de.terrestris</groupId>
-    <artifactId>shogun</artifactId>
-    <version>5.0.0</version>
-   </parent>
-   ```
-
-3. Include `shogun-boot` for the `dependency` in the same version as used as in
-   the parent block.
-
-   ```xml
-   <dependencies>
-    <dependency>
-     <groupId>de.terrestris</groupId>
-     <artifactId>shogun-boot</artifactId>
-     <version>5.0.0</version>
-    </dependency>
-   </dependencies>
-   ```
-
-4. Additionally define the repository for `shogun`:
-
-   ```xml
-   <repositories>
-    <repository>
-     <id>nexus.terrestris.de</id>
-     <url>https://nexus.terrestris.de/repository/public/</url>
-    </repository>
-   </repositories>
-   ```
-
-5. Remove the default App file and create a new `ApplicationConfig` in your
-   project module (e.g. `shogun-example-app/src/main/java/de/terrestris/shogunexample/config/ShogunExampleAppConfig.java`)
-   to run the main function.
-
-6. Create an `application.yml` file (in `shogun-example-app/src/main/resources/application.yml`)
-   to specify the project settings. Adjust the `context-path` to the name of your
-   app.
-
-7. Start the containers and the application as mentioned
-   [above](#quick-startup).
-
-8. Integrate your app into the Keycloak clients list as new redirect URI for
-   `shogun-boot` (e.g. `http://localhost:8080/shogun-example-app/*`).
+  - Use module classpath: `shogun-boot` (or any other module)
 
 ## GeoServer interceptor
 
@@ -195,6 +133,26 @@ mvn site -Preporting
 ```
 
 Just have a look at `/target/site/index.html` afterwards.
+
+## Get an access token programmatically
+
+To get an access token programmatically the following curl can be used (adjust `<EXTERNAL_KEYCLOAK_HOST>`
+beforehand):
+
+```bash
+curl \
+  -v \
+  -k \
+  -X POST \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  -d 'grant_type=password' \
+  -d 'client_id=shogun-client' \
+  -d 'username=shogun' \
+  -d 'password=shogun' \
+  'https://<EXTERNAL_KEYCLOAK_HOST>/auth/realms/SHOGun/protocol/openid-connect/token' | jq '.access_token'
+```
+
+The usage of `jq` is optional and can be removed if not needed or `jq` is not available.
 
 ## Actuator
 
@@ -213,9 +171,7 @@ The following list demonstrates some use cases:
 - List current log levels:
   - `https://localhost/actuator/loggers`
 - List current log level of a specific module:
-
   - `https://localhost/actuator/loggers/de.terrestris`
-
 - Set log level for a specific module to the desired level (e.g. `DEBUG` for
   `de.terrestris`):
 
@@ -223,7 +179,7 @@ The following list demonstrates some use cases:
     curl \
       -v \
       -X POST \
-      -u shogun:shogun \
+      -H 'Authorization: Bearer <TOKEN>' \
       -H 'Content-Type: application/json' \
       -d '{"configuredLevel": "DEBUG"}' \
       'https://localhost/actuator/loggers/de.terrestris'
