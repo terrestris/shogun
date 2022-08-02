@@ -19,7 +19,6 @@ package de.terrestris.shogun.lib.service.security.permission;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.model.security.permission.UserClassPermission;
 import de.terrestris.shogun.lib.repository.security.permission.UserClassPermissionRepository;
-import de.terrestris.shogun.lib.service.security.permission.internal.UserClassPermissionService;
 import de.terrestris.shogun.lib.service.security.provider.keycloak.KeycloakUserProviderService;
 import org.junit.Before;
 import org.mockito.InjectMocks;

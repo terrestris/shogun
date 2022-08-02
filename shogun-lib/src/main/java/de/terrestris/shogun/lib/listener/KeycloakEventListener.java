@@ -21,7 +21,7 @@ import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
 import de.terrestris.shogun.lib.event.KeycloakEvent;
 import de.terrestris.shogun.lib.event.OnRegistrationConfirmedEvent;
 import de.terrestris.shogun.lib.service.GroupService;
-import de.terrestris.shogun.lib.service.security.permission.internal.UserInstancePermissionService;
+import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
 import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;

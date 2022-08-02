@@ -19,14 +19,7 @@
 package de.terrestris.shogun.lib.controller.security.permission;
 
 import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
-import de.terrestris.shogun.lib.exception.security.permission.CreatePermissionException;
-import de.terrestris.shogun.lib.exception.security.permission.DeletePermissionException;
-import de.terrestris.shogun.lib.exception.security.permission.EntityAccessDeniedException;
-import de.terrestris.shogun.lib.exception.security.permission.EntityNotFoundException;
-import de.terrestris.shogun.lib.exception.security.permission.EntityPermissionNotFoundException;
-import de.terrestris.shogun.lib.exception.security.permission.GroupNotFoundException;
-import de.terrestris.shogun.lib.exception.security.permission.ReadPermissionException;
-import de.terrestris.shogun.lib.exception.security.permission.UserNotFoundException;
+import de.terrestris.shogun.lib.exception.security.permission.*;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.model.User;
@@ -37,27 +30,21 @@ import de.terrestris.shogun.lib.model.security.permission.UserInstancePermission
 import de.terrestris.shogun.lib.service.BaseService;
 import de.terrestris.shogun.lib.service.GroupService;
 import de.terrestris.shogun.lib.service.UserService;
-import de.terrestris.shogun.lib.service.security.permission.*;
-
-import java.util.List;
-import java.util.Optional;
-
-import de.terrestris.shogun.lib.service.security.permission.internal.GroupClassPermissionService;
-import de.terrestris.shogun.lib.service.security.permission.internal.GroupInstancePermissionService;
-import de.terrestris.shogun.lib.service.security.permission.internal.UserClassPermissionService;
+import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionServiceSecured;
+import de.terrestris.shogun.lib.service.security.permission.GroupClassPermissionService;
+import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionService;
+import de.terrestris.shogun.lib.service.security.permission.UserClassPermissionService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+import java.util.Optional;
 
 @Log4j2
 public abstract class BasePermissionController<T extends BaseService<?, S>, S extends BaseEntity> {

@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package de.terrestris.shogun.lib.service.security.permission.internal;
+package de.terrestris.shogun.lib.service.security.permission;
 
 import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
 import de.terrestris.shogun.lib.model.BaseEntity;
@@ -26,7 +26,6 @@ import de.terrestris.shogun.lib.model.security.permission.GroupInstancePermissio
 import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
 import de.terrestris.shogun.lib.repository.security.permission.GroupInstancePermissionRepository;
 import de.terrestris.shogun.lib.repository.security.permission.PermissionCollectionRepository;
-import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.service.security.provider.GroupProviderService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;

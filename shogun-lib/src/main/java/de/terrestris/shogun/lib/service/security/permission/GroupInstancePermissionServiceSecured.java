@@ -20,18 +20,11 @@ import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.model.User;
-import de.terrestris.shogun.lib.model.security.permission.GroupClassPermission;
 import de.terrestris.shogun.lib.model.security.permission.GroupInstancePermission;
 import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
-import de.terrestris.shogun.lib.service.security.permission.internal.GroupInstancePermissionService;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -115,39 +108,4 @@ public class GroupInstancePermissionServiceSecured extends GroupInstancePermissi
     // basePermissionService methods
     // todo: add permissions for non-admins
 
-    @Override
-    @PostFilter("hasRole('ROLE_ADMIN')")
-    public List<GroupInstancePermission> findAll() {
-        return super.findAll();
-    }
-
-    @Override
-    @PostFilter("hasRole('ROLE_ADMIN')")
-    public List<GroupInstancePermission> findAllBy(Specification specification) {
-        return super.findAllBy(specification);
-    }
-
-    @Override
-    @PostAuthorize("hasRole('ROLE_ADMIN')")
-    public Optional<GroupInstancePermission> findOne(Long id) {
-        return super.findOne(id);
-    }
-
-    @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public GroupInstancePermission create(GroupInstancePermission entity) {
-        return super.create(entity);
-    }
-
-    @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public GroupInstancePermission update(Long id, GroupInstancePermission entity) throws IOException {
-        return super.update(id, entity);
-    }
-
-    @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public void delete(GroupInstancePermission entity) {
-        super.delete(entity);
-    }
 }

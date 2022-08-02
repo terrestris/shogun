@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package de.terrestris.shogun.lib.service.security.permission.internal;
+package de.terrestris.shogun.lib.service.security.permission;
 
 import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
 import de.terrestris.shogun.lib.model.BaseEntity;

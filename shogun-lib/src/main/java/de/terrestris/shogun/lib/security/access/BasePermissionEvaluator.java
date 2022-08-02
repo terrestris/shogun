@@ -53,6 +53,8 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
     public boolean hasPermission(Authentication authentication, Object targetDomainObject,
             Object permissionObject) {
 
+        // todo: hasPermission(clazz)
+
         log.trace("About to evaluate permission for user '{}' targetDomainObject '{}' " +
             "and permissionObject '{}'", authentication, targetDomainObject, permissionObject);
 

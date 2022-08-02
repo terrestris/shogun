@@ -19,7 +19,6 @@ package de.terrestris.shogun.lib.service.security.permission;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.model.security.permission.GroupClassPermission;
 import de.terrestris.shogun.lib.repository.security.permission.GroupClassPermissionRepository;
-import de.terrestris.shogun.lib.service.security.permission.internal.GroupClassPermissionService;
 import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import de.terrestris.shogun.lib.service.security.provider.keycloak.KeycloakUserProviderService;
 import org.junit.Before;
