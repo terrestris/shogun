@@ -19,6 +19,7 @@ package de.terrestris.shogun.lib.model.security.permission;
 
 import de.terrestris.shogun.lib.model.BaseEntity;
 import lombok.*;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.envers.Audited;
@@ -27,15 +28,17 @@ import javax.persistence.FetchType;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToOne;
 
+import java.util.Objects;
+
 import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 
 @MappedSuperclass
 @Audited
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@EqualsAndHashCode(callSuper = true)
 public abstract class BasePermission extends BaseEntity {
 
     /**
@@ -48,6 +51,19 @@ public abstract class BasePermission extends BaseEntity {
     )
     @Fetch(FetchMode.JOIN)
     @Audited(targetAuditMode = NOT_AUDITED)
+    @ToString.Exclude
     private PermissionCollection permissions;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        BasePermission that = (BasePermission) o;
+        return getId() != null && Objects.equals(getId(), that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }
