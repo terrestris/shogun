@@ -20,6 +20,7 @@ package de.terrestris.shogun.lib.controller.security.permission;
 
 import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
 import de.terrestris.shogun.lib.exception.security.permission.*;
+import de.terrestris.shogun.lib.model.Application;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.model.User;
@@ -27,6 +28,7 @@ import de.terrestris.shogun.lib.model.security.permission.GroupClassPermission;
 import de.terrestris.shogun.lib.model.security.permission.GroupInstancePermission;
 import de.terrestris.shogun.lib.model.security.permission.UserClassPermission;
 import de.terrestris.shogun.lib.model.security.permission.UserInstancePermission;
+import de.terrestris.shogun.lib.repository.ApplicationRepository;
 import de.terrestris.shogun.lib.service.BaseService;
 import de.terrestris.shogun.lib.service.GroupService;
 import de.terrestris.shogun.lib.service.UserService;
@@ -43,6 +45,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,6 +57,9 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
 
     @Autowired
     protected MessageSource messageSource;
+
+    @Autowired
+    protected ApplicationRepository applicationRepository;
 
     @Autowired
     protected UserService userService;

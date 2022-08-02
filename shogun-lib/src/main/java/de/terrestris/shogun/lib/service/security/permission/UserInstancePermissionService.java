@@ -174,9 +174,6 @@ public class UserInstancePermissionService extends BasePermissionService<UserIns
         User user,
         PermissionCollectionType permissionCollectionType
     ) {
-        // todo: call setPermission for each entity in persistedEntityList
-        // persistedEntityList.forEach(e -> setPermission(e, user, permissionCollectionType));
-
         Optional<PermissionCollection> permissionCollection = permissionCollectionRepository
             .findByName(permissionCollectionType);
 

@@ -23,6 +23,7 @@ import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.model.security.permission.GroupInstancePermission;
 import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.prepost.PreFilter;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,12 +35,14 @@ public class GroupInstancePermissionServiceSecured extends GroupInstancePermissi
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#group, 'READ')")
+//    @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
+    // todo: postfilter permission check: how to get either targetDomainType or entity from permission.entityId?
     public List<GroupInstancePermission> findFor(Group group) {
         return super.findFor(group);
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'READ')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasPermission(#entity, 'READ') and hasPermission(#group, 'READ'))")
     public Optional<GroupInstancePermission> findFor(BaseEntity entity, Group group) {
         return super.findFor(entity, group);
     }
@@ -51,44 +54,43 @@ public class GroupInstancePermissionServiceSecured extends GroupInstancePermissi
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'READ')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasPermission(#entity, 'READ') and hasPermission(#user, 'READ'))")
     public Optional<GroupInstancePermission> findFor(BaseEntity entity, User user) {
         return super.findFor(entity, user);
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'READ')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasPermission(#entity, 'READ') and hasPermission(#group, 'READ') and hasPermission(#user, 'READ'))")
     public Optional<GroupInstancePermission> findFor(BaseEntity entity, Group group, User user) {
         return super.findFor(entity, group, user);
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'READ')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasPermission(#entity, 'READ') and hasPermission(#group, 'READ'))")
     public PermissionCollection findPermissionCollectionFor(BaseEntity entity, Group group) {
         return super.findPermissionCollectionFor(entity, group);
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'READ')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasPermission(#entity, 'READ') and hasPermission(#user, 'READ'))")
     public PermissionCollection findPermissionCollectionFor(BaseEntity entity, User user) {
         return super.findPermissionCollectionFor(entity, user);
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'READ')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasPermission(#entity, 'READ') and hasPermission(#group, 'READ') and hasPermission(#user, 'READ'))")
     public PermissionCollection findPermissionCollectionFor(BaseEntity entity, Group group, User user) {
         return super.findPermissionCollectionFor(entity, group, user);
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#persistedEntity, 'READ')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasPermission(#persistedEntity, 'UPDATE') and hasPermission(#group, 'READ'))")
     public void setPermission(BaseEntity persistedEntity, Group group, PermissionCollectionType permissionCollectionType) {
         super.setPermission(persistedEntity, group, permissionCollectionType);
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    // todo: permission check!
+    @PreFilter(filterTarget = "persistedEntityList", value = "hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'UPDATE')")
     public void setPermission(List<? extends BaseEntity> persistedEntityList, Group group, PermissionCollectionType permissionCollectionType) {
         super.setPermission(persistedEntityList, group, permissionCollectionType);
     }
@@ -104,8 +106,5 @@ public class GroupInstancePermissionServiceSecured extends GroupInstancePermissi
     public void deleteFor(BaseEntity persistedEntity, Group group) {
         super.deleteFor(persistedEntity, group);
     }
-
-    // basePermissionService methods
-    // todo: add permissions for non-admins
 
 }

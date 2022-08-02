@@ -26,4 +26,6 @@ public interface EntityPermissionEvaluator<E> {
     boolean hasPermission(User user, E entity, PermissionType permission);
 
     boolean hasPermission(User user, Long entityId, String targetDomainType, PermissionType permission);
+
+    boolean hasPermission(User user, Class<?> clazz, PermissionType permission);
 }

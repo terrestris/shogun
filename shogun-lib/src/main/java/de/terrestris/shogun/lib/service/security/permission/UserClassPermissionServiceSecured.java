@@ -33,6 +33,8 @@ public class UserClassPermissionServiceSecured extends UserClassPermissionServic
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#user, 'READ')")
+    //    @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
+    // todo: in postfilter permission check: how to get either targetDomainType or entity from permission.entityId?
     public List<UserClassPermission> findFor(User user) {
         return super.findFor(user);
     }
@@ -44,33 +46,34 @@ public class UserClassPermissionServiceSecured extends UserClassPermissionServic
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#user, 'READ')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasPermission(#user, 'READ') and hasPermission(#clazz, 'READ'))")
+    // todo: test this new permission check
     public Optional<UserClassPermission> findFor(Class<? extends BaseEntity> clazz, User user) {
         return super.findFor(clazz, user);
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'READ')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasPermission(#entity, 'READ') and hasPermission(#user, 'READ'))")
     public Optional<UserClassPermission> findFor(BaseEntity entity, User user) {
         return super.findFor(entity, user);
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'READ')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasPermission(#entity, 'READ') and hasPermission(#user, 'READ'))")
     public PermissionCollection findPermissionCollectionFor(BaseEntity entity, User user) {
         return super.findPermissionCollectionFor(entity, user);
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    // todo: how to check permission for this?
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#clazz, 'UPDATE')")
+    // todo: test class permission check
     public void setPermission(Class<? extends BaseEntity> clazz, PermissionCollectionType permissionCollectionType) {
         super.setPermission(clazz, permissionCollectionType);
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    // todo: how to check permission for this?
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasPermission(#clazz, 'UPDATE') and hasPermission(#user, 'READ'))")
+    // todo: test class permission check
     public void setPermission(Class<? extends BaseEntity> clazz, User user, PermissionCollectionType permissionCollectionType) {
         super.setPermission(clazz, user, permissionCollectionType);
     }
@@ -86,8 +89,5 @@ public class UserClassPermissionServiceSecured extends UserClassPermissionServic
     public void deleteFor(BaseEntity persistedEntity, User user) {
         super.deleteFor(persistedEntity, user);
     }
-
-    // basePermissionService methods
-    // todo: add permissions for non-admins
 
 }

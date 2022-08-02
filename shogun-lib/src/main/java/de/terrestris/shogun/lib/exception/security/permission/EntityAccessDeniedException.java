@@ -31,7 +31,7 @@ public final class EntityAccessDeniedException extends ResponseStatusException {
     public EntityAccessDeniedException(Long entityId, Serializable entityType, String message) {
         super(HttpStatus.NOT_FOUND, message);
 
-        log.info("Access to entity of type {} with ID {} is denied", entityId, entityType);
+        log.info("Access to entity of type {} with ID {} is denied", entityType, entityId);
     }
 
     public EntityAccessDeniedException(Long entityId, Serializable entityType, MessageSource messageSource) {

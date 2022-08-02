@@ -21,7 +21,9 @@ import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
 import de.terrestris.shogun.lib.model.security.permission.UserInstancePermission;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.prepost.PreFilter;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,13 +35,14 @@ public class UserInstancePermissionServiceSecured extends UserInstancePermission
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#user, 'READ')")
-    // todo: postfilter permission check
+//    @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
+    // todo: postfilter permission check: how to get either targetDomainType or entity from permission.entityId?
     public List<UserInstancePermission> findFor(User user) {
         return super.findFor(user);
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'READ')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasPermission(#entity, 'READ') and hasPermission(#user, 'READ'))")
     public Optional<UserInstancePermission> findFor(BaseEntity entity, User user) {
         return super.findFor(entity, user);
     }
@@ -58,26 +61,25 @@ public class UserInstancePermissionServiceSecured extends UserInstancePermission
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'READ')")
-    // todo: filter list of users (postfilter?)
+    @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
     public List<User> findOwner(BaseEntity entity) {
         return super.findOwner(entity);
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'READ')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasPermission(#entity, 'READ') and hasPermission(#user, 'READ'))")
     public PermissionCollection findPermissionCollectionFor(BaseEntity entity, User user) {
         return super.findPermissionCollectionFor(entity, user);
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#persistedEntity, 'UPDATE')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasPermission(#persistedEntity, 'UPDATE') and hasPermission(#user, 'READ'))")
     public void setPermission(BaseEntity persistedEntity, User user, PermissionCollectionType permissionCollectionType) {
         super.setPermission(persistedEntity, user, permissionCollectionType);
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    // todo: permission check!
+    @PreFilter(filterTarget = "persistedEntityList", value = "hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'UPDATE')")
     public void setPermission(List<? extends BaseEntity> persistedEntityList, User user, PermissionCollectionType permissionCollectionType) {
         super.setPermission(persistedEntityList, user, permissionCollectionType);
     }

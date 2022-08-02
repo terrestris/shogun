@@ -19,6 +19,10 @@ package de.terrestris.shogun.lib.security.access;
 import de.terrestris.shogun.lib.enumeration.PermissionType;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.User;
+import de.terrestris.shogun.lib.model.security.permission.BasePermission;
+import de.terrestris.shogun.lib.model.security.permission.ClassPermission;
+import de.terrestris.shogun.lib.model.security.permission.InstancePermission;
+import de.terrestris.shogun.lib.model.security.permission.UserInstancePermission;
 import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.security.access.entity.BaseEntityPermissionEvaluator;
 import de.terrestris.shogun.lib.security.access.entity.DefaultPermissionEvaluator;
@@ -76,6 +80,29 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
 
         Optional<User> userOpt = userProviderService.getUserFromAuthentication(authentication);
         User user = userOpt.orElse(null);
+
+        if (targetDomainObject instanceof Class<?>) {
+            // test if user/group class permission for provided class exists
+            // todo: test this
+            Class clazz = (Class<?>) targetDomainObject;
+            BaseEntityPermissionEvaluator entityPermissionEvaluator =
+                this.getPermissionEvaluatorForClass((String) targetDomainObject);
+            // todo: add method for this
+            final PermissionType permission = PermissionType.valueOf((String) permissionObject);
+            return entityPermissionEvaluator.hasPermission(user, clazz, permission);
+        }
+
+//        if (targetDomainObject instanceof InstancePermission) {
+//            // test if permission for entity of basePermission exists
+//            Long entityId = ((InstancePermission) targetDomainObject).getEntityId();
+//            BaseEntityPermissionEvaluator entityPermissionEvaluator =
+//                this.getPermissionEvaluatorForClass(targetDomainType);
+//
+//            log.trace("Checking permissions with permission evaluator '{}'",
+//                entityPermissionEvaluator.getClass().getSimpleName());
+//
+//            return entityPermissionEvaluator.hasPermission(user, entityId, targetDomainType, permissionObject);
+//        }
 
         final BaseEntity persistentObject;
         if (targetDomainObject instanceof Optional) {

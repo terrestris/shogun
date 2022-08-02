@@ -40,55 +40,57 @@ public class GroupClassPermissionServiceSecured extends GroupClassPermissionServ
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#group, 'READ')")
+    //    @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
+    // todo: in postfilter permission check: how to get either targetDomainType or entity from permission.entityId?
     public List<GroupClassPermission> findFor(Group group) {
         return super.findFor(group);
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'READ')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasPermission(#entity, 'READ') and hasPermission(#group, 'READ'))")
     public Optional<GroupClassPermission> findFor(BaseEntity entity, Group group) {
         return super.findFor(entity, group);
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#group, 'READ')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasPermission(#clazz, 'READ') and hasPermission(#group, 'READ'))")
     public Optional<GroupClassPermission> findFor(Class<? extends BaseEntity> clazz, Group group) {
         return super.findFor(clazz, group);
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#user, 'READ')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasPermission(#clazz, 'READ') and hasPermission(#user, 'READ'))")
     public Optional<GroupClassPermission> findFor(Class<? extends BaseEntity> clazz, User user) {
         return super.findFor(clazz, user);
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'READ')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasPermission(#entity, 'READ') and hasPermission(#group, 'READ') and hasPermission(#user, 'READ'))")
     public Optional<GroupClassPermission> findFor(BaseEntity entity, Group group, User user) {
         return super.findFor(entity, group, user);
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'READ')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasPermission(#entity, 'READ') and hasPermission(#group, 'READ'))")
     public PermissionCollection findPermissionCollectionFor(BaseEntity entity, Group group) {
         return super.findPermissionCollectionFor(entity, group);
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'READ')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasPermission(#entity, 'READ') and hasPermission(#user, 'READ'))")
     public PermissionCollection findPermissionCollectionFor(BaseEntity entity, User user) {
         return super.findPermissionCollectionFor(entity, user);
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'READ')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasPermission(#entity, 'READ') and hasPermission(#group, 'READ') and hasPermission(#user, 'READ'))")
     public PermissionCollection findPermissionCollectionFor(BaseEntity entity, Group group, User user) {
         return super.findPermissionCollectionFor(entity, group, user);
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#clazz, 'READ')")
-    // todo: how to check permission for this?
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasPermission(#clazz, 'UPDATE') and hasPermission(#group, 'READ'))")
+    // todo: test class permission check
     public void setPermission(Class<? extends BaseEntity> clazz, Group group, PermissionCollectionType permissionCollectionType) {
         super.setPermission(clazz, group, permissionCollectionType);
     }

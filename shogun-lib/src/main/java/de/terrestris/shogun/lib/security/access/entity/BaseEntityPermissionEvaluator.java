@@ -19,7 +19,9 @@ package de.terrestris.shogun.lib.security.access.entity;
 import de.terrestris.shogun.lib.enumeration.PermissionType;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.User;
+import de.terrestris.shogun.lib.model.security.permission.GroupClassPermission;
 import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
+import de.terrestris.shogun.lib.model.security.permission.UserClassPermission;
 import de.terrestris.shogun.lib.repository.BaseCrudRepository;
 import de.terrestris.shogun.lib.service.security.permission.GroupClassPermissionService;
 import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionService;
@@ -147,6 +149,32 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
         log.trace("Found entity for ID {}, permission will be evaluated now…", entityId);
 
         return hasPermission(user, entity.get(), permission);
+    }
+
+    @Override
+    public boolean hasPermission(User user, Class<?> clazz, PermissionType permission) {
+        log.trace("Evaluating whether user with ID '{}' has permission '{}' on class '{}'",
+            user.getId(), permission, clazz.getCanonicalName());
+
+
+        Optional<UserClassPermission> userClassPermission = userClassPermissionService.findFor((Class<? extends BaseEntity>) clazz, user);
+        Optional<GroupClassPermission> groupClassPermission = groupClassPermissionService.findFor((Class<? extends BaseEntity>) clazz, user);
+
+        if (userClassPermission.isPresent()) {
+            final Set<PermissionType> userClassPermissions = userClassPermission.get().getPermissions().getPermissions();
+            // Grant access if group explicitly has the requested permission or
+            // if the group has the ADMIN permission
+            return userClassPermissions.contains(permission) ||
+                userClassPermissions.contains(PermissionType.ADMIN);
+        }
+        if (groupClassPermission.isPresent()) {
+            final Set<PermissionType> groupClassPermissions = groupClassPermission.get().getPermissions().getPermissions();
+            // Grant access if group explicitly has the requested permission or
+            // if the group has the ADMIN permission
+            return groupClassPermissions.contains(permission) ||
+                groupClassPermissions.contains(PermissionType.ADMIN);
+        }
+        return false;
     }
 
     public boolean hasPermissionByUserInstancePermission(User user, BaseEntity entity, PermissionType permission) {
