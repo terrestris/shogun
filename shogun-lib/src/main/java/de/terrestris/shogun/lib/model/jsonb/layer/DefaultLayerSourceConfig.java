@@ -84,5 +84,12 @@ public class DefaultLayerSourceConfig implements LayerSourceConfig {
         dataType = "object"
     )
     private HashMap<String, Object> requestParams;
+
+    @Schema(
+        description = "Whether to send the (internal) Keycloak Bearer Token alongside the map requests or not. " +
+            "Please note: This should be set to `true` for internal layers only!",
+        example = "false"
+    )
+    private Boolean useBearerToken;
 }
 
