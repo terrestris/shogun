@@ -90,7 +90,6 @@ public class GroupClassPermissionServiceSecured extends GroupClassPermissionServ
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN') or (hasPermission(#clazz, 'UPDATE') and hasPermission(#group, 'READ'))")
-    // todo: test class permission check
     public void setPermission(Class<? extends BaseEntity> clazz, Group group, PermissionCollectionType permissionCollectionType) {
         super.setPermission(clazz, group, permissionCollectionType);
     }

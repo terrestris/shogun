@@ -47,7 +47,6 @@ public class UserClassPermissionServiceSecured extends UserClassPermissionServic
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN') or (hasPermission(#user, 'READ') and hasPermission(#clazz, 'READ'))")
-    // todo: test this new permission check
     public Optional<UserClassPermission> findFor(Class<? extends BaseEntity> clazz, User user) {
         return super.findFor(clazz, user);
     }
@@ -66,14 +65,12 @@ public class UserClassPermissionServiceSecured extends UserClassPermissionServic
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#clazz, 'UPDATE')")
-    // todo: test class permission check
     public void setPermission(Class<? extends BaseEntity> clazz, PermissionCollectionType permissionCollectionType) {
         super.setPermission(clazz, permissionCollectionType);
     }
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN') or (hasPermission(#clazz, 'UPDATE') and hasPermission(#user, 'READ'))")
-    // todo: test class permission check
     public void setPermission(Class<? extends BaseEntity> clazz, User user, PermissionCollectionType permissionCollectionType) {
         super.setPermission(clazz, user, permissionCollectionType);
     }

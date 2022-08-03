@@ -20,7 +20,6 @@ package de.terrestris.shogun.lib.controller.security.permission;
 
 import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
 import de.terrestris.shogun.lib.exception.security.permission.*;
-import de.terrestris.shogun.lib.model.Application;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.model.User;
@@ -32,10 +31,10 @@ import de.terrestris.shogun.lib.repository.ApplicationRepository;
 import de.terrestris.shogun.lib.service.BaseService;
 import de.terrestris.shogun.lib.service.GroupService;
 import de.terrestris.shogun.lib.service.UserService;
+import de.terrestris.shogun.lib.service.security.permission.GroupClassPermissionServiceSecured;
+import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionServiceSecured;
+import de.terrestris.shogun.lib.service.security.permission.UserClassPermissionServiceSecured;
 import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionServiceSecured;
-import de.terrestris.shogun.lib.service.security.permission.GroupClassPermissionService;
-import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionService;
-import de.terrestris.shogun.lib.service.security.permission.UserClassPermissionService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -45,7 +44,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,13 +69,13 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
     protected UserInstancePermissionServiceSecured userInstancePermissionService;
 
     @Autowired
-    protected UserClassPermissionService userClassPermissionService;
+    protected UserClassPermissionServiceSecured userClassPermissionService;
 
     @Autowired
-    protected GroupInstancePermissionService groupInstancePermissionService;
+    protected GroupInstancePermissionServiceSecured groupInstancePermissionService;
 
     @Autowired
-    protected GroupClassPermissionService groupClassPermissionService;
+    protected GroupClassPermissionServiceSecured groupClassPermissionService;
 
     @GetMapping("/{id}/permissions/instance/user")
     @ResponseStatus(HttpStatus.OK)

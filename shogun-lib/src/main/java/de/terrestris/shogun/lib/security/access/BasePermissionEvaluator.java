@@ -19,11 +19,6 @@ package de.terrestris.shogun.lib.security.access;
 import de.terrestris.shogun.lib.enumeration.PermissionType;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.User;
-import de.terrestris.shogun.lib.model.security.permission.BasePermission;
-import de.terrestris.shogun.lib.model.security.permission.ClassPermission;
-import de.terrestris.shogun.lib.model.security.permission.InstancePermission;
-import de.terrestris.shogun.lib.model.security.permission.UserInstancePermission;
-import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.security.access.entity.BaseEntityPermissionEvaluator;
 import de.terrestris.shogun.lib.security.access.entity.DefaultPermissionEvaluator;
 import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
@@ -46,9 +41,6 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
 
     @Autowired
     protected DefaultPermissionEvaluator defaultPermissionEvaluator;
-
-    @Autowired
-    protected SecurityContextUtil securityContextUtil;
 
     @Autowired
     private UserProviderService userProviderService;
@@ -83,15 +75,17 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
 
         if (targetDomainObject instanceof Class<?>) {
             // test if user/group class permission for provided class exists
-            // todo: test this
             Class clazz = (Class<?>) targetDomainObject;
+            String className = ((Class<?>) targetDomainObject).getCanonicalName();
             BaseEntityPermissionEvaluator entityPermissionEvaluator =
-                this.getPermissionEvaluatorForClass((String) targetDomainObject);
-            // todo: add method for this
+                this.getPermissionEvaluatorForClass(className);
             final PermissionType permission = PermissionType.valueOf((String) permissionObject);
             return entityPermissionEvaluator.hasPermission(user, clazz, permission);
         }
 
+        // todo: for this we need either
+        //  - targetDomainType as parameter
+        //  - a way to get an Entity from a InstancePermission
 //        if (targetDomainObject instanceof InstancePermission) {
 //            // test if permission for entity of basePermission exists
 //            Long entityId = ((InstancePermission) targetDomainObject).getEntityId();
