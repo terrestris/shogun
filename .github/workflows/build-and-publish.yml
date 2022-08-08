@@ -46,7 +46,7 @@ jobs:
     - name: Build SHOGun with Maven and publish artifacts to nexus
       run: mvn -B deploy
 
-    - name: Scan for Unit Tests
+    - name: Scan for unit tests
       run: mvn clean verify sonar:sonar -Dsonar.projectKey=SHOGun -Dsonar.login="${{ secrets.SONARQUBE_TOKEN }}" -Preporting
 
     - name: Refresh SonarQube

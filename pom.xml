@@ -94,9 +94,7 @@
     <sonar.host.url>https://sq.terrestris.de</sonar.host.url>
     <sonar.login>terrestris</sonar.login>
     <sonar.sources>src/main/</sonar.sources>
-
     <project.encoding>UTF-8</project.encoding>
-
     <java.version>17</java.version>
 
     <!-- Plugins -->
@@ -152,6 +150,7 @@
     <maven-dependency-plugin.version>3.3.0</maven-dependency-plugin.version>
     <maven-project-info-reports-plugin.version>3.2.1</maven-project-info-reports-plugin.version>
     <archunit.version>0.23.1</archunit.version>
+    <sonar-maven-plugin.version>3.9.1.2184</sonar-maven-plugin.version>
   </properties>
 
   <build>
@@ -160,7 +159,7 @@
         <plugin>
           <groupId>org.sonarsource.scanner.maven</groupId>
           <artifactId>sonar-maven-plugin</artifactId>
-          <version>3.9.1.2184</version>
+          <version>${sonar-maven-plugin.version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -298,7 +297,7 @@
             </goals>
           </execution>
         </executions>
-          </plugin>
+      </plugin>
     </plugins>
   </build>
 
