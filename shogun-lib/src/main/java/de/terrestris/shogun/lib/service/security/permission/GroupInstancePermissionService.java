@@ -212,7 +212,7 @@ public class GroupInstancePermissionService extends BasePermissionService<GroupI
         GroupInstancePermission groupInstancePermission = new GroupInstancePermission();
         groupInstancePermission.setGroup(group);
         groupInstancePermission.setEntityId(persistedEntity.getId());
-        groupInstancePermission.setPermissions(permissionCollection.get());
+        groupInstancePermission.setPermission(permissionCollection.get());
 
         repository.save(groupInstancePermission);
     }
@@ -242,7 +242,7 @@ public class GroupInstancePermissionService extends BasePermissionService<GroupI
             GroupInstancePermission groupInstancePermission = new GroupInstancePermission();
             groupInstancePermission.setGroup(group);
             groupInstancePermission.setEntityId(e.getId());
-            groupInstancePermission.setPermissions(permissionCollection.get());
+            groupInstancePermission.setPermission(permissionCollection.get());
             groupInstancePermissionsToSave.add(groupInstancePermission);
         });
 
@@ -309,7 +309,7 @@ public class GroupInstancePermissionService extends BasePermissionService<GroupI
      */
     private PermissionCollection getPermissionCollection(Optional<GroupInstancePermission> classPermission) {
         if (classPermission.isPresent()) {
-            return classPermission.get().getPermissions();
+            return classPermission.get().getPermission();
         }
 
         return new PermissionCollection();

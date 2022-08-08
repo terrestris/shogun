@@ -161,14 +161,14 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
         Optional<GroupClassPermission> groupClassPermission = groupClassPermissionService.findFor((Class<? extends BaseEntity>) clazz, user);
 
         if (userClassPermission.isPresent()) {
-            final Set<PermissionType> userClassPermissions = userClassPermission.get().getPermissions().getPermissions();
+            final Set<PermissionType> userClassPermissions = userClassPermission.get().getPermission().getPermissions();
             // Grant access if group explicitly has the requested permission or
             // if the group has the ADMIN permission
             return userClassPermissions.contains(permission) ||
                 userClassPermissions.contains(PermissionType.ADMIN);
         }
         if (groupClassPermission.isPresent()) {
-            final Set<PermissionType> groupClassPermissions = groupClassPermission.get().getPermissions().getPermissions();
+            final Set<PermissionType> groupClassPermissions = groupClassPermission.get().getPermission().getPermissions();
             // Grant access if group explicitly has the requested permission or
             // if the group has the ADMIN permission
             return groupClassPermissions.contains(permission) ||

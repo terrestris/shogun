@@ -227,7 +227,7 @@ public class GroupClassPermissionService extends BasePermissionService<GroupClas
         GroupClassPermission groupClassPermission = new GroupClassPermission();
         groupClassPermission.setGroup(group);
         groupClassPermission.setClassName(clazz.getCanonicalName());
-        groupClassPermission.setPermissions(permissionCollection.get());
+        groupClassPermission.setPermission(permissionCollection.get());
 
         repository.save(groupClassPermission);
     }
@@ -264,7 +264,7 @@ public class GroupClassPermissionService extends BasePermissionService<GroupClas
      */
     private PermissionCollection getPermissionCollection(Optional<GroupClassPermission> classPermission) {
         if (classPermission.isPresent()) {
-            return classPermission.get().getPermissions();
+            return classPermission.get().getPermission();
         }
 
         return new PermissionCollection();

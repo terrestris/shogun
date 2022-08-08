@@ -157,7 +157,7 @@ public class UserInstancePermissionService extends BasePermissionService<UserIns
         UserInstancePermission userInstancePermission = new UserInstancePermission();
         userInstancePermission.setUser(user);
         userInstancePermission.setEntityId(persistedEntity.getId());
-        userInstancePermission.setPermissions(permissionCollection.get());
+        userInstancePermission.setPermission(permissionCollection.get());
 
         repository.save(userInstancePermission);
     }
@@ -188,7 +188,7 @@ public class UserInstancePermissionService extends BasePermissionService<UserIns
             UserInstancePermission userInstancePermission = new UserInstancePermission();
             userInstancePermission.setUser(user);
             userInstancePermission.setEntityId(e.getId());
-            userInstancePermission.setPermissions(permissionCollection.get());
+            userInstancePermission.setPermission(permissionCollection.get());
             userInstancePermissionsToSave.add(userInstancePermission);
         });
 
@@ -242,7 +242,7 @@ public class UserInstancePermissionService extends BasePermissionService<UserIns
      */
     private PermissionCollection getPermissionCollection(Optional<UserInstancePermission> classPermission) {
         if (classPermission.isPresent()) {
-            return classPermission.get().getPermissions();
+            return classPermission.get().getPermission();
         }
 
         return new PermissionCollection();

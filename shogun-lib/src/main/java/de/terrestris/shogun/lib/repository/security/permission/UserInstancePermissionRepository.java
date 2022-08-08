@@ -41,7 +41,7 @@ public interface UserInstancePermissionRepository extends BasePermissionReposito
     @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
     List<UserInstancePermission> findByEntityId(Long entityId);
 
-    @Query("SELECT u FROM userinstancepermissions u LEFT JOIN u.permissions p WHERE u.entityId = :entityId AND p.name = :permissionCollectionType")
+    @Query("SELECT u FROM userinstancepermissions u LEFT JOIN u.permission p WHERE u.entityId = :entityId AND p.name = :permissionCollectionType")
     @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
     List<UserInstancePermission> findByEntityAndPermissionCollectionType(
         @Param("entityId") Long entityId,

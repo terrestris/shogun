@@ -154,7 +154,7 @@ public class UserClassPermissionService extends BasePermissionService<UserClassP
         UserClassPermission userClassPermission = new UserClassPermission();
         userClassPermission.setUser(user);
         userClassPermission.setClassName(clazz.getCanonicalName());
-        userClassPermission.setPermissions(permissionCollection.get());
+        userClassPermission.setPermission(permissionCollection.get());
 
         repository.save(userClassPermission);
     }
@@ -191,7 +191,7 @@ public class UserClassPermissionService extends BasePermissionService<UserClassP
      */
     private PermissionCollection getPermissionCollection(Optional<UserClassPermission> classPermission) {
         if (classPermission.isPresent()) {
-            return classPermission.get().getPermissions();
+            return classPermission.get().getPermission();
         }
 
         return new PermissionCollection();

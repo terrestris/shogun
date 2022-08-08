@@ -52,7 +52,7 @@ public abstract class BasePermission extends BaseEntity {
     @Fetch(FetchMode.JOIN)
     @Audited(targetAuditMode = NOT_AUDITED)
     @ToString.Exclude
-    private PermissionCollection permissions;
+    private PermissionCollection permission;
 
     @Override
     public boolean equals(Object o) {
