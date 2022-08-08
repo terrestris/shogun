@@ -1,0 +1,1 @@
+ALTER TABLE IF EXISTS shogun.layers ALTER COLUMN source_config DROP NOT NULL;

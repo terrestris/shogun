@@ -1,0 +1,54 @@
+#  SHOGun, https://terrestris.github.io/shogun/
+#
+#  Copyright © 2020-present terrestris GmbH & Co. KG
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#    https://www.apache.org/licenses/LICENSE-2.0.txt
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+Configuration:
+  Appenders:
+    Console:
+      name: STDOUT
+      PatternLayout:
+        Pattern: '%highlight{%d{HH:mm:ss.SSS} %-5level %logger{36}.%M() @%L - %msg%n}{FATAL=red blink, ERROR=red, WARN=yellow bold, INFO=white, DEBUG=green bold, TRACE=blue}'
+  Loggers:
+    Root:
+      level: info
+      AppenderRef:
+        ref: STDOUT
+
+    logger:
+      - name: de.terrestris
+        level: info
+      - name: org.flywaydb
+        level: info
+      - name: com.zaxxer.hikari
+        level: info
+      - name: io.lettuce
+        level: info
+      - name: io.netty
+        level: info
+      - name: springfox.documentation
+        level: info
+      - name: org.thymeleaf
+        level: info
+      - name: org.hibernate
+        level: info
+      - name: org.hibernate.SQL
+        level: info
+      - name: org.hibernate.type.descriptor.sql
+        level: info
+      - name: org.springframework.boot
+        level: info
+      - name: org.springframework
+        level: info
+      - name: org.keycloak
+        level: info

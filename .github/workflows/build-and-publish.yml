@@ -1,0 +1,53 @@
+name: Build and publish SHOGun
+
+on:
+  push:
+    branches:
+      - main
+  release:
+    types: [published]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-20.04
+
+    steps:
+    - name: Checkout sources
+      uses: actions/checkout@v2
+      with:
+        # Disabling shallow clone is recommended for improving relevancy of reporting
+        fetch-depth: 0
+
+    - name: Set up Java 17
+      uses: actions/setup-java@v1.4.3
+      with:
+        java-version: 17
+        java-package: jdk
+        architecture: x64
+
+    - name: Handle caching of maven repository
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+
+    - name: Create maven settings.xml with credentials
+      uses: whelk-io/maven-settings-xml-action@v2
+      with:
+        servers: '[
+                    { "id": "nexus.terrestris.de", "username": "${{ secrets.NEXUS_USER }}", "password": "${{ secrets.NEXUS_PASSWORD }}" },
+                    { "id": "terrestris-nexus", "username": "${{ secrets.NEXUS_USER }}", "password": "${{ secrets.NEXUS_PASSWORD }}" },
+                    { "id": "terrestris-nexus-snapshots", "username": "${{ secrets.NEXUS_USER }}", "password": "${{ secrets.NEXUS_PASSWORD }}" }
+                  ]'
+
+    - name: Build SHOGun with Maven and publish artifacts to nexus
+      run: mvn -B deploy
+
+    - name: Scan for Unit Tests
+      run: mvn clean verify sonar:sonar -Dsonar.projectKey=SHOGun -Dsonar.login="${{ secrets.SONARQUBE_TOKEN }}" -Preporting
+
+    - name: Refresh SonarQube
+      run: mvn compile sonar:sonar -Dsonar.projectKey=SHOGun -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }} -Dsonar.login="${{ secrets.SONARQUBE_TOKEN }}"
