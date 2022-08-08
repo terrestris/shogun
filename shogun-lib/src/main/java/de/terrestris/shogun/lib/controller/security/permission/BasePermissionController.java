@@ -27,7 +27,6 @@ import de.terrestris.shogun.lib.model.security.permission.GroupClassPermission;
 import de.terrestris.shogun.lib.model.security.permission.GroupInstancePermission;
 import de.terrestris.shogun.lib.model.security.permission.UserClassPermission;
 import de.terrestris.shogun.lib.model.security.permission.UserInstancePermission;
-import de.terrestris.shogun.lib.repository.ApplicationRepository;
 import de.terrestris.shogun.lib.service.BaseService;
 import de.terrestris.shogun.lib.service.GroupService;
 import de.terrestris.shogun.lib.service.UserService;
@@ -55,9 +54,6 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
 
     @Autowired
     protected MessageSource messageSource;
-
-    @Autowired
-    protected ApplicationRepository applicationRepository;
 
     @Autowired
     protected UserService userService;
