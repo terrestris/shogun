@@ -15,6 +15,9 @@ jobs:
     steps:
     - name: Checkout sources
       uses: actions/checkout@v2
+      with:
+        # Disabling shallow clone is recommended for improving relevancy of reporting
+        fetch-depth: 0
 
     - name: Set up Java 17
       uses: actions/setup-java@v1.4.3
@@ -42,3 +45,9 @@ jobs:
 
     - name: Build SHOGun with Maven and publish artifacts to nexus
       run: mvn -B deploy
+
+    - name: Scan for unit tests
+      run: mvn clean verify sonar:sonar -Dsonar.projectKey=SHOGun -Dsonar.login="${{ secrets.SONARQUBE_TOKEN }}" -Preporting
+
+    - name: Refresh SonarQube
+      run: mvn compile sonar:sonar -Dsonar.projectKey=SHOGun -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }} -Dsonar.login="${{ secrets.SONARQUBE_TOKEN }}"
