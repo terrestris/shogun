@@ -18,7 +18,7 @@
 
 package de.terrestris.shogun.lib.controller.security.permission;
 
-import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
+import de.terrestris.shogun.lib.dto.PermissionCollectionTypeDto;
 import de.terrestris.shogun.lib.exception.security.permission.*;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.Group;
@@ -363,14 +363,14 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
 
     @PostMapping("/{id}/permissions/instance/user/{userId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public void addUserInstancePermission(
+    public void setUserInstancePermission(
         @PathVariable("id") Long entityId,
         @PathVariable("userId") Long userId,
-        @RequestBody PermissionCollectionType permissionType
+        @RequestBody PermissionCollectionTypeDto permissionType
     ) {
         log.trace("Requested to set the user instance permission for entity of " +
             "type {} with ID {} for user with ID {} to {}", getGenericClassName(), entityId,
-            userId, permissionType);
+            userId, permissionType.getPermission());
 
         try {
             Optional<S> entity = service.findOne(entityId);
@@ -384,7 +384,7 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
                 throw new UserNotFoundException(userId, messageSource);
             }
 
-            userInstancePermissionService.setPermission(entity.get(), user.get(), permissionType);
+            userInstancePermissionService.setPermission(entity.get(), user.get(), permissionType.getPermission());
 
             log.trace("Successfully set the user instance permission for entity " +
                 "of type {} with ID {} for user with ID {}", getGenericClassName(), entityId, userId);
@@ -399,14 +399,14 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
 
     @PostMapping("/{id}/permissions/instance/group/{groupId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public void addGroupInstancePermission(
+    public void setGroupInstancePermission(
         @PathVariable("id") Long entityId,
         @PathVariable("groupId") Long groupId,
-        @RequestBody PermissionCollectionType permissionType
+        @RequestBody PermissionCollectionTypeDto permissionType
     ) {
         log.trace("Requested to set the group instance permission for entity of " +
             "type {} with ID {} for group with ID {} to {}", getGenericClassName(), entityId,
-            groupId, permissionType);
+            groupId, permissionType.getPermission());
 
         try {
             Optional<S> entity = service.findOne(entityId);
@@ -420,7 +420,7 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
                 throw new GroupNotFoundException(groupId, messageSource);
             }
 
-            groupInstancePermissionService.setPermission(entity.get(), group.get(), permissionType);
+            groupInstancePermissionService.setPermission(entity.get(), group.get(), permissionType.getPermission());
 
             log.trace("Successfully set the group instance permission for entity " +
                 "of type {} with ID {} for group with ID {}", getGenericClassName(), entityId, groupId);
@@ -435,14 +435,14 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
 
     @PostMapping("/{id}/permissions/class/user/{userId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public void addUserClassPermission(
+    public void setUserClassPermission(
         @PathVariable("id") Long entityId,
         @PathVariable("userId") Long userId,
-        @RequestBody PermissionCollectionType permissionType
+        @RequestBody PermissionCollectionTypeDto permissionType
     ) {
         log.trace("Requested to set the user class permission for entity of " +
             "type {} with ID {} for user with ID {} to {}", getGenericClassName(), entityId,
-            userId, permissionType);
+            userId, permissionType.getPermission());
 
         try {
             Optional<S> entity = service.findOne(entityId);
@@ -457,7 +457,7 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
             }
 
             userClassPermissionService.setPermission(entity.get().getClass(),
-                user.get(), permissionType);
+                user.get(), permissionType.getPermission());
 
             log.trace("Successfully set the user class permission for entity " +
                 "of type {} with ID {} for user with ID {}", getGenericClassName(), entityId, userId);
@@ -472,14 +472,14 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
 
     @PostMapping("/{id}/permissions/class/group/{groupId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public void addGroupClassPermission(
+    public void setGroupClassPermission(
         @PathVariable("id") Long entityId,
         @PathVariable("groupId") Long groupId,
-        @RequestBody PermissionCollectionType permissionType
+        @RequestBody PermissionCollectionTypeDto permissionType
     ) {
         log.trace("Requested to set the group class permission for entity of " +
             "type {} with ID {} for user with ID {} to {}", getGenericClassName(), entityId,
-            groupId, permissionType);
+            groupId, permissionType.getPermission());
 
         try {
             Optional<S> entity = service.findOne(entityId);
@@ -494,7 +494,7 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
             }
 
             groupClassPermissionService.setPermission(entity.get().getClass(),
-                group.get(), permissionType);
+                group.get(), permissionType.getPermission());
 
             log.trace("Successfully set the group class permission for entity " +
                 "of type {} with ID {} for group with ID {}", getGenericClassName(), entityId, groupId);
