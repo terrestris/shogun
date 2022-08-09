@@ -51,10 +51,13 @@ public class GroupClassPermissionService extends BasePermissionService<GroupClas
      * @return The permissions.
      */
     public List<GroupClassPermission> findFor(BaseEntity entity) {
-
         log.trace("Getting all group class permissions for entity with ID {}", entity.getId());
 
-        return repository.findByClassName(entity.getClass().getCanonicalName());
+        List<GroupClassPermission> permissions = repository.findByClassName(entity.getClass().getCanonicalName());
+
+        setAuthProviderRepresentation(permissions);
+
+        return permissions;
     }
 
     /**
@@ -64,11 +67,14 @@ public class GroupClassPermissionService extends BasePermissionService<GroupClas
      * @return The permissions.
      */
     public List<GroupClassPermission> findFor(Group group) {
-
         log.trace("Getting all group class permissions for group with Keycloak ID {}",
             group.getAuthProviderId());
 
-        return repository.findAllByGroup(group);
+        List<GroupClassPermission> permissions = repository.findAllByGroup(group);
+
+        setAuthProviderRepresentation(permissions);
+
+        return permissions;
     }
 
     /**
@@ -84,7 +90,13 @@ public class GroupClassPermissionService extends BasePermissionService<GroupClas
         log.trace("Getting all group class permissions for group with Keycloak ID {} and " +
             "entity class {}", group.getAuthProviderId(), className);
 
-        return repository.findByGroupIdAndClassName(group.getId(), className);
+        Optional<GroupClassPermission> permission = repository.findByGroupIdAndClassName(group.getId(), className);
+
+        if (permission.isPresent()) {
+            setAuthProviderRepresentation(permission.get());
+        }
+
+        return permission;
     }
 
     /**
@@ -100,7 +112,13 @@ public class GroupClassPermissionService extends BasePermissionService<GroupClas
         log.trace("Getting all group class permissions for group with Keycloak ID {} and " +
             "entity class {}", group.getAuthProviderId(), className);
 
-        return repository.findByGroupIdAndClassName(group.getId(), className);
+        Optional<GroupClassPermission> permission = repository.findByGroupIdAndClassName(group.getId(), className);
+
+        if (permission.isPresent()) {
+            setAuthProviderRepresentation(permission.get());
+        }
+
+        return permission;
     }
 
     /**
@@ -130,6 +148,7 @@ public class GroupClassPermissionService extends BasePermissionService<GroupClas
 
             if (permissionsForGroup.isPresent()) {
                 gcp = permissionsForGroup;
+                setAuthProviderRepresentation(gcp.get());
                 break;
             }
         }
@@ -147,7 +166,6 @@ public class GroupClassPermissionService extends BasePermissionService<GroupClas
      * @return The (optional) permission.
      */
     public Optional<GroupClassPermission> findFor(BaseEntity entity, Group group, User user) {
-
         log.trace("Getting all group class permissions for user with Keycloak ID {} and " +
                 "entity with ID {} in the context of group with Keycloak ID {}", user.getAuthProviderId(),
             entity.getId(), group.getAuthProviderId());
@@ -161,7 +179,13 @@ public class GroupClassPermissionService extends BasePermissionService<GroupClas
             return Optional.empty();
         }
 
-        return repository.findByGroupIdAndClassName(group.getId(), entity.getClass().getCanonicalName());
+        Optional<GroupClassPermission> permission = repository.findByGroupIdAndClassName(group.getId(), entity.getClass().getCanonicalName());
+
+        if (permission.isPresent()) {
+            setAuthProviderRepresentation(permission.get());
+        }
+
+        return permission;
     }
 
     /**
@@ -290,5 +314,13 @@ public class GroupClassPermissionService extends BasePermissionService<GroupClas
         } else {
             log.warn("Could not delete the group class permission. The requested permission does not exist.");
         }
+    }
+
+    private void setAuthProviderRepresentation(GroupClassPermission permission) {
+        groupProviderService.setTransientRepresentations(permission.getGroup());
+    }
+
+    private void setAuthProviderRepresentation(List<GroupClassPermission> permissions) {
+        permissions.forEach((groupClassPermission -> setAuthProviderRepresentation(groupClassPermission)));
     }
 }

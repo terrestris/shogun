@@ -98,10 +98,12 @@ public class UserService extends BaseService<UserRepository, User> {
     public void deleteByKeycloakId(String keycloakUserId) {
         Optional<User> userOptional = repository.findByAuthProviderId(keycloakUserId);
         User user = userOptional.orElse(null);
+
         if (user == null) {
             log.debug("User with keycloak id {} was deleted in Keycloak. It did not exists in SHOGun DB. No action needed.", keycloakUserId);
             return;
         }
+
         userInstancePermissionService.deleteAllFor(user);
         repository.delete(user);
         log.info("User with keycloak id {} was deleted in Keycloak and was therefore deleted in SHOGun DB, too.", keycloakUserId);

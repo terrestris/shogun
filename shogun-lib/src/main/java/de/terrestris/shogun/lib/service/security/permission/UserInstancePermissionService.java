@@ -25,6 +25,7 @@ import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
 import de.terrestris.shogun.lib.model.security.permission.UserInstancePermission;
 import de.terrestris.shogun.lib.repository.security.permission.PermissionCollectionRepository;
 import de.terrestris.shogun.lib.repository.security.permission.UserInstancePermissionRepository;
+import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,6 +42,9 @@ public class UserInstancePermissionService extends BasePermissionService<UserIns
     @Autowired
     protected PermissionCollectionRepository permissionCollectionRepository;
 
+    @Autowired
+    private UserProviderService userProviderService;
+
     /**
      * Returns all {@link UserInstancePermission} for the given query arguments.
      *
@@ -48,10 +52,13 @@ public class UserInstancePermissionService extends BasePermissionService<UserIns
      * @return The permissions
      */
     public List<UserInstancePermission> findFor(User user) {
-
         log.trace("Getting all user instance permissions for user {}", user);
 
-        return repository.findAllByUser(user);
+        List<UserInstancePermission> permissions = repository.findAllByUser(user);
+
+        setAuthProviderRepresentation(permissions);
+
+        return permissions;
     }
 
     /**
@@ -65,7 +72,14 @@ public class UserInstancePermissionService extends BasePermissionService<UserIns
         log.trace("Getting all user permissions for user with Keycloak ID {} and " +
             "entity with ID {}", user.getAuthProviderId(), entity);
 
-        return repository.findByUserIdAndEntityId(user.getId(), entity.getId());
+        Optional<UserInstancePermission> permission = repository.findByUserIdAndEntityId(
+            user.getId(), entity.getId());
+
+        if (permission.isPresent()) {
+            setAuthProviderRepresentation(permission.get());
+        }
+
+        return permission;
     }
 
     /**
@@ -77,7 +91,11 @@ public class UserInstancePermissionService extends BasePermissionService<UserIns
     public List<UserInstancePermission> findFor(BaseEntity entity) {
         log.trace("Getting all user permissions for entity with ID {}", entity.getId());
 
-        return repository.findByEntityId(entity.getId());
+        List<UserInstancePermission> permissions = repository.findByEntityId(entity.getId());
+
+        setAuthProviderRepresentation(permissions);
+
+        return permissions;
     }
 
     /**
@@ -92,10 +110,12 @@ public class UserInstancePermissionService extends BasePermissionService<UserIns
         log.trace("Getting all user permissions for entity with ID {} and permission " +
             "collection type {}", entity.getId(), permissionCollectionType);
 
-        List<UserInstancePermission> result = repository
+        List<UserInstancePermission> permissions = repository
             .findByEntityAndPermissionCollectionType(entity.getId(), permissionCollectionType);
 
-        return result;
+        setAuthProviderRepresentation(permissions);
+
+        return permissions;
     }
 
     /**
@@ -259,5 +279,13 @@ public class UserInstancePermissionService extends BasePermissionService<UserIns
         } else {
             log.warn("Could not delete the user instance permission. The requested permission does not exist.");
         }
+    }
+
+    private void setAuthProviderRepresentation(UserInstancePermission permission) {
+        userProviderService.setTransientRepresentations(permission.getUser());
+    }
+
+    private void setAuthProviderRepresentation(List<UserInstancePermission> permissions) {
+        permissions.forEach((userInstancePermission -> setAuthProviderRepresentation(userInstancePermission)));
     }
 }

@@ -52,11 +52,14 @@ public class GroupInstancePermissionService extends BasePermissionService<GroupI
      * @return The permissions.
      */
     public List<GroupInstancePermission> findFor(Group group) {
-
         log.trace("Getting all group instance permissions for group with Keycloak ID {}",
             group.getAuthProviderId());
 
-        return repository.findAllByGroup(group);
+        List<GroupInstancePermission> permissions = repository.findAllByGroup(group);
+
+        setAuthProviderRepresentation(permissions);
+
+        return permissions;
     }
 
     /**
@@ -80,7 +83,13 @@ public class GroupInstancePermissionService extends BasePermissionService<GroupI
         log.trace("Getting all group permissions for group with Keycloak ID {} and " +
             "entity with ID {}", group.getAuthProviderId(), entity.getId());
 
-        return repository.findByGroupIdAndEntityId(group.getId(), entity.getId());
+        Optional<GroupInstancePermission> permission = repository.findByGroupIdAndEntityId(group.getId(), entity.getId());
+
+        if (permission.isPresent()) {
+            setAuthProviderRepresentation(permission.get());
+        }
+
+        return permission;
     }
 
     /**
@@ -92,7 +101,11 @@ public class GroupInstancePermissionService extends BasePermissionService<GroupI
     public List<GroupInstancePermission> findFor(BaseEntity entity) {
         log.trace("Getting all group permissions for entity with ID {}", entity.getId());
 
-        return repository.findByEntityId(entity.getId());
+        List<GroupInstancePermission> permissions = repository.findByEntityId(entity.getId());
+
+        setAuthProviderRepresentation(permissions);
+
+        return permissions;
     }
 
     /**
@@ -110,17 +123,21 @@ public class GroupInstancePermissionService extends BasePermissionService<GroupI
         // Get all groups of the user from Keycloak
         List<Group> groups = groupProviderService.findByUser(user);
         Optional<GroupInstancePermission> gip = Optional.empty();
+
         if (groups == null) {
             return gip;
         }
+
         for (Group g : groups) {
             Optional<GroupInstancePermission> permissionsForGroup = repository
                 .findByGroupIdAndEntityId(g.getId(), entity.getId());
             if (permissionsForGroup.isPresent()) {
                 gip = permissionsForGroup;
+                setAuthProviderRepresentation(gip.get());
                 break;
             }
         }
+
         return gip;
     }
 
@@ -134,7 +151,6 @@ public class GroupInstancePermissionService extends BasePermissionService<GroupI
      * @return The (optional) permission.
      */
     public Optional<GroupInstancePermission> findFor(BaseEntity entity, Group group, User user) {
-
         log.trace("Getting all group instance permissions for user with Keycloak ID {} " +
                 "and entity with ID {} in the context of group with Keycloak ID {}",
             user.getAuthProviderId(), entity.getId(), group.getAuthProviderId());
@@ -148,7 +164,13 @@ public class GroupInstancePermissionService extends BasePermissionService<GroupI
             return Optional.empty();
         }
 
-        return repository.findByGroupIdAndEntityId(group.getId(), entity.getId());
+        Optional<GroupInstancePermission> permission = repository.findByGroupIdAndEntityId(group.getId(), entity.getId());
+
+        if (permission.isPresent()) {
+            setAuthProviderRepresentation(permission.get());
+        }
+
+        return permission;
     }
 
     /**
@@ -313,5 +335,13 @@ public class GroupInstancePermissionService extends BasePermissionService<GroupI
         }
 
         return new PermissionCollection();
+    }
+
+    private void setAuthProviderRepresentation(GroupInstancePermission permission) {
+        groupProviderService.setTransientRepresentations(permission.getGroup());
+    }
+
+    private void setAuthProviderRepresentation(List<GroupInstancePermission> permissions) {
+        permissions.forEach((groupInstancePermission -> setAuthProviderRepresentation(groupInstancePermission)));
     }
 }

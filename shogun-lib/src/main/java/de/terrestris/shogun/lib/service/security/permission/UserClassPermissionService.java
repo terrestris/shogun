@@ -50,11 +50,14 @@ public class UserClassPermissionService extends BasePermissionService<UserClassP
      * @return The permissions.
      */
     public List<UserClassPermission> findFor(User user) {
-
         log.trace("Getting all user class permissions for user with Keycloak ID {}",
             user.getAuthProviderId());
 
-        return repository.findAllByUser(user);
+        List<UserClassPermission> permissions = repository.findAllByUser(user);
+
+        setAuthProviderRepresentation(permissions);
+
+        return permissions;
     }
 
     /**
@@ -68,7 +71,11 @@ public class UserClassPermissionService extends BasePermissionService<UserClassP
 
         log.trace("Getting all user class permissions for entity class {}", className);
 
-        return repository.findByClassName(className);
+        List<UserClassPermission> permissions = repository.findByClassName(className);
+
+        setAuthProviderRepresentation(permissions);
+
+        return permissions;
     }
 
     /**
@@ -84,7 +91,13 @@ public class UserClassPermissionService extends BasePermissionService<UserClassP
         log.trace("Getting all user class permissions for user with Keycloak ID {} and " +
             "entity class {}", user.getAuthProviderId(), className);
 
-        return repository.findByUserIdAndClassName(user.getId(), className);
+        Optional<UserClassPermission> permission = repository.findByUserIdAndClassName(user.getId(), className);
+
+        if (permission.isPresent()) {
+            setAuthProviderRepresentation(permission.get());
+        }
+
+        return permission;
     }
 
     /**
@@ -99,7 +112,13 @@ public class UserClassPermissionService extends BasePermissionService<UserClassP
         log.trace("Getting all user class permissions for user with Keycloak ID {} and " +
             "entity class {}", user.getAuthProviderId(), entity.getClass().getCanonicalName());
 
-        return repository.findByUserIdAndClassName(user.getId(), entity.getClass().getCanonicalName());
+        Optional<UserClassPermission> permission = repository.findByUserIdAndClassName(user.getId(), entity.getClass().getCanonicalName());
+
+        if (permission.isPresent()) {
+            setAuthProviderRepresentation(permission.get());
+        }
+
+        return permission;
     }
 
     /**
@@ -217,5 +236,13 @@ public class UserClassPermissionService extends BasePermissionService<UserClassP
         } else {
             log.warn("Could not delete the user class permission. The requested permission does not exist.");
         }
+    }
+
+    private void setAuthProviderRepresentation(UserClassPermission permission) {
+        userProviderService.setTransientRepresentations(permission.getUser());
+    }
+
+    private void setAuthProviderRepresentation(List<UserClassPermission> permissions) {
+        permissions.forEach((userClassPermission -> setAuthProviderRepresentation(userClassPermission)));
     }
 }
