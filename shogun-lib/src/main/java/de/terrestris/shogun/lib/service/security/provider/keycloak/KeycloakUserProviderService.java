@@ -24,9 +24,10 @@ import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import de.terrestris.shogun.lib.util.KeycloakUtil;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
+import org.keycloak.admin.client.resource.RealmResource;
+import org.keycloak.admin.client.resource.RoleMappingResource;
 import org.keycloak.admin.client.resource.UserResource;
-import org.keycloak.representations.idm.GroupRepresentation;
-import org.keycloak.representations.idm.UserRepresentation;
+import org.keycloak.representations.idm.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.ApplicationEventPublisher;
@@ -36,8 +37,8 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static de.terrestris.shogun.lib.util.KeycloakUtil.getKeycloakUserIdFromAuthentication;
 
@@ -52,6 +53,9 @@ public class KeycloakUserProviderService implements UserProviderService<UserRepr
 
     @Autowired
     KeycloakUtil keycloakUtil;
+
+    @Autowired
+    RealmResource keycloakRealm;
 
     @Autowired
     UserRepository userRepository;
@@ -106,10 +110,51 @@ public class KeycloakUserProviderService implements UserProviderService<UserRepr
     }
 
     public User<UserRepresentation> setTransientRepresentations(User<UserRepresentation> user) {
-        UserResource userResource = keycloakUtil.getUserResource(user);
+        UserResource userResource = keycloakRealm.users().get(user.getAuthProviderId());
+        RoleMappingResource roles = userResource.roles();
+        List<RoleRepresentation> effectiveRealmRoles = roles.realmLevel().listEffective();
+        Map<String, ClientMappingsRepresentation> clientMappings = roles.getAll().getClientMappings();
+
+        HashMap<String, List<String>> clientRoles = new HashMap<>();
+        ArrayList<String> realmRoles = new ArrayList<>();
+
+        if (effectiveRealmRoles != null) {
+            effectiveRealmRoles.stream().forEach(effectiveRealmRole -> {
+                boolean isComposite = effectiveRealmRole.isComposite();
+                boolean isClientRole = effectiveRealmRole.getClientRole();
+
+                    if (isComposite && !isClientRole) {
+                        List<ClientRepresentation> clients = keycloakRealm.clients().findAll();
+
+                            if (clients != null) {
+                                clients.stream().forEach(client -> {
+                                    List<RoleRepresentation> effectiveClientRoles = roles.clientLevel(client.getId()).listEffective();
+
+                                        if (effectiveClientRoles != null) {
+                                            List<String> roleNames = effectiveClientRoles.stream()
+                                                .map(effectiveRole -> effectiveRole.getName())
+                                                .collect(Collectors.toList());
+
+                                            clientRoles.put(client.getClientId(), roleNames);
+                                        }
+                                });
+                            }
+                    }
+
+                    realmRoles.add(effectiveRealmRole.getName());
+            });
+        }
+
+        if (clientMappings != null) {
+            clientMappings.forEach((client, role) -> {
+                clientRoles.put(client, role.getMappings().stream().map(mapping -> mapping.getName()).collect(Collectors.toList()));
+            });
+        }
 
         try {
             UserRepresentation userRepresentation = userResource.toRepresentation();
+            userRepresentation.setClientRoles(clientRoles);
+            userRepresentation.setRealmRoles(realmRoles);
             user.setProviderDetails(userRepresentation);
         } catch (Exception e) {
             log.warn("Could not get the UserRepresentation for user with SHOGun ID {} and " +
