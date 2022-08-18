@@ -51,8 +51,6 @@ import static de.terrestris.shogun.lib.util.KeycloakUtil.getKeycloakUserIdFromAu
 @Component
 public class KeycloakGroupProviderService implements GroupProviderService<UserRepresentation, GroupRepresentation> {
 
-    public static final String groupUuidsClaimName = "groups_uuid";
-
     @Autowired
     KeycloakUtil keycloakUtil;
 

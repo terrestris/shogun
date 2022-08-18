@@ -14,18 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.terrestris.shogun.lib.security.access.entity;
+package de.terrestris.shogun.lib.dto;
 
-import de.terrestris.shogun.lib.enumeration.PermissionType;
-import de.terrestris.shogun.lib.model.User;
+import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-// https://insource.io/blog/articles/custom-authorization-with-spring-boot.html
-public interface EntityPermissionEvaluator<E> {
-    Class<E> getEntityClassName();
+import javax.validation.constraints.AssertTrue;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
-    boolean hasPermission(User user, E entity, PermissionType permission);
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+public class PermissionCollectionTypeDto {
 
-    boolean hasPermission(User user, Long entityId, String targetDomainType, PermissionType permission);
+    private PermissionCollectionType permission;
 
-    boolean hasPermission(User user, Class<?> clazz, PermissionType permission);
 }

@@ -14,18 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.terrestris.shogun.lib.security.access.entity;
+package de.terrestris.shogun.lib.service.security.permission;
 
-import de.terrestris.shogun.lib.enumeration.PermissionType;
-import de.terrestris.shogun.lib.model.User;
+import org.junit.Before;
 
-// https://insource.io/blog/articles/custom-authorization-with-spring-boot.html
-public interface EntityPermissionEvaluator<E> {
-    Class<E> getEntityClassName();
-
-    boolean hasPermission(User user, E entity, PermissionType permission);
-
-    boolean hasPermission(User user, Long entityId, String targetDomainType, PermissionType permission);
-
-    boolean hasPermission(User user, Class<?> clazz, PermissionType permission);
+public interface IBasePermissionServiceTest {
+    /**
+     * All service tests must call the init method (including the {@link Before})
+     * to set the desired service, repository and entity.
+     */
+    void init();
 }

@@ -16,8 +16,6 @@
  */
 package de.terrestris.shogun.lib.listener;
 
-import de.terrestris.shogun.lib.security.SecurityContextUtil;
-import de.terrestris.shogun.lib.service.UserService;
 import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import de.terrestris.shogun.lib.util.KeycloakUtil;
 import lombok.extern.log4j.Log4j2;
@@ -32,12 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Log4j2
 public class LoginListener implements ApplicationListener<InteractiveAuthenticationSuccessEvent> {
-
-    @Autowired
-    protected SecurityContextUtil securityContextUtil;
-
-    @Autowired
-    protected UserService userService;
 
     @Autowired
     private UserProviderService userProviderService;

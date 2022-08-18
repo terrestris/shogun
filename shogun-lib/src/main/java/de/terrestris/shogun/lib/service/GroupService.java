@@ -111,10 +111,12 @@ public class GroupService extends BaseService<GroupRepository, Group> {
     public void deleteByKeycloakId(String keycloakGroupId) {
         Optional<Group> groupOptional = repository.findByAuthProviderId(keycloakGroupId);
         Group group = groupOptional.orElse(null);
+
         if (group == null) {
             log.debug("Group with keycloak id {} was deleted in Keycloak. It did not exists in SHOGun DB. No action needed.", keycloakGroupId);
             return;
         }
+
         repository.delete(group);
         log.info("Group with keycloak id {} was deleted in Keycloak and was therefore deleted in SHOGun DB, too.", keycloakGroupId);
     }
