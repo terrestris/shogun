@@ -36,7 +36,8 @@ import java.util.HashMap;
 public class DefaultApplicationToolConfig implements ApplicationToolConfig {
     @Schema(
         description = "The name of the tool.",
-        example = "map-tool"
+        example = "map-tool",
+        required = true
     )
     private String name;
 
