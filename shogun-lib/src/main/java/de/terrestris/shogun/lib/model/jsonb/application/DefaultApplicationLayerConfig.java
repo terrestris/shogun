@@ -34,6 +34,13 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 public class DefaultApplicationLayerConfig implements LayerConfig {
+
+    @Schema(
+        description = "The ID of the layer to apply the custom configuration to.",
+        required = true
+    )
+    private Integer layerId;
+
     @Schema(
         description = "The configuration of the layer which should be used to define client specific aspects of " +
             "the layer. This may include the name, the visible resolution range, search configurations or similar."
