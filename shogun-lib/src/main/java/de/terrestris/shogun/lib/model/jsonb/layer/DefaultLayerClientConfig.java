@@ -74,5 +74,11 @@ public class DefaultLayerClientConfig implements LayerClientConfig {
         example = "anonymous"
     )
     private String crossOrigin;
+
+    @Schema(
+        description = "The default opacity of the layer.",
+        example = "1"
+    )
+    private Float opacity;
 }
 
