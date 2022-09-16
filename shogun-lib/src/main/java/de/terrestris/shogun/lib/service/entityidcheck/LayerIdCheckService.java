@@ -3,8 +3,8 @@
  *
  * Copyright © 2022-present terrestris GmbH & Co. KG
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *   https://www.apache.org/licenses/LICENSE-2.0.txt
@@ -15,11 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.terrestris.shogun.lib.repository.security.permission;
 
-import de.terrestris.shogun.lib.model.BaseEntity;
-import de.terrestris.shogun.lib.repository.BaseCrudRepository;
-import org.springframework.data.repository.NoRepositoryBean;
+package de.terrestris.shogun.lib.service.entityidcheck;
 
-@NoRepositoryBean
-public interface BasePermissionRepository<T extends BaseEntity, ID> extends BaseCrudRepository<T, ID> { }
+import de.terrestris.shogun.lib.model.Layer;
+import de.terrestris.shogun.lib.service.EntityIdCheckService;
+import org.springframework.stereotype.Service;
+
+@Service
+public class LayerIdCheckService extends EntityIdCheckService<Layer> {}

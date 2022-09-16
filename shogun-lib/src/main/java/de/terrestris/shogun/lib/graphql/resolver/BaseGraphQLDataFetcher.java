@@ -44,6 +44,9 @@ public abstract class BaseGraphQLDataFetcher<E extends BaseEntity, S extends Bas
     @Autowired
     protected ObjectMapper objectMapper;
 
+//    @Autowired
+//    protected EntityIdCheckService<E> idCheckService;
+
     @Autowired
     protected S service;
 
@@ -128,6 +131,13 @@ public abstract class BaseGraphQLDataFetcher<E extends BaseEntity, S extends Bas
                 Collectors.toList()));
         };
     }
+
+//    public DataFetcher<List<Long>> entityIdStartsWith() {
+//        return dataFetchingEnvironment -> {
+//            Long searchId = dataFetchingEnvironment.getArgument("id");
+//            return searchId == null ? List.of() : idCheckService.idStartsWith(searchId);
+//        };
+//    }
 
     public DataFetcher<E> create() {
         return dataFetchingEnvironment -> {

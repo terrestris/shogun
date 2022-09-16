@@ -25,7 +25,7 @@ import javax.persistence.QueryHint;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends BaseCrudRepository<User, Long>, JpaSpecificationExecutor<User> {
+public interface UserRepository extends BaseCrudRepository<User, Long>, JpaSpecificationExecutor<User>, EntityIdCheckRepository<User> {
 
     @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
     Optional<User> findByAuthProviderId(String authProviderId);

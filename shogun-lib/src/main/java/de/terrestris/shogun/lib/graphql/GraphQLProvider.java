@@ -153,6 +153,11 @@ public class GraphQLProvider {
             .dataFetcher(queryAllByIdsName, dataFetcher.findAllByIds()));
         log.debug("Added GraphQL query {}", queryAllByIdsName);
 
+//        String idStartsWith = String.format("%sIdStartsWith", simpleClassName);
+//        typeBuilders.add(TypeRuntimeWiring.newTypeWiring("Query")
+//            .dataFetcher(idStartsWith, dataFetcher.entityIdStartsWith()));
+//        log.debug("Added GraphQL query {}", idStartsWith);
+
         String createName = String.format("create%s", simpleClassName);
         typeBuilders.add(TypeRuntimeWiring.newTypeWiring("Mutation")
             .dataFetcher(createName, dataFetcher.create()));

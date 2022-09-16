@@ -17,14 +17,17 @@
 package de.terrestris.shogun.lib.repository;
 
 import de.terrestris.shogun.lib.model.Application;
-import java.util.Optional;
-import javax.persistence.QueryHint;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.QueryHint;
+import java.util.Optional;
+
 @Repository
-public interface ApplicationRepository extends BaseCrudRepository<Application, Long>, JpaSpecificationExecutor<Application> {
+@Qualifier("applicationRepository")
+public interface ApplicationRepository extends BaseCrudRepository<Application, Long>, JpaSpecificationExecutor<Application>, EntityIdCheckRepository<Application> {
 
     @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
     Optional<Application> findByName(String name);

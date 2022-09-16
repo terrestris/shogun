@@ -16,9 +16,27 @@
  */
 package de.terrestris.shogun.lib.graphql.resolver;
 
+import de.terrestris.shogun.lib.annotation.GraphQLQuery;
 import de.terrestris.shogun.lib.model.Application;
 import de.terrestris.shogun.lib.service.ApplicationService;
+import de.terrestris.shogun.lib.service.entityidcheck.ApplicationIdCheckService;
+import graphql.schema.DataFetcher;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
-public class ApplicationGraphQLDataFetcher extends BaseGraphQLDataFetcher<Application, ApplicationService> { }
+public class ApplicationGraphQLDataFetcher extends BaseGraphQLDataFetcher<Application, ApplicationService> {
+
+    @Autowired
+    protected ApplicationIdCheckService applicationIdCheckService;
+
+    @GraphQLQuery(name = "applicationIdStartsWith")
+    public DataFetcher<List<Long>> applicationIdStartsWith() {
+        return dataFetchingEnvironment -> {
+            Long searchId = dataFetchingEnvironment.getArgument("id");
+            return searchId == null ? List.of() : applicationIdCheckService.idStartsWith(searchId);
+        };
+    }
+}

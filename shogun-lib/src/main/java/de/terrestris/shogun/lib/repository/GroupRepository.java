@@ -25,7 +25,7 @@ import javax.persistence.QueryHint;
 import java.util.Optional;
 
 @Repository
-public interface GroupRepository extends BaseCrudRepository<Group, Long>, JpaSpecificationExecutor<Group> {
+public interface GroupRepository extends BaseCrudRepository<Group, Long>, JpaSpecificationExecutor<Group>, EntityIdCheckRepository<Group> {
 
     @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
     Optional<Group> findByAuthProviderId(String authProviderId);

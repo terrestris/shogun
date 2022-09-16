@@ -141,6 +141,23 @@ type Query {
     allApplicationsByIds(ids: [Int]): [Application]
 
     """
+    Returns a list of existing application ids starting with `id`.
+
+    Example:
+
+    ```
+    query {
+        applicationIdStartsWith(id: 1) {
+            id
+        }
+    }
+    ```
+
+    TODO: The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
+    applicationIdStartsWith(id: Long): [Long]
+
+    """
     Returns all files.
 
     Example:
@@ -191,6 +208,23 @@ type Query {
     The query takes the current user into account and filters all entities by the `READ` permission of the user.
     """
     allFilesByIds(ids: [Int]): [File]
+
+    """
+    Returns a list of existing file ids starting with `id`.
+
+    Example:
+
+    ```
+    query {
+        fileIdStartsWith(id: 1) {
+            id
+        }
+    }
+    ```
+
+    TODO: The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
+    fileIdStartsWith(id: Long): [Long]
 
     """
     Returns all groups.
@@ -309,6 +343,23 @@ type Query {
     allGroupsByIds(ids: [Int]): [Group]
 
     """
+    Returns a list of existing group ids starting with `id`.
+
+    Example:
+
+    ```
+    query {
+        groupIdStartsWith(id: 1) {
+            id
+        }
+    }
+    ```
+
+    TODO: The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
+    groupIdStartsWith(id: Long): [Long]
+
+    """
     Returns all imagefiles.
 
     Example:
@@ -359,6 +410,23 @@ type Query {
     The query takes the current user into account and filters all entities by the `READ` permission of the user.
     """
     allImageFilesByIds(ids: [Int]): [ImageFile]
+
+    """
+    Returns a list of existing imageFile ids starting with `id`.
+
+    Example:
+
+    ```
+    query {
+        imageFileIdStartsWith(id: 1) {
+            id
+        }
+    }
+    ```
+
+    TODO: The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
+    imageFileIdStartsWith(id: Long): [Long]
 
     """
     Returns all layers.
@@ -479,6 +547,23 @@ type Query {
     allLayersByIds(ids: [Int]): [Layer]
 
     """
+    Returns a list of existing layer ids starting with `id`.
+
+    Example:
+
+    ```
+    query {
+        layerIdStartsWith(id: 1) {
+            id
+        }
+    }
+    ```
+
+    TODO: The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
+    layerIdStartsWith(id: Long): [Long]
+
+    """
     Returns all users.
 
     Example:
@@ -593,6 +678,23 @@ type Query {
     The query takes the current user into account and filters all entities by the `READ` permission of the user.
     """
     allUsersByIds(ids: [Int]): [User]
+
+    """
+    Returns a list of existing user ids starting with `id`.
+
+    Example:
+
+    ```
+    query {
+        userIdStartsWith(id: 1) {
+            id
+        }
+    }
+    ```
+
+    TODO: The query takes the current user into account and filters all entities by the `READ` permission of the user.
+    """
+    userIdStartsWith(id: Long): [Long]
 }
 
 """
