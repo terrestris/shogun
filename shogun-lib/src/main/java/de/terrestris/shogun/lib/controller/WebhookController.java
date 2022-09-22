@@ -52,7 +52,8 @@ public class WebhookController {
             case "GROUP_MEMBERSHIP" -> applicationEventPublisher.publishEvent(new KeycloakEvent(
                 this,
                 KeycloakEventType.USER_GROUP_MEMBERSHIP_CHANGED,
-                split[1]
+                split[1],
+                split[3]
             ));
             case "USER" -> {
                 if (StringUtils.equals(eventType, "CREATE")) {
