@@ -26,9 +26,23 @@ public class KeycloakEvent extends ApplicationEvent {
     @Getter
     private final String keycloakId;
 
+    /**
+     * In case of a `USER_GROUP_MEMBERSHIP_CHANGED` event, the additionalKeycloakId will contain the keycloak id of the changed group.
+     */
+    @Getter
+    private final String additionalKeycloakId;
+
     public KeycloakEvent(Object source, KeycloakEventType eventType, String keycloakId) {
         super(source);
         this.eventType = eventType;
         this.keycloakId = keycloakId;
+        this.additionalKeycloakId = null;
+    }
+
+    public KeycloakEvent(Object source, KeycloakEventType eventType, String keycloakId, String additionalKeycloakId) {
+        super(source);
+        this.eventType = eventType;
+        this.keycloakId = keycloakId;
+        this.additionalKeycloakId = additionalKeycloakId;
     }
 }
