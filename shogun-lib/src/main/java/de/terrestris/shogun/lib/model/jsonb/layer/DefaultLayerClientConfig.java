@@ -60,6 +60,11 @@ public class DefaultLayerClientConfig implements LayerClientConfig {
     private Boolean searchable;
 
     @Schema(
+        description = "List of download configurations."
+    )
+    private ArrayList<DownloadConfig> downloadConfig;
+
+    @Schema(
         description = "The search configuration."
     )
     private Map<String, Object> searchConfig;
