@@ -2,7 +2,6 @@ package de.terrestris.shogun.boot.websocket;
 
 import de.terrestris.shogun.lib.util.KeycloakUtil;
 import lombok.extern.log4j.Log4j2;
-import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -10,6 +9,7 @@ import org.springframework.messaging.simp.user.SimpSubscriptionMatcher;
 import org.springframework.messaging.simp.user.SimpUser;
 import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
@@ -74,7 +74,7 @@ public class SocketService {
         Set<String> subscribedAdminUsers = getSubscribedUsers(subscription -> {
             SimpUser simpUser = subscription.getSession().getUser();
 
-            return ((KeycloakAuthenticationToken) simpUser.getPrincipal()).getAuthorities()
+            return ((JwtAuthenticationToken) simpUser.getPrincipal()).getAuthorities()
                 .contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
         }).stream()
             .map(user -> user.getName())

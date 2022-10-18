@@ -44,13 +44,17 @@ public interface DefaultWebSecurityConfig extends WebSecurityConfig {
                     "/v3/api-docs/swagger-config",
                     // Enable anonymous access to GraphiQL
                     "/graphiql/**"
+                    "/webjars/springfox-swagger-ui/**",
+                    "/swagger-resources/**",
+                    "/v2/api-docs",
+                    "/ws/**",
+                    "/websocket/**"
                 )
                     .permitAll()
                 .requestMatchers(
                     "/actuator/**",
                     "/cache/**",
-                    "/webhooks/**",
-                    "/ws/**"
+                    "/webhooks/**"
                 )
                     .hasRole("ADMIN")
                 .anyRequest()
