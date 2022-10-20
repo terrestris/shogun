@@ -40,6 +40,9 @@ spring:
           starttls:
             enable: true
           timeout: 8000
+  graphql:
+    graphiql:
+      enabled: true
 
 server:
   port: 8080
