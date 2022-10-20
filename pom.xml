@@ -143,7 +143,7 @@
     <mockito.version>4.4.0</mockito.version>
     <maven-dependency-plugin.version>3.3.0</maven-dependency-plugin.version>
     <maven-project-info-reports-plugin.version>3.2.1</maven-project-info-reports-plugin.version>
-    <archunit.version>0.23.1</archunit.version>
+    <archunit.version>1.0.0</archunit.version>
     <sonar-maven-plugin.version>3.9.1.2184</sonar-maven-plugin.version>
   </properties>
 
