@@ -111,7 +111,7 @@
     <jackson-bom.version>2.13.2.20220328</jackson-bom.version>
 
     <!-- Security -->
-    <keycloak.version>18.0.2</keycloak.version>
+    <keycloak.version>19.0.3</keycloak.version>
 
     <!-- Database -->
     <hibernate-extra-types.version>2.20.0</hibernate-extra-types.version>
