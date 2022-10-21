@@ -117,9 +117,7 @@
     <hibernate-extra-types.version>2.20.0</hibernate-extra-types.version>
 
     <!-- Swagger/REST -->
-    <springfox.version>3.0.0</springfox.version>
-    <swagger.version>2.1.1</swagger.version>
-    <swagger-codegen-maven-plugin.version>2.4.29</swagger-codegen-maven-plugin.version>
+    <springdoc-openapi.version>1.6.12</springdoc-openapi.version>
 
     <!-- JSON/Dataformats -->
     <jackson-datatype-jts.version>1.0-2.7</jackson-datatype-jts.version>
@@ -159,11 +157,6 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
           <version>${maven-dependency-plugin.version}</version>
-        </plugin>
-        <plugin>
-           <groupId>io.swagger</groupId>
-          <artifactId>swagger-codegen-maven-plugin</artifactId>
-          <version>${swagger-codegen-maven-plugin.version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -378,14 +371,9 @@
 
       <!-- Swagger -->
       <dependency>
-        <groupId>io.springfox</groupId>
-        <artifactId>springfox-swagger-ui</artifactId>
-        <version>${springfox.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.springfox</groupId>
-        <artifactId>springfox-boot-starter</artifactId>
-        <version>${springfox.version}</version>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi-ui</artifactId>
+        <version>${springdoc-openapi.version}</version>
       </dependency>
 
       <!-- Spring -->

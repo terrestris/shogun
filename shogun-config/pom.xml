@@ -55,8 +55,8 @@
 
     <!-- Swagger -->
     <dependency>
-      <groupId>io.springfox</groupId>
-      <artifactId>springfox-boot-starter</artifactId>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-ui</artifactId>
     </dependency>
 
     <!-- Lombok -->
