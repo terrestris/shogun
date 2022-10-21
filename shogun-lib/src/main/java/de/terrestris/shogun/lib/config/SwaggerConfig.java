@@ -16,76 +16,79 @@
  */
 package de.terrestris.shogun.lib.config;
 
-import com.fasterxml.classmate.TypeResolver;
 import de.terrestris.shogun.lib.annotation.JsonSuperType;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springdoc.core.SpringDocUtils;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.schema.AlternateTypeRules;
-import springfox.documentation.service.*;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spi.service.contexts.SecurityContext;
-import springfox.documentation.spring.web.plugins.Docket;
 
-import java.util.*;
-import java.util.function.Predicate;
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 @EnableAutoConfiguration
 @Profile(value = {"!test"})
 public abstract class SwaggerConfig {
 
-    @Autowired
-    private TypeResolver typeResolver;
-
     protected String title = "SHOGun REST API";
     protected String description = "This is the REST API description of SHOGun";
     protected String version = "1.0.0";
     protected String termsOfServiceUrl = "https://www.terrestris.de/en/impressum/";
-    protected Contact contact = new Contact("terrestris GmbH & Co. KG", "www.terrestris.de", "info@terrestris.de");
+    protected String contactName = "terrestris GmbH & Co. KG";
+    protected String contactUrl = "www.terrestris.de";
+    protected String contactMail = "info@terrestris.de";
     protected String license = "Apache License, Version 2.0";
     protected String licenseUrl = "https://www.apache.org/licenses/LICENSE-2.0.txt";
 
     @Bean
-    public Docket api() {
-        Docket docket = new Docket(DocumentationType.SWAGGER_2)
-            .select()
-            .apis(RequestHandlerSelectors.any())
-            .paths(PathSelectors.any())
-            .build()
-            .apiInfo(apiInfo())
-            .securityContexts(Collections.singletonList(actuatorSecurityContext()))
-            .securitySchemes(Collections.singletonList(apiKey()));
+    protected OpenAPI apiInfo() {
+        OpenAPI api = new OpenAPI()
+            .info(
+                new Info()
+                    .title(title)
+                    .description(description)
+                    .version(version)
+                    .contact(
+                        new Contact()
+                            .name(contactName)
+                            .url(contactUrl)
+                            .email(contactMail)
+                    )
+                    .license(
+                        new License()
+                            .name(license)
+                            .url(licenseUrl)
+                    )
+            )
+            .components(
+                // TODO Make list of endpoints configurable?
+                new Components()
+                    .addSecuritySchemes(
+                        "bearer-key",
+                        new SecurityScheme()
+                            .type(SecurityScheme.Type.HTTP)
+                            .scheme("bearer")
+                            .bearerFormat("JWT")
+                    )
+            );
 
-        directModelSubsitutions(docket);
+        replaceJsonSuperTypes();
 
-        return docket;
+        return api;
     }
 
-    private SecurityContext actuatorSecurityContext() {
-        return SecurityContext.builder()
-            .securityReferences(Collections.singletonList(bearerTokenAuth()))
-            .forPaths(setSecurityContextPaths()::test)
-            .build();
-    }
-
-    private SecurityScheme apiKey() {
-        return new ApiKey("apiKey", "Authorization", "header");
-    }
-
-    private SecurityReference bearerTokenAuth() {
-        return new SecurityReference("apiKey", new AuthorizationScope[0]);
-    }
-
-    protected void directModelSubsitutions(Docket docket) {
+    protected void replaceJsonSuperTypes() {
         var reflections = new Reflections(new ConfigurationBuilder()
             .setUrls(ClasspathHelper.forJavaClassPath())
             .setScanners(
@@ -136,63 +139,7 @@ public abstract class SwaggerConfig {
             Class<?> superType = entry.getKey();
             Class<?> cl = entry.getValue();
 
-            docket.directModelSubstitute(superType, cl);
-            docket.alternateTypeRules(
-                AlternateTypeRules.newRule(
-                    typeResolver.resolve(List.class, superType),
-                    typeResolver.resolve(List.class, cl)
-                ),
-                AlternateTypeRules.newRule(
-                    typeResolver.resolve(Set.class, superType),
-                    typeResolver.resolve(Set.class, cl)
-                ),
-                AlternateTypeRules.newRule(
-                    typeResolver.resolve(Collection.class, superType),
-                    typeResolver.resolve(Collection.class, cl)
-                )
-            );
+            SpringDocUtils.getConfig().replaceWithClass(superType, cl);
         }
     }
-
-    protected ApiInfo apiInfo() {
-        return new ApiInfo(
-            title,
-            description,
-            version,
-            termsOfServiceUrl,
-            contact,
-            license,
-            licenseUrl,
-            Collections.emptyList()
-        );
-    }
-
-    /**
-     * Define the project specific paths that require BasicAuth authentication.
-     *
-     * Possible return values could be:
-     * <ul>
-     *     <li>{@link PathSelectors#none()}</li>
-     *     <li>{@link PathSelectors#any()}</li>
-     *     <li>{@link PathSelectors#regex(String)}</li>
-     *     <li>{@link PathSelectors#ant(String)}</li>
-     * </ul>
-     *
-     *  Some examples for specifying a custom list of endpoints:
-     *  <pre>
-     *  PathSelectors.ant("/files/**");
-     *  </pre>
-     *
-     *  <pre>
-     *  Predicates.or(
-     *      PathSelectors.ant("/files/**"),
-     *      PathSelectors.ant("/applications/**")
-     *  );
-     *  </pre>
-     *
-     *  The latter requires {@code com.google.guava} on the classpath.
-     *
-     * @return The predicate that defines the secured paths.
-     */
-    protected abstract Predicate<String> setSecurityContextPaths();
 }

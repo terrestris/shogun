@@ -17,14 +17,10 @@
 package de.terrestris.shogun.boot.config;
 
 import de.terrestris.shogun.lib.config.SwaggerConfig;
+import io.swagger.v3.oas.models.OpenAPI;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.service.ApiInfo;
-
-import java.util.Collections;
-import java.util.function.Predicate;
 
 @Configuration
 @EnableAutoConfiguration
@@ -32,21 +28,12 @@ import java.util.function.Predicate;
 public class BootSwaggerConfig extends SwaggerConfig {
 
     @Override
-    protected ApiInfo apiInfo() {
-        return new ApiInfo(
-            "SHOGun Boot REST-API",
-            description,
-            version,
-            termsOfServiceUrl,
-            contact,
-            license,
-            licenseUrl,
-            Collections.emptyList()
-        );
+    protected OpenAPI apiInfo() {
+        OpenAPI api = super.apiInfo();
+
+        api.getInfo().setTitle("SHOGun Boot REST-API");
+
+        return api;
     }
 
-    @Override
-    protected Predicate<String> setSecurityContextPaths() {
-        return PathSelectors.any();
-    }
 }
