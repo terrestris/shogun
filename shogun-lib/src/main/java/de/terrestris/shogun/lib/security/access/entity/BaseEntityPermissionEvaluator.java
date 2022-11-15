@@ -23,19 +23,23 @@ import de.terrestris.shogun.lib.model.security.permission.GroupClassPermission;
 import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
 import de.terrestris.shogun.lib.model.security.permission.UserClassPermission;
 import de.terrestris.shogun.lib.repository.BaseCrudRepository;
+import de.terrestris.shogun.lib.service.BaseService;
 import de.terrestris.shogun.lib.service.security.permission.GroupClassPermissionService;
 import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionService;
 import de.terrestris.shogun.lib.service.security.permission.UserClassPermissionService;
 import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Log4j2
 public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implements EntityPermissionEvaluator<E> {
@@ -229,5 +233,66 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
         // if the group has the ADMIN permission
         return groupClassPermissions.contains(permission) ||
             groupClassPermissions.contains(PermissionType.ADMIN);
+    }
+
+    /**
+     * Default <code>findAll</code> implementation which supports paging.
+     * Speeds up the permission check by utilizing two simplifications:
+     * 1) If the authenticated user has role `ADMIN` or has class-level permission it skips further permission checks.
+     * 2) Otherwise, user and group instance permissions are checked while querying the data. This removes the need for
+     * any additional filtering.
+     *
+     * @param user The authenticated user.
+     * @param pageable The paging configuration.
+     * @param repository The base entity repository used to fetch the entities.
+     * @return A page of entities.
+     */
+    @Override
+    public Page<E> findAll(User user, Pageable pageable, BaseCrudRepository<E, Long> repository) {
+        // check if user has role `ADMIN`
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        List<GrantedAuthority> authorities = new ArrayList<>(authentication.getAuthorities());
+        var isAdmin = authorities.stream().anyMatch(
+            grantedAuthority -> StringUtils.endsWithIgnoreCase(grantedAuthority.getAuthority(), "ADMIN")
+        );
+
+        if (isAdmin) {
+            return repository.findAll(pageable);
+        }
+
+        // check if user has permission through class permissions
+        Class<? extends BaseEntity> baseEntityClass = getBaseEntityClass();
+        Optional<UserClassPermission> userClassPermissions = userClassPermissionService.findFor(baseEntityClass, user);
+        if (userClassPermissions.isPresent()) {
+            boolean hasReadPermission = userClassPermissions.get().getPermission().getPermissions().contains(PermissionType.READ) ||
+                userClassPermissions.get().getPermission().getPermissions().contains(PermissionType.ADMIN);
+
+            if (hasReadPermission) {
+                return repository.findAll(pageable);
+            }
+        }
+
+        // todo: check group class permissions
+
+        // checks instance permissions for each entity
+        return repository.findAll(pageable, user.getId());
+    }
+
+    /**
+     * Returns the class of the {@link BaseEntity} this abstract class
+     * has been declared with, e.g. 'Application.class'.
+     *
+     * @return The class.
+     */
+    public Class<? extends BaseEntity> getBaseEntityClass() {
+        Class<? extends BaseEntity>[] resolvedTypeArguments = (Class<? extends BaseEntity>[]) GenericTypeResolver.resolveTypeArguments(getClass(),
+            BaseService.class);
+
+        if (resolvedTypeArguments != null && resolvedTypeArguments.length == 2) {
+            return resolvedTypeArguments[1];
+        } else {
+            return null;
+        }
     }
 }

@@ -21,12 +21,8 @@ import de.terrestris.shogun.lib.enumeration.PermissionType;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.security.access.entity.BaseEntityPermissionEvaluator;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 /**
  * Permission evaluator for {@link InterceptorRule}s
@@ -40,13 +36,13 @@ public class InterceptorRulePermissionEvaluator extends BaseEntityPermissionEval
     @Override
     public boolean hasPermission(User user, InterceptorRule entity, PermissionType permission) {
 
-
         if (securityContextUtil.isInterceptorAdmin()) {
             return true;
         }
 
         return super.hasPermission(user, entity, permission);
     }
+
 }
 
 

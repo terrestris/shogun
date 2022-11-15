@@ -47,7 +47,7 @@ import static de.terrestris.shogun.lib.util.KeycloakUtil.getKeycloakUserIdFromAu
  */
 @ConditionalOnExpression("${keycloak.enabled:true}")
 @Log4j2
-@Component
+@Component("keycloakUserProviderService")
 public class KeycloakUserProviderService implements UserProviderService<UserRepresentation> {
 
     @Autowired
