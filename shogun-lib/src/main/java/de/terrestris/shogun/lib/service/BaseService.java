@@ -24,7 +24,9 @@ import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.BaseCrudRepository;
+import de.terrestris.shogun.lib.security.access.entity.EntityPermissionEvaluator;
 import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionService;
+import de.terrestris.shogun.lib.service.security.permission.UserClassPermissionService;
 import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
 import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import lombok.extern.log4j.Log4j2;
@@ -33,6 +35,8 @@ import org.hibernate.envers.query.AuditEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.GenericTypeResolver;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
 import org.springframework.data.jpa.domain.Specification;
@@ -66,11 +70,18 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
 
     @Autowired
     @Lazy
+    protected UserClassPermissionService userClassPermissionService;
+
+    @Autowired
+    @Lazy
     protected GroupInstancePermissionService groupInstancePermissionService;
 
     @Autowired
     @Lazy
     protected UserProviderService userProviderService;
+
+    @Autowired
+    protected EntityPermissionEvaluator<S> entityPermissionEvaluator;
 
     @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
     @Transactional(readOnly = true)
@@ -78,10 +89,23 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
         return (List<S>) repository.findAll();
     }
 
+    @Transactional(readOnly = true)
+    public Page<S> findAll(Pageable pageable) {
+        // note: security check is done in permission evaluator
+        Optional<User> userOpt = userProviderService.getUserBySession();
+        return entityPermissionEvaluator.findAll(userOpt.orElseThrow(), pageable, repository);
+    }
+
     @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
     @Transactional(readOnly = true)
     public List<S> findAllBy(Specification specification) {
         return (List<S>) repository.findAll(specification);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Transactional(readOnly = true)
+    public Page<S> findAllBy(Specification specification, Pageable pageable) {
+        return (Page<S>) repository.findAll(specification, pageable);
     }
 
     @PostAuthorize("hasRole('ROLE_ADMIN') or hasPermission(returnObject.orElse(null), 'READ')")
