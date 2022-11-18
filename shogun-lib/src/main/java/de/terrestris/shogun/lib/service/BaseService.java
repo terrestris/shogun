@@ -143,9 +143,9 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'UPDATE')")
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public S updatePartial(S entity, JsonMergePatch patch) throws IOException, JsonPatchException {
-        JsonNode patched = patch.apply(objectMapper.convertValue(entity, JsonNode.class));
-        S updatedEntity = (S) objectMapper.treeToValue(patched, getBaseEntityClass());
-
+        JsonNode entityNode = objectMapper.valueToTree(entity);
+        JsonNode patchedEntityNode = patch.apply(entityNode);
+        S updatedEntity = objectMapper.readerForUpdating(entity).readValue(patchedEntityNode);
         return repository.save(updatedEntity);
     }
 
