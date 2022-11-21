@@ -178,10 +178,6 @@ public abstract class BaseServiceTest<U extends BaseService, S extends BaseEntit
         when(baseCrudRepositoryMock.findById(1909L)).thenReturn(Optional.of(mockEntity));
         when(baseCrudRepositoryMock.save(mockEntity)).thenReturn(mockEntity);
 
-        when(objectMapperMock.valueToTree(mockEntity)).thenReturn(returnNode);
-        when(objectMapperMock.readerForUpdating(mockEntity)).thenReturn(objectReaderMock);
-        when(objectReaderMock.readValue(returnNode)).thenReturn(mockEntity);
-
         S returnValue = (S) service.update(1909L, mockEntity);
 
         verify(baseCrudRepositoryMock, times(1)).findById(1909L);

@@ -25,6 +25,7 @@ import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.AuditTable;
 import org.hibernate.envers.Audited;
@@ -35,6 +36,7 @@ import java.util.Objects;
 
 @Entity(name = "applications")
 @Table(schema = "shogun")
+@DynamicUpdate
 @Audited
 @AuditTable(value = "applications_rev", schema = "shogun_rev")
 @Cacheable

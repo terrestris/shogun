@@ -24,10 +24,10 @@ import de.terrestris.shogun.lib.model.BaseEntity;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.*;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Objects;
@@ -35,6 +35,7 @@ import java.util.Set;
 
 @Entity(name = "permissions")
 @Table(schema = "shogun")
+@DynamicUpdate
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "permissions")
 @Getter

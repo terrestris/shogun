@@ -16,15 +16,11 @@
  */
 package de.terrestris.shogun.lib.controller;
 
+import com.github.fge.jsonpatch.mergepatch.JsonMergePatch;
 import de.terrestris.shogun.lib.controller.security.permission.BasePermissionController;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.service.BaseService;
 import lombok.extern.log4j.Log4j2;
-
-import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -37,6 +33,11 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Optional;
+
+// TODO Specify and type extension of BaseService
 @Log4j2
 public abstract class BaseController<T extends BaseService<?, S>, S extends BaseEntity> extends BasePermissionController<T, S> {
 
@@ -535,26 +536,15 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
         }
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public S updatePartial(@RequestBody Map<String, Object> values, @PathVariable("id") Long entityId) {
-        log.trace("Requested to partially update entity of type {} with ID {} ({})", getGenericClassName(), entityId, values);
+    public S updatePartial(@RequestBody JsonMergePatch patch, @PathVariable("id") Long entityId) {
+        log.trace("Requested to partially update entity of type {} with ID {} ({})", getGenericClassName(), entityId, patch);
 
         try {
-            Object idFromValues = values.get("id");
-            if (idFromValues == null) {
-                log.error("Field 'id' (entity {})is missing in the passed values: {}.", entityId, values);
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-            }
-            Long id = Long.valueOf((Integer) idFromValues);
-            if (!entityId.equals(id)) {
-                log.error("IDs of update candidate (ID: {}) and update data ({}) don't match.", entityId, values);
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-            }
-
             S persistedEntity = service.findOne(entityId).orElseThrow();
             if (persistedEntity != null) {
-                S updatedEntity = service.updatePartial(entityId, persistedEntity, values);
+                S updatedEntity = service.updatePartial(persistedEntity, patch);
 
                 log.trace("Successfully updated values for entity of type {} with ID {}",
                     getGenericClassName(), entityId);
@@ -588,7 +578,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
             );
         } catch (NumberFormatException nfe) {
             log.error("Can't parse 'id' field ({}) from values ({}). It has to be an Integer.: {}",
-                values, entityId, nfe.getMessage());
+                patch, entityId, nfe.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         } catch (ResponseStatusException rse) {
             throw rse;
