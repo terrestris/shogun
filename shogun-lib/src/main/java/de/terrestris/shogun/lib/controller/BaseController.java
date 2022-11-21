@@ -535,7 +535,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
         }
     }
 
-    @PatchMapping(value = "/{id}", consumes = "application/json-patch+json")
+    @PatchMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public S updatePartial(@RequestBody JsonMergePatch patch, @PathVariable("id") Long entityId) {
         log.trace("Requested to partially update entity of type {} with ID {} ({})", getGenericClassName(), entityId, patch);
