@@ -17,6 +17,11 @@
 package de.terrestris.shogun.lib.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.*;
+import org.hibernate.Hibernate;
+import org.hibernate.annotations.DynamicUpdate;
+
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,6 +36,7 @@ import lombok.ToString;
 
 @Entity(name = "imagefiles")
 @Table(schema = "shogun")
+@DynamicUpdate
 @Cacheable
 @Data
 @AllArgsConstructor
