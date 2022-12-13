@@ -71,6 +71,11 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
         Optional<User> userOpt = userProviderService.getUserFromAuthentication(authentication);
         User user = userOpt.orElse(null);
 
+        if (user == null) {
+            log.trace("Restricting access since no user is available.");
+            return false;
+        }
+
         if (targetDomainObject instanceof Class<?>) {
             // test if user/group class permission for provided class exists
             Class clazz = (Class<?>) targetDomainObject;

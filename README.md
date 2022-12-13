@@ -154,6 +154,11 @@ curl \
 
 The usage of `jq` is optional and can be removed if not needed or `jq` is not available.
 
+To use the token in a request use it in a header like this:
+```
+Authorization: Bearer <<TOKEN>>
+```
+
 ## Actuator
 
 [Spring Boot Actuator](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html#production-ready)

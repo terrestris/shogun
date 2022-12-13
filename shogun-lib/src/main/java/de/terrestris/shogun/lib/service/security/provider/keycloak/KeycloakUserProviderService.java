@@ -155,7 +155,7 @@ public class KeycloakUserProviderService implements UserProviderService<UserRepr
         }
 
         String keycloakUserId = getKeycloakUserIdFromAuthentication(authentication);
-        return (Optional) userRepository.findByAuthProviderId(keycloakUserId);
+        return Optional.of(findOrCreateByProviderId(keycloakUserId));
     }
 
 }

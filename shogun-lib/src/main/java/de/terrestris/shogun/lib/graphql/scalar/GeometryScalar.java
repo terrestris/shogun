@@ -22,11 +22,9 @@ import de.terrestris.shogun.lib.config.JacksonConfig;
 import graphql.Internal;
 import graphql.language.StringValue;
 import graphql.schema.*;
-import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 import org.locationtech.jts.geom.Geometry;
 
-import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 
 @Log4j2
