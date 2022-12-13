@@ -30,6 +30,9 @@ spring:
         jwt:
           issuer-uri: https://localhost/auth/realms/SHOGun
           jwk-set-uri: https://localhost/auth/realms/SHOGun/protocol/openid-connect/certs
+  graphql:
+    graphiql:
+      enabled: true
 
 keycloak:
   enabled: true
