@@ -18,6 +18,7 @@ package de.terrestris.shogun.lib.graphql.scalar;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.terrestris.shogun.lib.config.JacksonConfig;
 import graphql.Internal;
 import graphql.language.StringValue;
 import graphql.schema.*;
@@ -31,7 +32,7 @@ import java.util.HashMap;
 public class GeometryScalar {
     private GeometryScalar() {}
 
-    static ObjectMapper om = new ObjectMapper();
+    static ObjectMapper om = (new JacksonConfig()).objectMapper();
 
     static final Coercing<Object, Object> GEOMETRY_COERCING = new Coercing<>() {
         @Override
@@ -52,10 +53,9 @@ public class GeometryScalar {
 
         @Override
         public Object parseValue(Object input) {
-            if (input instanceof String) {
-                String geometryString = (String)input;
+            if (input instanceof HashMap) {
                 try {
-                    return om.readValue(geometryString, HashMap.class);
+                    return om.readValue(om.writeValueAsString(input), Geometry.class);
                 } catch (JsonProcessingException e) {
                     throw new CoercingParseValueException("Unable to parse variable value " + input + " as a geometry");
                 }
@@ -66,7 +66,7 @@ public class GeometryScalar {
         @Override
         public Object parseLiteral(Object input) {
             if (input instanceof StringValue) {
-                String geometryString = ((StringValue) input).getValue();;
+                String geometryString = ((StringValue) input).getValue();
                 try {
                     return om.readValue(geometryString, HashMap.class);
                 } catch (JsonProcessingException e) {
