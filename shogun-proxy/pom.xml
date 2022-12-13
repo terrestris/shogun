@@ -77,6 +77,12 @@
       <groupId>de.terrestris</groupId>
       <artifactId>shogun-lib</artifactId>
       <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework.graphql</groupId>
+          <artifactId>spring-graphql</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <!-- SHOGun Config -->
     <dependency>
