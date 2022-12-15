@@ -116,6 +116,9 @@
     <!-- Database -->
     <hibernate-extra-types.version>2.20.0</hibernate-extra-types.version>
 
+    <!-- GraphQL -->
+    <graphql-java-extended-scalars.version>19.1</graphql-java-extended-scalars.version>
+
     <!-- Swagger/REST -->
     <springdoc-openapi.version>1.6.12</springdoc-openapi.version>
 
@@ -425,6 +428,11 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-graphql</artifactId>
         <version>${spring-boot.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.graphql-java</groupId>
+        <artifactId>graphql-java-extended-scalars</artifactId>
+        <version>${graphql-java-extended-scalars.version}</version>
       </dependency>
 
       <!-- Logging -->
