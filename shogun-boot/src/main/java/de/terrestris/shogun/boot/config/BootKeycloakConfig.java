@@ -18,8 +18,18 @@ package de.terrestris.shogun.boot.config;
 
 import de.terrestris.shogun.config.KeycloakConfig;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.data.repository.query.SecurityEvaluationContextExtension;
 
 @ConditionalOnExpression("${keycloak.enabled:true}")
 @Configuration
-public class BootKeycloakConfig extends KeycloakConfig { }
+public class BootKeycloakConfig extends KeycloakConfig {
+
+    @Bean
+    // todo: move to generic config (non-keycloak systems need this as well)
+    public SecurityEvaluationContextExtension securityEvaluationContextExtension() {
+        return new SecurityEvaluationContextExtension();
+    }
+
+}
