@@ -21,6 +21,10 @@ import de.terrestris.shogun.lib.controller.security.permission.BasePermissionCon
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.service.BaseService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,9 +53,39 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
     @Autowired
     protected MessageSource messageSource;
 
-    @GetMapping
+    @GetMapping(
+        produces = { "application/json" }
+    )
     @ResponseStatus(HttpStatus.OK)
-    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
+    @Operation(
+        summary = "Returns all entities",
+        description = "TODO"
+//        security = { @SecurityRequirement(name = "bearer-key") }
+//        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = Class<S>)) }
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Ok: The entity was successfully created"
+        ),
+//        @ApiResponse(
+//            responseCode = "400",
+//            description = "Bad Request: "
+//        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized: You need to provide a bearer token",
+            content = @Content
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Not found: The provided ID does not exist (or you don't have the permission to delete it)"
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error: Something internal went wrong while deleting the entity"
+        )
+    })
     public List<S> findAll() {
         log.trace("Requested to return all entities of type {}", getGenericClassName());
 
@@ -610,10 +644,40 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
         }
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(
+        value = "/{id}",
+        produces = { "application/json" }
+    )
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
-    public void delete(@PathVariable("id") Long entityId) {
+    @Operation(
+        summary = "Delete entity by its ID",
+        description = "TODO"
+//        security = { @SecurityRequirement(name = "bearer-key") }
+//        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = Class<S>)) }
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "204",
+            description = "No content: The entity was successfully deleted"
+        ),
+//        @ApiResponse(
+//            responseCode = "400",
+//            description = "Bad Request: "
+//        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized: You need to provide a bearer token"
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Not found: The provided ID does not exist (or you don't have the permission to delete it)"
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error: Something internal went wrong while deleting the entity"
+        )
+    })
+    public void delete(@Parameter(description = "id of the entity to delete") @PathVariable("id") Long entityId) {
         log.trace("Requested to delete entity of type {} with ID {}",
             getGenericClassName(), entityId);
 
@@ -627,52 +691,52 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
                     getGenericClassName(), entityId);
             } else {
                 log.error("Could not find entity of type {} with ID {}",
-                        getGenericClassName(), entityId);
+                    getGenericClassName(), entityId);
 
                 throw new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        messageSource.getMessage(
-                                "BaseController.NOT_FOUND",
-                                null,
-                                LocaleContextHolder.getLocale()
-                        )
+                    HttpStatus.NOT_FOUND,
+                    messageSource.getMessage(
+                        "BaseController.NOT_FOUND",
+                        null,
+                        LocaleContextHolder.getLocale()
+                    )
                 );
             }
         } catch (AccessDeniedException ade) {
             log.warn("Deleting entity of type {} with ID {} is denied",
-                    getGenericClassName(), entityId);
+                getGenericClassName(), entityId);
 
             throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    messageSource.getMessage(
-                            "BaseController.NOT_FOUND",
-                            null,
-                            LocaleContextHolder.getLocale()
-                    ),
-                    ade
+                HttpStatus.NOT_FOUND,
+                messageSource.getMessage(
+                    "BaseController.NOT_FOUND",
+                    null,
+                    LocaleContextHolder.getLocale()
+                ),
+                ade
             );
         } catch (ResponseStatusException rse) {
             throw rse;
         } catch (Exception e) {
             log.error("Error while deleting entity of type {} with ID {}: \n {}",
-                    getGenericClassName(), entityId, e.getMessage());
+                getGenericClassName(), entityId, e.getMessage());
             log.trace("Full stack trace: ", e);
 
             throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    messageSource.getMessage(
-                            "BaseController.INTERNAL_SERVER_ERROR",
-                            null,
-                            LocaleContextHolder.getLocale()
-                    ),
-                    e
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                messageSource.getMessage(
+                    "BaseController.INTERNAL_SERVER_ERROR",
+                    null,
+                    LocaleContextHolder.getLocale()
+                ),
+                e
             );
         }
     }
 
     protected String getGenericClassName() {
         Class<?>[] resolvedTypeArguments = GenericTypeResolver.resolveTypeArguments(getClass(),
-                BaseController.class);
+            BaseController.class);
 
         if (resolvedTypeArguments != null && resolvedTypeArguments.length == 2) {
             return resolvedTypeArguments[1].getSimpleName();

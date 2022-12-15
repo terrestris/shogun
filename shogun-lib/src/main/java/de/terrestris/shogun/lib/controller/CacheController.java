@@ -17,6 +17,8 @@
 package de.terrestris.shogun.lib.controller;
 
 import de.terrestris.shogun.lib.service.CacheService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -36,6 +38,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/cache")
 @ConditionalOnExpression("${controller.cache.enabled:true}")
+@Tag(
+    name = "Cache",
+    description = "The endpoints to clear the Hibernate Cache"
+)
+@SecurityRequirement(name = "bearer-key")
 public class CacheController {
 
     @Autowired
