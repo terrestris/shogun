@@ -25,7 +25,6 @@
     <version>15.0.1-SNAPSHOT</version>
   </parent>
 
-  <groupId>de.terrestris</groupId>
   <artifactId>shogun-gs-interceptor</artifactId>
   <name>SHOGun GeoServer Interceptor</name>
   <packaging>jar</packaging>
