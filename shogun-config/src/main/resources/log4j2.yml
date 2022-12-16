@@ -50,5 +50,9 @@ Configuration:
         level: info
       - name: org.keycloak
         level: info
+      - name: org.springdoc
+        level: info
+      - name: com.graphql-java
+        level: info
       - name: org.reflections
         level: error
