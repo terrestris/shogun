@@ -14,34 +14,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.terrestris.shogun.lib.model.jsonb.application;
+package de.terrestris.shogun.lib.model.jsonb.layer;
+
+import de.terrestris.shogun.lib.annotation.JsonSuperType;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.terrestris.shogun.lib.annotation.JsonSuperType;
-import de.terrestris.shogun.lib.model.jsonb.ApplicationToolConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.util.HashMap;
+import java.io.Serializable;
+
 @Data
-@JsonDeserialize(as = DefaultApplicationToolConfig.class)
-@JsonSuperType(type = ApplicationToolConfig.class)
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @ToString
 @EqualsAndHashCode
-public class DefaultApplicationToolConfig implements ApplicationToolConfig {
+public class FeaturesConfig implements Serializable {
+
     @Schema(
-        description = "The name of the tool.",
-        example = "map-tool",
+        description = "The object type",
+        example = "Feature",
         required = true
     )
-    private String name;
+    private String type;
 
     @Schema(
-        description = "The configuration object for the given tool."
+        description = "The definition of the feature geometry"
     )
+    private GeometryConfig geometry;
 
-    private DefaultToolConfig config;
+    @Schema(
+        description = "The properties associated to a feature",
+        example = "\"{\"prop0\": \"value0\"}\""
+    )
+    private HashMap<String,Object> properties;
 }

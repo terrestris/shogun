@@ -14,34 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.terrestris.shogun.lib.model.jsonb.application;
+package de.terrestris.shogun.lib.model.jsonb.layer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.terrestris.shogun.lib.annotation.JsonSuperType;
-import de.terrestris.shogun.lib.model.jsonb.ApplicationToolConfig;
+import de.terrestris.shogun.lib.model.jsonb.LayerFeaturesConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data
-@JsonDeserialize(as = DefaultApplicationToolConfig.class)
-@JsonSuperType(type = ApplicationToolConfig.class)
+@JsonDeserialize(as = DefaultLayerFeaturesConfig.class)
+@JsonSuperType(type = LayerFeaturesConfig.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ToString
 @EqualsAndHashCode
-public class DefaultApplicationToolConfig implements ApplicationToolConfig {
-    @Schema(
-        description = "The name of the tool.",
-        example = "map-tool",
-        required = true
-    )
-    private String name;
+public class DefaultLayerFeaturesConfig implements LayerFeaturesConfig {
+  @Schema(
+    description = "The feature object type (Can be either FeatureCollection or Feature)",
+    example = "FeatureCollection"
+  )
+  private String type;
 
-    @Schema(
-        description = "The configuration object for the given tool."
-    )
-
-    private DefaultToolConfig config;
+  @Schema(
+    description = "The features for a given feature collection type",
+    example = "FeatureCollection"
+  )
+  private FeaturesConfig features;
 }
+

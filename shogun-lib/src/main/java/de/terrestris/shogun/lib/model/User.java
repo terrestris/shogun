@@ -54,7 +54,7 @@ public class User<T> extends BaseEntity {
 
     @Transient
     @Schema(
-        description = "The user details stored in the associated provider.",
+        description = "The user details stored in the associated provider. Read only. Can only be chnaged within the provider.",
         accessMode = Schema.AccessMode.READ_ONLY
     )
     private T providerDetails;
