@@ -19,10 +19,12 @@ package de.terrestris.shogun.lib.controller;
 import com.github.fge.jsonpatch.mergepatch.JsonMergePatch;
 import de.terrestris.shogun.lib.controller.security.permission.BasePermissionController;
 import de.terrestris.shogun.lib.model.BaseEntity;
+import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.service.BaseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -39,6 +41,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.lang.reflect.ParameterizedType;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -59,19 +62,13 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
     @ResponseStatus(HttpStatus.OK)
     @Operation(
         summary = "Returns all entities",
-        description = "TODO"
-//        security = { @SecurityRequirement(name = "bearer-key") }
-//        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = Class<S>)) }
+        security = { @SecurityRequirement(name = "bearer-key") }
     )
     @ApiResponses(value = {
         @ApiResponse(
             responseCode = "200",
             description = "Ok: The entity was successfully created"
         ),
-//        @ApiResponse(
-//            responseCode = "400",
-//            description = "Bad Request: "
-//        ),
         @ApiResponse(
             responseCode = "401",
             description = "Unauthorized: You need to provide a bearer token",
