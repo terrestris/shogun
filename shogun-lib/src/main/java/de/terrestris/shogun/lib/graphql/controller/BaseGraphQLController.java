@@ -112,11 +112,8 @@ public abstract class BaseGraphQLController<E extends BaseEntity, S extends Base
         Optional<E> persistedEntity = this.service.findOne(id);
 
         if (persistedEntity.isEmpty()) {
-            throw new EntityNotAvailableException(String.format("Entity with ID %s is not " +
-                "available", id));
+            throw new EntityNotAvailableException("Entity with ID %s is not available".formatted(id));
         }
-
-//        updateEntity.put("id", id);
 
         E entity = this.deserializeInput(updateEntity);
 
@@ -147,23 +144,6 @@ public abstract class BaseGraphQLController<E extends BaseEntity, S extends Base
             return false;
         }
     }
-
-//    /**
-//     * Returns the simple class name of the {@link BaseEntity} this abstract class
-//     * has been declared with, e.g. 'Application'.
-//     *
-//     * @return The simple class name.
-//     */
-//    public String getGenericSimpleClassName() {
-//        Class<?>[] resolvedTypeArguments = GenericTypeResolver.resolveTypeArguments(getClass(),
-//            BaseGraphQLController.class);
-//
-//        if (resolvedTypeArguments != null && resolvedTypeArguments.length == 2) {
-//            return resolvedTypeArguments[0].getSimpleName();
-//        } else {
-//            return null;
-//        }
-//    }
 
     private E deserializeInput(Serializable entityMap) {
         E entity = null;
