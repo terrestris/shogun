@@ -1,6 +1,6 @@
 /* SHOGun, https://terrestris.github.io/shogun/
  *
- * Copyright © 2020-present terrestris GmbH & Co. KG
+ * Copyright © 2022-present terrestris GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.terrestris.shogun.lib.graphql.resolver;
+package de.terrestris.shogun.lib.graphql.dto;
 
-import de.terrestris.shogun.lib.model.ImageFile;
-import de.terrestris.shogun.lib.service.ImageFileService;
-import org.springframework.stereotype.Component;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Component
-public class ImageFileGraphQLDataFetcher extends BaseGraphQLDataFetcher<ImageFile, ImageFileService> { }
+import java.io.Serializable;
+import java.util.HashMap;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class MutateGroup implements Serializable {
+    private String authProviderId;
+}

@@ -20,6 +20,8 @@ import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.service.GroupService;
 import de.terrestris.shogun.lib.service.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -35,6 +37,11 @@ import java.util.Optional;
 @RequestMapping("/groups")
 @ConditionalOnExpression("${controller.groups.enabled:true}")
 @Log4j2
+@Tag(
+    name = "Users",
+    description = "The endpoints to manage users"
+)
+@SecurityRequirement(name = "bearer-key")
 public class GroupController extends BaseController<GroupService, Group> {
 
     @Autowired

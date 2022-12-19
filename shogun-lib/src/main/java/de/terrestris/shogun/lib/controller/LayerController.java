@@ -18,6 +18,8 @@ package de.terrestris.shogun.lib.controller;
 
 import de.terrestris.shogun.lib.model.Layer;
 import de.terrestris.shogun.lib.service.LayerService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,4 +27,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/layers")
 @ConditionalOnExpression("${controller.layers.enabled:true}")
+@Tag(
+    name = "Layers",
+    description = "The endpoints to manage layers"
+)
+@SecurityRequirement(name = "bearer-key")
 public class LayerController extends BaseController<LayerService, Layer> { }

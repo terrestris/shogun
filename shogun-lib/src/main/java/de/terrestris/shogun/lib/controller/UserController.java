@@ -18,6 +18,8 @@ package de.terrestris.shogun.lib.controller;
 
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.service.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,4 +27,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/users")
 @ConditionalOnExpression("${controller.users.enabled:true}")
+@Tag(
+    name = "Users",
+    description = "The endpoints to manage users"
+)
+@SecurityRequirement(name = "bearer-key")
 public class UserController extends BaseController<UserService, User> { }

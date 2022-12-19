@@ -39,9 +39,10 @@ public interface DefaultWebSecurityConfig extends WebSecurityConfig {
                     // Enable anonymous access to swagger docs
                     "/swagger-ui/index.html",
                     "/swagger-ui/**",
-                    "/webjars/springfox-swagger-ui/**",
-                    "/swagger-resources/**",
-                    "/v2/api-docs"
+                    "/v3/api-docs",
+                    "/v3/api-docs/swagger-config",
+                    // Enable anonymous access to GraphiQL
+                    "/graphiql/**"
                 )
                     .permitAll()
                 .antMatchers(

@@ -20,7 +20,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.terrestris.shogun.lib.annotation.JsonSuperType;
 import de.terrestris.shogun.lib.model.jsonb.LayerSourceConfig;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -84,10 +83,9 @@ public class DefaultLayerSourceConfig implements LayerSourceConfig {
     )
     private String attribution;
 
-    @ApiModelProperty(
-        value = "Request parameters to be passed to the service when querying a layer.",
-        example = "{\"transparent\": true}",
-        dataType = "object"
+    @Schema(
+        description = "Request parameters to be passed to the service when querying a layer.",
+        example = "{\"transparent\": true}"
     )
     private HashMap<String, Object> requestParams;
 

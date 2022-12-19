@@ -14,26 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.terrestris.shogun.lib.graphql.exception;
+package de.terrestris.shogun.lib.graphql.dto;
 
-import graphql.ErrorType;
-import graphql.GraphQLError;
-import graphql.language.SourceLocation;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.util.List;
+import java.io.Serializable;
+import java.util.HashMap;
 
-public class EntityNotAvailableException extends RuntimeException implements GraphQLError {
-    public EntityNotAvailableException(String message) {
-        super(message);
-    }
-
-    @Override
-    public List<SourceLocation> getLocations() {
-        return null;
-    }
-
-    @Override
-    public ErrorType getErrorType() {
-        return null;
-    }
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class MutateApplication implements Serializable {
+    private String name;
+    private Boolean stateOnly;
+    private HashMap<String, Object> clientConfig;
+    private HashMap<String, Object> layerTree;
+    private HashMap<String, Object> layerConfig;
+    private HashMap<String, Object> toolConfig;
+    private String type;
 }
