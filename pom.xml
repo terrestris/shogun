@@ -114,7 +114,7 @@
     <keycloak.version>18.0.2</keycloak.version>
 
     <!-- Database -->
-    <hibernate-extra-types.version>2.20.0</hibernate-extra-types.version>
+    <hibernate-extra-types.version>2.21.0</hibernate-extra-types.version>
 
     <!-- GraphQL -->
     <graphql-spring-boot-starter.version>5.0.2</graphql-spring-boot-starter.version>
