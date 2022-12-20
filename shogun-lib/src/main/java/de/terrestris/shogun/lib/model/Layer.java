@@ -19,9 +19,10 @@ package de.terrestris.shogun.lib.model;
 import de.terrestris.shogun.lib.enumeration.LayerType;
 import de.terrestris.shogun.lib.model.jsonb.LayerClientConfig;
 import de.terrestris.shogun.lib.model.jsonb.LayerSourceConfig;
-import de.terrestris.shogun.lib.model.jsonb.LayerFeaturesConfig;
+// import de.terrestris.shogun.lib.model.jsonb.LayerFeaturesConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
+import org.geojson.GeoJsonObject;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -83,7 +84,7 @@ public class Layer extends BaseEntity {
         description = "Custom features for the layers that aren't available in the datasource. This might be used " +
             "for custom draw layers or similiar. It's advised to store the features using the GeoJSON format."
     )
-    private LayerFeaturesConfig features;
+    private GeoJsonObject features;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
