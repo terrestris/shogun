@@ -42,6 +42,5 @@ public class DefaultApplicationToolConfig implements ApplicationToolConfig {
     @Schema(
         description = "The configuration object for the given tool."
     )
-
     private DefaultToolConfig config;
 }
