@@ -70,7 +70,41 @@ public class Application extends BaseEntity {
     @ToString.Exclude
     @Schema(
         description = "The configuration to be considered by the client/application which may include all specific " +
-            "configurations required by the project."
+            "configurations required by the project.",
+        example = "{\n" +
+            "\"mapView\": {\n" +
+              "\"zoom\": 2,\n" +
+              "\"center\": [10, 51], \n" +
+              "\"extent\": null,\n" +
+              "\"projection\": \"EPSG:3857\",\n" +
+              "\"resolutions\": [\n" +
+                "8920,\n" +
+                "4480,\n" +
+                "2240,\n" +
+                "1120,\n" +
+                "560,\n" +
+                "350,\n" +
+                "280,\n" +
+                "140,\n" +
+                "70,\n" +
+                "28,\n" +
+                "14,\n" +
+                "7,\n" +
+                "2.8,\n" +
+                "1.4,\n" +
+                "0.7,\n" +
+                "0.28,\n" +
+                "0.07\n" +
+              "]\n" +
+            "},\n" +
+            "\"description\": \"An awesome shogun app\",\n" +
+            "\"theme\": {\n" +
+              "\"primaryColor\": \"#02203d\",\n" +
+              "\"secondaryColor\": \"#73b3fb\",\n" +
+              "\"complementaryColor\": \"#ffffff\",\n" +
+              "\"logoPath\": \"https://terrestris.github.io/fossgis2019/shared/img/shogun-qgis-talk/logo-shogun.png\"\n" +
+            "}\n" +
+          "}\n"
     )
     private ApplicationClientConfig clientConfig;
 
@@ -79,7 +113,38 @@ public class Application extends BaseEntity {
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
     @Schema(
-        description = "The tree shaped configuration entry of the applications table of contents."
+        description = "The tree shaped configuration entry of the applications table of contents.",
+        example = "{\n" +
+            "\"title\": \"root\",\n" +
+            "\"children\": [\n" +
+              "{\n" +
+                "\"title\": \"Backgroundlayer\",\n" +
+                "\"checked\": true,\n" +
+                "\"children\": [\n" +
+                  "{\n" +
+                    "\"title\": \"OSM\",\n" +
+                    "\"checked\": false,\n" +
+                    "\"layerId\": 1\n" +
+                  "},\n" +
+                  "{\n" +
+                    "\"title\": \"OSM-WMS\",\n" +
+                    "\"checked\": false,\n" +
+                    "\"layerId\": 2\n" +
+                  "},\n" +
+                  "{\n" +
+                    "\"title\": \"OSM-WMS (gray)\",\n" +
+                    "\"checked\": true,\n" +
+                    "\"layerId\": 3\n" +
+                  "}\n" +
+                "]\n" +
+              "},\n" +
+              "{\n" +
+                "\"title\": \"Countries\",\n" +
+                "\"checked\": false,\n" +
+                "\"layerId\": 4\n" +
+             "}\n" +
+            "]\n" +
+          "}\n"
     )
     private LayerTree layerTree;
 
@@ -89,7 +154,15 @@ public class Application extends BaseEntity {
     @ToString.Exclude
     @Schema(
         description = "The definition of layer configurations. This may be used to set application specific " +
-            "configurations for any layers in the given application."
+            "configurations for any layers in the given application.",
+        example = "[\n" +
+            "{\n" +
+              "\"layerId\": 2,\n" +
+              "\"clientConfig\": {\n" +
+                "\"opacity\": 30\n" +
+              "}\n" +
+            "}\n" +
+          "]\n"
     )
     private List<LayerConfig> layerConfig;
 
@@ -99,7 +172,15 @@ public class Application extends BaseEntity {
     @ToString.Exclude
     @Schema(
         description = "The definition of tool configurations. This may be used to set application specific " +
-            "configurations for any tools in the given application, e.g. the visibility or the layers the tool should work on."
+            "configurations for any tools in the given application, e.g. the visibility or the layers the tool should work on.",
+        example = "[\n" +
+            "{\n" +
+              "\"name\": \"measure_tools\",\n" +
+              "\"config\": {\n" +
+                "\"visible\": true\n" +
+              "}\n" +
+            "}\n" +
+          "]\n"
     )
     private List<ApplicationToolConfig> toolConfig;
 

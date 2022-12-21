@@ -19,7 +19,6 @@ package de.terrestris.shogun.lib.model;
 import de.terrestris.shogun.lib.enumeration.LayerType;
 import de.terrestris.shogun.lib.model.jsonb.LayerClientConfig;
 import de.terrestris.shogun.lib.model.jsonb.LayerSourceConfig;
-// import de.terrestris.shogun.lib.model.jsonb.LayerFeaturesConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.geojson.GeoJsonObject;
@@ -61,7 +60,15 @@ public class Layer extends BaseEntity {
     @ToString.Exclude
     @Schema(
         description = "The configuration of the layer which should be used to define client specific aspects of " +
-            "the layer. This may include the name, the visible resolution range, search configurations or similar."
+            "the layer. This may include the name, the visible resolution range, search configurations or similar.",
+        example = "[\n" +
+            "{\n" +
+              "\"layerId\": 2,\n" +
+              "\"clientConfig\": {\n" +
+                "\"opacity\": 30\n" +
+              "}\n" +
+            "}\n" +
+          "]\n"
     )
     private LayerClientConfig clientConfig;
 
@@ -72,7 +79,12 @@ public class Layer extends BaseEntity {
     @Schema(
         description = "The configuration of the datasource of the layer, e.g. the URL of the server, the name or " +
             "the grid configuration.",
-        required = true
+        required = true,
+        example = "{\n" +
+            "\"url\": \"https://ows.terrestris.de/osm/service?\",\n" +
+            "\"layerNames\": \"OSM-WMS\",\n" +
+            "\"useBearerToken\": false\n" +
+          "}\n"
     )
     private LayerSourceConfig sourceConfig;
 
@@ -82,7 +94,51 @@ public class Layer extends BaseEntity {
     @ToString.Exclude
     @Schema(
         description = "Custom features for the layers that aren't available in the datasource. This might be used " +
-            "for custom draw layers or similiar. It's advised to store the features using the GeoJSON format."
+            "for custom draw layers or similiar. It's advised to store the features using the GeoJSON format.",
+        example = "{\n" +
+            "\"type\": \"FeatureCollection\",\n" +
+            "\"features\": [\n" +
+              "{\n" +
+                "\"type\": \"Feature\",\n" +
+                "\"geometry\": {\n" +
+                  "\"type\": \"Point\",\n" +
+                  "\"coordinates\": [102.0, 0.5]\n" +
+                "},\n" +
+                "\"properties\": {\n" +
+                  "\"prop0\": \"value0\"\n" +
+                "}\n" +
+              "},\n" +
+              "{\n" +
+                "\"type\": \"Feature\",\n" +
+                "\"geometry\": {\n" +
+                  "\"type\": \"LineString\",\n" +
+                  "\"coordinates\": [\n" +
+                    "[102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]\n" +
+                  "]\n" +
+                "},\n" +
+                "\"properties\": {\n" +
+                  "\"prop0\": \"value0\",\n" +
+                  "\"prop1\": 0.0\n" +
+                "}\n" +
+              "},\n" +
+              "{\n" +
+                "\"type\": \"Feature\",\n" +
+                "\"geometry\": {\n" +
+                  "\"type\": \"Polygon\",\n" +
+                  "\"coordinates\": [\n" +
+                    "[\n" +
+                      "[100.0, 0.0], [101.0, 0.0], [101.0, 1.0],\n" +
+                      "[100.0, 1.0], [100.0, 0.0]\n" +
+                    "]\n" +
+                  "]\n" +
+                "},\n" +
+                "\"properties\": {\n" +
+                  "\"prop0\": \"value0\",\n" +
+                  "\"prop1\": { \"this\": \"that\" }\n" +
+                "}\n" +
+              "}\n" +
+            "]\n" +
+          "}\n"
     )
     private GeoJsonObject features;
 

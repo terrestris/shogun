@@ -55,6 +55,11 @@ public class User<T> extends BaseEntity {
     @Transient
     @Schema(
         description = "The user details stored in the associated provider. Read only. Can only be changed within the provider.",
+        example = "{" +
+            "\"locale\": \"DE\",\n" +
+            "\"lastViewdApp\": \"32\",\n" +
+            "\"lastLogin\": \"2022-12-19\"\n" +
+          "}\n",
         accessMode = Schema.AccessMode.READ_ONLY
     )
     private T providerDetails;
@@ -64,7 +69,11 @@ public class User<T> extends BaseEntity {
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
     @Schema(
-        description = "Custom user details that aren't stored inside the provider."
+        description = "Custom user details that aren't stored inside the provider.",
+        example = "{\n" +
+            "\"favoriteApp\": \"SHOGun\",\n" +
+            "\"lastReadBook\": \"The art of war\"\n" +
+          "}\n"
     )
     private UserDetails details;
 
