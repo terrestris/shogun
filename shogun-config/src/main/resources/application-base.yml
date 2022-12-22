@@ -90,6 +90,9 @@ spring:
         jwt:
           issuer-uri: https://${KEYCLOAK_HOST:shogun-keycloak}/auth/realms/SHOGun
           jwk-set-uri: https://${KEYCLOAK_HOST:shogun-keycloak}/auth/realms/SHOGun/protocol/openid-connect/certs
+  graphql:
+    schema:
+      locations: classpath*:graphql/**/
 
 springdoc:
   show-actuator: false
