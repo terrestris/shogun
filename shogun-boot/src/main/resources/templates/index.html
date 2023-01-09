@@ -159,13 +159,11 @@
       }
 
       const applications = await getApplications(keycloak.token);
-      const appInfos = applications.map(app => {
-        appInfos.push({
-          id: app.id,
-          name: app.name,
-          description: app.clientConfig.description
-        });
-      });
+      const appInfos = applications.map(app => ({
+        id: app.id,
+        name: app.name,
+        description: app.clientConfig.description
+      }));
       const appsEl = document.querySelector('.apps');
 
       // Create web components
