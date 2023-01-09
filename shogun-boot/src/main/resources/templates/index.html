@@ -49,7 +49,7 @@
         <a href="#" class="nav-link px-2 text-muted" th:text="${'Version: ' + version}"></a>
       </li>
     </ul>
-    <button id="login-btn" class="btn btn-primary">login</button>
+    <button id="login-btn" class="btn btn-primary">Log in</button>
     <button id="logout-btn" class="btn btn-primary" hidden>Log out</button>
   </header>
 
@@ -116,15 +116,15 @@
       &copy; 2021 - present <a href="https://www.terrestris.de">terrestris GmbH & Co. KG</a>
     </p>
     <p class="col-md-3 mb-0 text-muted">
-      <i class="fas fa-project-diagram"></i>
+      <i class="fas fa-plug"></i>
       <a href="./swagger-ui/index.html">Swagger / OpenAPI</a>
     </p>
     <p class="col-md-3 mb-0 text-muted">
-      <i class="fas fa-lock"></i>
+      <i class="fas fa-project-diagram"></i>
       <a href="./graphiql">GraphiQL</a>
     </p>
     <p class="col-md-3 mb-0 text-muted">
-      <i class="fas fa-external-link-alt"></i>
+      <i class="fas fa-github"></i>
       <a href="https://github.com/terrestris/shogun">GitHub</a>
     </p>
   </footer>
@@ -159,8 +159,7 @@
       }
 
       const applications = await getApplications(keycloak.token);
-      const appInfos = [];
-      applications.forEach(app => {
+      const appInfos = applications.map(app => {
         appInfos.push({
           id: app.id,
           name: app.name,
