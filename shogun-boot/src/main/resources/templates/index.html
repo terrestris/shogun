@@ -150,12 +150,12 @@
       document.querySelector('#login-btn').addEventListener('click', () => {
         keycloak.login();
       });
+      document.querySelector('#logout-btn').addEventListener('click', () => {
+        keycloak.logout();
+      });
       if (keycloak.authenticated) {
         document.querySelector('#logout-btn').hidden = false;
         document.querySelector('#login-btn').hidden = true;
-        document.querySelector('#logout-btn').addEventListener('click', () => {
-          keycloak.logout();
-        });
       }
 
       const applications = await getApplications(keycloak.token);
