@@ -30,9 +30,11 @@
 
   <!-- Bootstrap 5.1.1  -->
   <link href="./assets/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <script src="./assets/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
   <!-- Font Awesome 5.15.4 -->
   <link href="./assets/lib/fontawesome/css/all.min.css" rel="stylesheet">
   <link href="./index.css" rel="stylesheet">
+  <script src="/auth/js/keycloak.js"></script>
 </head>
 
 <body>
@@ -42,106 +44,183 @@
     <a href="/" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
       <img class="header-image" src="./assets/img/shogun_logo.png">
     </a>
+    <ul class="nav col-md-3">
+      <li class="nav-item">
+        <a href="#" class="nav-link px-2 text-muted" th:text="${'Version: ' + version}"></a>
+      </li>
+    </ul>
+    <button id="login-btn" class="btn btn-primary">Log in</button>
+    <button id="logout-btn" class="btn btn-primary" hidden>Log out</button>
   </header>
 
   <main>
+    <!-- web component template starts -->
+    <template id="shogun-app" url="">
+      <link href="./assets/lib/fontawesome/css/all.min.css" rel="stylesheet">
+      <div class="app-card">
+        <div class="app-buttons">
+          <slot name="admin-btn"></slot>
+        </div>
+        <div class="app-info">
+          <h4>
+            <slot name="app-title">Default Title</slot>
+          </h4>
+          <p>
+            <slot name="app-info">description</slot>
+          </p>
+        </div>
+      </div>
+      <style>
+        .app-card {
+          border-radius: 10px;
+          background-color: rgba(248, 249, 250, 1);
+          height: auto;
+        }
+
+        .app-card:hover {
+          background-color: rgba(233, 236, 239, 1);
+        }
+
+        .app-buttons {
+          display: flex;
+          justify-content: end;
+          padding: 5px;
+        }
+
+        .app-info {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+        }
+      </style>
+    </template>
+    <!-- web component template ends -->
+
     <div class="container px-4 py-5">
-
       <h2 class="pb-2">Welcome to SHOGun</h2>
-
-      <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
-        <div class="feature col">
-          <div class="feature-icon bg-primary bg-gradient">
-            <i class="fas fa-plug"></i>
-          </div>
-          <h3>Swagger / OpenAPI</h3>
-          <p>
-            Execute CRUD requests against the SHOGun REST API using the Swagger interface.
-          </p>
-          <a href="./swagger-ui/index.html" class="icon-link">
-            Open
-          </a>
-        </div>
-        <div class="feature col">
-          <div class="feature-icon bg-primary bg-gradient">
-            <i class="fas fa-project-diagram"></i>
-          </div>
-          <h3>GraphiQL</h3>
-          <p>
-            Build and execute GraqhQL mutations and queries against the SHOGun GraphQL API.
-          </p>
-          <a href="./graphiql" class="icon-link">
-            Open <i class="fas fa-lock"></i>
-          </a>
-        </div>
-        <div class="feature col">
-          <div class="feature-icon bg-primary bg-gradient">
-            <i class="fas fa-exchange-alt"></i>
-          </div>
-          <h3>WebSocket</h3>
-          <p>
-            This site contains a simple example for establishing a web socket connection.
-          </p>
-          <a href="./ws/websocket.html" class="icon-link">
-            Open <i class="fas fa-lock"></i>
-          </a>
-        </div>
-      </div>
-      <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
-        <div class="feature col">
-          <div class="feature-icon bg-primary bg-gradient">
-            <i class="fas fa-cogs"></i>
-          </div>
-          <h3>Admin client</h3>
-          <p>
-            The built-in admin client can be used to configure the SHOGun entities in a comfortable way.
-          </p>
-          <a href="./admin" class="icon-link">
-            Open <i class="fas fa-lock"></i>
-          </a>
-        </div>
-        <div class="feature col">
-          <div class="feature-icon bg-primary bg-gradient">
-            <i class="fas fa-map"></i>
-          </div>
-          <h3>GIS client</h3>
-          <p>
-            Give me maps! This shows an exemplary map client consuming the application context of SHOGun.
-          </p>
-          <a href="./client" class="icon-link">
-            Open <i class="fas fa-lock"></i>
-          </a>
-        </div>
-        <div class="feature col">
-          <div class="feature-icon bg-primary bg-gradient">
-            <i class="fab fa-github"></i>
-          </div>
-          <h3>GitHub repository</h3>
-          <p>
-            The repository contains the source code, the issue tracker and the overall documentation.
-          </p>
-          <a href="https://github.com/terrestris/shogun" class="icon-link">
-            Open <i class="fas fa-external-link-alt"></i>
-          </a>
-        </div>
-      </div>
+      <div style="display: none" id="keycloak-host" th:text="${@environment.getProperty('KEYCLOAK_HOST')}"></div>
+      <a href="/admin">
+        <button id="admin-panel-btn" class="btn btn-primary">
+          Open Admin Panel <i class="fas fa-lock"></i>
+        </button>
+      </a>
+      <h3 class="pb-2 pt-4">Applications</h3>
+      <div class="row row-cols-1 row-cols-md-3 g-4 apps" />
     </div>
 
   </main>
 
-  <footer class="container d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+  <footer class="container d-flex justify-content-between align-items-center py-3 my-4 border-top">
     <p class="col-md-4 mb-0 text-muted">
       &copy; 2021 - present <a href="https://www.terrestris.de">terrestris GmbH & Co. KG</a>
     </p>
-
-    <ul class="nav col-md-4 justify-content-end">
-      <li class="nav-item">
-        <a href="#" class="nav-link px-2 text-muted" th:text="${'Version: ' + version}" />
-      </li>
-    </ul>
+    <p class="col-md-3 mb-0 text-muted">
+      <i class="fas fa-plug"></i>
+      <a href="./swagger-ui/index.html">Swagger / OpenAPI</a>
+    </p>
+    <p class="col-md-3 mb-0 text-muted">
+      <i class="fas fa-project-diagram"></i>
+      <a href="./graphiql">GraphiQL</a>
+    </p>
+    <p class="col-md-3 mb-0 text-muted">
+      <i class="fas fa-github"></i>
+      <a href="https://github.com/terrestris/shogun">GitHub</a>
+    </p>
   </footer>
 
-  <script src="./assets/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script th:inline="javascript">
+    window.onload = async () => {
+      const keycloakHost = [[${@environment.getProperty('KEYCLOAK_HOST')}]];
+      const keycloak = new Keycloak({
+        url: `https://${keycloakHost}/auth`,
+        realm: 'SHOGun',
+        clientId: 'shogun-client'
+      });
+      try {
+        const authenticated = await keycloak.init({
+          onLoad: 'check-sso'
+        });
+      } catch (error) {
+        console.error(error);
+        return;
+      }
+
+      // Register login/logout actions
+      document.querySelector('#login-btn').addEventListener('click', () => {
+        keycloak.login();
+      });
+      document.querySelector('#logout-btn').addEventListener('click', () => {
+        keycloak.logout();
+      });
+      if (keycloak.authenticated) {
+        document.querySelector('#logout-btn').hidden = false;
+        document.querySelector('#login-btn').hidden = true;
+      }
+
+      const applications = await getApplications(keycloak.token);
+      const appInfos = applications.map(app => {
+        appInfos.push({
+          id: app.id,
+          name: app.name,
+          description: app.clientConfig.description
+        });
+      });
+      const appsEl = document.querySelector('.apps');
+
+      // Create web components
+      customElements.define('shogun-app',
+        class extends HTMLElement {
+          constructor() {
+            super();
+            const template = document.querySelector('#shogun-app');
+            const templateContent = template.content;
+
+            this.attachShadow({ mode: 'open' }).appendChild(
+              templateContent.cloneNode(true)
+            );
+          }
+          connectedCallback() {
+            this.onclick = () => window.open(`/client?applicationId=${this.getAttribute('app')}`);
+          }
+        });
+
+
+      if (appsEl) {
+        appInfos.forEach(app => {
+          const html = `<shogun-app app='${app.id}'>` +
+            `<a style='visibility: hidden' class='admin-btn' title='Edit application' slot='admin-btn' href='/admin/portal/application/${app.id}'>` +
+            `<i class='fas fa-cog'></i></a>` +
+            `<span slot='app-title'>${app.name}</span>` +
+            `<span slot='app-info'>${app.description}</span>` +
+            `</shogun-app>`;
+          appsEl.insertAdjacentHTML('beforeend', html);
+        });
+      }
+
+      // Check for admin role
+      const hasAdminRole = keycloak.hasResourceRole('admin', 'shogun-admin');
+      if (hasAdminRole) {
+        document.querySelectorAll(".admin-btn").forEach(btn => {
+          btn.style.visibility = 'visible';
+        });
+      };
+    }
+
+    const getApplications = async (token) => {
+      try {
+        const response = await fetch('/applications', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const applications = await response.json();
+        return applications;
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  </script>
 </body>
 
 </html>
