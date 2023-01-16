@@ -81,6 +81,7 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
     protected UserProviderService userProviderService;
 
     @Autowired
+    @Lazy
     protected EntityPermissionEvaluator<S> entityPermissionEvaluator;
 
     @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
