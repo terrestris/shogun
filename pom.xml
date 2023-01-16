@@ -106,7 +106,7 @@
 
     <!-- Spring -->
     <spring-boot.version>2.7.6</spring-boot.version>
-    <spring-data.version>2.7.6</spring-data.version>
+    <spring-data.version>3.0.1</spring-data.version>
 
     <jackson-bom.version>2.13.2.20220328</jackson-bom.version>
 
