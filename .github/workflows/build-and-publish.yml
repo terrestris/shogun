@@ -1,23 +1,18 @@
-name: Build and publish SHOGun
+name: Publish SHOGun
 
-on:
-  push:
-    branches:
-      - main
-  release:
-    types: [published]
+on: workflow_dispatch
 
 jobs:
-  build:
-
-    runs-on: ubuntu-20.04
+  publish:
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Checkout sources
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         # Disabling shallow clone is recommended for improving relevancy of reporting
         fetch-depth: 0
+        persist-credentials: false
 
     - name: Set up Java 17
       uses: actions/setup-java@v1.4.3
@@ -26,8 +21,8 @@ jobs:
         java-package: jdk
         architecture: x64
 
-    - name: Handle caching of maven repository
-      uses: actions/cache@v2
+    - name: Restore cache
+      uses: actions/cache/restore@v3
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -37,18 +32,41 @@ jobs:
     - name: Create maven settings.xml with credentials
       uses: whelk-io/maven-settings-xml-action@v2
       with:
-        servers: '[
-                    { "id": "nexus.terrestris.de", "username": "${{ secrets.NEXUS_USER }}", "password": "${{ secrets.NEXUS_PASSWORD }}" },
-                    { "id": "docker-public.terrestris.de", "username": "${{ secrets.NEXUS_DOCKER_USER }}", "password": "${{ secrets.NEXUS_DOCKER_PASSWORD }}" },
-                    { "id": "terrestris-nexus", "username": "${{ secrets.NEXUS_USER }}", "password": "${{ secrets.NEXUS_PASSWORD }}" },
-                    { "id": "terrestris-nexus-snapshots", "username": "${{ secrets.NEXUS_USER }}", "password": "${{ secrets.NEXUS_PASSWORD }}" }
-                  ]'
+        servers: |
+          [
+            { "id": "nexus.terrestris.de", "username": "${{ secrets.NEXUS_USER }}", "password": "${{ secrets.NEXUS_PASSWORD }}" },
+            { "id": "docker-public.terrestris.de", "username": "${{ secrets.NEXUS_DOCKER_USER }}", "password": "${{ secrets.NEXUS_DOCKER_PASSWORD }}" },
+            { "id": "terrestris-nexus", "username": "${{ secrets.NEXUS_USER }}", "password": "${{ secrets.NEXUS_PASSWORD }}" },
+            { "id": "terrestris-nexus-snapshots", "username": "${{ secrets.NEXUS_USER }}", "password": "${{ secrets.NEXUS_PASSWORD }}" }
+          ]
 
-    - name: Build SHOGun with Maven and publish artifacts to nexus
-      run: mvn -B deploy
+    - name: Install dependencies
+      run: mvn install --batch-mode -DskipTests
+
+    - name: Save cache
+      uses: actions/cache/save@v3
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+
+    - name: Semantic release
+      uses: cycjimmy/semantic-release-action@v3
+      with:
+        extra_plugins: |
+          @semantic-release/changelog
+          @terrestris/maven-semantic-release
+          @semantic-release/git
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Scan for unit tests
-      run: mvn clean verify sonar:sonar -Dsonar.projectKey=SHOGun -Dsonar.login="${{ secrets.SONARQUBE_TOKEN }}" -Preporting
+      run: mvn clean verify sonar:sonar --batch-mode -Dsonar.projectKey=SHOGun -Dsonar.login="${{ secrets.SONARQUBE_TOKEN }}" -Preporting
 
     - name: Refresh SonarQube
-      run: mvn compile sonar:sonar -Dsonar.projectKey=SHOGun -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }} -Dsonar.login="${{ secrets.SONARQUBE_TOKEN }}"
+      run: mvn compile sonar:sonar --batch-mode -Dsonar.projectKey=SHOGun -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }} -Dsonar.login="${{ secrets.SONARQUBE_TOKEN }}"
+
+    - name: Save cache
+      uses: actions/cache/save@v3
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}

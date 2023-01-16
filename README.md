@@ -192,15 +192,7 @@ Note: All endpoints are accessible by users with the `ADMIN` role only.
 
 ## Release
 
-- Checkout the latest `main`.
-- Run the release script, e.g.
-
-    ```bash
-    #./scripts/release.sh RELEASE_VERSION DEVELOPMENT_VERSION
-    ./scripts/release.sh "3.0.0" "3.0.1-SNAPSHOT"
-    ```
-
-- Go to `Releases` page in GitHub and publish the newly created release.
+- To trigger a release, manually run the `Publish` github action 
 
 ## Entity Auditing
 

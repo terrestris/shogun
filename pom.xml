@@ -98,7 +98,6 @@
     <java.version>17</java.version>
 
     <!-- Plugins -->
-    <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
     <maven-site-plugin.version>3.12.1</maven-site-plugin.version>
     <jacoco-plugin.version>0.8.8</jacoco-plugin.version>
     <maven-project-info-reports-plugin.version>3.4.2</maven-project-info-reports-plugin.version>
@@ -146,6 +145,9 @@
     <maven-project-info-reports-plugin.version>3.2.1</maven-project-info-reports-plugin.version>
     <archunit.version>1.0.1</archunit.version>
     <sonar-maven-plugin.version>3.9.1.2184</sonar-maven-plugin.version>
+
+    <!-- Jib -->
+    <image>docker-public.terrestris.de/shogun/${project.artifactId}:latest</image>
   </properties>
 
   <build>
@@ -177,11 +179,6 @@
           <groupId>org.hibernate.orm.tooling</groupId>
           <artifactId>hibernate-enhance-maven-plugin</artifactId>
           <version>${hibernate.version}</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-release-plugin</artifactId>
-          <version>${maven-release-plugin.version}</version>
         </plugin>
         <plugin>
           <groupId>org.springframework.boot</groupId>
@@ -239,7 +236,7 @@
               <image>docker.terrestris.de/openjdk@sha256:d50104b0b5811b60c198a3e5ced23c783a49e0d4f78b99762fca4bfdbbc59dd2</image>
             </from>
             <to>
-              <image>docker-public.terrestris.de/shogun/${project.artifactId}:latest</image>
+              <image>${image}</image>
               <tags>
                 <tag>${project.version}</tag>
                 <!--suppress UnresolvedMavenProperty -->
@@ -253,6 +250,7 @@
               </jvmFlags>
               <creationTime>EPOCH</creationTime>
             </container>
+
           </configuration>
         </plugin>
         <plugin>
@@ -264,10 +262,6 @@
     </pluginManagement>
 
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-      </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>

@@ -37,5 +37,6 @@ header:
     - '**/*.md'
     - '**/*.sql'
     - '**/*.iml'
+    - '.releaserc.json'
 
   comment: on-failure

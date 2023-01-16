@@ -1,0 +1,29 @@
+{
+  "branches": [
+    "main"
+  ],
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    "@semantic-release/changelog",
+    [
+      "@terrestris/maven-semantic-release",
+      {
+        "mavenTarget": "deploy",
+        "clean": false,
+        "updateSnapshotVersion": true,
+        "settingsPath": "/home/runner/.m2/settings.xml"
+      }
+    ],
+    [
+      "@semantic-release/git",
+      {
+        "assets": [
+          "CHANGELOG.md", "pom.xml"
+        ],
+        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+      }
+    ],
+    "@semantic-release/github"
+  ]
+}
