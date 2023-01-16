@@ -38,11 +38,9 @@ public interface BaseCrudRepository<T, ID> extends
     List<T> findAll();
 
     /**
-     * Returns a {@link Page} of entities for which the user with userId has permission via UserInstancePermission or
-     * GroupInstancePermission.
+     * Returns a {@link Page} of entities for which the user with userId has permission via UserInstancePermission.
      *
-     * @param pageable the pageable to request a paged result, can be {@link Pageable#unpaged()}, must not be
-     *                 {@literal null}.
+     * @param pageable the pageable to request a paged result, can be {@link Pageable#unpaged()}, must not be {@literal null}.
      * @param userId ID of the authenticated user.
      * @return A page of entities.
      */
@@ -53,9 +51,32 @@ public interface BaseCrudRepository<T, ID> extends
             where uip.user_id = :userId and uip.entity_id = m.id and uip.permission_id = 1
         )
     """)
-    // todo: check group instance permissions
+    // todo: replace ID 1 with ids for READ / ADMIN
     @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
     Page<T> findAll(Pageable pageable, Long userId);
+
+    /**
+     * Returns a {@link Page} of entities for which the user with userId has permission via UserInstancePermission or GroupInstancePermission.
+     *
+     * @param pageable the pageable to request a paged result, can be {@link Pageable#unpaged()}, must not be {@literal null}.
+     * @param userId ID of the authenticated user.
+     * @param groupIds All IDs of the groups of the authenticated user.
+     * @return A page of entities.
+     */
+    @Query(nativeQuery = true, value = """
+        select * from shogun.#{#entityName} m
+        where exists (
+            select 1 from shogun.userinstancepermissions uip
+            where uip.user_id = :userId and uip.entity_id = m.id and uip.permission_id = 1
+        )
+        or exists (
+            select 1 from shogun.groupinstancepermissions gip
+            where gip.group_id in :groupIds and gip.entity_id = m.id and gip.permission_id = 1
+        )
+    """)
+    // todo: replace ID 1 with ids for READ / ADMIN
+    @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
+    Page<T> findAll(Pageable pageable, Long userId, List<Long> groupIds);
 
     /**
      * Returns a {@link Page} of entities without checking any permissions.

@@ -18,7 +18,9 @@ package de.terrestris.shogun.lib.security.access.entity;
 
 import de.terrestris.shogun.lib.enumeration.PermissionType;
 import de.terrestris.shogun.lib.model.BaseEntity;
+import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.model.User;
+import de.terrestris.shogun.lib.model.security.permission.ClassPermission;
 import de.terrestris.shogun.lib.model.security.permission.GroupClassPermission;
 import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
 import de.terrestris.shogun.lib.model.security.permission.UserClassPermission;
@@ -28,8 +30,11 @@ import de.terrestris.shogun.lib.service.security.permission.GroupClassPermission
 import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionService;
 import de.terrestris.shogun.lib.service.security.permission.UserClassPermissionService;
 import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
+import de.terrestris.shogun.lib.service.security.provider.GroupProviderService;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
+import org.keycloak.representations.idm.GroupRepresentation;
+import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
@@ -55,6 +60,9 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
 
     @Autowired
     protected GroupClassPermissionService groupClassPermissionService;
+
+    @Autowired
+    protected GroupProviderService<UserRepresentation, GroupRepresentation> groupProviderService;
 
     @Autowired
     protected List<BaseCrudRepository> baseCrudRepositories;
@@ -249,7 +257,7 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
      */
     @Override
     public Page<E> findAll(User user, Pageable pageable, BaseCrudRepository<E, Long> repository) {
-        // check if user has role `ADMIN`
+        // option A: user has role `ADMIN`
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         List<GrantedAuthority> authorities = new ArrayList<>(authentication.getAuthorities());
@@ -261,22 +269,38 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
             return repository.findAll(pageable);
         }
 
-        // check if user has permission through class permissions
+        // option B: user has permission through class permissions
         Class<? extends BaseEntity> baseEntityClass = getBaseEntityClass();
-        Optional<UserClassPermission> userClassPermissions = userClassPermissionService.findFor(baseEntityClass, user);
-        if (userClassPermissions.isPresent()) {
-            boolean hasReadPermission = userClassPermissions.get().getPermission().getPermissions().contains(PermissionType.READ) ||
-                userClassPermissions.get().getPermission().getPermissions().contains(PermissionType.ADMIN);
+        Optional<UserClassPermission> userClassPermission = userClassPermissionService.findFor(baseEntityClass, user);
+        Optional<GroupClassPermission> groupClassPermission = groupClassPermissionService.findFor(baseEntityClass, user);
 
-            if (hasReadPermission) {
-                return repository.findAll(pageable);
-            }
+        if (containsReadPermission(userClassPermission.orElse(null), groupClassPermission.orElse(null))) {
+            return repository.findAll(pageable);
         }
 
-        // todo: check group class permissions
+        // option C: check instance permissions for each entity with a single query
+        List<Group<GroupRepresentation>> userGroups = groupProviderService.getGroupsForUser();
+        if (userGroups.isEmpty()) {
+            // user has no groups so only user instance permissions have to be checked
+            return repository.findAll(pageable, user.getId());
+        } else {
+            // check both user and group instance permissions
+            List<Long> groupIds = userGroups.stream()
+                .map(BaseEntity::getId)
+                .toList();
+            return repository.findAll(pageable, user.getId(), groupIds);
+        }
+    }
 
-        // checks instance permissions for each entity
-        return repository.findAll(pageable, user.getId());
+    private boolean containsReadPermission(ClassPermission ...classPermissions) {
+        return Arrays.stream(classPermissions).anyMatch(classPermission -> {
+            if (classPermission == null) {
+                return false;
+            }
+            Set<PermissionType> permissions = classPermission.getPermission().getPermissions();
+            return permissions.contains(PermissionType.READ) ||
+                permissions.contains(PermissionType.ADMIN);
+        });
     }
 
     /**
