@@ -256,7 +256,7 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
      * @return A page of entities.
      */
     @Override
-    public Page<E> findAll(User user, Pageable pageable, BaseCrudRepository<E, Long> repository) {
+    public Page<E> findAll(User user, Pageable pageable, BaseCrudRepository<E, Long> repository, Class<E> baseEntityClass) {
         // option A: user has role `ADMIN`
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -270,7 +270,6 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
         }
 
         // option B: user has permission through class permissions
-        Class<? extends BaseEntity> baseEntityClass = getBaseEntityClass();
         Optional<UserClassPermission> userClassPermission = userClassPermissionService.findFor(baseEntityClass, user);
         Optional<GroupClassPermission> groupClassPermission = groupClassPermissionService.findFor(baseEntityClass, user);
 
@@ -311,10 +310,10 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
      */
     public Class<? extends BaseEntity> getBaseEntityClass() {
         Class<? extends BaseEntity>[] resolvedTypeArguments = (Class<? extends BaseEntity>[]) GenericTypeResolver.resolveTypeArguments(getClass(),
-            BaseService.class);
+            BaseEntityPermissionEvaluator.class);
 
-        if (resolvedTypeArguments != null && resolvedTypeArguments.length == 2) {
-            return resolvedTypeArguments[1];
+        if (resolvedTypeArguments != null && resolvedTypeArguments.length == 1) {
+            return resolvedTypeArguments[0];
         } else {
             return null;
         }

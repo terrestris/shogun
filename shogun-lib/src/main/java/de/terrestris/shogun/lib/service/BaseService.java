@@ -24,7 +24,7 @@ import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.BaseCrudRepository;
-import de.terrestris.shogun.lib.security.access.entity.EntityPermissionEvaluator;
+import de.terrestris.shogun.lib.security.access.entity.BaseEntityPermissionEvaluator;
 import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionService;
 import de.terrestris.shogun.lib.service.security.permission.UserClassPermissionService;
 import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
@@ -70,10 +70,6 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
 
     @Autowired
     @Lazy
-    protected UserClassPermissionService userClassPermissionService;
-
-    @Autowired
-    @Lazy
     protected GroupInstancePermissionService groupInstancePermissionService;
 
     @Autowired
@@ -81,8 +77,7 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
     protected UserProviderService userProviderService;
 
     @Autowired
-    @Lazy
-    protected EntityPermissionEvaluator<S> entityPermissionEvaluator;
+    protected List<BaseEntityPermissionEvaluator<?>> permissionEvaluators;
 
     @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
     @Transactional(readOnly = true)
@@ -94,7 +89,14 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
     public Page<S> findAll(Pageable pageable) {
         // note: security check is done in permission evaluator
         Optional<User> userOpt = userProviderService.getUserBySession();
-        return entityPermissionEvaluator.findAll(userOpt.orElseThrow(), pageable, repository);
+
+        // todo: can this be simplified? autowiring BaseEntityPermissionEvaluator did not work.
+        BaseEntityPermissionEvaluator entityPermissionEvaluator =
+            this.getPermissionEvaluatorForClass(BaseEntity.class.getCanonicalName());
+
+        Class<? extends BaseEntity> entityClass = this.getBaseEntityClass();
+
+        return entityPermissionEvaluator.findAll(userOpt.orElseThrow(), pageable, repository, entityClass);
     }
 
     @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
@@ -219,13 +221,25 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
      * @return The class.
      */
     public Class<? extends BaseEntity> getBaseEntityClass() {
-        Class<? extends BaseEntity>[] resolvedTypeArguments = (Class<? extends BaseEntity>[]) GenericTypeResolver.resolveTypeArguments(getClass(),
-            BaseService.class);
+        Class<? extends BaseEntity>[] resolvedTypeArguments = (Class<? extends BaseEntity>[]) GenericTypeResolver.resolveTypeArguments(
+            getClass(), BaseService.class
+        );
 
         if (resolvedTypeArguments != null && resolvedTypeArguments.length == 2) {
             return resolvedTypeArguments[1];
         } else {
             return null;
         }
+    }
+
+    protected BaseEntityPermissionEvaluator getPermissionEvaluatorForClass(String persistentObjectClass) {
+
+        BaseEntityPermissionEvaluator entityPermissionEvaluator = permissionEvaluators.stream()
+            .filter(permissionEvaluator -> persistentObjectClass.equals(
+                permissionEvaluator.getEntityClassName().getCanonicalName()))
+            .findAny()
+            .orElse(null);
+
+        return entityPermissionEvaluator;
     }
 }
