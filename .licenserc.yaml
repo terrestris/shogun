@@ -37,5 +37,7 @@ header:
     - '**/*.md'
     - '**/*.sql'
     - '**/*.iml'
+    - '.releaserc.json'
+    - '.commitlintrc.json'
 
   comment: on-failure
