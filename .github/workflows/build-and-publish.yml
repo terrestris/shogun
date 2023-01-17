@@ -57,7 +57,7 @@ jobs:
           @terrestris/maven-semantic-release
           @semantic-release/git
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
     - name: Scan for unit tests
       run: mvn clean verify sonar:sonar --batch-mode -Dsonar.projectKey=SHOGun -Dsonar.login="${{ secrets.SONARQUBE_TOKEN }}" -Preporting
