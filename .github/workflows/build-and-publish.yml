@@ -41,7 +41,7 @@ jobs:
           ]
 
     - name: Install dependencies
-      run: mvn install --batch-mode -DskipTests
+      run: mvn compile --batch-mode
 
     - name: Save cache
       uses: actions/cache/save@v3
@@ -50,6 +50,7 @@ jobs:
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
 
     - name: Semantic release
+      id: semantic
       uses: cycjimmy/semantic-release-action@v3
       with:
         extra_plugins: |
@@ -60,9 +61,11 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
     - name: Scan for unit tests
+      if: steps.semantic.outputs.new_release_published == 'true'
       run: mvn clean verify sonar:sonar --batch-mode -Dsonar.projectKey=SHOGun -Dsonar.login="${{ secrets.SONARQUBE_TOKEN }}" -Preporting
 
     - name: Refresh SonarQube
+      if: steps.semantic.outputs.new_release_published == 'true'
       run: mvn compile sonar:sonar --batch-mode -Dsonar.projectKey=SHOGun -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }} -Dsonar.login="${{ secrets.SONARQUBE_TOKEN }}"
 
     - name: Save cache
