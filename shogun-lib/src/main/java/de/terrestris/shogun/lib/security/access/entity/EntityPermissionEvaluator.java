@@ -37,5 +37,5 @@ public interface EntityPermissionEvaluator<E> {
      * with paging. See {@link BaseEntityPermissionEvaluator#findAll(User, Pageable, BaseCrudRepository)} for the
      * default implementation for {@link de.terrestris.shogun.lib.model.BaseEntity}.
      */
-    Page<E> findAll(User user, Pageable pageable, BaseCrudRepository<E, Long> repository);
+    Page<E> findAll(User user, Pageable pageable, BaseCrudRepository<E, Long> repository, Class<E> baseEntityClass);
 }
