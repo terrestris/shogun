@@ -45,13 +45,17 @@ public interface BaseCrudRepository<T, ID> extends
      * @return A page of entities.
      */
     @Query(nativeQuery = true, value = """
-        select * from shogun.#{#entityName} m
-        where exists (
-            select 1 from shogun.userinstancepermissions uip
-            where uip.user_id = :userId and uip.entity_id = m.id and uip.permission_id = 1
-        )
-    """)
-    // todo: replace ID 1 with ids for READ / ADMIN
+            WITH read_permissions AS (
+                select id
+                from shogun.permissions
+                where name in ('ADMIN', 'READ', 'CREATE_READ', 'CREATE_READ_UPDATE', 'CREATE_READ_DELETE', 'READ_UPDATE', 'READ_DELETE', 'READ_UPDATE_DELETE')
+            )
+            select * from shogun.#{#entityName} m
+            where exists (
+                select 1 from shogun.userinstancepermissions uip
+                where uip.user_id = :userId and uip.entity_id = m.id and uip.permission_id in (select id from read_permissions)
+            )
+        """)
     @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
     Page<T> findAll(Pageable pageable, Long userId);
 
@@ -64,17 +68,21 @@ public interface BaseCrudRepository<T, ID> extends
      * @return A page of entities.
      */
     @Query(nativeQuery = true, value = """
+        WITH read_permissions AS (
+            select id
+            from shogun.permissions
+            where name in ('ADMIN', 'READ', 'CREATE_READ', 'CREATE_READ_UPDATE', 'CREATE_READ_DELETE', 'READ_UPDATE', 'READ_DELETE', 'READ_UPDATE_DELETE')
+        )
         select * from shogun.#{#entityName} m
         where exists (
             select 1 from shogun.userinstancepermissions uip
-            where uip.user_id = :userId and uip.entity_id = m.id and uip.permission_id = 1
+            where uip.user_id = :userId and uip.entity_id = m.id and uip.permission_id in (select id from read_permissions)
         )
         or exists (
             select 1 from shogun.groupinstancepermissions gip
-            where gip.group_id in :groupIds and gip.entity_id = m.id and gip.permission_id = 1
+            where gip.group_id in :groupIds and gip.entity_id = m.id and gip.permission_id in (select id from read_permissions)
         )
     """)
-    // todo: replace ID 1 with ids for READ / ADMIN
     @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
     Page<T> findAll(Pageable pageable, Long userId, List<Long> groupIds);
 
