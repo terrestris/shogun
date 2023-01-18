@@ -16,6 +16,7 @@
  */
 package de.terrestris.shogun.lib.config;
 
+import de.terrestris.shogun.lib.graphql.scalar.DateTimeScalar;
 import de.terrestris.shogun.lib.graphql.scalar.GeometryScalar;
 import graphql.scalars.ExtendedScalars;
 import org.springframework.context.annotation.Bean;
@@ -30,7 +31,7 @@ public class GraphQLConfig {
         return wiringBuilder -> {
             wiringBuilder.scalar(ExtendedScalars.Json);
             wiringBuilder.scalar(GeometryScalar.INSTANCE);
-            wiringBuilder.scalar(ExtendedScalars.DateTime);
+            wiringBuilder.scalar(DateTimeScalar.INSTANCE);
             wiringBuilder.scalar(ExtendedScalars.GraphQLLong);
         };
     }
