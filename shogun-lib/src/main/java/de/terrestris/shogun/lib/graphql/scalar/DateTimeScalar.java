@@ -42,7 +42,7 @@ import static java.time.temporal.ChronoField.SECOND_OF_MINUTE;
 /**
  * Access this via {@link graphql.scalars.ExtendedScalars#DateTime}
  *
- * Added parser / serializer for {@link java.time.Instant} based on <a href="https://raw.githubusercontent.com/terrestris/shogun/v15.0.0/shogun-lib/src/main/java/de/terrestris/shogun/lib/graphql/scalar/DateTimeScalar.java">this implementation</a>
+ * Added parser / serializer for {@link java.time.Instant} based on <a href="https://github.com/graphql-java/graphql-java-extended-scalars/blob/master/src/main/java/graphql/scalars/datetime/DateTimeScalar.java">this implementation</a>
  *
  */
 @Internal
