@@ -28,6 +28,7 @@ header:
     - 'shogun-lib/src/main/java/de/terrestris/shogun/lib/envers/ShogunEnversRevisionRepositoryFactoryBean.java'
     - 'shogun-lib/src/main/java/de/terrestris/shogun/lib/envers/ShogunRevisionMetadata.java'
     - 'shogun-lib/src/main/java/de/terrestris/shogun/lib/repository/impl/ShogunRevisionRepositoryImpl.java'
+    - 'shogun-lib/src/main/java/de/terrestris/shogun/lib/graphql/graphql/DateTimeScalar.java'
     - 'shogun-boot/target'
     - 'shogun-config/target'
     - 'shogun-gs-interceptor/target'
