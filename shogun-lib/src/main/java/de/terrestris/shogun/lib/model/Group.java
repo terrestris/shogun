@@ -30,12 +30,14 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.envers.AuditTable;
 import org.hibernate.envers.Audited;
 import org.keycloak.representations.idm.GroupRepresentation;
 
 @Entity(name = "groups")
 @Table(schema = "shogun")
+@DynamicUpdate
 @Audited
 @AuditTable(value = "groups_rev", schema = "shogun_rev")
 @Cacheable

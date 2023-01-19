@@ -35,6 +35,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.AuditTable;
 import org.hibernate.envers.Audited;
@@ -42,6 +43,7 @@ import org.keycloak.representations.idm.UserRepresentation;
 
 @Entity(name = "users")
 @Table(schema = "shogun")
+@DynamicUpdate
 @Audited
 @AuditTable(value = "users_rev", schema = "shogun_rev")
 @Cacheable
