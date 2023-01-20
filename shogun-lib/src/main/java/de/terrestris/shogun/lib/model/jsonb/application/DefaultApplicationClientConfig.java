@@ -49,7 +49,6 @@ public class DefaultApplicationClientConfig implements ApplicationClientConfig {
     )
     private DefaultLegalInformation legal;
 
-
     @Schema(
         description = "The configuration of the applications theme."
     )
