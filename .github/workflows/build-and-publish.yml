@@ -53,10 +53,11 @@ jobs:
       id: semantic
       uses: cycjimmy/semantic-release-action@v3
       with:
+        semantic_version: 19
         extra_plugins: |
-          @semantic-release/changelog
-          @terrestris/maven-semantic-release
-          @semantic-release/git
+          @semantic-release/changelog@6
+          @terrestris/maven-semantic-release@2
+          @semantic-release/git@10
       env:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
