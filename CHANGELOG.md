@@ -1,3 +1,10 @@
+# [16.2.0](https://github.com/terrestris/shogun/compare/v16.1.1...v16.2.0) (2023-01-20)
+
+
+### Features
+
+* extend application client config model for legal information link config ([21d4874](https://github.com/terrestris/shogun/commit/21d487488aa5f182c1b038c9e3627f39c3a8d6d9))
+
 ## [16.1.1](https://github.com/terrestris/shogun/compare/v16.1.0...v16.1.1) (2023-01-18)
 
 
