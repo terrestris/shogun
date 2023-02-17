@@ -18,6 +18,9 @@ package de.terrestris.shogun.lib.graphql.controller;
 
 import de.terrestris.shogun.lib.model.ImageFile;
 import de.terrestris.shogun.lib.service.ImageFileService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
@@ -29,8 +32,8 @@ import java.util.Optional;
 public class ImageFileGraphQLController extends BaseGraphQLController<ImageFile, ImageFileService> {
 
     @QueryMapping
-    public List<ImageFile> allImageFiles() {
-        return super.findAll();
+    public List<ImageFile> allImageFiles(@Argument("page") Integer page, @Argument("size") Integer size) {
+        return super.findAll(page, size);
     }
 
     @QueryMapping

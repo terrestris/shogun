@@ -40,7 +40,7 @@ type Query {
 
     The query takes the current user into account and filters all entities by the `READ` permission of the user.
     """
-    allApplications: [Application]
+    allApplications(page: Int = 0, size: Int = 0): [Application]
     """
     Returns the application with the given ID (if any).
 
@@ -156,7 +156,7 @@ type Query {
 
     The query takes the current user into account and filters all entities by the `READ` permission of the user.
     """
-    allFiles: [File]
+    allFiles(page: Int = 0, size: Int = 0): [File]
     """
     Returns the file with the given ID (if any).
 
@@ -208,7 +208,7 @@ type Query {
 
     The query takes the current user into account and filters all entities by the `READ` permission of the user.
     """
-    allGroups: [Group]
+    allGroups(page: Int = 0, size: Int = 0): [Group]
     """
     Returns the group with the given ID (if any).
 
@@ -324,7 +324,7 @@ type Query {
 
     The query takes the current user into account and filters all entities by the `READ` permission of the user.
     """
-    allImageFiles: [ImageFile]
+    allImageFiles(page: Int = 0, size: Int = 0): [ImageFile]
     """
     Returns the imagefile with the given ID (if any).
 
@@ -376,7 +376,7 @@ type Query {
 
     The query takes the current user into account and filters all entities by the `READ` permission of the user.
     """
-    allLayers: [Layer]
+    allLayers(page: Int = 0, size: Int = 0): [Layer]
     """
     Returns the layer with the given ID (if any).
 
@@ -494,7 +494,7 @@ type Query {
 
     The query takes the current user into account and filters all entities by the `READ` permission of the user.
     """
-    allUsers: [User]
+    allUsers(page: Int = 0, size: Int = 0): [User]
     """
     Returns the user with the given ID (if any).
 

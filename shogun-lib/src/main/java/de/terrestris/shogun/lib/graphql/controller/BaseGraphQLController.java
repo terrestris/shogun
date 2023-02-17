@@ -24,6 +24,9 @@ import de.terrestris.shogun.lib.repository.BaseCrudRepository;
 import de.terrestris.shogun.lib.service.BaseService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
 
@@ -43,8 +46,11 @@ public abstract class BaseGraphQLController<E extends BaseEntity, S extends Base
     @Autowired
     protected S service;
 
-    public List<E> findAll() {
-        return this.service.findAll();
+    public List<E> findAll(Integer page, Integer size) {
+        size = size.equals(0) ? Integer.MAX_VALUE : size;
+        Pageable pageable = PageRequest.of(page, size);
+        Page<E> entities = service.findAll(pageable);
+        return entities.getContent(); // todo: error handling
     }
 
     public Optional<E> findOne(Long id) {

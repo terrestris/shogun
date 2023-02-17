@@ -34,8 +34,8 @@ import java.util.Optional;
 public class LayerGraphQLController extends BaseGraphQLController<Layer, LayerService> {
 
     @QueryMapping
-    public List<Layer> allLayers() {
-        return super.findAll();
+    public List<Layer> allLayers(@Argument("page") Integer page, @Argument("size") Integer size) {
+        return super.findAll(page, size);
     }
 
     @QueryMapping

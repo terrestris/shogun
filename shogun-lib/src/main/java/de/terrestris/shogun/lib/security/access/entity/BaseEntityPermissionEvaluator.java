@@ -25,6 +25,7 @@ import de.terrestris.shogun.lib.model.security.permission.GroupClassPermission;
 import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
 import de.terrestris.shogun.lib.model.security.permission.UserClassPermission;
 import de.terrestris.shogun.lib.repository.BaseCrudRepository;
+import de.terrestris.shogun.lib.security.SecurityContextUtil;
 import de.terrestris.shogun.lib.service.BaseService;
 import de.terrestris.shogun.lib.service.security.permission.GroupClassPermissionService;
 import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionService;
@@ -63,6 +64,9 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
 
     @Autowired
     protected GroupProviderService<UserRepresentation, GroupRepresentation> groupProviderService;
+
+    @Autowired
+    protected SecurityContextUtil securityContextUtil;
 
     @Autowired
     protected List<BaseCrudRepository> baseCrudRepositories;
@@ -257,10 +261,8 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
      */
     @Override
     public Page<E> findAll(User user, Pageable pageable, BaseCrudRepository<E, Long> repository, Class<E> baseEntityClass) {
-        // option A: user has role `ADMIN`
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        List<GrantedAuthority> authorities = new ArrayList<>(authentication.getAuthorities());
+        // easiest option: user has role `ADMIN` and permission check can be skipped
+        List<GrantedAuthority> authorities = securityContextUtil.getGrantedAuthorities();
         var isAdmin = authorities.stream().anyMatch(
             grantedAuthority -> StringUtils.endsWithIgnoreCase(grantedAuthority.getAuthority(), "ADMIN")
         );
@@ -269,7 +271,7 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
             return repository.findAll(pageable);
         }
 
-        // option B: user has permission through class permissions
+        // next option: check if user has permission through class permissions
         Optional<UserClassPermission> userClassPermission = userClassPermissionService.findFor(baseEntityClass, user);
         Optional<GroupClassPermission> groupClassPermission = groupClassPermissionService.findFor(baseEntityClass, user);
 
@@ -277,10 +279,9 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
             return repository.findAll(pageable);
         }
 
-        // option C: check instance permissions for each entity with a single query
+        // last option: check instance permissions for each entity with a single database query
         List<Group<GroupRepresentation>> userGroups = groupProviderService.getGroupsForUser();
         if (userGroups.isEmpty()) {
-            // user has no groups so only user instance permissions have to be checked
             return repository.findAll(pageable, user.getId());
         } else {
             // check both user and group instance permissions

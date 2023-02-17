@@ -19,6 +19,9 @@ package de.terrestris.shogun.lib.graphql.controller;
 import de.terrestris.shogun.lib.graphql.dto.MutateUser;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
 import org.springframework.graphql.data.method.annotation.Argument;
@@ -34,8 +37,8 @@ import java.util.Optional;
 public class UserGraphQLController extends BaseGraphQLController<User, UserService> {
 
     @QueryMapping
-    public List<User> allUsers() {
-        return super.findAll();
+    public List<User> allUsers(@Argument("page") Integer page, @Argument("size") Integer size) {
+        return super.findAll(page, size);
     }
 
     @QueryMapping
