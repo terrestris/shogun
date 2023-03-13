@@ -44,18 +44,15 @@ public interface BaseCrudRepository<T, ID> extends
      * @param userId ID of the authenticated user.
      * @return A page of entities.
      */
-    @Query(nativeQuery = true, value = """
-            WITH read_permissions AS (
-                select id
-                from shogun.permissions
-                where name in ('ADMIN', 'READ', 'CREATE_READ', 'CREATE_READ_UPDATE', 'CREATE_READ_DELETE', 'READ_UPDATE', 'READ_DELETE', 'READ_UPDATE_DELETE')
-            )
-            select * from shogun.#{#entityName} m
-            where exists (
-                select 1 from shogun.userinstancepermissions uip
-                where uip.user_id = :userId and uip.entity_id = m.id and uip.permission_id in (select id from read_permissions)
-            )
-        """)
+    @Query("""
+        FROM #{#entityName} m
+        WHERE EXISTS (
+            SELECT 1 FROM userinstancepermissions uip
+            WHERE uip.user.id = :userId
+            AND uip.entityId = m.id
+            AND uip.permission.name IN ('ADMIN', 'READ', 'CREATE_READ', 'CREATE_READ_UPDATE', 'CREATE_READ_DELETE', 'READ_UPDATE', 'READ_DELETE', 'READ_UPDATE_DELETE')
+        )
+    """)
     @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
     Page<T> findAll(Pageable pageable, Long userId);
 
@@ -67,20 +64,18 @@ public interface BaseCrudRepository<T, ID> extends
      * @param groupIds All IDs of the groups of the authenticated user.
      * @return A page of entities.
      */
-    @Query(nativeQuery = true, value = """
-        WITH read_permissions AS (
-            select id
-            from shogun.permissions
-            where name in ('ADMIN', 'READ', 'CREATE_READ', 'CREATE_READ_UPDATE', 'CREATE_READ_DELETE', 'READ_UPDATE', 'READ_DELETE', 'READ_UPDATE_DELETE')
-        )
-        select * from shogun.#{#entityName} m
-        where exists (
-            select 1 from shogun.userinstancepermissions uip
-            where uip.user_id = :userId and uip.entity_id = m.id and uip.permission_id in (select id from read_permissions)
-        )
-        or exists (
-            select 1 from shogun.groupinstancepermissions gip
-            where gip.group_id in :groupIds and gip.entity_id = m.id and gip.permission_id in (select id from read_permissions)
+    @Query("""
+        FROM #{#entityName} m
+        WHERE EXISTS (
+            SELECT 1 FROM userinstancepermissions uip
+            WHERE uip.user.id = :userId
+            AND uip.entityId = m.id
+            AND uip.permission.name IN ('ADMIN', 'READ', 'CREATE_READ', 'CREATE_READ_UPDATE', 'CREATE_READ_DELETE', 'READ_UPDATE', 'READ_DELETE', 'READ_UPDATE_DELETE')
+        ) OR EXISTS (
+            SELECT 1 FROM groupinstancepermissions gip
+            WHERE gip.group.id IN :groupIds
+            AND gip.entityId = m.id
+            AND gip.permission.name IN ('ADMIN', 'READ', 'CREATE_READ', 'CREATE_READ_UPDATE', 'CREATE_READ_DELETE', 'READ_UPDATE', 'READ_DELETE', 'READ_UPDATE_DELETE')
         )
     """)
     @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
