@@ -18,10 +18,16 @@ package de.terrestris.shogun.lib.graphql.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.terrestris.shogun.lib.dto.DefaultGraphQLConnection;
+import de.terrestris.shogun.lib.dto.GraphQLConnection;
 import de.terrestris.shogun.lib.graphql.exception.EntityNotAvailableException;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.repository.BaseCrudRepository;
 import de.terrestris.shogun.lib.service.BaseService;
+import graphql.relay.DefaultConnectionCursor;
+import graphql.relay.DefaultEdge;
+import graphql.relay.DefaultPageInfo;
+import graphql.relay.Edge;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,8 +40,10 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Log4j2
 public abstract class BaseGraphQLController<E extends BaseEntity, S extends BaseService<? extends BaseCrudRepository<E, Long>, E>> {
@@ -46,11 +54,26 @@ public abstract class BaseGraphQLController<E extends BaseEntity, S extends Base
     @Autowired
     protected S service;
 
-    public List<E> findAll(Integer page, Integer size) {
-        size = size.equals(0) ? Integer.MAX_VALUE : size;
-        Pageable pageable = PageRequest.of(page, size);
+    public DefaultGraphQLConnection<E> findAll(Integer first, Integer offset) {
+        Pageable pageable = PageRequest.of(first, offset); // todo: calculate first / offset
         Page<E> entities = service.findAll(pageable);
-        return entities.getContent(); // todo: error handling
+        List<Edge<E>> defaultEdge = entities.get().map(e -> new DefaultEdge<E>(
+            e,
+            new DefaultConnectionCursor("DK")
+        )).collect(Collectors.toList());
+
+        DefaultPageInfo pageInfo = new DefaultPageInfo(
+            new DefaultConnectionCursor("LL"), // todo: find out
+            new DefaultConnectionCursor("JW"),
+            entities.hasPrevious(),
+            entities.hasNext()
+        );
+        DefaultGraphQLConnection graphQLConnection = new DefaultGraphQLConnection<>(
+            entities.getTotalElements(),
+            defaultEdge,
+            pageInfo
+        );
+        return graphQLConnection;
     }
 
     public Optional<E> findOne(Long id) {

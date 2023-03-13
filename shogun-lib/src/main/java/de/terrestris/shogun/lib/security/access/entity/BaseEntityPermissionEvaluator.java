@@ -262,12 +262,7 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
     @Override
     public Page<E> findAll(User user, Pageable pageable, BaseCrudRepository<E, Long> repository, Class<E> baseEntityClass) {
         // easiest option: user has role `ADMIN` and permission check can be skipped
-        List<GrantedAuthority> authorities = securityContextUtil.getGrantedAuthorities();
-        var isAdmin = authorities.stream().anyMatch(
-            grantedAuthority -> StringUtils.endsWithIgnoreCase(grantedAuthority.getAuthority(), "ADMIN")
-        );
-
-        if (isAdmin) {
+        if (securityContextUtil.isAdmin()) {
             return repository.findAll(pageable);
         }
 

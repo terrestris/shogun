@@ -16,6 +16,7 @@
  */
 package de.terrestris.shogun.lib.graphql.controller;
 
+import de.terrestris.shogun.lib.dto.DefaultGraphQLConnection;
 import de.terrestris.shogun.lib.graphql.dto.MutateUser;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.service.UserService;
@@ -37,7 +38,7 @@ import java.util.Optional;
 public class UserGraphQLController extends BaseGraphQLController<User, UserService> {
 
     @QueryMapping
-    public List<User> allUsers(@Argument("page") Integer page, @Argument("size") Integer size) {
+    public DefaultGraphQLConnection<User> allUsers(@Argument("page") Integer page, @Argument("size") Integer size) {
         return super.findAll(page, size);
     }
 

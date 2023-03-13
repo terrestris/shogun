@@ -16,6 +16,7 @@
  */
 package de.terrestris.shogun.lib.graphql.controller;
 
+import de.terrestris.shogun.lib.dto.DefaultGraphQLConnection;
 import de.terrestris.shogun.lib.graphql.dto.MutateApplication;
 import de.terrestris.shogun.lib.model.Application;
 import de.terrestris.shogun.lib.service.ApplicationService;
@@ -37,8 +38,8 @@ import java.util.Optional;
 public class ApplicationGraphQLController extends BaseGraphQLController<Application, ApplicationService> {
 
     @QueryMapping
-    public List<Application> allApplications(@Argument("page") int page, @Argument("size") int size) {
-        return super.findAll(page, size);
+    public DefaultGraphQLConnection<Application> allApplications(@Argument("first") int first, @Argument("offset") int offset) {
+        return super.findAll(first, offset);
     }
 
     @QueryMapping

@@ -16,6 +16,7 @@
  */
 package de.terrestris.shogun.lib.graphql.controller;
 
+import de.terrestris.shogun.lib.dto.DefaultGraphQLConnection;
 import de.terrestris.shogun.lib.model.Application;
 import de.terrestris.shogun.lib.model.File;
 import de.terrestris.shogun.lib.service.FileService;
@@ -33,7 +34,7 @@ import java.util.Optional;
 public class FileGraphQLController extends BaseGraphQLController<File, FileService> {
 
     @QueryMapping
-    public List<File> allFiles(@Argument("page") Integer page, @Argument("size") Integer size) {
+    public DefaultGraphQLConnection<File> allFiles(@Argument("page") Integer page, @Argument("size") Integer size) {
         return super.findAll(page, size);
     }
 

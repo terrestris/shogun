@@ -20,6 +20,26 @@ scalar Geometry
 scalar DateTime
 scalar Long
 
+type PageInfo {
+    hasPreviousPage: Boolean!
+    hasNextPage: Boolean!
+}
+
+type ApplicationEdge {
+    cursor: DefaultConnectionCursor
+    node: Application
+}
+
+type DefaultConnectionCursor {
+    value: String
+}
+
+type ApplicationConnection {
+    totalCount: Long
+    edges: [ApplicationEdge]
+    pageInfo: PageInfo
+}
+
 """
 The following list contains all supported GraphQL queries of the SHOGun-API.
 """
@@ -40,7 +60,7 @@ type Query {
 
     The query takes the current user into account and filters all entities by the `READ` permission of the user.
     """
-    allApplications(page: Int = 0, size: Int = 0): [Application]
+    allApplications(first: Int = 0, offset: Int = 0): ApplicationConnection
     """
     Returns the application with the given ID (if any).
 

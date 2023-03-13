@@ -16,6 +16,7 @@
  */
 package de.terrestris.shogun.lib.graphql.controller;
 
+import de.terrestris.shogun.lib.dto.DefaultGraphQLConnection;
 import de.terrestris.shogun.lib.model.ImageFile;
 import de.terrestris.shogun.lib.service.ImageFileService;
 import org.springframework.data.domain.Page;
@@ -32,7 +33,7 @@ import java.util.Optional;
 public class ImageFileGraphQLController extends BaseGraphQLController<ImageFile, ImageFileService> {
 
     @QueryMapping
-    public List<ImageFile> allImageFiles(@Argument("page") Integer page, @Argument("size") Integer size) {
+    public DefaultGraphQLConnection<ImageFile> allImageFiles(@Argument("page") Integer page, @Argument("size") Integer size) {
         return super.findAll(page, size);
     }
 

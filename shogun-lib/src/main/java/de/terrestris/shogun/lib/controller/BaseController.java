@@ -86,7 +86,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
             description = "Internal Server Error: Something internal went wrong while deleting the entity"
         )
     })
-    public Page<S> findAll(@PageableDefault(Integer.MAX_VALUE) Pageable pageable) {
+    public Page<S> findAll(@PageableDefault(20) Pageable pageable) {
         log.trace("Requested to return all entities of type {}", getGenericClassName());
 
         try {

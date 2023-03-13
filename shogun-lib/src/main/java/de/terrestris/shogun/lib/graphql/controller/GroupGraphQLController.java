@@ -16,6 +16,7 @@
  */
 package de.terrestris.shogun.lib.graphql.controller;
 
+import de.terrestris.shogun.lib.dto.DefaultGraphQLConnection;
 import de.terrestris.shogun.lib.graphql.dto.MutateGroup;
 import de.terrestris.shogun.lib.model.Application;
 import de.terrestris.shogun.lib.model.Group;
@@ -38,7 +39,7 @@ import java.util.Optional;
 public class GroupGraphQLController extends BaseGraphQLController<Group, GroupService> {
 
     @QueryMapping
-    public List<Group> allGroups(@Argument("page") Integer page, @Argument("size") Integer size) {
+    public DefaultGraphQLConnection<Group> allGroups(@Argument("page") Integer page, @Argument("size") Integer size) {
         return super.findAll(page, size);
     }
 

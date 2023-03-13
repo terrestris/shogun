@@ -26,6 +26,7 @@ import org.mockito.Mock;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 
@@ -71,15 +72,13 @@ public class SecurityContextUtilTest {
             grantedAuthorities.add(new SimpleGrantedAuthority(userRole));
         }
 
-        final String testPassword = "test";
-        User testUser = new User("test", testPassword , grantedAuthorities);
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(testUser, testPassword, grantedAuthorities);
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
     @Test
     public void currentUserIsAdmin_shouldReturnTrue() {
-        // prepare a user that is interceptoradmin
+        // prepare a user that is admin
         loginMockUser("ADMIN");
 
         assertTrue(securityContextUtil.isInterceptorAdmin());
@@ -87,7 +86,7 @@ public class SecurityContextUtilTest {
 
     @Test
     public void currentUserIsInterceptorAdmin_shouldReturnTrue() {
-        // prepare a user that is interceptoradmin
+        // prepare a user that is interceptor admin
         loginMockUser("INTERCEPTOR_ADMIN");
 
         assertTrue(securityContextUtil.isInterceptorAdmin());
@@ -95,7 +94,7 @@ public class SecurityContextUtilTest {
 
     @Test
     public void currentUserIsInterceptorAdmin_shouldReturnFalse() {
-        // prepare a user that is not an interceptoradmin
+        // prepare a user that is not an interceptor admin
         loginMockUser("USER");
 
         assertFalse(securityContextUtil.isInterceptorAdmin());

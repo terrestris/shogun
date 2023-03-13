@@ -16,43 +16,38 @@
  */
 package de.terrestris.shogun.lib.security;
 
-import de.terrestris.shogun.lib.repository.UserRepository;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Component
 @Log4j2
 public class SecurityContextUtil {
 
-    @Autowired
-    protected UserRepository userRepository;
-
-    /**
-     *
-     * @return
-     */
     public List<GrantedAuthority> getGrantedAuthorities() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return new ArrayList<>(authentication.getAuthorities());
     }
 
-    /**
-     * Return if user (in session) is an admin of SHOGun-GeoServer-Interceptor microservice
-     * @return true if so, false otherwise
-     */
     public boolean isInterceptorAdmin() {
         List<GrantedAuthority> authorities = getGrantedAuthorities();
         return authorities.stream().anyMatch(
-            grantedAuthority -> StringUtils.endsWithIgnoreCase(grantedAuthority.getAuthority(), "INTERCEPTOR_ADMIN") ||
-                StringUtils.endsWithIgnoreCase(grantedAuthority.getAuthority(), "ADMIN")
+            grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_INTERCEPTOR_ADMIN") || grantedAuthority.getAuthority().equals("ROLE_ADMIN")
+        );
+    }
+
+    public boolean isAdmin() {
+        List<GrantedAuthority> authorities = getGrantedAuthorities();
+        return authorities.stream().anyMatch(
+            grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN")
         );
     }
 
