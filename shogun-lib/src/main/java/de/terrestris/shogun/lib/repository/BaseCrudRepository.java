@@ -16,6 +16,7 @@
  */
 package de.terrestris.shogun.lib.repository;
 
+import org.hibernate.jpa.AvailableHints;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;

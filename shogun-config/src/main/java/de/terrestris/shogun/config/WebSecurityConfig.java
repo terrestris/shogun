@@ -29,6 +29,9 @@ public interface WebSecurityConfig {
         return refererHeader != null && refererHeader.endsWith("swagger-ui/index.html");
     };
 
+    @Bean
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception;
+
 //    default void configure(HttpSecurity http) throws Exception {
 //        customHttpConfiguration(http);
 //    }

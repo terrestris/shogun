@@ -21,6 +21,7 @@ import de.terrestris.shogun.interceptor.enumeration.InterceptorEnum;
 import de.terrestris.shogun.interceptor.enumeration.OgcEnum;
 import de.terrestris.shogun.interceptor.model.InterceptorRule;
 import de.terrestris.shogun.lib.repository.BaseCrudRepository;
+import org.hibernate.jpa.AvailableHints;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.stereotype.Repository;
@@ -34,19 +35,19 @@ public interface InterceptorRuleRepository extends BaseCrudRepository<Intercepto
 
     @QueryHints(value = {
         @QueryHint(name = AvailableHints.HINT_CACHEABLE, value = "true"),
-        @QueryHint(name = org.hibernate.annotations.QueryHints.CACHE_REGION, value = "interceptorrule_query")
+        @QueryHint(name = AvailableHints.HINT_CACHE_REGION, value = "interceptorrule_query")
     })
     List<InterceptorRule> findAllByServiceAndEvent(OgcEnum.ServiceType service, HttpEnum.EventType event);
 
     @QueryHints(value = {
         @QueryHint(name = AvailableHints.HINT_CACHEABLE, value = "true"),
-        @QueryHint(name = org.hibernate.annotations.QueryHints.CACHE_REGION, value = "interceptorrule_query")
+        @QueryHint(name = AvailableHints.HINT_CACHE_REGION, value = "interceptorrule_query")
     })
     List<InterceptorRule> findByEndPoint(String endpoint);
 
     @QueryHints(value = {
         @QueryHint(name = AvailableHints.HINT_CACHEABLE, value = "true"),
-        @QueryHint(name = org.hibernate.annotations.QueryHints.CACHE_REGION, value = "interceptorrule_query")
+        @QueryHint(name = AvailableHints.HINT_CACHE_REGION, value = "interceptorrule_query")
     })
     Optional<InterceptorRule> findByEventAndRuleAndServiceAndOperationAndEndPoint(HttpEnum.EventType event, InterceptorEnum.RuleType rule, OgcEnum.ServiceType service, OgcEnum.OperationType operation, String endPoint);
 

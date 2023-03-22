@@ -21,6 +21,7 @@ import de.terrestris.shogun.lib.model.security.permission.GroupClassPermission;
 import java.util.List;
 import java.util.Optional;
 import jakarta.persistence.QueryHint;
+import org.hibernate.jpa.AvailableHints;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;

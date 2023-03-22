@@ -19,6 +19,7 @@ package de.terrestris.shogun.lib.repository;
 import java.util.Optional;
 import java.util.UUID;
 import jakarta.persistence.QueryHint;
+import org.hibernate.jpa.AvailableHints;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.NoRepositoryBean;
 

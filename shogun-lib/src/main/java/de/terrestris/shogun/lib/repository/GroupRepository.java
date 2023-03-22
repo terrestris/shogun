@@ -17,6 +17,7 @@
 package de.terrestris.shogun.lib.repository;
 
 import de.terrestris.shogun.lib.model.Group;
+import org.hibernate.jpa.AvailableHints;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.stereotype.Repository;
