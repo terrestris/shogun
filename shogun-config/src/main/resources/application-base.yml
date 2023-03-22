@@ -38,7 +38,7 @@ spring:
           non_contextual_creation: true
       ddl-auto: none
     properties:
-      javax:
+      jakarta:
         persistence:
           sharedCache:
             # Only entities with @Cacheable annotation will use L2 cache
@@ -51,7 +51,7 @@ spring:
             audit_table_suffix: _rev
             global_with_modified_flag: true
       hibernate:
-        javax:
+        jakarta:
           cache:
             provider: org.ehcache.jsr107.EhcacheCachingProvider
             uri: ehcache.xml

@@ -21,18 +21,21 @@ import de.terrestris.shogun.properties.KeycloakProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
+
 import javax.net.ssl.HttpsURLConnection;
 
 @ConditionalOnExpression("${keycloak.enabled:true}")
 @Configuration
 @EnableWebSecurity
-public class KeycloakWebSecurityConfig extends WebSecurityConfigurerAdapter implements DefaultWebSecurityConfig {
+public class KeycloakWebSecurityConfig implements DefaultWebSecurityConfig {
 
     @Autowired
     private KeycloakProperties keycloakProperties;
@@ -48,14 +51,14 @@ public class KeycloakWebSecurityConfig extends WebSecurityConfigurerAdapter impl
         }
     }
 
-    @Override
-    public void configure(HttpSecurity http) throws Exception {
-        // allows access to `/webhooks/keycloak` for request from internal keycloak container
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeRequests()
-                .antMatchers("/webhooks/keycloak/**")
-                    .access("authenticated or hasIpAddress('%s')"
-                        .formatted(keycloakProperties.getInternalServerUrl()));
+            .authorizeHttpRequests()
+                .requestMatchers("/webhooks/keycloak/**")
+                    .access(new WebExpressionAuthorizationManager(
+                        "authenticated or hasIpAddress('%s')".formatted(keycloakProperties.getInternalServerUrl()))
+                    );
 
         customHttpConfiguration(http);
 
@@ -66,11 +69,13 @@ public class KeycloakWebSecurityConfig extends WebSecurityConfigurerAdapter impl
 
         http
             .csrf()
-                .ignoringAntMatchers("/webhooks/**")
+                .ignoringRequestMatchers("/webhooks/**")
             .and()
                 .oauth2ResourceServer()
-                    .jwt()
-                    .jwtAuthenticationConverter(authConverter);
+                .jwt()
+                .jwtAuthenticationConverter(authConverter);
+
+        return http.build();
     }
 
 }

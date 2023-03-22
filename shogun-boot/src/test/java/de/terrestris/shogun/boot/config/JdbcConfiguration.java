@@ -21,7 +21,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.junit.AfterClass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy;
-import org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -96,7 +95,7 @@ public class JdbcConfiguration {
         jpaProperties.put("hibernate.default_schema", env.getProperty("hibernate.default_schema"));
         jpaProperties.put("hibernate.integration.envers.enabled", false);
         jpaProperties.put("hibernate.implicit_naming_strategy", SpringImplicitNamingStrategy.class.getName());
-        jpaProperties.put("hibernate.physical_naming_strategy", SpringPhysicalNamingStrategy.class.getName());
+//        jpaProperties.put("hibernate.physical_naming_strategy", CamelCaseToUnderscoresNamingStrategy.class.getName()); // todo: needs fix?
 
         result.setJpaPropertyMap(jpaProperties);
 

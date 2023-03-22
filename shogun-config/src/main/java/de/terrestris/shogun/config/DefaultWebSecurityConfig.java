@@ -27,8 +27,8 @@ public interface DefaultWebSecurityConfig extends WebSecurityConfig {
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-            .authorizeRequests()
-                .antMatchers(
+            .authorizeHttpRequests()
+                .requestMatchers(
                     "/",
                     "/auth/**",
                     "/info/**",
@@ -45,7 +45,7 @@ public interface DefaultWebSecurityConfig extends WebSecurityConfig {
                     "/graphiql/**"
                 )
                     .permitAll()
-                .antMatchers(
+                .requestMatchers(
                     "/actuator/**",
                     "/cache/**",
                     "/webhooks/**",
@@ -58,10 +58,10 @@ public interface DefaultWebSecurityConfig extends WebSecurityConfig {
                 .csrf()
                     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                     .ignoringRequestMatchers(csrfRequestMatcher)
-                    .ignoringAntMatchers("/graphql")
-                    .ignoringAntMatchers("/actuator/**")
-                    .ignoringAntMatchers("/sso/**")
-                    .ignoringAntMatchers("/ws/**");
+                    .ignoringRequestMatchers("/graphql")
+                    .ignoringRequestMatchers("/actuator/**")
+                    .ignoringRequestMatchers("/sso/**")
+                    .ignoringRequestMatchers("/ws/**");
     }
 
 }

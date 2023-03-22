@@ -19,16 +19,17 @@ package de.terrestris.shogun.lib.model;
 import de.terrestris.shogun.lib.model.jsonb.UserClientConfig;
 import de.terrestris.shogun.lib.model.jsonb.UserDetails;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.envers.AuditTable;
 import org.hibernate.envers.Audited;
+import org.hibernate.type.SqlTypes;
 
-import javax.persistence.*;
 import java.util.Objects;
 
 @Entity(name = "users")
@@ -59,7 +60,7 @@ public class User<T> extends BaseEntity {
     )
     private T providerDetails;
 
-    @Type(type = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
@@ -68,7 +69,7 @@ public class User<T> extends BaseEntity {
     )
     private UserDetails details;
 
-    @Type(type = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude

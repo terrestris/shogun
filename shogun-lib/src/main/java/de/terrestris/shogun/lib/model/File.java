@@ -18,14 +18,13 @@ package de.terrestris.shogun.lib.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -41,7 +40,6 @@ import java.util.UUID;
 public class File extends BaseEntity {
 
     @Column(columnDefinition = "uuid", updatable = false, nullable = false)
-    @Type(type="pg-uuid")
     @Getter
     @Schema(
         description = "The (auto assigned) UUID of the file.",

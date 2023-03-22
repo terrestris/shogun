@@ -98,7 +98,7 @@
     <!-- Hibernate -->
     <dependency>
       <groupId>com.vladmihalcea</groupId>
-      <artifactId>hibernate-types-52</artifactId>
+      <artifactId>hibernate-types-60</artifactId>
     </dependency>
 
     <!-- Lombok -->
@@ -110,7 +110,7 @@
     <!-- Swagger -->
     <dependency>
       <groupId>org.springdoc</groupId>
-      <artifactId>springdoc-openapi-ui</artifactId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
     </dependency>
 
     <!-- GeoServer Manager-->

@@ -16,26 +16,28 @@
  */
 package de.terrestris.shogun.interceptor.config;
 
-import de.terrestris.shogun.config.WebSecurityConfig;
+import de.terrestris.shogun.config.DefaultWebSecurityConfig;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 @Configuration
-public class InterceptorWebSecurityConfig implements WebSecurityConfig {
+public class InterceptorWebSecurityConfig implements DefaultWebSecurityConfig {
 
     RequestMatcher csrfRequestMatcher = httpServletRequest -> {
         String refererHeader = httpServletRequest.getHeader("Referer");
         return StringUtils.equalsIgnoreCase(refererHeader, "Shogun-Manager-Client");
     };
 
-    @Override
-    public void customHttpConfiguration(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeRequests()
-            .antMatchers(
+            .authorizeHttpRequests()
+            .requestMatchers(
                 // Allow access to swagger interface
                 "/swagger-ui/index.html",
                 "/swagger-resources/**",
@@ -43,16 +45,18 @@ public class InterceptorWebSecurityConfig implements WebSecurityConfig {
                 "/v2/**",
                 "/csrf/**"
             )
-                .permitAll()
-            .antMatchers("/interceptorrules/**")
-                .hasRole("INTERCEPTOR_ADMIN")
+            .permitAll()
+            .requestMatchers("/interceptorrules/**")
+            .hasRole("INTERCEPTOR_ADMIN")
             .anyRequest()
-                .authenticated()
+            .authenticated()
             .and()
-                .httpBasic()
+            .httpBasic()
             .and()
-                .csrf()
-                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                    .ignoringRequestMatchers(csrfRequestMatcher);
+            .csrf()
+            .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+            .ignoringRequestMatchers(csrfRequestMatcher);
+        return http.build();
     }
+
 }

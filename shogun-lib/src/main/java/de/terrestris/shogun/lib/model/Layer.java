@@ -20,17 +20,18 @@ import de.terrestris.shogun.lib.enumeration.LayerType;
 import de.terrestris.shogun.lib.model.jsonb.LayerClientConfig;
 import de.terrestris.shogun.lib.model.jsonb.LayerSourceConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
 import lombok.*;
 import org.geojson.GeoJsonObject;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.envers.AuditTable;
 import org.hibernate.envers.Audited;
+import org.hibernate.type.SqlTypes;
 
-import javax.persistence.*;
 import java.util.Objects;
 
 @Entity(name = "layers")
@@ -54,7 +55,7 @@ public class Layer extends BaseEntity {
     )
     private String name;
 
-    @Type(type = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
@@ -64,7 +65,7 @@ public class Layer extends BaseEntity {
     )
     private LayerClientConfig clientConfig;
 
-    @Type(type = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
@@ -75,7 +76,7 @@ public class Layer extends BaseEntity {
     )
     private LayerSourceConfig sourceConfig;
 
-    @Type(type = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude

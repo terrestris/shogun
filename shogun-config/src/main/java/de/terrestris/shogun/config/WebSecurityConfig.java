@@ -16,7 +16,9 @@
  */
 package de.terrestris.shogun.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 public interface WebSecurityConfig {
@@ -27,9 +29,9 @@ public interface WebSecurityConfig {
         return refererHeader != null && refererHeader.endsWith("swagger-ui/index.html");
     };
 
-    default void configure(HttpSecurity http) throws Exception {
-        customHttpConfiguration(http);
-    }
+//    default void configure(HttpSecurity http) throws Exception {
+//        customHttpConfiguration(http);
+//    }
 
     void customHttpConfiguration(HttpSecurity http) throws Exception;
 

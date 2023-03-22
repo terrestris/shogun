@@ -25,6 +25,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,7 +36,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -92,7 +93,7 @@ public class HttpProxyServiceTest {
 
     @DisplayName("Return status code 405 for unsupported HTTP methods")
     @ParameterizedTest
-    @EnumSource(value = HttpMethod.class, names = {"DELETE", "PUT", "HEAD", "PATCH", "TRACE", "OPTIONS"})
+    @ValueSource(strings = {"DELETE", "PUT", "HEAD", "PATCH", "TRACE", "OPTIONS"})
     public void proxy_returns_405_for_unsupported_HTTP_methods(HttpMethod unsupportedMethod) {
         final String baseUrl = "https://www.terrestris.de/internet.txt";
         HttpServletRequest mockedRequest = mock(HttpServletRequest.class);

@@ -16,17 +16,21 @@
  */
 package de.terrestris.shogun.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
-public class HttpProxyWebSecurityConfig implements WebSecurityConfig {
+public class HttpProxyWebSecurityConfig implements DefaultWebSecurityConfig {
 
-    @Override
-    public void customHttpConfiguration(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeRequests()
+            .authorizeHttpRequests()
             .anyRequest()
-                .authenticated();
+            .authenticated();
+        return http.build();
     }
 }
