@@ -27,6 +27,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+
 /**
  * Credits to https://stackoverflow.com/questions/57787768/issues-running-example-keycloak-spring-boot-app
  */
@@ -39,7 +43,7 @@ public abstract class KeycloakConfig {
 
     @Bean
     public Keycloak keycloakAdminClient() {
-        ResteasyClient restClient = new ResteasyClientBuilder()
+        Client restClient = ((ResteasyClientBuilder) ClientBuilder.newBuilder())
             .hostnameVerification(ResteasyClientBuilder.HostnameVerificationPolicy.ANY)
             .build();
 
