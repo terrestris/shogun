@@ -18,16 +18,13 @@ package de.terrestris.shogun.config;
 
 import de.terrestris.shogun.converter.KeycloakJwtAuthenticationConverter;
 import de.terrestris.shogun.properties.KeycloakProperties;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-
-import jakarta.annotation.PostConstruct;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -51,16 +48,16 @@ public class KeycloakWebSecurityConfig implements DefaultWebSecurityConfig {
         }
     }
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    @Override
+    public void customHttpConfiguration(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests()
-                .requestMatchers("/webhooks/keycloak/**")
-                    .access(new WebExpressionAuthorizationManager(
-                        "authenticated or hasIpAddress('%s')".formatted(keycloakProperties.getInternalServerUrl()))
-                    );
+            .requestMatchers("/webhooks/keycloak/**")
+            .access(new WebExpressionAuthorizationManager(
+                "authenticated or hasIpAddress('%s')".formatted(keycloakProperties.getInternalServerUrl())
+            ));
 
-        customHttpConfiguration(http);
+        DefaultWebSecurityConfig.super.customHttpConfiguration(http);
 
         KeycloakJwtAuthenticationConverter authConverter = new KeycloakJwtAuthenticationConverter(
             keycloakProperties.getClientId(),
@@ -72,10 +69,8 @@ public class KeycloakWebSecurityConfig implements DefaultWebSecurityConfig {
                 .ignoringRequestMatchers("/webhooks/**")
             .and()
                 .oauth2ResourceServer()
-                .jwt()
-                .jwtAuthenticationConverter(authConverter);
-
-        return http.build();
+                    .jwt()
+                    .jwtAuthenticationConverter(authConverter);
     }
 
 }

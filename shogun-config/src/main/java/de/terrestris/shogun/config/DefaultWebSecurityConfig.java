@@ -19,6 +19,7 @@ package de.terrestris.shogun.config;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 public interface DefaultWebSecurityConfig extends WebSecurityConfig {
 
@@ -57,6 +58,7 @@ public interface DefaultWebSecurityConfig extends WebSecurityConfig {
             .and()
                 .csrf()
                     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+//                    .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()) // revert to normal csrf protection
                     .ignoringRequestMatchers(csrfRequestMatcher)
                     .ignoringRequestMatchers("/graphql")
                     .ignoringRequestMatchers("/actuator/**")

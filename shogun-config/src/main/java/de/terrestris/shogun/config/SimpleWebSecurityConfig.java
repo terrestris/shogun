@@ -18,13 +18,10 @@ package de.terrestris.shogun.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
-import org.springframework.security.web.SecurityFilterChain;
 
 @ConditionalOnExpression("${keycloak.enabled:false}")
 @Configuration
@@ -39,12 +36,6 @@ public abstract class SimpleWebSecurityConfig implements DefaultWebSecurityConfi
         grantedAuthorityMapper.setConvertToUpperCase(true);
 
         // TODO make this extendable
-    }
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        customHttpConfiguration(http);
-        return http.build();
     }
 
 }

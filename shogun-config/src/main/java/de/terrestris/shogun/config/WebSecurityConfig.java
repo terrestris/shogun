@@ -17,6 +17,8 @@
 package de.terrestris.shogun.config;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -30,11 +32,11 @@ public interface WebSecurityConfig {
     };
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception;
-
-//    default void configure(HttpSecurity http) throws Exception {
-//        customHttpConfiguration(http);
-//    }
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    default SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        customHttpConfiguration(http);
+        return http.getOrBuild();
+    }
 
     void customHttpConfiguration(HttpSecurity http) throws Exception;
 
