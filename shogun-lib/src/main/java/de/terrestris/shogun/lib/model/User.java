@@ -18,17 +18,16 @@ package de.terrestris.shogun.lib.model;
 
 import de.terrestris.shogun.lib.model.jsonb.UserClientConfig;
 import de.terrestris.shogun.lib.model.jsonb.UserDetails;
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.envers.AuditTable;
 import org.hibernate.envers.Audited;
-import org.hibernate.type.SqlTypes;
 
 import java.util.Objects;
 
@@ -60,8 +59,8 @@ public class User<T> extends BaseEntity {
     )
     private T providerDetails;
 
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "jsonb", name = "details")
+    @Type(JsonBinaryType.class)
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
     @Schema(
@@ -69,8 +68,8 @@ public class User<T> extends BaseEntity {
     )
     private UserDetails details;
 
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "jsonb", name = "client_config")
+    @Type(JsonBinaryType.class)
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
     @Schema(

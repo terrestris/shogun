@@ -51,6 +51,8 @@ spring:
             audit_table_suffix: _rev
             global_with_modified_flag: true
       hibernate:
+        id:
+          db_structure_naming_strategy: single
         jakarta:
           cache:
             provider: org.ehcache.jsr107.EhcacheCachingProvider

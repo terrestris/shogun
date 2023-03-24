@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.0.4</version>
+    <version>3.0.5</version>
   </parent>
 
   <groupId>de.terrestris</groupId>
@@ -106,7 +106,7 @@
     <jib-maven-plugin.version>3.3.2</jib-maven-plugin.version>
 
     <!-- Spring -->
-    <spring-boot.version>3.0.4</spring-boot.version>
+    <spring-boot.version>3.0.5</spring-boot.version>
     <spring-data.version>3.0.4</spring-data.version>
 
     <!-- Hibernate -->
@@ -118,10 +118,10 @@
     <keycloak.version>21.0.1</keycloak.version>
 
     <!-- Database -->
-    <hibernate-extra-types.version>2.21.1</hibernate-extra-types.version>
+    <hypersistence-utils.version>3.2.0</hypersistence-utils.version>
 
     <!-- GraphQL -->
-    <graphql-java-extended-scalars.version>21.0</graphql-java-extended-scalars.version>
+    <graphql-java-extended-scalars.version>19.1</graphql-java-extended-scalars.version>
 
     <!-- Swagger/REST -->
     <springdoc-openapi.version>2.0.4</springdoc-openapi.version>
@@ -370,6 +370,11 @@
         <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
         <version>${spring-boot.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-validation</artifactId>
+        <version>${spring-boot.version}</version>
+      </dependency>
 
       <!-- Swagger -->
       <dependency>
@@ -417,9 +422,9 @@
 
       <!-- Hibernate -->
       <dependency>
-        <groupId>com.vladmihalcea</groupId>
-        <artifactId>hibernate-types-60</artifactId>
-        <version>${hibernate-extra-types.version}</version>
+        <groupId>io.hypersistence</groupId>
+        <artifactId>hypersistence-utils-hibernate-60</artifactId>
+        <version>${hypersistence-utils.version}</version>
       </dependency>
 
 <!--      todo: check why we have to provide these versions now-->
@@ -491,6 +496,11 @@
       </dependency>
 
       <!-- Jackson -->
+      <dependency>
+        <groupId>com.fasterxml.jackson.module</groupId>
+        <artifactId>jackson-module-jakarta-xmlbind-annotations</artifactId>
+        <version>2.13.2</version>
+      </dependency>
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
