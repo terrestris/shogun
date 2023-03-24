@@ -17,6 +17,8 @@ shogun:
   srid: 25832
 
 spring:
+  main:
+    allow-circular-references: true
   flyway:
     schemas: shogun, public
     defaultSchema: shogun
