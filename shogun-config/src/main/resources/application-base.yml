@@ -27,11 +27,12 @@ server:
 spring:
   main:
     banner-mode: off
+    allow-circular-references: true
   jpa:
     # Show SQL statements
     show-sql: true
     open-in-view: true
-    database-platform: org.hibernate.spatial.dialect.postgis.PostgisPG95Dialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       jdbc:
         lob:
