@@ -1,3 +1,10 @@
+# [16.3.0](https://github.com/terrestris/shogun/compare/v16.2.0...v16.3.0) (2023-04-18)
+
+
+### Features
+
+* introduce crsDefinitions field on mapView config ([7457fb7](https://github.com/terrestris/shogun/commit/7457fb77989fdb8865349e847594139e26f586b9))
+
 # [16.2.0](https://github.com/terrestris/shogun/compare/v16.1.1...v16.2.0) (2023-04-18)
 
 
