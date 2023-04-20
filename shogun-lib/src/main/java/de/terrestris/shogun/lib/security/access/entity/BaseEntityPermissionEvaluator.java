@@ -18,24 +18,23 @@ package de.terrestris.shogun.lib.security.access.entity;
 
 import de.terrestris.shogun.lib.enumeration.PermissionType;
 import de.terrestris.shogun.lib.model.BaseEntity;
+import de.terrestris.shogun.lib.model.Role;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.model.security.permission.GroupClassPermission;
 import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
 import de.terrestris.shogun.lib.model.security.permission.UserClassPermission;
 import de.terrestris.shogun.lib.repository.BaseCrudRepository;
-import de.terrestris.shogun.lib.service.security.permission.GroupClassPermissionService;
-import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionService;
-import de.terrestris.shogun.lib.service.security.permission.UserClassPermissionService;
-import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
+import de.terrestris.shogun.lib.repository.RoleRepository;
+import de.terrestris.shogun.lib.service.security.permission.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Log4j2
 public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implements EntityPermissionEvaluator<E> {
@@ -53,7 +52,13 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
     protected GroupClassPermissionService groupClassPermissionService;
 
     @Autowired
+    protected RoleInstancePermissionService roleInstancePermissionService;
+
+    @Autowired
     protected List<BaseCrudRepository> baseCrudRepositories;
+
+    @Autowired
+    protected RoleRepository roleRepository;
 
     @Override
     public Class<E> getEntityClassName() {
@@ -73,6 +78,13 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
 
             return true;
         }
+
+        // CHECK ROLE INSTANCE PERMISSIONS
+//        if (this.hasPermissionByRoleInstancePermission(entity, permission)) {
+//            log.trace("Granting {} access by role instance permissions", permission);
+//
+//            return true;
+//        }
 
         // CHECK GROUP INSTANCE PERMISSIONS
         if (this.hasPermissionByGroupInstancePermission(user, entity, permission)) {
@@ -191,6 +203,46 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
         // if the user has the ADMIN permission
         return userInstancePermissions.contains(permission) ||
             userInstancePermissions.contains(PermissionType.ADMIN);
+    }
+
+    public boolean hasPermissionByRoleInstancePermission(Role role, BaseEntity entity, PermissionType permission) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        Collection<? extends GrantedAuthority> grantedAuthorities = authentication.getAuthorities();
+
+        grantedAuthorities.stream().forEach(grantedAuthority -> {
+            String authority = grantedAuthority.getAuthority();
+//            roleRepository.findByName();
+        });
+
+        PermissionCollection rolePermissionCol;
+        if (permission.equals(PermissionType.CREATE) && entity.getId() == null) {
+            rolePermissionCol = new PermissionCollection();
+        } else {
+//            rolePermissionCol = roleInstancePermissionService
+//                .findPermissionCollectionFor(entity, grantedAuthorities.stream().findFirst().get());
+        }
+//        final Set<PermissionType> roleInstancePermissions = rolePermissionCol.getPermissions();
+
+        return false;
+        // Grant access if user explicitly has the requested permission or
+        // if the user has the ADMIN permission
+//        return roleInstancePermissions.contains(permission) ||
+//            roleInstancePermissions.contains(PermissionType.ADMIN);
+
+//        PermissionCollection userPermissionCol;
+//        if (permission.equals(PermissionType.CREATE) && entity.getId() == null) {
+//            userPermissionCol = new PermissionCollection();
+//        } else {
+//            userPermissionCol = userInstancePermissionService
+//                .findPermissionCollectionFor(entity, user);
+//        }
+//        final Set<PermissionType> userInstancePermissions = userPermissionCol.getPermissions();
+//
+//        // Grant access if user explicitly has the requested permission or
+//        // if the user has the ADMIN permission
+//        return userInstancePermissions.contains(permission) ||
+//            userInstancePermissions.contains(PermissionType.ADMIN);
     }
 
     public boolean hasPermissionByGroupInstancePermission(User user, BaseEntity entity, PermissionType permission) {

@@ -16,34 +16,21 @@
  */
 package de.terrestris.shogun.lib.repository;
 
-import de.terrestris.shogun.lib.model.Application;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
+import de.terrestris.shogun.lib.model.Role;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
-import org.springframework.data.repository.query.Param;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.QueryHint;
-import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
 
 @Repository
-public interface ApplicationRepository extends BaseCrudRepository<Application, Long>, JpaSpecificationExecutor<Application> {
+public interface RoleRepository extends BaseCrudRepository<Role, Long>, JpaSpecificationExecutor<Role> {
 
     @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
-    Optional<Application> findByName(String name);
+    Optional<Role> findByName(String authProviderId);
 
-    // https://github.com/spring-projects/spring-data-jpa/issues/2644
-//    @Query(
-//        value = "SELECT * FROM {h-schema}applications a WHERE jsonb_path_exists(a.layer_tree, '$.** \\\\?\\\\? (@.\"layerId\" == $id)', jsonb_build_object('id', :layerId))",
-//        nativeQuery = true
-//    )
-//    @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
-//    List<Application> findAllByLayerId(@Param("layerId") Long layerId);
+    @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
+    Optional<Role> findByAuthProviderId(String authProviderId);
 
 }
-
