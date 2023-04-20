@@ -22,13 +22,12 @@ import de.terrestris.shogun.lib.dto.PermissionCollectionTypeDto;
 import de.terrestris.shogun.lib.exception.security.permission.*;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.Group;
+import de.terrestris.shogun.lib.model.Role;
 import de.terrestris.shogun.lib.model.User;
-import de.terrestris.shogun.lib.model.security.permission.GroupClassPermission;
-import de.terrestris.shogun.lib.model.security.permission.GroupInstancePermission;
-import de.terrestris.shogun.lib.model.security.permission.UserClassPermission;
-import de.terrestris.shogun.lib.model.security.permission.UserInstancePermission;
+import de.terrestris.shogun.lib.model.security.permission.*;
 import de.terrestris.shogun.lib.service.BaseService;
 import de.terrestris.shogun.lib.service.GroupService;
+import de.terrestris.shogun.lib.service.RoleService;
 import de.terrestris.shogun.lib.service.UserService;
 import de.terrestris.shogun.lib.service.security.permission.*;
 import lombok.extern.log4j.Log4j2;
@@ -60,6 +59,9 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
     protected GroupService groupService;
 
     @Autowired
+    protected RoleService roleService;
+
+    @Autowired
     protected PublicInstancePermissionService publicInstancePermissionService;
 
     @Autowired
@@ -73,6 +75,12 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
 
     @Autowired
     protected GroupClassPermissionServiceSecured groupClassPermissionService;
+
+    @Autowired
+    protected RoleInstancePermissionService roleInstancePermissionService;
+
+    @Autowired
+    protected RoleClassPermissionService roleClassPermissionService;
 
     @GetMapping("/{id}/permissions/instance/user")
     @ResponseStatus(HttpStatus.OK)
@@ -134,6 +142,36 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
         }
     }
 
+    @GetMapping("/{id}/permissions/instance/role")
+    @ResponseStatus(HttpStatus.OK)
+    public List<RoleInstancePermission> getRoleInstancePermissions(@PathVariable("id") Long entityId) {
+        log.trace("Requested to get all role instance permissions for entity of " +
+            "type {} with ID {}", getGenericClassName(), entityId);
+
+        try {
+            Optional<S> entity = service.findOne(entityId);
+
+            if (entity.isEmpty()) {
+                throw new EntityNotFoundException(entityId, getGenericClassName(), messageSource);
+            }
+
+            List<RoleInstancePermission> permissions = roleInstancePermissionService
+                .findFor(entity.get());
+
+            log.trace("Successfully got all role instance permissions for entity " +
+                    "of type {} with ID {} (count: {})", getGenericClassName(), entityId,
+                permissions.size());
+
+            return permissions;
+        } catch (AccessDeniedException ade) {
+            throw new EntityAccessDeniedException(entityId, getGenericClassName(), messageSource);
+        } catch (ResponseStatusException rse) {
+            throw rse;
+        } catch (Exception e) {
+            throw new ReadPermissionException(e, messageSource);
+        }
+    }
+
     @GetMapping("/{id}/permissions/class/user")
     @ResponseStatus(HttpStatus.OK)
     public List<UserClassPermission> getUserClassPermissions(@PathVariable("id") Long entityId) {
@@ -182,6 +220,36 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
 
             log.trace("Successfully got all group class permissions for entity " +
                 "of type {} with ID {} (count: {})", getGenericClassName(), entityId,
+                permissions.size());
+
+            return permissions;
+        } catch (AccessDeniedException ade) {
+            throw new EntityAccessDeniedException(entityId, getGenericClassName(), messageSource);
+        } catch (ResponseStatusException rse) {
+            throw rse;
+        }  catch (Exception e) {
+            throw new ReadPermissionException(e, messageSource);
+        }
+    }
+
+    @GetMapping("/{id}/permissions/class/role")
+    @ResponseStatus(HttpStatus.OK)
+    public List<RoleClassPermission> getRoleClassPermissions(@PathVariable("id") Long entityId) {
+        log.trace("Requested to get all role class permissions for entity of " +
+            "type {} with ID {}", getGenericClassName(), entityId);
+
+        try {
+            Optional<S> entity = service.findOne(entityId);
+
+            if (entity.isEmpty()) {
+                throw new EntityNotFoundException(entityId, getGenericClassName(), messageSource);
+            }
+
+            List<RoleClassPermission> permissions = roleClassPermissionService
+                .findFor(entity.get());
+
+            log.trace("Successfully got all role class permissions for entity " +
+                    "of type {} with ID {} (count: {})", getGenericClassName(), entityId,
                 permissions.size());
 
             return permissions;
@@ -276,6 +344,47 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
         }
     }
 
+    @GetMapping("/{id}/permissions/instance/role/{roleId}")
+    @ResponseStatus(HttpStatus.OK)
+    public RoleInstancePermission getRoleInstancePermission(
+        @PathVariable("id") Long entityId,
+        @PathVariable("roleId") Long roleId
+    ) {
+        log.trace("Requested to get the role instance permission for entity of " +
+            "type {} with ID {} for role with ID {}", getGenericClassName(), entityId, roleId);
+
+        try {
+            Optional<S> entity = service.findOne(entityId);
+            Optional<Role> role = roleService.findOne(roleId);
+
+            if (entity.isEmpty()) {
+                throw new EntityNotFoundException(entityId, getGenericClassName(), messageSource);
+            }
+
+            if (role.isEmpty()) {
+                throw new RoleNotFoundException(roleId, messageSource);
+            }
+
+            Optional<RoleInstancePermission> permission = roleInstancePermissionService
+                .findFor(entity.get(), role.get());
+
+            if (permission.isEmpty()) {
+                throw new EntityPermissionNotFoundException(entityId, getGenericClassName(), messageSource);
+            }
+
+            log.trace("Successfully got the role instance permission for entity " +
+                "of type {} with ID {} for role with ID {}", getGenericClassName(), entityId, roleId);
+
+            return permission.get();
+        } catch (AccessDeniedException ade) {
+            throw new EntityAccessDeniedException(entityId, getGenericClassName(), messageSource);
+        } catch (ResponseStatusException rse) {
+            throw rse;
+        }  catch (Exception e) {
+            throw new ReadPermissionException(e, messageSource);
+        }
+    }
+
     @GetMapping("/{id}/permissions/class/user/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public UserClassPermission getUserClassPermission(
@@ -347,6 +456,47 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
 
             log.trace("Successfully got the group class permission for entity of " +
                 "type {} with ID {} for group with ID {}", getGenericClassName(), entityId, groupId);
+
+            return permission.get();
+        } catch (AccessDeniedException ade) {
+            throw new EntityAccessDeniedException(entityId, getGenericClassName(), messageSource);
+        } catch (ResponseStatusException rse) {
+            throw rse;
+        }  catch (Exception e) {
+            throw new ReadPermissionException(e, messageSource);
+        }
+    }
+
+    @GetMapping("/{id}/permissions/class/role/{roleId}")
+    @ResponseStatus(HttpStatus.OK)
+    public RoleClassPermission getRoleClassPermission(
+        @PathVariable("id") Long entityId,
+        @PathVariable("roleId") Long roleId)
+    {
+        log.trace("Requested to get the role class permission for entity of " +
+            "type {} with ID {} for role with ID {}", getGenericClassName(), entityId, roleId);
+
+        try {
+            Optional<S> entity = service.findOne(entityId);
+            Optional<Role> role = roleService.findOne(roleId);
+
+            if (entity.isEmpty()) {
+                throw new EntityNotFoundException(entityId, getGenericClassName(), messageSource);
+            }
+
+            if (role.isEmpty()) {
+                throw new RoleNotFoundException(roleId, messageSource);
+            }
+
+            Optional<RoleClassPermission> permission = roleClassPermissionService
+                .findFor(entity.get().getClass(), role.get());
+
+            if (permission.isEmpty()) {
+                throw new EntityPermissionNotFoundException(entityId, getGenericClassName(), messageSource);
+            }
+
+            log.trace("Successfully got the role class permission for entity of " +
+                "type {} with ID {} for role with ID {}", getGenericClassName(), entityId, roleId);
 
             return permission.get();
         } catch (AccessDeniedException ade) {
@@ -430,6 +580,42 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
         }
     }
 
+    @PostMapping("/{id}/permissions/instance/role/{roleId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void setRoleInstancePermission(
+        @PathVariable("id") Long entityId,
+        @PathVariable("roleId") Long roleId,
+        @RequestBody PermissionCollectionTypeDto permissionType
+    ) {
+        log.trace("Requested to set the role instance permission for entity of " +
+                "type {} with ID {} for role with ID {} to {}", getGenericClassName(), entityId,
+            roleId, permissionType.getPermission());
+
+        try {
+            Optional<S> entity = service.findOne(entityId);
+            Optional<Role> role = roleService.findOne(roleId);
+
+            if (entity.isEmpty()) {
+                throw new EntityNotFoundException(entityId, getGenericClassName(), messageSource);
+            }
+
+            if (role.isEmpty()) {
+                throw new RoleNotFoundException(roleId, messageSource);
+            }
+
+            roleInstancePermissionService.setPermission(entity.get(), role.get(), permissionType.getPermission());
+
+            log.trace("Successfully set the role instance permission for entity " +
+                "of type {} with ID {} for role with ID {}", getGenericClassName(), entityId, roleId);
+        } catch (AccessDeniedException ade) {
+            throw new EntityAccessDeniedException(entityId, getGenericClassName(), messageSource);
+        } catch (ResponseStatusException rse) {
+            throw rse;
+        }  catch (Exception e) {
+            throw new CreatePermissionException(e, messageSource);
+        }
+    }
+
     @PostMapping("/{id}/permissions/class/user/{userId}")
     @ResponseStatus(HttpStatus.CREATED)
     public void setUserClassPermission(
@@ -475,7 +661,7 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
         @RequestBody PermissionCollectionTypeDto permissionType
     ) {
         log.trace("Requested to set the group class permission for entity of " +
-            "type {} with ID {} for user with ID {} to {}", getGenericClassName(), entityId,
+            "type {} with ID {} for group with ID {} to {}", getGenericClassName(), entityId,
             groupId, permissionType.getPermission());
 
         try {
@@ -495,6 +681,43 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
 
             log.trace("Successfully set the group class permission for entity " +
                 "of type {} with ID {} for group with ID {}", getGenericClassName(), entityId, groupId);
+        } catch (AccessDeniedException ade) {
+            throw new EntityAccessDeniedException(entityId, getGenericClassName(), messageSource);
+        } catch (ResponseStatusException rse) {
+            throw rse;
+        }  catch (Exception e) {
+            throw new CreatePermissionException(e, messageSource);
+        }
+    }
+
+    @PostMapping("/{id}/permissions/class/role/{roleId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void setRoleClassPermission(
+        @PathVariable("id") Long entityId,
+        @PathVariable("roleId") Long roleId,
+        @RequestBody PermissionCollectionTypeDto permissionType
+    ) {
+        log.trace("Requested to set the role class permission for entity of " +
+                "type {} with ID {} for role with ID {} to {}", getGenericClassName(), entityId,
+            roleId, permissionType.getPermission());
+
+        try {
+            Optional<S> entity = service.findOne(entityId);
+            Optional<Role> role = roleService.findOne(roleId);
+
+            if (entity.isEmpty()) {
+                throw new EntityNotFoundException(entityId, getGenericClassName(), messageSource);
+            }
+
+            if (role.isEmpty()) {
+                throw new RoleNotFoundException(roleId, messageSource);
+            }
+
+            roleClassPermissionService.setPermission(entity.get().getClass(),
+                role.get(), permissionType.getPermission());
+
+            log.trace("Successfully set the role class permission for entity " +
+                "of type {} with ID {} for role with ID {}", getGenericClassName(), entityId, roleId);
         } catch (AccessDeniedException ade) {
             throw new EntityAccessDeniedException(entityId, getGenericClassName(), messageSource);
         } catch (ResponseStatusException rse) {
@@ -574,6 +797,41 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
         }
     }
 
+    @DeleteMapping("/{id}/permissions/instance/role/{roleId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteRoleInstancePermission(
+        @PathVariable("id") Long entityId,
+        @PathVariable("roleId") Long roleId
+    ) {
+        log.trace("Requested to delete the role instance permission for entity " +
+            "of type {} with ID {} for role with ID {}", getGenericClassName(), entityId, roleId);
+
+        try {
+            Optional<S> entity = service.findOne(entityId);
+            Optional<Role> role = roleService.findOne(roleId);
+
+            if (entity.isEmpty()) {
+                throw new EntityNotFoundException(entityId, getGenericClassName(), messageSource);
+            }
+
+            if (role.isEmpty()) {
+                throw new RoleNotFoundException(roleId, messageSource);
+            }
+
+            roleInstancePermissionService.deleteFor(entity.get(), role.get());
+
+            log.trace("Successfully deleted the role instance permission for " +
+                    "entity of type {} with ID {} for role with ID {}", getGenericClassName(),
+                entityId, roleId);
+        } catch (AccessDeniedException ade) {
+            throw new EntityAccessDeniedException(entityId, getGenericClassName(), messageSource);
+        } catch (ResponseStatusException rse) {
+            throw rse;
+        }  catch (Exception e) {
+            throw new DeletePermissionException(e, messageSource);
+        }
+    }
+
     @DeleteMapping("/{id}/permissions/class/user/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUserClassPermission(
@@ -642,6 +900,40 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
         }
     }
 
+    @DeleteMapping("/{id}/permissions/class/role/{roleId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteRoleClassPermission(
+        @PathVariable("id") Long entityId,
+        @PathVariable("roleId") Long roleId
+    ) {
+        log.trace("Requested to delete the role class permission for entity of " +
+            "type {} with ID {} for role with ID {}", getGenericClassName(), entityId, roleId);
+
+        try {
+            Optional<S> entity = service.findOne(entityId);
+            Optional<Role> role = roleService.findOne(roleId);
+
+            if (entity.isEmpty()) {
+                throw new EntityNotFoundException(entityId, getGenericClassName(), messageSource);
+            }
+
+            if (role.isEmpty()) {
+                throw new RoleNotFoundException(roleId, messageSource);
+            }
+
+            roleClassPermissionService.deleteFor(entity.get(), role.get());
+
+            log.trace("Successfully deleted the role class permission for entity " +
+                "of type {} with ID {} for role with ID {}", getGenericClassName(), entityId, roleId);
+        } catch (AccessDeniedException ade) {
+            throw new EntityAccessDeniedException(entityId, getGenericClassName(), messageSource);
+        } catch (ResponseStatusException rse) {
+            throw rse;
+        }  catch (Exception e) {
+            throw new DeletePermissionException(e, messageSource);
+        }
+    }
+
     @DeleteMapping("/{id}/permissions/instance/user")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUserInstancePermissions(
@@ -698,6 +990,34 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
         }
     }
 
+    @DeleteMapping("/{id}/permissions/instance/role")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteRoleInstancePermissions(
+        @PathVariable("id") Long entityId
+    ) {
+        log.trace("Requested to delete all role instance permissions for entity " +
+            "of type {} with ID {}", getGenericClassName(), entityId);
+
+        try {
+            Optional<S> entity = service.findOne(entityId);
+
+            if (entity.isEmpty()) {
+                throw new EntityNotFoundException(entityId, getGenericClassName(), messageSource);
+            }
+
+            roleInstancePermissionService.deleteAllFor(entity.get());
+
+            log.trace("Successfully deleted all role instance permissions for entity " +
+                "of type {} with ID {}", getGenericClassName(), entityId);
+        } catch (AccessDeniedException ade) {
+            throw new EntityAccessDeniedException(entityId, getGenericClassName(), messageSource);
+        } catch (ResponseStatusException rse) {
+            throw rse;
+        }  catch (Exception e) {
+            throw new DeletePermissionException(e, messageSource);
+        }
+    }
+
     @DeleteMapping("/{id}/permissions/class/user")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUserClassPermissions(
@@ -744,6 +1064,34 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
             groupClassPermissionService.deleteAllFor(entity.get());
 
             log.trace("Successfully deleted all group instance permissions for entity " +
+                "of type {} with ID {}", getGenericClassName(), entityId);
+        } catch (AccessDeniedException ade) {
+            throw new EntityAccessDeniedException(entityId, getGenericClassName(), messageSource);
+        } catch (ResponseStatusException rse) {
+            throw rse;
+        }  catch (Exception e) {
+            throw new DeletePermissionException(e, messageSource);
+        }
+    }
+
+    @DeleteMapping("/{id}/permissions/class/role")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteRoleClassPermissions(
+        @PathVariable("id") Long entityId
+    ) {
+        log.trace("Requested to delete all role class permissions for entity of " +
+            "type {} with ID {}", getGenericClassName(), entityId);
+
+        try {
+            Optional<S> entity = service.findOne(entityId);
+
+            if (entity.isEmpty()) {
+                throw new EntityNotFoundException(entityId, getGenericClassName(), messageSource);
+            }
+
+            roleClassPermissionService.deleteAllFor(entity.get());
+
+            log.trace("Successfully deleted all role instance permissions for entity " +
                 "of type {} with ID {}", getGenericClassName(), entityId);
         } catch (AccessDeniedException ade) {
             throw new EntityAccessDeniedException(entityId, getGenericClassName(), messageSource);

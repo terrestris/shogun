@@ -22,6 +22,7 @@ import de.terrestris.shogun.lib.event.KeycloakEvent;
 import de.terrestris.shogun.lib.event.OnRegistrationConfirmedEvent;
 import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
 import de.terrestris.shogun.lib.service.security.provider.GroupProviderService;
+import de.terrestris.shogun.lib.service.security.provider.RoleProviderService;
 import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -37,6 +38,9 @@ public class KeycloakEventListener {
     private GroupProviderService groupProviderService;
 
     @Autowired
+    private RoleProviderService roleProviderService;
+
+    @Autowired
     protected UserInstancePermissionService userInstancePermissionService;
 
     @EventListener
@@ -44,6 +48,7 @@ public class KeycloakEventListener {
         switch (event.getEventType()) {
             case USER_CREATED -> userProviderService.findOrCreateByProviderId(event.getKeycloakId());
             case GROUP_CREATED -> groupProviderService.findOrCreateByProviderId(event.getKeycloakId());
+            case REALM_ROLE_CREATED -> roleProviderService.findOrCreateByProviderId(event.getKeycloakId());
         }
     }
 

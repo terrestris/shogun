@@ -19,14 +19,14 @@ package de.terrestris.shogun.lib.security.access.entity;
 import de.terrestris.shogun.lib.enumeration.PermissionType;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.Group;
+import de.terrestris.shogun.lib.model.Role;
 import de.terrestris.shogun.lib.model.User;
-import de.terrestris.shogun.lib.model.security.permission.ClassPermission;
-import de.terrestris.shogun.lib.model.security.permission.GroupClassPermission;
-import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
-import de.terrestris.shogun.lib.model.security.permission.UserClassPermission;
+import de.terrestris.shogun.lib.model.security.permission.*;
 import de.terrestris.shogun.lib.repository.BaseCrudRepository;
+import de.terrestris.shogun.lib.repository.RoleRepository;
 import de.terrestris.shogun.lib.service.security.permission.*;
 import de.terrestris.shogun.lib.service.security.provider.GroupProviderService;
+import de.terrestris.shogun.lib.service.security.provider.RoleProviderService;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.keycloak.representations.idm.GroupRepresentation;
@@ -41,6 +41,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Log4j2
 public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implements EntityPermissionEvaluator<E> {
@@ -61,10 +62,22 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
     protected GroupProviderService<UserRepresentation, GroupRepresentation> groupProviderService;
 
     @Autowired
+    protected RoleProviderService roleProviderService;
+
+    @Autowired
+    protected RoleInstancePermissionService roleInstancePermissionService;
+
+    @Autowired
+    protected RoleClassPermissionService roleClassPermissionService;
+
+    @Autowired
     private PublicInstancePermissionService publicInstancePermissionService;
 
     @Autowired
     protected List<BaseCrudRepository> baseCrudRepositories;
+
+    @Autowired
+    protected RoleRepository roleRepository;
 
     @Override
     public Class<E> getEntityClassName() {
@@ -102,6 +115,13 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
             return true;
         }
 
+        // CHECK ROLE INSTANCE PERMISSIONS
+        if (this.hasPermissionByRoleInstancePermission(user, entity, permission)) {
+            log.trace("Granting {} access by role instance permissions", permission);
+
+            return true;
+        }
+
         // CHECK USER CLASS PERMISSIONS
         if (this.hasPermissionByUserClassPermission(user, entity, permission)) {
             log.trace("Granting {} access by user class permissions", permission);
@@ -112,6 +132,13 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
         // CHECK GROUP CLASS PERMISSIONS
         if (this.hasPermissionByGroupClassPermission(user, entity, permission)) {
             log.trace("Granting {} access by group class permissions", permission);
+
+            return true;
+        }
+
+        // CHECK ROLE CLASS PERMISSIONS
+        if (this.hasPermissionByRoleClassPermission(user, entity, permission)) {
+            log.trace("Granting {} access by role instance permissions", permission);
 
             return true;
         }
@@ -230,6 +257,28 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
             groupInstancePermissions.contains(PermissionType.ADMIN);
     }
 
+    public boolean hasPermissionByRoleInstancePermission(User user, BaseEntity entity, PermissionType permission) {
+        List<Role> roles = roleProviderService.getRolesForUser(user);
+
+        List<PermissionCollection> rolePermissionCols;
+        if (permission.equals(PermissionType.CREATE) && entity.getId() == null) {
+            rolePermissionCols = List.of(new PermissionCollection());
+        } else {
+            rolePermissionCols = roles.stream()
+                .map(role -> roleInstancePermissionService.findPermissionCollectionFor(entity, role))
+                .toList();
+        }
+
+        return rolePermissionCols.stream().anyMatch(rolePermissionCol -> {
+            final Set<PermissionType> roleInstancePermissions = rolePermissionCol.getPermissions();
+
+            // Grant access if user explicitly has the requested permission or
+            // if the user has the ADMIN permission
+            return roleInstancePermissions.contains(permission) ||
+                roleInstancePermissions.contains(PermissionType.ADMIN);
+        });
+    }
+
     public boolean hasPermissionByUserClassPermission(User user, BaseEntity entity, PermissionType permission) {
         PermissionCollection userClassPermissionCol = userClassPermissionService
             .findPermissionCollectionFor(entity, user);
@@ -252,6 +301,23 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
             groupClassPermissions.contains(PermissionType.ADMIN);
     }
 
+    public boolean hasPermissionByRoleClassPermission(User user, BaseEntity entity, PermissionType permission) {
+        List<Role> roles = roleProviderService.getRolesForUser(user);
+
+        List<PermissionCollection> rolePermissionCols = roles.stream()
+            .map(role -> roleClassPermissionService.findPermissionCollectionFor(entity, role))
+            .toList();
+
+        return rolePermissionCols.stream().anyMatch(rolePermissionCol -> {
+            final Set<PermissionType> roleClassPermissions = rolePermissionCol.getPermissions();
+
+            // Grant access if user explicitly has the requested permission or
+            // if the user has the ADMIN permission
+            return roleClassPermissions.contains(permission) ||
+                roleClassPermissions.contains(PermissionType.ADMIN);
+        });
+    }
+
     /**
      * Default <code>findAll</code> implementation which supports pagination.
      * Speeds up the permission check by utilizing two simplifications:
@@ -267,10 +333,10 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
     @Override
     public Page<E> findAll(User user, Pageable pageable, BaseCrudRepository<E, Long> repository, Class<E> baseEntityClass) {
         if (user == null) {
-            return repository.findAll(pageable, null);
+            return repository.findAll(pageable, null, null);
         }
 
-        // option A: user has role `ADMIN`
+        // option A: user has role `ADMIN`.
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         List<GrantedAuthority> authorities = new ArrayList<>(authentication.getAuthorities());
@@ -282,7 +348,7 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
             return repository.findAll(pageable);
         }
 
-        // option B: user has permission through class permissions
+        // option B: user has permission through instance or group class permissions.
         Optional<UserClassPermission> userClassPermission = userClassPermissionService.findFor(baseEntityClass, user);
         Optional<GroupClassPermission> groupClassPermission = groupClassPermissionService.findFor(baseEntityClass, user);
 
@@ -290,17 +356,38 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
             return repository.findAll(pageable);
         }
 
-        // option C: check instance permissions for each entity with a single query
+        // option C: user has permission through role class permissions.
+        List<Role> roles = roleProviderService.getRolesForUser(user);
+
+        List<RoleClassPermission> roleClassPermissions = roles.stream()
+            .map(role -> roleClassPermissionService.findFor(baseEntityClass, role))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .toList();
+
+        if (containsReadPermission(roleClassPermissions.toArray(RoleClassPermission[]::new))) {
+            return repository.findAll(pageable);
+        }
+
+        // TODO take into account the role permissions
+        // TODO das sollte der letzte notwendige Schritt sein.
+        // option D: user has permission through role instance permissions.
+
+        List<Long> roleIds = roles.stream()
+            .map(BaseEntity::getId)
+            .toList();
+
+        // option E: check instance permissions for each entity with a single query.
         List<Group<GroupRepresentation>> userGroups = groupProviderService.getGroupsForUser();
         if (userGroups.isEmpty()) {
             // user has no groups so only user instance permissions have to be checked
-            return repository.findAll(pageable, user.getId());
+            return repository.findAll(pageable, user.getId(), roleIds);
         } else {
             // check both user and group instance permissions
             List<Long> groupIds = userGroups.stream()
                 .map(BaseEntity::getId)
                 .toList();
-            return repository.findAll(pageable, user.getId(), groupIds);
+            return repository.findAll(pageable, user.getId(), groupIds, roleIds);
         }
     }
 
@@ -316,13 +403,31 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
     }
 
     protected boolean hasPublicPermission(E entity) {
-
         if (entity instanceof Group || entity instanceof User) {
             return false;
         }
 
         return publicInstancePermissionService.getPublic(entity);
     }
+
+//    /**
+//     * Returns the roles of the currently authenticated user.
+//     * @return
+//     */
+//    protected List<Role> getUserRoles() {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//
+//        Collection<? extends GrantedAuthority> grantedAuthorities = authentication.getAuthorities();
+//
+//        return grantedAuthorities.stream()
+//            .map(grantedAuthority -> {
+//                String authority = grantedAuthority.getAuthority();
+//                return roleRepository.findByName(authority);
+//            })
+//            .filter(Optional::isPresent)
+//            .map(Optional::get)
+//            .toList();
+//    }
 
     /**
      * Returns the class of the {@link BaseEntity} this abstract class

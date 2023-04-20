@@ -39,9 +39,6 @@ import java.util.UUID;
 @Log4j2
 public abstract class BaseFileController<T extends BaseFileService<?, S>, S extends File> extends BasePermissionController<T, S> {
 
-    @Value("${upload.basePath}")
-    protected String uploadBasePath;
-
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Page<S> findAll(@PageableDefault(Integer.MAX_VALUE) @ParameterObject Pageable pageable) {

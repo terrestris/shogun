@@ -56,10 +56,15 @@ public interface BaseCrudRepository<T, ID> extends
             WHERE uip.user.id = :userId
             AND uip.entityId = m.id
             AND uip.permission.name IN ('ADMIN', 'READ', 'CREATE_READ', 'CREATE_READ_UPDATE', 'CREATE_READ_DELETE', 'READ_UPDATE', 'READ_DELETE', 'READ_UPDATE_DELETE')
+        ) OR EXISTS (
+            SELECT 1 FROM roleinstancepermissions rip
+            WHERE rip.role.id IN :roleIds
+            AND rip.entityId = m.id
+            AND rip.permission.name IN ('ADMIN', 'READ', 'CREATE_READ', 'CREATE_READ_UPDATE', 'CREATE_READ_DELETE', 'READ_UPDATE', 'READ_DELETE', 'READ_UPDATE_DELETE')
         )
     """)
     @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
-    Page<T> findAll(Pageable pageable, Long userId);
+    Page<T> findAll(Pageable pageable, Long userId, List<Long> roleIds);
 
     /**
      * Returns a {@link Page} of entities for which the user with userId has permission via UserInstancePermission or GroupInstancePermission.
@@ -85,10 +90,15 @@ public interface BaseCrudRepository<T, ID> extends
             WHERE gip.group.id IN :groupIds
             AND gip.entityId = m.id
             AND gip.permission.name IN ('ADMIN', 'READ', 'CREATE_READ', 'CREATE_READ_UPDATE', 'CREATE_READ_DELETE', 'READ_UPDATE', 'READ_DELETE', 'READ_UPDATE_DELETE')
+        ) OR EXISTS (
+            SELECT 1 FROM roleinstancepermissions rip
+            WHERE rip.role.id IN :roleIds
+            AND rip.entityId = m.id
+            AND rip.permission.name IN ('ADMIN', 'READ', 'CREATE_READ', 'CREATE_READ_UPDATE', 'CREATE_READ_DELETE', 'READ_UPDATE', 'READ_DELETE', 'READ_UPDATE_DELETE')
         )
     """)
     @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
-    Page<T> findAll(Pageable pageable, Long userId, List<Long> groupIds);
+    Page<T> findAll(Pageable pageable, Long userId, List<Long> groupIds, List<Long> roleIds);
 
     /**
      * Returns a {@link Page} of entities without checking any permissions.

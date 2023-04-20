@@ -31,4 +31,24 @@ public interface ApplicationRepository extends BaseCrudRepository<Application, L
     @QueryHints(@QueryHint(name = AvailableHints.HINT_CACHEABLE, value = "true"))
     Optional<Application> findByName(String name);
 
+    // https://github.com/spring-projects/spring-data-jpa/issues/2644
+//    @Query(
+//        value = "SELECT * FROM {h-schema}applications a WHERE jsonb_path_exists(a.layer_tree, '$.** \\\\?\\\\? (@.\"layerId\" == $id)', jsonb_build_object('id', :layerId))",
+//        nativeQuery = true
+//    )
+//    @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
+//    List<Application> findAllByLayerId(@Param("layerId") Long layerId);
+
+//    @QueryHints(@QueryHint(name = AvailableHints.HINT_CACHEABLE, value = "true"))
+//    @Query(
+//        value = "SELECT * FROM shogun.applications a WHERE jsonb_path_exists(a.layer_tree, '$.** ? (@.\"layerId\" == $id)', jsonb_build_object('id', :layerId))",
+//        nativeQuery = true
+//    )
+//    List<Application> findAllApplicationsContainingLayer(Long layerId);
+//
+//    @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
+//    @Query(
+//        value = "SELECT a FROM Application a WHERE a.public_access = true"
+//    )
+//    Page<Application> findAllOpenApplications(Pageable pageable);
 }
