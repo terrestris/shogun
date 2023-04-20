@@ -59,6 +59,7 @@ public abstract class SwaggerConfig {
                     .title(title)
                     .description(description)
                     .version(version)
+                    .termsOfService(termsOfServiceUrl)
                     .contact(
                         new Contact()
                             .name(contactName)
