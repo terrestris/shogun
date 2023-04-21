@@ -16,6 +16,7 @@
  */
 package de.terrestris.shogun.lib.model.jsonb.application;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -25,6 +26,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @ToString
 @EqualsAndHashCode
 public class DefaultMapView implements Serializable {
