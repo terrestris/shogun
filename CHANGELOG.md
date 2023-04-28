@@ -1,3 +1,18 @@
+# [16.4.0](https://github.com/terrestris/shogun/compare/v16.3.0...v16.4.0) (2023-04-28)
+
+
+### Bug Fixes
+
+* add JsonInclude.Include.NON_NULL annotations to all jsonb models ([38e4811](https://github.com/terrestris/shogun/commit/38e4811d53b0f38acb2dbeb7a193211f3840677e))
+* enable arbitrary objects in open api specification ([563a2ba](https://github.com/terrestris/shogun/commit/563a2babb9194f97457ab030a1c40750a11c7879))
+* readd terms of service url ([bb09a79](https://github.com/terrestris/shogun/commit/bb09a79d3c11625ac9927da761e699922582eec3))
+* replace deprecated mockito-inline by mockito-core ([16fcbf0](https://github.com/terrestris/shogun/commit/16fcbf0a63169e50e59fd12c37b73c6daa36d18d))
+
+
+### Features
+
+* add defaultLanguage param to clientConfig ([#685](https://github.com/terrestris/shogun/issues/685)) ([c85dc96](https://github.com/terrestris/shogun/commit/c85dc968ffd5562ef92dad59f77872d869a6fdf1))
+
 # [16.3.0](https://github.com/terrestris/shogun/compare/v16.2.0...v16.3.0) (2023-04-18)
 
 
