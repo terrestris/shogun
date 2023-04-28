@@ -16,9 +16,13 @@
  */
 package de.terrestris.shogun.lib.graphql.controller;
 
+import de.terrestris.shogun.lib.dto.DefaultGraphQLConnection;
 import de.terrestris.shogun.lib.graphql.dto.MutateApplication;
 import de.terrestris.shogun.lib.model.Application;
 import de.terrestris.shogun.lib.service.ApplicationService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
 import org.springframework.graphql.data.method.annotation.Argument;
@@ -34,8 +38,8 @@ import java.util.Optional;
 public class ApplicationGraphQLController extends BaseGraphQLController<Application, ApplicationService> {
 
     @QueryMapping
-    public List<Application> allApplications() {
-        return super.findAll();
+    public DefaultGraphQLConnection<Application> allApplications(@Argument("first") int first, @Argument("offset") int offset) {
+        return super.findAll(first, offset);
     }
 
     @QueryMapping

@@ -225,8 +225,9 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
             )
             .andExpect(MockMvcResultMatchers.status().isOk())
             .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$").isArray())
-            .andExpect(jsonPath("$", hasSize(0)));
+            .andExpect(jsonPath("$").isMap())
+            .andExpect(jsonPath("$.content").isArray())
+            .andExpect(jsonPath("$.content", hasSize(0)));
     }
 
     @Test
@@ -242,8 +243,9 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
             )
             .andExpect(MockMvcResultMatchers.status().isOk())
             .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$").isArray())
-            .andExpect(jsonPath("$", hasSize(1)));
+            .andExpect(jsonPath("$").isMap())
+            .andExpect(jsonPath("$.content").isArray())
+            .andExpect(jsonPath("$.content", hasSize(1)));
     }
 
     @Test
@@ -256,8 +258,9 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
             )
             .andExpect(MockMvcResultMatchers.status().isOk())
             .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$").isArray())
-            .andExpect(jsonPath("$", hasSize(testData.size())));
+            .andExpect(jsonPath("$").isMap())
+            .andExpect(jsonPath("$.content").isArray())
+            .andExpect(jsonPath("$.content", hasSize(testData.size())));
     }
 
     @Test

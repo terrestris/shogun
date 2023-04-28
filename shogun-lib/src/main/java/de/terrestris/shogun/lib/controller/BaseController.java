@@ -33,8 +33,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.GenericTypeResolver;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -83,14 +86,14 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
             description = "Internal Server Error: Something internal went wrong while deleting the entity"
         )
     })
-    public List<S> findAll() {
+    public Page<S> findAll(@PageableDefault(20) Pageable pageable) {
         log.trace("Requested to return all entities of type {}", getGenericClassName());
 
         try {
-            List<S> persistedEntities = service.findAll();
+            Page<S> persistedEntities = service.findAll(pageable);
 
             log.trace("Successfully got all entities of type {} (count: {})",
-                getGenericClassName(), persistedEntities.size());
+                getGenericClassName(), persistedEntities.getTotalElements());
 
             return persistedEntities;
         } catch (AccessDeniedException ade) {

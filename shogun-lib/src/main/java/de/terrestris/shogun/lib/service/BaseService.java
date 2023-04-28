@@ -24,7 +24,9 @@ import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.BaseCrudRepository;
+import de.terrestris.shogun.lib.security.access.entity.BaseEntityPermissionEvaluator;
 import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionService;
+import de.terrestris.shogun.lib.service.security.permission.UserClassPermissionService;
 import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
 import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import lombok.extern.log4j.Log4j2;
@@ -33,6 +35,8 @@ import org.hibernate.envers.query.AuditEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.GenericTypeResolver;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
 import org.springframework.data.jpa.domain.Specification;
@@ -72,16 +76,39 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
     @Lazy
     protected UserProviderService userProviderService;
 
+    @Autowired
+    protected List<BaseEntityPermissionEvaluator<?>> permissionEvaluators;
+
     @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
     @Transactional(readOnly = true)
     public List<S> findAll() {
         return (List<S>) repository.findAll();
     }
 
+    @Transactional(readOnly = true)
+    public Page<S> findAll(Pageable pageable) {
+        // note: security check is done in permission evaluator
+        Optional<User> userOpt = userProviderService.getUserBySession();
+
+        // todo: can this be simplified? autowiring BaseEntityPermissionEvaluator did not work.
+        BaseEntityPermissionEvaluator entityPermissionEvaluator =
+            this.getPermissionEvaluatorForClass(BaseEntity.class.getCanonicalName());
+
+        Class<? extends BaseEntity> entityClass = this.getBaseEntityClass();
+
+        return entityPermissionEvaluator.findAll(userOpt.orElseThrow(), pageable, repository, entityClass);
+    }
+
     @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
     @Transactional(readOnly = true)
     public List<S> findAllBy(Specification specification) {
         return (List<S>) repository.findAll(specification);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Transactional(readOnly = true)
+    public Page<S> findAllBy(Specification specification, Pageable pageable) {
+        return (Page<S>) repository.findAll(specification, pageable);
     }
 
     @PostAuthorize("hasRole('ROLE_ADMIN') or hasPermission(returnObject.orElse(null), 'READ')")
@@ -194,13 +221,25 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
      * @return The class.
      */
     public Class<? extends BaseEntity> getBaseEntityClass() {
-        Class<? extends BaseEntity>[] resolvedTypeArguments = (Class<? extends BaseEntity>[]) GenericTypeResolver.resolveTypeArguments(getClass(),
-            BaseService.class);
+        Class<? extends BaseEntity>[] resolvedTypeArguments = (Class<? extends BaseEntity>[]) GenericTypeResolver.resolveTypeArguments(
+            getClass(), BaseService.class
+        );
 
         if (resolvedTypeArguments != null && resolvedTypeArguments.length == 2) {
             return resolvedTypeArguments[1];
         } else {
             return null;
         }
+    }
+
+    protected BaseEntityPermissionEvaluator getPermissionEvaluatorForClass(String persistentObjectClass) {
+
+        BaseEntityPermissionEvaluator entityPermissionEvaluator = permissionEvaluators.stream()
+            .filter(permissionEvaluator -> persistentObjectClass.equals(
+                permissionEvaluator.getEntityClassName().getCanonicalName()))
+            .findAny()
+            .orElse(null);
+
+        return entityPermissionEvaluator;
     }
 }

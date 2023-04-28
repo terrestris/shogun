@@ -16,6 +16,7 @@
  */
 package de.terrestris.shogun.lib.graphql.controller;
 
+import de.terrestris.shogun.lib.dto.DefaultGraphQLConnection;
 import de.terrestris.shogun.lib.graphql.dto.MutateLayer;
 import de.terrestris.shogun.lib.model.Layer;
 import de.terrestris.shogun.lib.service.LayerService;
@@ -34,8 +35,8 @@ import java.util.Optional;
 public class LayerGraphQLController extends BaseGraphQLController<Layer, LayerService> {
 
     @QueryMapping
-    public List<Layer> allLayers() {
-        return super.findAll();
+    public DefaultGraphQLConnection<Layer> allLayers(@Argument("page") Integer page, @Argument("size") Integer size) {
+        return super.findAll(page, size);
     }
 
     @QueryMapping

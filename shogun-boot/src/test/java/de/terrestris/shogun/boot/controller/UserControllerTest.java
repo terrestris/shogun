@@ -80,8 +80,9 @@ public class UserControllerTest extends BaseControllerTest<UserController, UserR
             )
             .andExpect(MockMvcResultMatchers.status().isOk())
             .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$").isArray())
-            .andExpect(jsonPath("$", hasSize(testData.size() + 2)));
+            .andExpect(jsonPath("$").isMap())
+            .andExpect(jsonPath("$.content").isArray())
+            .andExpect(jsonPath("$.content", hasSize(testData.size() + 2)));
     }
 
     @Test

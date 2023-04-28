@@ -16,9 +16,14 @@
  */
 package de.terrestris.shogun.lib.graphql.controller;
 
+import de.terrestris.shogun.lib.dto.DefaultGraphQLConnection;
 import de.terrestris.shogun.lib.graphql.dto.MutateGroup;
+import de.terrestris.shogun.lib.model.Application;
 import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.service.GroupService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
 import org.springframework.graphql.data.method.annotation.Argument;
@@ -34,8 +39,8 @@ import java.util.Optional;
 public class GroupGraphQLController extends BaseGraphQLController<Group, GroupService> {
 
     @QueryMapping
-    public List<Group> allGroups() {
-        return super.findAll();
+    public DefaultGraphQLConnection<Group> allGroups(@Argument("page") Integer page, @Argument("size") Integer size) {
+        return super.findAll(page, size);
     }
 
     @QueryMapping

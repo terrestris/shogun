@@ -20,6 +20,26 @@ scalar Geometry
 scalar DateTime
 scalar Long
 
+type PageInfo {
+    hasPreviousPage: Boolean!
+    hasNextPage: Boolean!
+}
+
+type ApplicationEdge {
+    cursor: DefaultConnectionCursor
+    node: Application
+}
+
+type DefaultConnectionCursor {
+    value: String
+}
+
+type ApplicationConnection {
+    totalCount: Long
+    edges: [ApplicationEdge]
+    pageInfo: PageInfo
+}
+
 """
 The following list contains all supported GraphQL queries of the SHOGun-API.
 """
@@ -40,7 +60,7 @@ type Query {
 
     The query takes the current user into account and filters all entities by the `READ` permission of the user.
     """
-    allApplications: [Application]
+    allApplications(first: Int = 0, offset: Int = 0): ApplicationConnection
     """
     Returns the application with the given ID (if any).
 
@@ -156,7 +176,7 @@ type Query {
 
     The query takes the current user into account and filters all entities by the `READ` permission of the user.
     """
-    allFiles: [File]
+    allFiles(page: Int = 0, size: Int = 0): [File]
     """
     Returns the file with the given ID (if any).
 
@@ -208,7 +228,7 @@ type Query {
 
     The query takes the current user into account and filters all entities by the `READ` permission of the user.
     """
-    allGroups: [Group]
+    allGroups(page: Int = 0, size: Int = 0): [Group]
     """
     Returns the group with the given ID (if any).
 
@@ -324,7 +344,7 @@ type Query {
 
     The query takes the current user into account and filters all entities by the `READ` permission of the user.
     """
-    allImageFiles: [ImageFile]
+    allImageFiles(page: Int = 0, size: Int = 0): [ImageFile]
     """
     Returns the imagefile with the given ID (if any).
 
@@ -376,7 +396,7 @@ type Query {
 
     The query takes the current user into account and filters all entities by the `READ` permission of the user.
     """
-    allLayers: [Layer]
+    allLayers(page: Int = 0, size: Int = 0): [Layer]
     """
     Returns the layer with the given ID (if any).
 
@@ -494,7 +514,7 @@ type Query {
 
     The query takes the current user into account and filters all entities by the `READ` permission of the user.
     """
-    allUsers: [User]
+    allUsers(page: Int = 0, size: Int = 0): [User]
     """
     Returns the user with the given ID (if any).
 
