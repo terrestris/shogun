@@ -244,14 +244,14 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
     }
 
     /**
-     * Default <code>findAll</code> implementation which supports paging.
+     * Default <code>findAll</code> implementation which supports pagination.
      * Speeds up the permission check by utilizing two simplifications:
      * 1) If the authenticated user has role `ADMIN` or has class-level permission it skips further permission checks.
      * 2) Otherwise, user and group instance permissions are checked while querying the data. This removes the need for
      * any additional filtering.
      *
      * @param user The authenticated user.
-     * @param pageable The paging configuration.
+     * @param pageable The pagination configuration.
      * @param repository The base entity repository used to fetch the entities.
      * @return A page of entities.
      */

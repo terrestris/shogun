@@ -34,7 +34,7 @@ public interface EntityPermissionEvaluator<E> {
 
     /**
      * Custom permission evaluators have to implement this method to provide a way to check permissions for requests
-     * with paging. See {@link BaseEntityPermissionEvaluator#findAll(User, Pageable, BaseCrudRepository)} for the
+     * with pagination. See {@link BaseEntityPermissionEvaluator#findAll(User, Pageable, BaseCrudRepository)} for the
      * default implementation for {@link de.terrestris.shogun.lib.model.BaseEntity}.
      */
     Page<E> findAll(User user, Pageable pageable, BaseCrudRepository<E, Long> repository, Class<E> baseEntityClass);

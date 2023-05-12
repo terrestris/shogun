@@ -20,6 +20,7 @@ import de.terrestris.shogun.lib.controller.security.permission.BasePermissionCon
 import de.terrestris.shogun.lib.model.File;
 import de.terrestris.shogun.lib.service.BaseFileService;
 import lombok.extern.log4j.Log4j2;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -52,7 +53,7 @@ public abstract class BaseFileController<T extends BaseFileService<?, S>, S exte
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Page<S> findAll(@PageableDefault(Integer.MAX_VALUE) Pageable pageable) {
+    public Page<S> findAll(@PageableDefault(Integer.MAX_VALUE) @ParameterObject Pageable pageable) {
         log.trace("Requested to return all entities of type {}", getGenericClassName());
 
         try {

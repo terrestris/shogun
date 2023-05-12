@@ -29,6 +29,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.log4j.Log4j2;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -86,7 +87,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
             description = "Internal Server Error: Something internal went wrong while deleting the entity"
         )
     })
-    public Page<S> findAll(@PageableDefault(Integer.MAX_VALUE) Pageable pageable) {
+    public Page<S> findAll(@PageableDefault(Integer.MAX_VALUE) @ParameterObject Pageable pageable) {
         log.trace("Requested to return all entities of type {}", getGenericClassName());
 
         try {
