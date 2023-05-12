@@ -249,6 +249,24 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
     }
 
     @Test
+    public void findAll_shouldReturnAllAvailableEntitiesWithUserClassPermissions() throws Exception {
+
+        userClassPermissionService.setPermission(entityClass, this.user, PermissionCollectionType.READ);
+
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .get(basePath)
+                    .with(authentication(getMockAuthentication(this.user)))
+            )
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$").isMap())
+            .andExpect(jsonPath("$.content").isArray())
+            .andExpect(jsonPath("$.content", hasSize(testData.size())));
+    }
+
+    @Test
     public void findAll_shouldReturnAllAvailableEntitiesForRoleAdmin() throws Exception {
         this.mockMvc
             .perform(

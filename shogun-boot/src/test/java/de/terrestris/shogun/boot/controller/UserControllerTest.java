@@ -87,6 +87,25 @@ public class UserControllerTest extends BaseControllerTest<UserController, UserR
 
     @Test
     @Override
+    public void findAll_shouldReturnAllAvailableEntitiesWithUserClassPermissions() throws Exception {
+
+        userClassPermissionService.setPermission(entityClass, this.user, PermissionCollectionType.READ);
+
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .get(basePath)
+                    .with(authentication(getMockAuthentication(this.user)))
+            )
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$").isMap())
+            .andExpect(jsonPath("$.content").isArray())
+            .andExpect(jsonPath("$.content", hasSize(testData.size() + 2)));
+    }
+
+    @Test
+    @Override
     public void add_shouldDenyAccessForRoleAnonymous() throws Exception {
         JsonNode insertNode = objectMapper.valueToTree(testData.get(0));
         List<String> fieldsToRemove = List.of("id", "created", "modified");
