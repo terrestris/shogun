@@ -24,12 +24,4 @@ import org.springframework.security.data.repository.query.SecurityEvaluationCont
 
 @ConditionalOnExpression("${keycloak.enabled:true}")
 @Configuration
-public class BootKeycloakConfig extends KeycloakConfig {
-
-    @Bean
-    // todo: move to generic config (non-keycloak systems need this as well)
-    public SecurityEvaluationContextExtension securityEvaluationContextExtension() {
-        return new SecurityEvaluationContextExtension();
-    }
-
-}
+public class BootKeycloakConfig extends KeycloakConfig {}
