@@ -18,9 +18,7 @@ package de.terrestris.shogun.boot.config;
 
 import de.terrestris.shogun.config.KeycloakConfig;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.data.repository.query.SecurityEvaluationContextExtension;
 
 @ConditionalOnExpression("${keycloak.enabled:true}")
 @Configuration
