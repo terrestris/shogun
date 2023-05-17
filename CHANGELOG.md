@@ -1,3 +1,87 @@
+# [17.0.0](https://github.com/terrestris/shogun/compare/v16.4.0...v17.0.0) (2023-05-17)
+
+
+### Bug Fixes
+
+* convert permission query to non native query ([3a151d4](https://github.com/terrestris/shogun/commit/3a151d4b6a9c5b93588df4d924ae3735ba9d0d1e))
+* determine read permission id from DB ([ec5ba01](https://github.com/terrestris/shogun/commit/ec5ba01113e24dc09d2d12b5cf0fb1ef582eb875))
+* fix api docs for pageable parameter ([11a3a6d](https://github.com/terrestris/shogun/commit/11a3a6da38541ad9070a9b768313a4d15f481e42))
+* get base entity class dynamically ([a3c6a35](https://github.com/terrestris/shogun/commit/a3c6a3586ca8f5bc48acb78190e959a62f7bac1c))
+* improvements from code review ([4416356](https://github.com/terrestris/shogun/commit/44163562a38c104bca33718a131a559209c1685b))
+* move securityExtension to ApplicationConfig ([112dd89](https://github.com/terrestris/shogun/commit/112dd8978796c573fab8c674d01557a0ddfe02dc))
+* remove SecurityContextEvaluationExtension ([ce86a05](https://github.com/terrestris/shogun/commit/ce86a0507ef84fe140629f7c17c188c0e53c0acb))
+* remove unneeded imports ([7abf3ed](https://github.com/terrestris/shogun/commit/7abf3ed2a338d265a998b4ae7702fe5407f01a96))
+* security evaluation extension ([d3437e1](https://github.com/terrestris/shogun/commit/d3437e176b34bc45b44da7ae5235c9764aeda811))
+* update tests for new findAll response ([919c0e4](https://github.com/terrestris/shogun/commit/919c0e4682373e9bc64e1a2a73fdd0977b77bffc))
+
+
+### Features
+
+* add paging and simplify permission check ([c378348](https://github.com/terrestris/shogun/commit/c3783480c90dc1ee9e089c9495a586591b5a9b96))
+* also check group permissions ([f887da9](https://github.com/terrestris/shogun/commit/f887da9abaffee71dec8874d7bab24be837c5971))
+
+
+### BREAKING CHANGES
+
+* changes `BaseController::findAll` signature. Now returns paged entities.
+
+Migration instructions
+
+1. BaseController::findAll() - method signature has changed
+
+- the method now returns `Page<BaseEntity>` instead of `List<BaseEntity>`
+- this means the results are now wrapped into a paging object, e.g.:
+   ```json
+  {
+    "content": [
+      {
+        "id": 475870,
+        "created": "2022-10-07T14:01:43.11027Z"
+        [...]
+      }
+    ],
+    "pageable": {
+      "sort": {
+        "empty": true,
+        "sorted": false,
+        "unsorted": true
+      },
+      "offset": 0,
+      "pageNumber": 0,
+      "pageSize": 1,
+      "paged": true,
+      "unpaged": false
+    },
+    "last": false,
+    "totalElements": 2,
+    "totalPages": 2,
+    "size": 1,
+    "number": 0,
+    "sort": {
+      [...]
+    },
+    "first": true,
+    "numberOfElements": 1,
+    "empty": false
+  }
+   ```
+   - `content` contains the list of entities
+   - the object also contains metadata, for more information see https://docs.spring.io/spring-data/commons/docs/current/api/org/springframework/data/domain/Page.html
+- the method has a new optional parameter `Pageable pageable` which can be used to specify which page and size is returned e.g.:
+   ```json
+  {
+    "page": 0,
+    "size": 10
+  }
+   ```
+- if no pagination configuration is provided, one page with all entities is returned. But it is recommended to use pagination for performance reasons
+
+2. Custom permission evaluators have to implement a `findAll` method
+
+- if you project uses custom permission evaluators, you have to implement this method to provide a way to check permissions for requests with pagination
+- BaseEntityPermissionEvaluator contains a default implemenation which performs the new improved permisison check described above
+   - the default only works for the "shogun way" (permission managment through UserInstance-, UserClass- GroupInstance- and GroupClassPermissions
+
 # [16.4.0](https://github.com/terrestris/shogun/compare/v16.3.0...v16.4.0) (2023-04-28)
 
 
