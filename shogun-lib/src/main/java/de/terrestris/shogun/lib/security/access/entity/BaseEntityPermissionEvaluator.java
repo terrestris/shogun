@@ -31,12 +31,14 @@ import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermiss
 import de.terrestris.shogun.lib.service.security.permission.UserClassPermissionService;
 import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
 import de.terrestris.shogun.lib.service.security.provider.GroupProviderService;
+import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -257,12 +259,16 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
      */
     @Override
     public Page<E> findAll(User user, Pageable pageable, BaseCrudRepository<E, Long> repository, Class<E> baseEntityClass) {
+        if (user == null) {
+            throw new RuntimeException("No user provided!");
+        }
+
         // option A: user has role `ADMIN`
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         List<GrantedAuthority> authorities = new ArrayList<>(authentication.getAuthorities());
         var isAdmin = authorities.stream().anyMatch(
-            grantedAuthority -> StringUtils.endsWithIgnoreCase(grantedAuthority.getAuthority(), "ADMIN")
+            grantedAuthority -> StringUtils.equalsIgnoreCase(grantedAuthority.getAuthority(), "ROLE_ADMIN")
         );
 
         if (isAdmin) {

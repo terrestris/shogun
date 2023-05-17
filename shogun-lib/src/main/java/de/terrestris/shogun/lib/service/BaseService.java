@@ -96,7 +96,7 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
 
         Class<? extends BaseEntity> entityClass = this.getBaseEntityClass();
 
-        return entityPermissionEvaluator.findAll(userOpt.orElseThrow(), pageable, repository, entityClass);
+        return entityPermissionEvaluator.findAll(userOpt.orElse(null), pageable, repository, entityClass);
     }
 
     @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
