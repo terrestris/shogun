@@ -27,7 +27,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.security.data.repository.query.SecurityEvaluationContextExtension;
 
 @SpringBootApplication
 @EnableJpaRepositories(
@@ -42,11 +41,6 @@ import org.springframework.security.data.repository.query.SecurityEvaluationCont
     ImageFileUploadProperties.class
 })
 public class ApplicationConfig {
-
-    @Bean
-    public SecurityEvaluationContextExtension securityEvaluationContextExtension() {
-        return new SecurityEvaluationContextExtension();
-    }
 
     public static void main(String[] args) {
         SpringApplication.run(ApplicationConfig.class, args);
