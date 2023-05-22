@@ -59,4 +59,9 @@ public class DefaultApplicationClientConfig implements ApplicationClientConfig {
     )
     private String defaultLanguage;
 
+    @Schema(
+        description = "The configuration of the search field."
+    )
+    private DefaultSearchFieldConfig searchFieldConfig;
+
 }
