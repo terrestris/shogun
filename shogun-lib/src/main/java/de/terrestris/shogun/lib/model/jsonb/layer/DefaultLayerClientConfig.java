@@ -85,5 +85,11 @@ public class DefaultLayerClientConfig implements LayerClientConfig {
         example = "1"
     )
     private Float opacity;
+
+    @Schema(
+        description = "Whether the layer is editable or not.",
+        example = "true"
+    )
+    private Boolean editable;
 }
 
