@@ -213,7 +213,11 @@
           }
         });
         const applications = await response.json();
-        return applications;
+        if (applications && applications.content) {
+          return applications.content;
+        } else {
+          throw new Error('Error while fetching applications');
+        }
       } catch (error) {
         console.error(error);
       }
