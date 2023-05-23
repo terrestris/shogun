@@ -35,7 +35,7 @@ public class DefaultApplicationClientConfig implements ApplicationClientConfig {
 
     @Schema(
         description = "The configuration of the map view.",
-        required = true
+        requiredMode = Schema.RequiredMode.REQUIRED
     )
     private DefaultMapView mapView;
 

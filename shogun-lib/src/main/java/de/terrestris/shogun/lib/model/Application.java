@@ -51,7 +51,7 @@ public class Application extends BaseEntity {
     @Column
     @Schema(
         description = "The name of the application.",
-        required = true,
+        requiredMode = Schema.RequiredMode.REQUIRED,
         example = "My SHOGun application"
     )
     private String name;

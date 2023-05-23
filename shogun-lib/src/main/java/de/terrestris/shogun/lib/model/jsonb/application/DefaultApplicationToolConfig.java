@@ -37,7 +37,7 @@ public class DefaultApplicationToolConfig implements ApplicationToolConfig {
     @Schema(
         description = "The name of the tool.",
         example = "map-tool",
-        required = true
+        requiredMode = Schema.RequiredMode.REQUIRED
     )
     private String name;
 

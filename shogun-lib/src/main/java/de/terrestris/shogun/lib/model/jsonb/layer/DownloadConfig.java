@@ -33,7 +33,7 @@ public class DownloadConfig implements Serializable {
     @Schema(
         description = "URL which allows to download the layer data.",
         example = "https://example.com/geoserver/SHOGUN/ows?service=WFS&version=1.0.0&request=GetFeature&outputFormat=application%2Fjson",
-        required = true
+        requiredMode = Schema.RequiredMode.REQUIRED
     )
     private String downloadUrl;
 
