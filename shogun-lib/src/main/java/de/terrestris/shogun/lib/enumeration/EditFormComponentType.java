@@ -19,9 +19,10 @@ package de.terrestris.shogun.lib.enumeration;
 public enum EditFormComponentType {
     CHECKBOX("Checkbox"),
     DATE("Date"),
-    DROPDOWN("Dropdown"),
+    DISPLAY("Display"),
     INPUT("Input"),
     NUMBER("Number"),
+    SELECT("Select"),
     SWITCH("Switch"),
     TEXTAREA("TextArea"),
     UPLOAD("Upload");
