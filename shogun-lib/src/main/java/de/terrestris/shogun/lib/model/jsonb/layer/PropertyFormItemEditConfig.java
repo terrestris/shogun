@@ -1,6 +1,6 @@
 /* SHOGun, https://terrestris.github.io/shogun/
  *
- * Copyright © 2022-present terrestris GmbH & Co. KG
+ * Copyright © 2023-present terrestris GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,31 +17,36 @@
 package de.terrestris.shogun.lib.model.jsonb.layer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import de.terrestris.shogun.lib.enumeration.EditFormComponentType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import java.io.Serializable;
-
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ToString
-@EqualsAndHashCode
-public class DownloadConfig implements Serializable {
+@EqualsAndHashCode(callSuper = true)
+public class PropertyFormItemEditConfig extends PropertyFormItemReadConfig {
 
     @Schema(
-        description = "URL which allows to download the layer data.",
-        example = "https://example.com/geoserver/SHOGUN/ows?service=WFS&version=1.0.0&request=GetFeature&outputFormat=application%2Fjson",
+        description = "The identifier of the component to render for this property.",
+        example = "TEXTAREA",
         requiredMode = Schema.RequiredMode.REQUIRED
     )
-    private String downloadUrl;
+    private EditFormComponentType component;
 
     @Schema(
-        description = "The displayed format name for the given downloadUrl.",
-        example = "GeoJSON"
+        description = "Whether the property is read only or not.",
+        example = "true"
     )
-    private String formatName;
+    private Boolean readOnly;
+
+    @Schema(
+        description = "Whether the property is required or not.",
+        example = "true"
+    )
+    private Boolean required;
 
 }
 

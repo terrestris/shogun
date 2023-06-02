@@ -37,7 +37,7 @@ public class DefaultApplicationLayerConfig implements LayerConfig {
 
     @Schema(
         description = "The ID of the layer to apply the custom configuration to.",
-        required = true
+        requiredMode = Schema.RequiredMode.REQUIRED
     )
     private Integer layerId;
 

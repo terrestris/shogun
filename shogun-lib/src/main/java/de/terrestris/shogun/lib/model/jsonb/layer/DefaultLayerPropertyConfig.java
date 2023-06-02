@@ -32,8 +32,8 @@ public class DefaultLayerPropertyConfig implements Serializable {
 
     @Schema(
         description = "The name of the property.",
-        example = "description",
-        required = true
+        example = "desc",
+        requiredMode = Schema.RequiredMode.REQUIRED
     )
     private String propertyName;
 
@@ -43,10 +43,5 @@ public class DefaultLayerPropertyConfig implements Serializable {
     )
     private String displayName;
 
-    @Schema(
-        description = "Whether the attribute should be shown or not.",
-        example = "true"
-    )
-    private boolean visible = true;
 }
 

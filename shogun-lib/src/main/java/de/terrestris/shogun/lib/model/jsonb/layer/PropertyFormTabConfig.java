@@ -1,6 +1,6 @@
 /* SHOGun, https://terrestris.github.io/shogun/
  *
- * Copyright © 2022-present terrestris GmbH & Co. KG
+ * Copyright © 2023-present terrestris GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,25 +23,26 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ToString
 @EqualsAndHashCode
-public class DownloadConfig implements Serializable {
+public class PropertyFormTabConfig<T extends PropertyFormItemReadConfig> implements Serializable {
 
+    // TODO i18n?
     @Schema(
-        description = "URL which allows to download the layer data.",
-        example = "https://example.com/geoserver/SHOGUN/ows?service=WFS&version=1.0.0&request=GetFeature&outputFormat=application%2Fjson",
+        description = "The title of the tab",
+        example = "Base statistics",
         requiredMode = Schema.RequiredMode.REQUIRED
     )
-    private String downloadUrl;
+    private String title;
 
     @Schema(
-        description = "The displayed format name for the given downloadUrl.",
-        example = "GeoJSON"
+        description = "The list of fields to add to the tab."
     )
-    private String formatName;
+    private ArrayList<T> children;
 
 }
 

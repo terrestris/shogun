@@ -1,6 +1,6 @@
 /* SHOGun, https://terrestris.github.io/shogun/
  *
- * Copyright © 2022-present terrestris GmbH & Co. KG
+ * Copyright © 2023-present terrestris GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,26 +22,19 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import java.io.Serializable;
+import java.util.Map;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ToString
-@EqualsAndHashCode
-public class DownloadConfig implements Serializable {
+@EqualsAndHashCode(callSuper = true)
+public class PropertyFormItemReadConfig extends DefaultLayerPropertyConfig {
 
     @Schema(
-        description = "URL which allows to download the layer data.",
-        example = "https://example.com/geoserver/SHOGUN/ows?service=WFS&version=1.0.0&request=GetFeature&outputFormat=application%2Fjson",
-        requiredMode = Schema.RequiredMode.REQUIRED
+        description = "Additional properties that should be applied.",
+        example = "true"
     )
-    private String downloadUrl;
-
-    @Schema(
-        description = "The displayed format name for the given downloadUrl.",
-        example = "GeoJSON"
-    )
-    private String formatName;
+    private Map<String, Object> fieldProps;
 
 }
 

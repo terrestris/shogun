@@ -51,8 +51,7 @@ public abstract class BaseEntity implements Serializable {
     @Getter
     @Schema(
         description = "The ID of the entity.",
-        accessMode = Schema.AccessMode.READ_ONLY,
-        readOnly = true
+        accessMode = Schema.AccessMode.READ_ONLY
     )
     private Long id;
 
@@ -61,8 +60,7 @@ public abstract class BaseEntity implements Serializable {
     @Getter @Setter
     @Schema(
         description = "The timestamp of creation.",
-        accessMode = Schema.AccessMode.READ_ONLY,
-        readOnly = true
+        accessMode = Schema.AccessMode.READ_ONLY
     )
     private OffsetDateTime created;
 
@@ -71,8 +69,7 @@ public abstract class BaseEntity implements Serializable {
     @Getter @Setter
     @Schema(
         description = "The timestamp of the last modification.",
-        accessMode = Schema.AccessMode.READ_ONLY,
-        readOnly = true
+        accessMode = Schema.AccessMode.READ_ONLY
     )
     private OffsetDateTime modified;
 
