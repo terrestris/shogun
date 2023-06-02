@@ -31,7 +31,7 @@ public class PropertyFormItemEditConfig extends PropertyFormItemReadConfig {
 
     @Schema(
         description = "The identifier of the component to render for this property.",
-        example = "TextField",
+        example = "TEXTAREA",
         requiredMode = Schema.RequiredMode.REQUIRED
     )
     private EditFormComponentType component;
