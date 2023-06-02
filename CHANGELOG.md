@@ -1,3 +1,21 @@
+# [17.1.0](https://github.com/terrestris/shogun/compare/v17.0.0...v17.1.0) (2023-06-02)
+
+
+### Bug Fixes
+
+* fix return value of application findAll() endpoint ([776f813](https://github.com/terrestris/shogun/commit/776f813dada3c918f42285f07d2b39a11c5496ed))
+* remove unneeded visible field ([75d3ae9](https://github.com/terrestris/shogun/commit/75d3ae9f21221340bbc89566b8cb38ab71e76d9e))
+* replace deprecated usages ([f9b64e1](https://github.com/terrestris/shogun/commit/f9b64e113b24e1566fa5cfd8cd8664c43035a38e))
+* set correct example value ([3807a28](https://github.com/terrestris/shogun/commit/3807a28e3c5b0cc6758e5e426ae02a89c00308b4))
+* update types ([804ecc7](https://github.com/terrestris/shogun/commit/804ecc740d04a502d9c24d4a4abaeff51165cbb8))
+
+
+### Features
+
+* add models for search configuration ([d76c8db](https://github.com/terrestris/shogun/commit/d76c8dbb64a27521c8a04b852da29c357ba6b515))
+* add models for specifying form configurations(still without i18n support) ([1ad6bba](https://github.com/terrestris/shogun/commit/1ad6bbae028247cc9d2d848c9facf603b807f814))
+* adds layer editable flag ([88dd6df](https://github.com/terrestris/shogun/commit/88dd6df89fbdd5e615f7457a994fdace9a9c8071))
+
 # [17.0.0](https://github.com/terrestris/shogun/compare/v16.4.0...v17.0.0) (2023-05-17)
 
 
