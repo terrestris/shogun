@@ -67,7 +67,7 @@ public class DefaultLayerClientConfig implements LayerClientConfig {
     @Schema(
         description = "The search configuration."
     )
-    private Map<String, Object> searchConfig;
+    private SearchConfig searchConfig;
 
     @Schema(
         description = "The shared property configuration that should be used application wide."
