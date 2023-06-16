@@ -20,7 +20,7 @@ import de.terrestris.shogun.interceptor.exception.InterceptorException;
 import de.terrestris.shogun.interceptor.service.GeoServerInterceptorService;
 import de.terrestris.shogun.lib.dto.HttpResponse;
 import lombok.extern.log4j.Log4j2;
-import org.apache.http.HttpException;
+import org.apache.hc.core5.http.HttpException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

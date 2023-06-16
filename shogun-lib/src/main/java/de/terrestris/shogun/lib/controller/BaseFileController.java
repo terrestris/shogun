@@ -20,7 +20,7 @@ import de.terrestris.shogun.lib.controller.security.permission.BasePermissionCon
 import de.terrestris.shogun.lib.model.File;
 import de.terrestris.shogun.lib.service.BaseFileService;
 import lombok.extern.log4j.Log4j2;
-import org.springdoc.api.annotations.ParameterObject;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;

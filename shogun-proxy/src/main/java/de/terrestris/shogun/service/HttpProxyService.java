@@ -21,8 +21,8 @@ import de.terrestris.shogun.lib.dto.HttpResponse;
 import de.terrestris.shogun.lib.util.HttpUtil;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpException;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.net.URIBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -64,7 +64,7 @@ public class HttpProxyService {
     public static final String ERR_MSG_405 = "ERROR 405: (Method Not Allowed):"
         + " The HttpProxyService does not support this request method.";
     public static final String ERR_MSG_500 = "ERROR 500 (Internal Error)"
-        + " An internal error occured which prevented further processing.";
+        + " An internal error occurred which prevented further processing.";
     public static final String ERR_MSG_502 = "ERROR 502 (Bad Gateway):"
         + " The HttpProxyService does not allow you to access that location.";
 
