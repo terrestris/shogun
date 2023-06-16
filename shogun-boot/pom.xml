@@ -102,7 +102,7 @@
     <!-- Hibernate -->
     <dependency>
       <groupId>io.hypersistence</groupId>
-      <artifactId>hypersistence-utils-hibernate-60</artifactId>
+      <artifactId>hypersistence-utils-hibernate-62</artifactId>
     </dependency>
 
     <!-- Lombok -->

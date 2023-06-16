@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.0.5</version>
+    <version>3.1.0</version>
   </parent>
 
   <groupId>de.terrestris</groupId>
@@ -106,25 +106,25 @@
     <jib-maven-plugin.version>3.3.2</jib-maven-plugin.version>
 
     <!-- Spring -->
-    <spring-boot.version>3.0.5</spring-boot.version>
-    <spring-data.version>3.0.4</spring-data.version>
+    <spring-boot.version>3.1.0</spring-boot.version>
+    <spring-data.version>3.1.0</spring-data.version>
 
     <!-- Hibernate -->
-    <hibernate.version>6.1.7.Final</hibernate.version>
+    <hibernate.version>6.2.4.Final</hibernate.version>
 
     <jackson-bom.version>2.13.2.20220328</jackson-bom.version>
 
     <!-- Security -->
-    <keycloak.version>21.0.1</keycloak.version>
+    <keycloak.version>21.1.1</keycloak.version>
 
     <!-- Database -->
-    <hypersistence-utils.version>3.2.0</hypersistence-utils.version>
+    <hypersistence-utils.version>3.4.2</hypersistence-utils.version>
 
     <!-- GraphQL -->
     <graphql-java-extended-scalars.version>19.1</graphql-java-extended-scalars.version>
 
     <!-- Swagger/REST -->
-    <springdoc-openapi.version>2.0.4</springdoc-openapi.version>
+    <springdoc-openapi.version>2.1.0</springdoc-openapi.version>
 
     <!-- JSON/Dataformats -->
     <jackson-datatype-jts.version>1.0-2.7</jackson-datatype-jts.version>
@@ -423,25 +423,25 @@
       <!-- Hibernate -->
       <dependency>
         <groupId>io.hypersistence</groupId>
-        <artifactId>hypersistence-utils-hibernate-60</artifactId>
+        <artifactId>hypersistence-utils-hibernate-62</artifactId>
         <version>${hypersistence-utils.version}</version>
       </dependency>
 
 <!--      todo: check why we have to provide these versions now-->
       <dependency>
-        <groupId>org.hibernate</groupId>
+        <groupId>org.hibernate.orm</groupId>
         <artifactId>hibernate-core</artifactId>
         <version>${hibernate.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>org.hibernate</groupId>
+        <groupId>org.hibernate.orm</groupId>
         <artifactId>hibernate-spatial</artifactId>
         <version>${hibernate.version}</version>
       </dependency>
 
       <dependency>
-        <groupId>org.hibernate</groupId>
+        <groupId>org.hibernate.orm</groupId>
         <artifactId>hibernate-jcache</artifactId>
         <version>${hibernate.version}</version>
       </dependency>
