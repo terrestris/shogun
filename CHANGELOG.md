@@ -1,3 +1,11 @@
+## [17.1.1](https://github.com/terrestris/shogun/compare/v17.1.0...v17.1.1) (2023-06-21)
+
+
+### Bug Fixes
+
+* append the transient provider details for users and groups ([72cb1e6](https://github.com/terrestris/shogun/commit/72cb1e6a1ac20246d4bd8024278ad7f06298d8d6))
+* get the actual target entity class and set a common default permission evaluator ([978426f](https://github.com/terrestris/shogun/commit/978426fb784c366bb3eccdf90ba33f5fe0fcf086))
+
 # [17.1.0](https://github.com/terrestris/shogun/compare/v17.0.0...v17.1.0) (2023-06-02)
 
 
