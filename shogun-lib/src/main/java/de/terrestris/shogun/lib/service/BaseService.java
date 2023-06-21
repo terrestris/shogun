@@ -25,8 +25,8 @@ import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.BaseCrudRepository;
 import de.terrestris.shogun.lib.security.access.entity.BaseEntityPermissionEvaluator;
+import de.terrestris.shogun.lib.security.access.entity.DefaultPermissionEvaluator;
 import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionService;
-import de.terrestris.shogun.lib.service.security.permission.UserClassPermissionService;
 import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
 import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import lombok.extern.log4j.Log4j2;
@@ -79,6 +79,9 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
     @Autowired
     protected List<BaseEntityPermissionEvaluator<?>> permissionEvaluators;
 
+    @Autowired
+    protected DefaultPermissionEvaluator defaultPermissionEvaluator;
+
     @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
     @Transactional(readOnly = true)
     public List<S> findAll() {
@@ -90,11 +93,11 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
         // note: security check is done in permission evaluator
         Optional<User> userOpt = userProviderService.getUserBySession();
 
+        Class<? extends BaseEntity> entityClass = this.getBaseEntityClass();
+
         // todo: can this be simplified? autowiring BaseEntityPermissionEvaluator did not work.
         BaseEntityPermissionEvaluator entityPermissionEvaluator =
-            this.getPermissionEvaluatorForClass(BaseEntity.class.getCanonicalName());
-
-        Class<? extends BaseEntity> entityClass = this.getBaseEntityClass();
+            this.getPermissionEvaluatorForClass(entityClass.getCanonicalName());
 
         return entityPermissionEvaluator.findAll(userOpt.orElse(null), pageable, repository, entityClass);
     }
@@ -233,12 +236,11 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
     }
 
     protected BaseEntityPermissionEvaluator getPermissionEvaluatorForClass(String persistentObjectClass) {
-
         BaseEntityPermissionEvaluator entityPermissionEvaluator = permissionEvaluators.stream()
             .filter(permissionEvaluator -> persistentObjectClass.equals(
                 permissionEvaluator.getEntityClassName().getCanonicalName()))
             .findAny()
-            .orElse(null);
+            .orElse(defaultPermissionEvaluator);
 
         return entityPermissionEvaluator;
     }
