@@ -14,23 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.terrestris.shogun.lib.enumeration;
+package de.terrestris.shogun.lib.model.jsonb.layer;
 
-public enum EditFormComponentType {
-    CHECKBOX("Checkbox"),
-    DATE("Date"),
-    DISPLAY("Display"),
-    INPUT("Input"),
-    NUMBER("Number"),
-    REFERENCE_TABLE("ReferenceTable"),
-    SELECT("Select"),
-    SWITCH("Switch"),
-    TEXTAREA("TextArea"),
-    UPLOAD("Upload");
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-    private final String type;
-
-    EditFormComponentType(String type) {
-        this.type = type;
-    }
-}
+@Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@ToString
+@EqualsAndHashCode(callSuper = true)
+public class PropertyFormItemEditDefaultConfig extends PropertyFormItemEditConfig { }
