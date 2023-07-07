@@ -71,7 +71,7 @@ public class Layer extends BaseEntity {
     @Schema(
         description = "The configuration of the datasource of the layer, e.g. the URL of the server, the name or " +
             "the grid configuration.",
-        required = true
+        requiredMode = Schema.RequiredMode.REQUIRED
     )
     private LayerSourceConfig sourceConfig;
 
@@ -89,7 +89,7 @@ public class Layer extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Schema(
         description = "The type of the layer. Currently one of `TileWMS`, `VectorTile`, `WFS`, `WMS`, `WMTS` or `XYZ`.",
-        required = true
+        requiredMode = Schema.RequiredMode.REQUIRED
     )
     private LayerType type;
 

@@ -34,7 +34,7 @@ import java.util.ArrayList;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ToString
 @EqualsAndHashCode
-@AllArgsConstructors
+@AllArgsConstructor
 public class DefaultLayerTree implements LayerTree {
     @Schema(
         description = "The title of the node to show.",

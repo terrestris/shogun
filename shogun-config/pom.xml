@@ -23,7 +23,7 @@
   <parent>
     <groupId>de.terrestris</groupId>
     <artifactId>shogun</artifactId>
-    <version>16.3.1-SNAPSHOT</version>
+    <version>17.1.2-SNAPSHOT</version>
   </parent>
 
   <artifactId>shogun-config</artifactId>
@@ -49,6 +49,7 @@
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-oauth2-resource-server</artifactId>
     </dependency>
+
     <dependency>
       <groupId>com.fasterxml.jackson.dataformat</groupId>
       <artifactId>jackson-dataformat-yaml</artifactId>

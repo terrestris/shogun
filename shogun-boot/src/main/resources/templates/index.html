@@ -75,6 +75,7 @@
           border-radius: 10px;
           background-color: rgba(248, 249, 250, 1);
           height: auto;
+          cursor: pointer;
         }
 
         .app-card:hover {
@@ -213,7 +214,11 @@
           }
         });
         const applications = await response.json();
-        return applications;
+        if (applications && applications.content) {
+          return applications.content;
+        } else {
+          throw new Error('Error while fetching applications');
+        }
       } catch (error) {
         console.error(error);
       }

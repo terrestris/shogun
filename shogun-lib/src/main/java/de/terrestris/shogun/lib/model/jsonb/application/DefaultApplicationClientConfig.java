@@ -55,4 +55,9 @@ public class DefaultApplicationClientConfig implements ApplicationClientConfig {
     )
     private DefaultApplicationTheme theme;
 
+    @Schema(
+        description = "The default language of the application (ISO 639-1)."
+    )
+    private String defaultLanguage;
+
 }

@@ -48,7 +48,7 @@ public class User<T> extends BaseEntity {
     @Column(unique = true, nullable = false)
     @Schema(
         description = "The backend ID of the user.",
-        required = true
+        requiredMode = Schema.RequiredMode.REQUIRED
     )
     private String authProviderId;
 

@@ -1,6 +1,6 @@
 /* SHOGun, https://terrestris.github.io/shogun/
  *
- * Copyright © 2020-present terrestris GmbH & Co. KG
+ * Copyright © 2023-present terrestris GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.terrestris.shogun.boot.config;
+package de.terrestris.shogun.lib.enumeration;
 
-import de.terrestris.shogun.config.KeycloakConfig;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.context.annotation.Configuration;
+public enum EditFormComponentType {
+    CHECKBOX("Checkbox"),
+    DATE("Date"),
+    DISPLAY("Display"),
+    INPUT("Input"),
+    NUMBER("Number"),
+    SELECT("Select"),
+    SWITCH("Switch"),
+    TEXTAREA("TextArea"),
+    UPLOAD("Upload");
 
-@ConditionalOnExpression("${keycloak.enabled:true}")
-@Configuration
-public class BootKeycloakConfig extends KeycloakConfig {}
+    private final String type;
+
+    EditFormComponentType(String type) {
+        this.type = type;
+    }
+}

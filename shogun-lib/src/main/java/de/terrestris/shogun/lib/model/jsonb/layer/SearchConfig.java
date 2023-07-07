@@ -1,6 +1,6 @@
 /* SHOGun, https://terrestris.github.io/shogun/
  *
- * Copyright © 2022-present terrestris GmbH & Co. KG
+ * Copyright © 2023-present terrestris GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,30 +18,30 @@ package de.terrestris.shogun.lib.model.jsonb.layer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ToString
 @EqualsAndHashCode
-@AllArgsConstructor
-@RequiredArgsConstructor
-public class DefaultLayerPropertyConfig implements Serializable {
+public class SearchConfig implements Serializable {
 
     @Schema(
-        description = "The name of the property.",
-        example = "name",
-        requiredMode = Schema.RequiredMode.REQUIRED
+        description = "List of attributes which will be considered when searching. When empty, all attributes will be searched.",
+        example = "[\"name\", \"street\", \"postcode\"]"
     )
-    private String propertyName;
+    private List<String> attributes;
 
     @Schema(
-        description = "The name of the attribute to show.",
-        example = "Description"
+        description = "Search display template.",
+        example = "{name}"
     )
-    private String displayName;
+    private String displayTemplate;
 
 }
 

@@ -70,12 +70,22 @@ public class DefaultLayerClientConfig implements LayerClientConfig {
     @Schema(
         description = "The search configuration."
     )
-    private Map<String, Object> searchConfig;
+    private SearchConfig searchConfig;
 
     @Schema(
-        description = "The property configuration."
+        description = "The shared property configuration that should be used application wide."
     )
     private ArrayList<DefaultLayerPropertyConfig> propertyConfig;
+
+    @Schema(
+        description = "The configuration for the feature info form/view."
+    )
+    private ArrayList<PropertyFormTabConfig<PropertyFormItemReadConfig>> featureInfoFormConfig;
+
+    @Schema(
+        description = "The configuration for the feature edit form."
+    )
+    private ArrayList<PropertyFormTabConfig<PropertyFormItemEditConfig>> editFormConfig;
 
     @Schema(
         description = "The cross Origin mode to use.",
@@ -88,6 +98,12 @@ public class DefaultLayerClientConfig implements LayerClientConfig {
         example = "1"
     )
     private Float opacity;
+
+    @Schema(
+        description = "Whether the layer is editable or not.",
+        example = "true"
+    )
+    private Boolean editable;
 
 }
 
