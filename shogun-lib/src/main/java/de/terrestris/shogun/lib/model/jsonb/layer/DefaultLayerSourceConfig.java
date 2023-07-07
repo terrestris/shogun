@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.terrestris.shogun.lib.annotation.JsonSuperType;
 import de.terrestris.shogun.lib.model.jsonb.LayerSourceConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -34,7 +35,9 @@ import java.util.HashMap;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ToString
 @EqualsAndHashCode
+@AllArgsConstructor
 public class DefaultLayerSourceConfig implements LayerSourceConfig {
+
     @Schema(
         description = "The base URL of the layer.",
         example = "https://ows.terrestris.de/ows"
@@ -96,4 +99,3 @@ public class DefaultLayerSourceConfig implements LayerSourceConfig {
     )
     private Boolean useBearerToken;
 }
-

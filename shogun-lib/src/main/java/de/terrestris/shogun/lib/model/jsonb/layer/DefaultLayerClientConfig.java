@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.terrestris.shogun.lib.annotation.JsonSuperType;
 import de.terrestris.shogun.lib.model.jsonb.LayerClientConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -34,7 +35,9 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ToString
 @EqualsAndHashCode
+@AllArgsConstructor
 public class DefaultLayerClientConfig implements LayerClientConfig {
+
     @Schema(
         description = "The minimum resolution of the layer (at what resolution/zoom level the layer should become visible).",
         example = "305.74811309814453"
@@ -85,5 +88,6 @@ public class DefaultLayerClientConfig implements LayerClientConfig {
         example = "1"
     )
     private Float opacity;
+
 }
 
