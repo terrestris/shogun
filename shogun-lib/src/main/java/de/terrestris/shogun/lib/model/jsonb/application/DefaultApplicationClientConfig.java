@@ -21,9 +21,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.terrestris.shogun.lib.annotation.JsonSuperType;
 import de.terrestris.shogun.lib.model.jsonb.ApplicationClientConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 
 @Data
 @JsonDeserialize(as = DefaultApplicationClientConfig.class)
@@ -31,12 +29,15 @@ import lombok.ToString;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ToString
 @EqualsAndHashCode
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultApplicationClientConfig implements ApplicationClientConfig {
 
     @Schema(
         description = "The configuration of the map view.",
         requiredMode = Schema.RequiredMode.REQUIRED
     )
+    @NonNull
     private DefaultMapView mapView;
 
     @Schema(
