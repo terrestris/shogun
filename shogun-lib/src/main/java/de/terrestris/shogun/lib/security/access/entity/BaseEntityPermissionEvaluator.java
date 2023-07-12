@@ -76,7 +76,11 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
         final String simpleClassName = entity.getClass().getSimpleName();
 
         log.trace("Evaluating whether user with ID '{}' has permission '{}' on entity '{}' with ID {}",
-            user.getId(), permission, simpleClassName, entity.getId());
+            (user != null ? user.getId() : null), permission, simpleClassName, entity.getId());
+
+        if (user == null) {
+            return false;
+        }
 
         // CHECK USER INSTANCE PERMISSIONS
         if (this.hasPermissionByUserInstancePermission(user, entity, permission)) {
@@ -165,8 +169,11 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
     @Override
     public boolean hasPermission(User user, Class<?> clazz, PermissionType permission) {
         log.trace("Evaluating whether user with ID '{}' has permission '{}' on class '{}'",
-            user.getId(), permission, clazz.getCanonicalName());
+            (user != null ? user.getId() : null), permission, clazz.getCanonicalName());
 
+        if (user == null) {
+            return false;
+        }
 
         Optional<UserClassPermission> userClassPermission = userClassPermissionService.findFor((Class<? extends BaseEntity>) clazz, user);
         Optional<GroupClassPermission> groupClassPermission = groupClassPermissionService.findFor((Class<? extends BaseEntity>) clazz, user);

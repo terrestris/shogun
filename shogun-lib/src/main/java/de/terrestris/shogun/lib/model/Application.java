@@ -65,6 +65,14 @@ public class Application extends BaseEntity {
     )
     private Boolean stateOnly;
 
+    @Column
+    @Schema(
+        description = "Whether the application configuration is considered as public or not. Public application ." +
+            "configurations can be accessed (read-only) without further authorization.",
+        example = "false"
+    )
+    private Boolean publicAccess;
+
     @Column(columnDefinition = "jsonb", name = "client_config")
     @Type(JsonBinaryType.class)
     @Basic(fetch = FetchType.LAZY)
