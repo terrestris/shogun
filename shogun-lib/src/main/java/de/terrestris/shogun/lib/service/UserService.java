@@ -18,13 +18,16 @@ package de.terrestris.shogun.lib.service;
 
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.UserRepository;
+import de.terrestris.shogun.lib.service.security.permission.UserClassPermissionService;
 import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -36,6 +39,9 @@ public class UserService extends BaseService<UserRepository, User> {
 
     @Autowired
     UserProviderService userProviderService;
+
+    @Autowired
+    UserClassPermissionService userClassPermissionService;
 
     @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
     @Transactional(readOnly = true)
@@ -104,9 +110,21 @@ public class UserService extends BaseService<UserRepository, User> {
             return;
         }
 
+        userClassPermissionService.deleteAllFor(user);
         userInstancePermissionService.deleteAllFor(user);
+
         repository.delete(user);
+
         log.info("User with keycloak id {} was deleted in Keycloak and was therefore deleted in SHOGun DB, too.", keycloakUserId);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#user, 'DELETE')")
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public void delete(User user) {
+        userClassPermissionService.deleteAllFor(user);
+        userInstancePermissionService.deleteAllFor(user);
+
+        repository.delete(user);
     }
 
 }

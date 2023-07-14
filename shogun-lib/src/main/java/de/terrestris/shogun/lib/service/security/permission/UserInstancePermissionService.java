@@ -249,7 +249,20 @@ public class UserInstancePermissionService extends BasePermissionService<UserIns
 
         log.info("Successfully deleted all user instance permissions for entity with ID {}",
             persistedEntity.getId());
-        log.trace("Deleted entity: {}", persistedEntity);
+    }
+
+    /**
+     * Deletes all {@link UserInstancePermission} for the given user.
+     *
+     * @param user The entity to clear the permissions for.
+     */
+    public void deleteAllFor(User user) {
+        List<UserInstancePermission> userInstancePermissions = this.findFor(user);
+
+        repository.deleteAll(userInstancePermissions);
+
+        log.info("Successfully deleted all user instance permissions for user with ID {}",
+            user.getId());
     }
 
     /**
