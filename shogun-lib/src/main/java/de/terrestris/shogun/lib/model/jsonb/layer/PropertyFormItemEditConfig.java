@@ -19,14 +19,16 @@ package de.terrestris.shogun.lib.model.jsonb.layer;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.terrestris.shogun.lib.enumeration.EditFormComponentType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.NoArgsConstructor;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@ToString
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class PropertyFormItemEditConfig extends PropertyFormItemReadConfig {
 
     @Schema(
@@ -49,4 +51,3 @@ public class PropertyFormItemEditConfig extends PropertyFormItemReadConfig {
     private Boolean required;
 
 }
-

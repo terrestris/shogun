@@ -18,17 +18,17 @@ package de.terrestris.shogun.lib.model.jsonb.layer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@ToString
-@EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor
 public class PropertyFormTabConfig<T extends PropertyFormItemReadConfig> implements Serializable {
 
     // TODO i18n?
@@ -45,4 +45,3 @@ public class PropertyFormTabConfig<T extends PropertyFormItemReadConfig> impleme
     private ArrayList<T> children;
 
 }
-

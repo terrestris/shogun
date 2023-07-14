@@ -23,8 +23,7 @@ import de.terrestris.shogun.lib.model.jsonb.LayerSourceConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,8 +32,7 @@ import java.util.HashMap;
 @JsonDeserialize(as = DefaultLayerSourceConfig.class)
 @JsonSuperType(type = LayerSourceConfig.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@ToString
-@EqualsAndHashCode
+@NoArgsConstructor
 @AllArgsConstructor
 public class DefaultLayerSourceConfig implements LayerSourceConfig {
 

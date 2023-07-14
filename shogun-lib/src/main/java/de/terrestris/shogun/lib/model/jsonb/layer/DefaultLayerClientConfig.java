@@ -23,18 +23,15 @@ import de.terrestris.shogun.lib.model.jsonb.LayerClientConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 @Data
 @JsonDeserialize(as = DefaultLayerClientConfig.class)
 @JsonSuperType(type = LayerClientConfig.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@ToString
-@EqualsAndHashCode
+@NoArgsConstructor
 @AllArgsConstructor
 public class DefaultLayerClientConfig implements LayerClientConfig {
 
@@ -106,4 +103,3 @@ public class DefaultLayerClientConfig implements LayerClientConfig {
     private Boolean editable;
 
 }
-

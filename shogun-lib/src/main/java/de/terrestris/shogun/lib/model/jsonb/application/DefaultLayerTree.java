@@ -23,8 +23,7 @@ import de.terrestris.shogun.lib.model.jsonb.LayerTree;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 
@@ -32,10 +31,10 @@ import java.util.ArrayList;
 @JsonDeserialize(as = DefaultLayerTree.class)
 @JsonSuperType(type = LayerTree.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@ToString
-@EqualsAndHashCode
+@NoArgsConstructor
 @AllArgsConstructor
 public class DefaultLayerTree implements LayerTree {
+
     @Schema(
         description = "The title of the node to show.",
         example = "Layer A"
@@ -60,4 +59,3 @@ public class DefaultLayerTree implements LayerTree {
     )
     private ArrayList<DefaultLayerTree> children;
 }
-
