@@ -21,16 +21,17 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.terrestris.shogun.lib.annotation.JsonSuperType;
 import de.terrestris.shogun.lib.model.jsonb.ApplicationClientConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 @Data
 @JsonDeserialize(as = DefaultApplicationClientConfig.class)
 @JsonSuperType(type = ApplicationClientConfig.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@ToString
-@EqualsAndHashCode
+@NoArgsConstructor(force = true)
 @AllArgsConstructor
-@RequiredArgsConstructor
 public class DefaultApplicationClientConfig implements ApplicationClientConfig {
 
     @Schema(

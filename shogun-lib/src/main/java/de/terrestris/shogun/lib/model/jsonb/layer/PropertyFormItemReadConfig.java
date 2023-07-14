@@ -18,16 +18,18 @@ package de.terrestris.shogun.lib.model.jsonb.layer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.NoArgsConstructor;
 
 import java.util.Map;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@ToString
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class PropertyFormItemReadConfig extends DefaultLayerPropertyConfig {
 
     @Schema(
@@ -37,4 +39,3 @@ public class PropertyFormItemReadConfig extends DefaultLayerPropertyConfig {
     private Map<String, Object> fieldProps;
 
 }
-
