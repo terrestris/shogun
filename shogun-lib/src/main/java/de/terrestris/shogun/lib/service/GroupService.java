@@ -19,6 +19,7 @@ package de.terrestris.shogun.lib.service;
 import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.GroupRepository;
+import de.terrestris.shogun.lib.service.security.permission.GroupClassPermissionService;
 import de.terrestris.shogun.lib.service.security.provider.GroupProviderService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -38,6 +40,9 @@ public class GroupService extends BaseService<GroupRepository, Group> {
 
     @Autowired
     GroupProviderService groupProviderService;
+
+    @Autowired
+    GroupClassPermissionService groupClassPermissionService;
 
     @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
     @Transactional(readOnly = true)
@@ -117,8 +122,19 @@ public class GroupService extends BaseService<GroupRepository, Group> {
             return;
         }
 
+        groupClassPermissionService.deleteAllFor(group);
+        groupInstancePermissionService.deleteAllFor(group);
+
         repository.delete(group);
         log.info("Group with keycloak id {} was deleted in Keycloak and was therefore deleted in SHOGun DB, too.", keycloakGroupId);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#group, 'DELETE')")
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public void delete(Group group) {
+        groupClassPermissionService.deleteAllFor(group);
+        groupInstancePermissionService.deleteAllFor(group);
+
+        repository.delete(group);
+    }
 }

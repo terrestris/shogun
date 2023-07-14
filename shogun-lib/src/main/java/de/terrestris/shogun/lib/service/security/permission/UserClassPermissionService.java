@@ -216,6 +216,11 @@ public class UserClassPermissionService extends BasePermissionService<UserClassP
         return new PermissionCollection();
     }
 
+    /**
+     * Deletes all {@link UserClassPermission} for the given entity.
+     *
+     * @param persistedEntity The entity to clear the permissions for.
+     */
     public void deleteAllFor(BaseEntity persistedEntity) {
         List<UserClassPermission> userClassPermissions = this.findFor(persistedEntity);
 
@@ -223,6 +228,20 @@ public class UserClassPermissionService extends BasePermissionService<UserClassP
 
         log.info("Successfully deleted all user class permissions for entity with ID {}",
             persistedEntity.getId());
+    }
+
+    /**
+     * Deletes all {@link UserClassPermission} for the given user.
+     *
+     * @param user The entity to clear the permissions for.
+     */
+    public void deleteAllFor(User user) {
+        List<UserClassPermission> userClassPermissions = this.findFor(user);
+
+        repository.deleteAll(userClassPermissions);
+
+        log.info("Successfully deleted all user class permissions for user with ID {}",
+            user.getId());
     }
 
     public void deleteFor(BaseEntity persistedEntity, User user) {

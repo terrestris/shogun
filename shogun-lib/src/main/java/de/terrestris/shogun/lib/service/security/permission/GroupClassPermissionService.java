@@ -294,6 +294,11 @@ public class GroupClassPermissionService extends BasePermissionService<GroupClas
         return new PermissionCollection();
     }
 
+    /**
+     * Deletes all {@link GroupClassPermission} for the given entity.
+     *
+     * @param persistedEntity The entity to clear the permissions for.
+     */
     public void deleteAllFor(BaseEntity persistedEntity) {
         List<GroupClassPermission> groupClassPermissions = this.findFor(persistedEntity);
 
@@ -301,6 +306,20 @@ public class GroupClassPermissionService extends BasePermissionService<GroupClas
 
         log.info("Successfully deleted all group class permissions for entity with ID {}",
             persistedEntity.getId());
+    }
+
+    /**
+     * Deletes all {@link GroupClassPermission} for the given group.
+     *
+     * @param group The group to clear the permissions for.
+     */
+    public void deleteAllFor(Group group) {
+        List<GroupClassPermission> groupClassPermissions = this.findFor(group);
+
+        repository.deleteAll(groupClassPermissions);
+
+        log.info("Successfully deleted all group class permissions for group with ID {}",
+            group.getId());
     }
 
     public void deleteFor(BaseEntity persistedEntity, Group group) {
