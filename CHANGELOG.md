@@ -1,3 +1,17 @@
+# [17.2.0](https://github.com/terrestris/shogun/compare/v17.1.1...v17.2.0) (2023-07-18)
+
+
+### Bug Fixes
+
+* delete all user/group permissions before deleting the user/group itself ([365f31d](https://github.com/terrestris/shogun/commit/365f31d4e3d18cc75c998c7e169b1d733016f96d))
+* generate all args and required args constructor, remove annotations that were dealed by @Data ([554caf0](https://github.com/terrestris/shogun/commit/554caf0c83332408d5224633d7e2d318d56586ec))
+
+
+### Features
+
+* add WMSTIME layer type ([8d32f1b](https://github.com/terrestris/shogun/commit/8d32f1b78afd83fbe67fd5c91c668209d00c9628))
+* adds all args constructor and constructor for required parameters of JSONB models ([70d7192](https://github.com/terrestris/shogun/commit/70d7192e2ea4777177ae90f32ffbdf27b860f927))
+
 ## [17.1.1](https://github.com/terrestris/shogun/compare/v17.1.0...v17.1.1) (2023-06-21)
 
 

@@ -22,7 +22,7 @@
   <parent>
     <groupId>de.terrestris</groupId>
     <artifactId>shogun</artifactId>
-    <version>17.1.2-SNAPSHOT</version>
+    <version>17.2.0</version>
   </parent>
 
   <artifactId>shogun-proxy</artifactId>
