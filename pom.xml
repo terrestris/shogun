@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.1.0</version>
+    <version>3.1.3</version>
   </parent>
 
   <groupId>de.terrestris</groupId>
@@ -106,25 +106,25 @@
     <jib-maven-plugin.version>3.3.2</jib-maven-plugin.version>
 
     <!-- Spring -->
-    <spring-boot.version>3.1.0</spring-boot.version>
-    <spring-data.version>3.1.0</spring-data.version>
+    <spring-boot.version>3.1.3</spring-boot.version>
+    <spring-data.version>3.1.3</spring-data.version>
 
     <!-- Hibernate -->
-    <hibernate.version>6.2.4.Final</hibernate.version>
+    <hibernate.version>6.2.7.Final</hibernate.version>
 
     <jackson-bom.version>2.13.2.20220328</jackson-bom.version>
 
     <!-- Security -->
-    <keycloak.version>21.1.1</keycloak.version>
+    <keycloak.version>19.0.3</keycloak.version>
 
     <!-- Database -->
     <hypersistence-utils.version>3.4.2</hypersistence-utils.version>
 
     <!-- GraphQL -->
-    <graphql-java-extended-scalars.version>19.1</graphql-java-extended-scalars.version>
+    <graphql-java-extended-scalars.version>21.0</graphql-java-extended-scalars.version>
 
     <!-- Swagger/REST -->
-    <springdoc-openapi.version>2.1.0</springdoc-openapi.version>
+    <springdoc-openapi.version>2.2.0</springdoc-openapi.version>
 
     <!-- JSON/Dataformats -->
     <jackson-datatype-jts.version>1.0-2.7</jackson-datatype-jts.version>
