@@ -118,7 +118,7 @@
     <keycloak.version>19.0.3</keycloak.version>
 
     <!-- Database -->
-    <hypersistence-utils.version>3.4.2</hypersistence-utils.version>
+    <hypersistence-utils.version>3.5.2</hypersistence-utils.version>
 
     <!-- GraphQL -->
     <graphql-java-extended-scalars.version>21.0</graphql-java-extended-scalars.version>
