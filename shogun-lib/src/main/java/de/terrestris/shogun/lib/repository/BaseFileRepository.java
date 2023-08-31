@@ -16,11 +16,12 @@
  */
 package de.terrestris.shogun.lib.repository;
 
-import java.util.Optional;
-import java.util.UUID;
-import javax.persistence.QueryHint;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.NoRepositoryBean;
+
+import javax.persistence.QueryHint;
+import java.util.Optional;
+import java.util.UUID;
 
 @NoRepositoryBean
 public interface BaseFileRepository<T, ID> extends BaseCrudRepository<T, ID> {

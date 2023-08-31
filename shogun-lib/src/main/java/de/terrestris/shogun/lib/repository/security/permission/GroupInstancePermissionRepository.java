@@ -18,13 +18,14 @@ package de.terrestris.shogun.lib.repository.security.permission;
 
 import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.model.security.permission.GroupInstancePermission;
-import java.util.List;
-import java.util.Optional;
-import javax.persistence.QueryHint;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.stereotype.Repository;
+
+import javax.persistence.QueryHint;
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface GroupInstancePermissionRepository extends BasePermissionRepository<GroupInstancePermission, Long>,
