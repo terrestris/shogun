@@ -16,14 +16,12 @@
  */
 package de.terrestris.shogun.boot.flyway;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.matchesPattern;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
-import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.matchesPattern;
 
 public class FlywayMigrationsTest {
 
