@@ -21,14 +21,13 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
 import de.terrestris.shogun.lib.enumeration.PermissionType;
 import de.terrestris.shogun.lib.model.BaseEntity;
+import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.*;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;

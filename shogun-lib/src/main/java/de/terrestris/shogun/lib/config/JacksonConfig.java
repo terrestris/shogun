@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.terrestris.shogun.lib.annotation.JsonSuperType;
 import io.hypersistence.utils.hibernate.type.util.ObjectMapperSupplier;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.log4j.Log4j2;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.PrecisionModel;
@@ -35,7 +36,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import jakarta.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 

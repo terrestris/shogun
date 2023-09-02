@@ -18,6 +18,8 @@ package de.terrestris.shogun.interceptor.util;
 
 import de.terrestris.shogun.interceptor.exception.InterceptorException;
 import de.terrestris.shogun.interceptor.servlet.MutableHttpServletRequest;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.StreamUtils;
@@ -27,8 +29,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import jakarta.servlet.ServletInputStream;
-import jakarta.servlet.http.HttpServletRequest;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;

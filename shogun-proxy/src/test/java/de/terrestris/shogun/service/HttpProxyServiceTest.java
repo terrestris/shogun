@@ -19,12 +19,12 @@ package de.terrestris.shogun.service;
 import de.terrestris.shogun.config.HttpProxyConfig;
 import de.terrestris.shogun.lib.dto.HttpResponse;
 import de.terrestris.shogun.lib.util.HttpUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.net.URISyntaxException;
 

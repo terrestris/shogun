@@ -28,6 +28,7 @@ import de.terrestris.shogun.interceptor.servlet.MutableHttpServletRequest;
 import de.terrestris.shogun.interceptor.util.OgcXmlUtil;
 import de.terrestris.shogun.lib.dto.HttpResponse;
 import de.terrestris.shogun.lib.util.HttpUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.ContentType;
@@ -41,7 +42,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;

@@ -16,12 +16,11 @@
  */
 package de.terrestris.shogun.lib.config;
 
+import jakarta.persistence.EntityManagerFactory;
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import jakarta.persistence.EntityManagerFactory;
 
 @Configuration
 public class AuditConfig {

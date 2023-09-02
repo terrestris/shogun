@@ -23,11 +23,12 @@ import de.terrestris.shogun.lib.model.jsonb.LayerTree;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.Hibernate;
-import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.Type;
 import org.hibernate.envers.AuditTable;
 import org.hibernate.envers.Audited;
 

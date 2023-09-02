@@ -19,7 +19,6 @@ package de.terrestris.shogun.config;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 public interface DefaultWebSecurityConfig extends WebSecurityConfig {
 

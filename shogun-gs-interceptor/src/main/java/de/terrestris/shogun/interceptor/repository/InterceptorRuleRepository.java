@@ -21,12 +21,12 @@ import de.terrestris.shogun.interceptor.enumeration.InterceptorEnum;
 import de.terrestris.shogun.interceptor.enumeration.OgcEnum;
 import de.terrestris.shogun.interceptor.model.InterceptorRule;
 import de.terrestris.shogun.lib.repository.BaseCrudRepository;
+import jakarta.persistence.QueryHint;
 import org.hibernate.jpa.AvailableHints;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.stereotype.Repository;
 
-import jakarta.persistence.QueryHint;
 import java.util.List;
 import java.util.Optional;
 

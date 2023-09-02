@@ -19,6 +19,8 @@ package de.terrestris.shogun.service;
 import de.terrestris.shogun.config.properties.HttpProxyProperties;
 import de.terrestris.shogun.lib.dto.HttpResponse;
 import de.terrestris.shogun.lib.util.HttpUtil;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpException;
@@ -30,8 +32,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;

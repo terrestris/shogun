@@ -16,15 +16,14 @@
  */
 package de.terrestris.shogun.lib.service;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.PersistenceContext;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Cache;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Service;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.PersistenceContext;
 
 @Service
 @Log4j2

@@ -19,6 +19,7 @@ package de.terrestris.shogun.lib.repository.impl;
 import de.terrestris.shogun.lib.envers.ShogunAnnotationRevisionMetadata;
 import de.terrestris.shogun.lib.envers.ShogunRevisionMetadata;
 import de.terrestris.shogun.lib.repository.ShogunRevisionRepository;
+import jakarta.persistence.EntityManager;
 import org.hibernate.envers.*;
 import org.hibernate.envers.query.AuditEntity;
 import org.springframework.data.envers.repository.support.EnversRevisionRepositoryImpl;
@@ -30,7 +31,6 @@ import org.springframework.data.repository.core.EntityInformation;
 import org.springframework.data.repository.history.support.RevisionEntityInformation;
 import org.springframework.util.Assert;
 
-import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;

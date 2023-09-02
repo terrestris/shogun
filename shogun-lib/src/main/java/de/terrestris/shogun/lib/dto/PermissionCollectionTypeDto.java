@@ -22,11 +22,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import jakarta.validation.constraints.AssertTrue;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

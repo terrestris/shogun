@@ -20,12 +20,12 @@ import de.terrestris.shogun.interceptor.enumeration.HttpEnum;
 import de.terrestris.shogun.interceptor.enumeration.InterceptorEnum;
 import de.terrestris.shogun.interceptor.enumeration.OgcEnum;
 import de.terrestris.shogun.lib.model.BaseEntity;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import jakarta.persistence.*;
 import java.util.Objects;
 
 @Entity

@@ -18,14 +18,12 @@ package de.terrestris.shogun.lib.repository.security.permission;
 
 import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
 import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
-import java.util.Optional;
 import jakarta.persistence.QueryHint;
 import org.hibernate.jpa.AvailableHints;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.QueryHint;
 import java.util.Optional;
 
 @Repository

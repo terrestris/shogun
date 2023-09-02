@@ -17,14 +17,12 @@
 package de.terrestris.shogun.lib.repository;
 
 import de.terrestris.shogun.lib.model.Application;
-import java.util.Optional;
 import jakarta.persistence.QueryHint;
 import org.hibernate.jpa.AvailableHints;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.QueryHint;
 import java.util.Optional;
 
 @Repository
