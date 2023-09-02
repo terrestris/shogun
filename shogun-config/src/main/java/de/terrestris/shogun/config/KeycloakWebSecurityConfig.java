@@ -51,11 +51,12 @@ public class KeycloakWebSecurityConfig implements DefaultWebSecurityConfig {
     @Override
     public void customHttpConfiguration(HttpSecurity http) throws Exception {
         http
-            .authorizeHttpRequests()
-            .requestMatchers("/webhooks/keycloak/**")
-            .access(new WebExpressionAuthorizationManager(
-                "authenticated or hasIpAddress('%s')".formatted(keycloakProperties.getInternalServerUrl())
-            ));
+            .authorizeHttpRequests((auths) -> auths
+                .requestMatchers("/webhooks/keycloak/**")
+                .access(new WebExpressionAuthorizationManager(
+                    "authenticated or hasIpAddress('%s')".formatted(keycloakProperties.getInternalServerUrl())
+                ))
+            );
 
         DefaultWebSecurityConfig.super.customHttpConfiguration(http);
 
@@ -71,6 +72,7 @@ public class KeycloakWebSecurityConfig implements DefaultWebSecurityConfig {
                 .oauth2ResourceServer()
                     .jwt()
                     .jwtAuthenticationConverter(authConverter);
+
     }
 
 }

@@ -18,6 +18,7 @@ package de.terrestris.shogun.boot.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy;
 import org.junit.AfterClass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy;
@@ -94,8 +95,9 @@ public class JdbcConfiguration {
         jpaProperties.put("hibernate.format_sql", env.getProperty("hibernate.format_sql"));
         jpaProperties.put("hibernate.default_schema", env.getProperty("hibernate.default_schema"));
         jpaProperties.put("hibernate.integration.envers.enabled", false);
+        jpaProperties.put("hibernate.id.db_structure_naming_strategy", "single");
         jpaProperties.put("hibernate.implicit_naming_strategy", SpringImplicitNamingStrategy.class.getName());
-//        jpaProperties.put("hibernate.physical_naming_strategy", CamelCaseToUnderscoresNamingStrategy.class.getName()); // todo: needs fix?
+        jpaProperties.put("hibernate.physical_naming_strategy", CamelCaseToUnderscoresNamingStrategy.class.getName());
 
         result.setJpaPropertyMap(jpaProperties);
 

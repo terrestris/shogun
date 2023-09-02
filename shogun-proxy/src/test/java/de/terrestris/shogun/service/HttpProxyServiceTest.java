@@ -21,7 +21,7 @@ import de.terrestris.shogun.lib.dto.HttpResponse;
 import de.terrestris.shogun.lib.util.HttpUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpException;
+import org.apache.hc.core5.http.HttpException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -93,10 +93,10 @@ public class HttpProxyServiceTest {
     @DisplayName("Return status code 405 for unsupported HTTP methods")
     @ParameterizedTest
     @ValueSource(strings = {"DELETE", "PUT", "HEAD", "PATCH", "TRACE", "OPTIONS"})
-    public void proxy_returns_405_for_unsupported_HTTP_methods(HttpMethod unsupportedMethod) {
+    public void proxy_returns_405_for_unsupported_HTTP_methods(String unsupportedMethod) {
         final String baseUrl = "https://www.terrestris.de/internet.txt";
         HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
-        when(mockedRequest.getMethod()).thenReturn(unsupportedMethod.name());
+        when(mockedRequest.getMethod()).thenReturn(unsupportedMethod);
         final ResponseEntity<?> responseEntity = httpProxyService.doProxy(mockedRequest, baseUrl, null);
         assertEquals("Returned Status code matched mocked one.", HttpStatus.METHOD_NOT_ALLOWED, responseEntity.getStatusCode());
         assertEquals("Returned Status message matched", HttpProxyService.ERR_MSG_405, responseEntity.getBody());
