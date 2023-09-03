@@ -248,7 +248,7 @@
                 <jvmFlag>-Djava.security.egd=file:/dev/./urandom</jvmFlag>
                 <jvmFlag>-Djdk.serialSetFilterAfterRead=true</jvmFlag>
               </jvmFlags>
-              <creationTime>EPOCH</creationTime>
+              <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
             </container>
 
           </configuration>
