@@ -272,11 +272,11 @@
     </dependency>
 
     <!-- Hibernate typically requires JAXB that’s no longer provided by default. -->
-<!--    <dependency>-->
-<!--      <groupId>jakarta.xml.bind</groupId>-->
-<!--      <artifactId>jakarta.xml.bind-api</artifactId>-->
-<!--      <scope>test</scope>-->
-<!--    </dependency>-->
+    <dependency>
+      <groupId>jakarta.xml.bind</groupId>
+      <artifactId>jakarta.xml.bind-api</artifactId>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>com.zaxxer</groupId>

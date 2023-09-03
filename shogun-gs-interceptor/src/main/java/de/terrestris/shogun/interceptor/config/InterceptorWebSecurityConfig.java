@@ -56,7 +56,7 @@ public class InterceptorWebSecurityConfig implements DefaultWebSecurityConfig {
             .csrf()
             .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
             .ignoringRequestMatchers(csrfRequestMatcher);
-        return http.getOrBuild();
+        return http.build();
     }
 
 }

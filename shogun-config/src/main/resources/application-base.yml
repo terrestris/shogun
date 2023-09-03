@@ -28,7 +28,6 @@ spring:
   main:
     banner-mode: off
     allow-circular-references: true
-    allow-bean-definition-overriding: true
   jpa:
     # Show SQL statements
     show-sql: true

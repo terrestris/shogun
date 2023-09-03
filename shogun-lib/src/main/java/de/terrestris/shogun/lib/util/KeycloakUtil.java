@@ -18,6 +18,8 @@ package de.terrestris.shogun.lib.util;
 
 import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.model.User;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.keycloak.admin.client.CreatedResponseUtil;
@@ -32,8 +34,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
