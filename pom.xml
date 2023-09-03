@@ -233,7 +233,7 @@
           </executions>
           <configuration>
             <from>
-              <image>docker.terrestris.de/openjdk@sha256:d50104b0b5811b60c198a3e5ced23c783a49e0d4f78b99762fca4bfdbbc59dd2</image>
+              <image>eclipse-temurin:17-jdk-alpine@sha256:61bf57c1550b428c4e0e49339ff7e23964fed193b50734bf1f8854b3fd19f765</image>
             </from>
             <to>
               <image>${image}</image>

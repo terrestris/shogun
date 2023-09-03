@@ -14,11 +14,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-FROM openjdk@sha256:d50104b0b5811b60c198a3e5ced23c783a49e0d4f78b99762fca4bfdbbc59dd2
+FROM eclipse-temurin:17-jdk-alpine@sha256:61bf57c1550b428c4e0e49339ff7e23964fed193b50734bf1f8854b3fd19f765
 
 WORKDIR /shogun/shogun-gs-interceptor
 
-RUN microdnf install maven
+RUN apk add --no-cache maven
+
+EXPOSE 8081 4711 9010
 
 ENTRYPOINT [ \
   "mvn", \
