@@ -97,8 +97,6 @@
     <project.encoding>UTF-8</project.encoding>
     <java.version>17</java.version>
 
-    <git.commit.id.abbrev>""</git.commit.id.abbrev>
-
     <!-- Plugins -->
     <maven-site-plugin.version>3.12.1</maven-site-plugin.version>
     <jacoco-plugin.version>0.8.10</jacoco-plugin.version>
