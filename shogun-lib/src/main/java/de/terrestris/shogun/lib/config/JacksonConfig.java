@@ -24,7 +24,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.terrestris.shogun.lib.annotation.JsonSuperType;
 import io.hypersistence.utils.hibernate.type.util.ObjectMapperSupplier;
-import jakarta.annotation.PostConstruct;
 import lombok.extern.log4j.Log4j2;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.PrecisionModel;
@@ -51,6 +50,7 @@ public class JacksonConfig implements ObjectMapperSupplier {
     public ObjectMapper objectMapper() {
         if (mapper == null) {
             mapper = new ObjectMapper();
+            init(mapper);
         }
         return mapper;
     }
@@ -65,12 +65,9 @@ public class JacksonConfig implements ObjectMapperSupplier {
     public ObjectMapper get() {
         return objectMapper();
     }
-
-    @PostConstruct
-    public void init() {
+    public void init(ObjectMapper objectMapper) {
         if (!initialized) {
             GeometryFactory geomFactory = new GeometryFactory(new PrecisionModel(coordinatePrecisionScale), srid);
-            ObjectMapper objectMapper = get();
             objectMapper.registerModule(new JtsModule(geomFactory));
 
             var javaTimeModule = new JavaTimeModule();

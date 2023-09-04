@@ -17,13 +17,9 @@
 package de.terrestris.shogun.lib.service;
 
 import de.terrestris.shogun.lib.dto.WebSocketMessage;
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-@Data
-@Slf4j
 @Service
 public class WebSocketService {
     private final SimpMessagingTemplate simpMessagingTemplate;

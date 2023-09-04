@@ -59,6 +59,7 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
     protected T repository;
 
     @Autowired
+    @Lazy
     ObjectMapper objectMapper;
 
     @Autowired
