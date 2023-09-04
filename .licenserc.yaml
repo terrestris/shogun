@@ -40,5 +40,6 @@ header:
     - '**/*.iml'
     - '.releaserc.json'
     - '.commitlintrc.json'
+    - '.java-version'
 
   comment: on-failure
