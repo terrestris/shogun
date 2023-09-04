@@ -16,6 +16,7 @@
  */
 package de.terrestris.shogun.lib.security.access.entity;
 
+import com.jayway.jsonpath.Filter;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.BaseCrudRepository;
 import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
@@ -31,9 +32,9 @@ public class UserPermissionEvaluator extends BaseEntityPermissionEvaluator<User>
     UserProviderService userProviderService;
 
     @Override
-    public Page<User> findAll(User user, Pageable pageable, BaseCrudRepository<User, Long> repository,
-        Class<User> baseEntityClass) {
-        Page<User> users = super.findAll(user, pageable, repository, baseEntityClass);
+    public Page<User> findAll(User user, Pageable pageable, Filter filter, BaseCrudRepository<User, Long> repository,
+                              Class<User> baseEntityClass) {
+        Page<User> users = super.findAll(user, pageable, filter, repository, baseEntityClass);
 
         users.forEach(u -> userProviderService.setTransientRepresentations(u));
 

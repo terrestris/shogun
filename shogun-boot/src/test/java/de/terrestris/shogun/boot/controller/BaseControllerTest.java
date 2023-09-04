@@ -24,20 +24,28 @@ import de.terrestris.shogun.boot.config.JdbcConfiguration;
 import de.terrestris.shogun.lib.controller.BaseController;
 import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
 import de.terrestris.shogun.lib.model.BaseEntity;
+import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.BaseCrudRepository;
+import de.terrestris.shogun.lib.repository.GroupRepository;
 import de.terrestris.shogun.lib.repository.UserRepository;
+import de.terrestris.shogun.lib.repository.security.permission.GroupClassPermissionRepository;
+import de.terrestris.shogun.lib.repository.security.permission.GroupInstancePermissionRepository;
 import de.terrestris.shogun.lib.repository.security.permission.UserClassPermissionRepository;
 import de.terrestris.shogun.lib.repository.security.permission.UserInstancePermissionRepository;
+import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionService;
 import de.terrestris.shogun.lib.service.security.permission.UserClassPermissionService;
 import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
+import de.terrestris.shogun.lib.service.security.provider.GroupProviderService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.keycloak.representations.IDToken;
+import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.servlet.server.Encoding;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -57,6 +65,7 @@ import java.util.stream.Collectors;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -80,13 +89,25 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
     protected UserRepository userRepository;
 
     @Autowired
+    protected GroupRepository groupRepository;
+
+    @Autowired
     protected UserInstancePermissionRepository userInstancePermissionRepository;
 
     @Autowired
     protected UserClassPermissionRepository userClassPermissionRepository;
 
     @Autowired
+    protected GroupInstancePermissionRepository groupInstancePermissionRepository;
+
+    @Autowired
+    protected GroupClassPermissionRepository groupClassPermissionRepository;
+
+    @Autowired
     protected UserInstancePermissionService userInstancePermissionService;
+
+    @Autowired
+    protected GroupInstancePermissionService groupInstancePermissionService;
 
     @Autowired
     protected UserClassPermissionService userClassPermissionService;
@@ -96,6 +117,9 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
 
     @Autowired
     protected ObjectMapper objectMapper;
+
+    @MockBean
+    private GroupProviderService groupProviderService;
 
     protected Class<S> entityClass;
 
@@ -108,6 +132,8 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
     protected User adminUser;
 
     protected User user;
+
+    protected Group group;
 
     public void initMockMvc() {
         this.mockMvc = MockMvcBuilders
@@ -149,9 +175,25 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
         this.user = userRepository.save(user);
     }
 
+    public void initGroup() {
+        Group<GroupRepresentation> group = new Group();
+        String authProviderId = "c886684b-1a22-4443-b0d8-36c006c19f08";
+        group.setAuthProviderId(authProviderId);
+        GroupRepresentation groupRepresentation = new GroupRepresentation();
+        groupRepresentation.setName("SHOGun Group");
+        group.setProviderDetails(groupRepresentation);
+
+        this.group = groupRepository.save(group);
+
+        when(groupProviderService.getGroupsForUser()).thenReturn(List.of(this.group));
+        when(groupProviderService.findByUser(this.user)).thenReturn(List.of(this.group));
+    }
+
     public void cleanupPermissions() {
         userInstancePermissionRepository.deleteAll();
+        groupInstancePermissionRepository.deleteAll();
         userClassPermissionRepository.deleteAll();
+        groupClassPermissionRepository.deleteAll();
     }
 
     public void deinitAdminUser() {
@@ -160,6 +202,10 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
 
     public void deinitUser() {
         userRepository.delete(this.user);
+    }
+
+    public void deinitGroup() {
+        groupRepository.delete(this.group);
     }
 
     public void cleanupTestData() {
@@ -192,6 +238,7 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
         initMockMvc();
         initAdminUser();
         initUser();
+        initGroup();
         setBaseEntity();
         setBasePath();
         insertTestData();
@@ -202,6 +249,7 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
         cleanupPermissions();
         deinitUser();
         deinitAdminUser();
+        deinitGroup();
         cleanupTestData();
     }
 

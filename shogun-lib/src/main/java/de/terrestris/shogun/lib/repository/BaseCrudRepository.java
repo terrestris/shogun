@@ -16,6 +16,7 @@
  */
 package de.terrestris.shogun.lib.repository;
 
+import com.jayway.jsonpath.Filter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -44,17 +45,49 @@ public interface BaseCrudRepository<T, ID> extends
      * @param userId ID of the authenticated user.
      * @return A page of entities.
      */
-    @Query("""
-        FROM #{#entityName} m
-        WHERE EXISTS (
-            SELECT 1 FROM userinstancepermissions uip
-            WHERE uip.user.id = :userId
-            AND uip.entityId = m.id
-            AND uip.permission.name IN ('ADMIN', 'READ', 'CREATE_READ', 'CREATE_READ_UPDATE', 'CREATE_READ_DELETE', 'READ_UPDATE', 'READ_DELETE', 'READ_UPDATE_DELETE')
-        )
-    """)
-    @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
-    Page<T> findAll(Pageable pageable, Long userId);
+    @Query(
+        value = """
+            SELECT
+                *
+            FROM
+                {h-schema}#{#entityName} e
+            WHERE (EXISTS (
+                SELECT
+                    1
+                FROM
+                    {h-schema}userinstancepermissions uip
+                LEFT JOIN {h-schema}permissions p ON p.id = uip.permission_id
+                WHERE
+                    uip.user_id = :userId AND
+                    uip.entity_id = e.id AND
+                    p."name" IN (
+                        'ADMIN',
+                        'READ',
+                        'CREATE_READ',
+                        'CREATE_READ_UPDATE',
+                        'CREATE_READ_DELETE',
+                        'READ_UPDATE',
+                        'READ_DELETE',
+                        'READ_UPDATE_DELETE'
+                    )
+            )) AND (
+                :#{T(de.terrestris.shogun.lib.util.JsonPathFilterUtil).writeFilter(#filter)} = '$' OR CAST(row_to_json(e) AS JSONB) @@ CAST(:#{T(de.terrestris.shogun.lib.util.JsonPathFilterUtil).writeFilter(#filter)} AS JSONPATH)
+            )
+        """,
+        // TODO This should include the exists filter
+        countQuery = """
+            SELECT
+                COUNT(e.*)
+            FROM
+                {h-schema}#{#entityName} e
+        """,
+        nativeQuery = true
+    )
+    @QueryHints(
+        value = @QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"),
+        forCounting = false
+    )
+    Page<T> findAll(Pageable pageable, Filter filter, Long userId);
 
     /**
      * Returns a {@link Page} of entities for which the user with userId has permission via UserInstancePermission or GroupInstancePermission.
@@ -64,22 +97,67 @@ public interface BaseCrudRepository<T, ID> extends
      * @param groupIds All IDs of the groups of the authenticated user.
      * @return A page of entities.
      */
-    @Query("""
-        FROM #{#entityName} m
-        WHERE EXISTS (
-            SELECT 1 FROM userinstancepermissions uip
-            WHERE uip.user.id = :userId
-            AND uip.entityId = m.id
-            AND uip.permission.name IN ('ADMIN', 'READ', 'CREATE_READ', 'CREATE_READ_UPDATE', 'CREATE_READ_DELETE', 'READ_UPDATE', 'READ_DELETE', 'READ_UPDATE_DELETE')
-        ) OR EXISTS (
-            SELECT 1 FROM groupinstancepermissions gip
-            WHERE gip.group.id IN :groupIds
-            AND gip.entityId = m.id
-            AND gip.permission.name IN ('ADMIN', 'READ', 'CREATE_READ', 'CREATE_READ_UPDATE', 'CREATE_READ_DELETE', 'READ_UPDATE', 'READ_DELETE', 'READ_UPDATE_DELETE')
-        )
-    """)
-    @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
-    Page<T> findAll(Pageable pageable, Long userId, List<Long> groupIds);
+    @Query(
+        value = """
+            SELECT
+                *
+            FROM
+                {h-schema}#{#entityName} e
+            WHERE (EXISTS (
+                SELECT
+                    1
+                FROM
+                    {h-schema}userinstancepermissions uip
+                LEFT JOIN {h-schema}permissions p ON p.id = uip.permission_id
+                WHERE
+                    uip.user_id = :userId AND
+                    uip.entity_id = e.id AND
+                    p."name" IN (
+                        'ADMIN',
+                        'READ',
+                        'CREATE_READ',
+                        'CREATE_READ_UPDATE',
+                        'CREATE_READ_DELETE',
+                        'READ_UPDATE',
+                        'READ_DELETE',
+                        'READ_UPDATE_DELETE'
+                    )
+                ) OR EXISTS (
+                    SELECT
+                        1
+                    FROM
+                        {h-schema}groupinstancepermissions gip
+                    LEFT JOIN {h-schema}permissions p ON p.id = gip.permission_id
+                    WHERE
+                        gip.group_id IN :groupIds AND
+                        gip.entity_id = e.id AND
+                        p."name" IN (
+                            'ADMIN',
+                            'READ',
+                            'CREATE_READ',
+                            'CREATE_READ_UPDATE',
+                            'CREATE_READ_DELETE',
+                            'READ_UPDATE',
+                            'READ_DELETE',
+                            'READ_UPDATE_DELETE'
+                        )
+                )) AND (
+                    :#{T(de.terrestris.shogun.lib.util.JsonPathFilterUtil).writeFilter(#filter)} = '$' OR CAST(row_to_json(e) AS JSONB) @@ CAST(:#{T(de.terrestris.shogun.lib.util.JsonPathFilterUtil).writeFilter(#filter)} AS JSONPATH)
+                )
+        """,
+        countQuery = """
+            SELECT
+                COUNT(e.*)
+            FROM
+                {h-schema}#{#entityName} e
+        """,
+        nativeQuery = true
+    )
+    @QueryHints(
+        value = @QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"),
+        forCounting = false
+    )
+    Page<T> findAll(Pageable pageable, Filter filter, Long userId, List<Long> groupIds);
 
     /**
      * Returns a {@link Page} of entities without checking any permissions.
@@ -88,7 +166,27 @@ public interface BaseCrudRepository<T, ID> extends
      *                 {@literal null}.
      * @return A page of entities.
      */
-    @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
-    Page<T> findAll(Pageable pageable);
+    @Query(
+        value = """
+            SELECT
+                e.*
+            FROM
+                {h-schema}#{#entityName} e
+            WHERE
+                :#{T(de.terrestris.shogun.lib.util.JsonPathFilterUtil).writeFilter(#filter)} = '$' OR CAST(row_to_json(e) AS JSONB) @@ CAST(:#{T(de.terrestris.shogun.lib.util.JsonPathFilterUtil).writeFilter(#filter)} AS JSONPATH)
+        """,
+        countQuery = """
+            SELECT
+                COUNT(e.*)
+            FROM
+                {h-schema}#{#entityName} e
+        """,
+        nativeQuery = true
+    )
+    @QueryHints(
+        value = @QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"),
+        forCounting = false
+    )
+    Page<T> findAll(Pageable pageable, Filter filter);
 
 }

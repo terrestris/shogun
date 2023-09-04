@@ -16,15 +16,32 @@
  */
 package de.terrestris.shogun.boot.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.terrestris.shogun.lib.controller.GroupController;
+import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
 import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.repository.GroupRepository;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.web.servlet.server.Encoding;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertEquals;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+
 public class GroupControllerTest extends BaseControllerTest<GroupController, GroupRepository, Group> {
+
+    private int numberOfInternalTestGroups = 1;
 
     public void setBaseEntity() {
         entityClass = Group.class;
@@ -52,4 +69,204 @@ public class GroupControllerTest extends BaseControllerTest<GroupController, Gro
         testData = (List<Group>) repository.saveAll(entities);
     }
 
+    @Test
+    @Override
+    public void findAll_shouldReturnAllAvailableEntitiesForRoleAdmin() throws Exception {
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .get(basePath)
+                    .with(authentication(getMockAuthentication(this.adminUser)))
+            )
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$").isMap())
+            .andExpect(jsonPath("$.content").isArray())
+            .andExpect(jsonPath("$.content", hasSize(testData.size() + numberOfInternalTestGroups)));
+    }
+
+    @Test
+    @Override
+    public void findAll_shouldReturnAllAvailableEntitiesWithUserClassPermissions() throws Exception {
+
+        userClassPermissionService.setPermission(entityClass, this.user, PermissionCollectionType.READ);
+
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .get(basePath)
+                    .with(authentication(getMockAuthentication(this.user)))
+            )
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$").isMap())
+            .andExpect(jsonPath("$.content").isArray())
+            .andExpect(jsonPath("$.content", hasSize(testData.size() + numberOfInternalTestGroups)));
+    }
+
+    @Test
+    @Override
+    public void add_shouldDenyAccessForRoleAnonymous() throws Exception {
+        JsonNode insertNode = objectMapper.valueToTree(testData.get(0));
+        List<String> fieldsToRemove = List.of("id", "created", "modified");
+        insertNode = ((ObjectNode) insertNode).remove(fieldsToRemove);
+
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .post(String.format("%s", basePath))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding(Encoding.DEFAULT_CHARSET.toString())
+                    .content(objectMapper.writeValueAsString(insertNode))
+                    .with(csrf())
+            )
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+
+        List<Group> persistedEntities = repository.findAll();
+        assertEquals(testData.size() + numberOfInternalTestGroups, persistedEntities.size());
+    }
+
+    @Test
+    @Override
+    public void add_shouldDenyAccessForRoleUserWithoutExplicitPermission() throws Exception {
+        JsonNode insertNode = objectMapper.valueToTree(testData.get(0));
+        List<String> fieldsToRemove = List.of("id", "created", "modified");
+        insertNode = ((ObjectNode) insertNode).remove(fieldsToRemove);
+
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .post(String.format("%s", basePath))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding(Encoding.DEFAULT_CHARSET.toString())
+                    .content(objectMapper.writeValueAsString(insertNode))
+                    .with(authentication(getMockAuthentication(this.user)))
+                    .with(csrf())
+            )
+            .andExpect(MockMvcResultMatchers.status().isNotFound());
+
+        List<Group> persistedEntities = repository.findAll();
+        assertEquals(testData.size() + numberOfInternalTestGroups, persistedEntities.size());
+    }
+
+    @Test
+    @Override
+    public void add_shouldCreateTheEntityForRoleUser() throws Exception {
+
+        userClassPermissionService.setPermission(entityClass, this.user, PermissionCollectionType.CREATE);
+
+        JsonNode insertNode = objectMapper.valueToTree(testData.get(0));
+        List<String> fieldsToRemove = List.of("id", "created", "modified");
+        insertNode = ((ObjectNode) insertNode).remove(fieldsToRemove);
+
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .post(String.format("%s", basePath))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding(Encoding.DEFAULT_CHARSET.toString())
+                    .content(objectMapper.writeValueAsString(insertNode))
+                    .with(authentication(getMockAuthentication(this.adminUser)))
+                    .with(csrf())
+            )
+            .andExpect(MockMvcResultMatchers.status().isCreated())
+            .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$").exists())
+            .andExpect(jsonPath("$", hasKey("id")));
+
+        List<Group> persistedEntities = repository.findAll();
+        assertEquals(testData.size() + numberOfInternalTestGroups + 1, persistedEntities.size());
+    }
+
+    @Test
+    @Override
+    public void add_shouldCreateTheEntityForRoleAdmin() throws Exception {
+        JsonNode insertNode = objectMapper.valueToTree(testData.get(0));
+        List<String> fieldsToRemove = List.of("id", "created", "modified");
+        insertNode = ((ObjectNode) insertNode).remove(fieldsToRemove);
+
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .post(String.format("%s", basePath))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding(Encoding.DEFAULT_CHARSET.toString())
+                    .content(objectMapper.writeValueAsString(insertNode))
+                    .with(authentication(getMockAuthentication(this.adminUser)))
+                    .with(csrf())
+            )
+            .andExpect(MockMvcResultMatchers.status().isCreated())
+            .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$").exists())
+            .andExpect(jsonPath("$", hasKey("id")));
+
+        List<Group> persistedEntities = repository.findAll();
+        assertEquals(testData.size() + numberOfInternalTestGroups + 1, persistedEntities.size());
+    }
+
+    @Test
+    @Override
+    public void delete_shouldDenyAccessForRoleAnonymous() throws Exception {
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .delete(String.format("%s/%s", basePath, testData.get(0).getId()))
+                    .with(csrf())
+            )
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+
+        List<Group> persistedEntities = repository.findAll();
+        assertEquals(testData.size() + numberOfInternalTestGroups, persistedEntities.size());
+    }
+
+    @Test
+    @Override
+    public void delete_shouldDenyAccessForRoleUserWithoutExplicitPermission() throws Exception {
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .delete(String.format("%s/%s", basePath, testData.get(0).getId()))
+                    .with(authentication(getMockAuthentication(this.user)))
+                    .with(csrf())
+            )
+            .andExpect(MockMvcResultMatchers.status().isNotFound());
+
+        List<Group> persistedEntities = repository.findAll();
+        assertEquals(testData.size() + numberOfInternalTestGroups, persistedEntities.size());
+    }
+
+    @Test
+    @Override
+    public void delete_shouldDeleteAnAvailableEntityForRoleUser() throws Exception {
+
+        userInstancePermissionService.setPermission(testData.get(0), this.user, PermissionCollectionType.DELETE);
+
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .delete(String.format("%s/%s", basePath, testData.get(0).getId()))
+                    .with(authentication(getMockAuthentication(this.adminUser)))
+                    .with(csrf())
+            )
+            .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+        List<Group> persistedEntities = repository.findAll();
+        assertEquals(testData.size() + numberOfInternalTestGroups - 1, persistedEntities.size());
+    }
+
+    @Test
+    @Override
+    public void delete_shouldDeleteAnAvailableEntityForRoleAdmin() throws Exception {
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .delete(String.format("%s/%s", basePath, testData.get(0).getId()))
+                    .with(authentication(getMockAuthentication(this.adminUser)))
+                    .with(csrf())
+            )
+            .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+        List<Group> persistedEntities = repository.findAll();
+        assertEquals(testData.size() + numberOfInternalTestGroups - 1, persistedEntities.size());
+    }
 }

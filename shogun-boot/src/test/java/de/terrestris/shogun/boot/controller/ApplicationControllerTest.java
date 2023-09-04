@@ -17,11 +17,20 @@
 package de.terrestris.shogun.boot.controller;
 
 import de.terrestris.shogun.lib.controller.ApplicationController;
+import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
 import de.terrestris.shogun.lib.model.Application;
 import de.terrestris.shogun.lib.repository.ApplicationRepository;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 public class ApplicationControllerTest extends BaseControllerTest<ApplicationController, ApplicationRepository, Application> {
 
@@ -53,4 +62,56 @@ public class ApplicationControllerTest extends BaseControllerTest<ApplicationCon
         testData = persistedEntities;
     }
 
+    @Test
+    public void findAll_shouldReturnFilteredEntitiesForAdminUsers() throws Exception {
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .get(basePath + "?filter=$.name == \"Application 1\"")
+                    .with(authentication(getMockAuthentication(this.adminUser)))
+            )
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$").isMap())
+            .andExpect(jsonPath("$.content").isArray())
+            .andExpect(jsonPath("$.content", hasSize(1)));
+    }
+
+    @Test
+    public void findAll_shouldReturnFilteredEntitiesForUsersByUserInstancePermission() throws Exception {
+
+        userInstancePermissionService.setPermission(testData.get(0), this.user, PermissionCollectionType.READ);
+        userInstancePermissionService.setPermission(testData.get(1), this.user, PermissionCollectionType.READ);
+
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .get(basePath + "?filter=$.name == \"Application 1\"")
+                    .with(authentication(getMockAuthentication(this.user)))
+            )
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$").isMap())
+            .andExpect(jsonPath("$.content").isArray())
+            .andExpect(jsonPath("$.content", hasSize(1)));
+    }
+
+    @Test
+    public void findAll_shouldReturnFilteredEntitiesForUsersByGroupInstancePermission() throws Exception {
+
+        groupInstancePermissionService.setPermission(testData.get(0), this.group, PermissionCollectionType.READ);
+        groupInstancePermissionService.setPermission(testData.get(1), this.group, PermissionCollectionType.READ);
+
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .get(basePath + "?filter=$.name == \"Application 1\"")
+                    .with(authentication(getMockAuthentication(this.user)))
+            )
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$").isMap())
+            .andExpect(jsonPath("$.content").isArray())
+            .andExpect(jsonPath("$.content", hasSize(1)));
+    }
 }

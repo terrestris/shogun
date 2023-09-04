@@ -17,16 +17,20 @@
 package de.terrestris.shogun.lib.controller;
 
 import com.github.fge.jsonpatch.mergepatch.JsonMergePatch;
+import com.jayway.jsonpath.Filter;
 import de.terrestris.shogun.lib.controller.security.permission.BasePermissionController;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.service.BaseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -64,6 +68,34 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
         summary = "Returns all entities",
         security = { @SecurityRequirement(name = "bearer-key") }
     )
+    @Parameters(
+        @Parameter(
+            name = "filter",
+            description = "JSONPath predicate, see https://github.com/json-path/JsonPath#predicates",
+            examples = {
+                @ExampleObject(
+                    name = "Example 1",
+                    description = "Get all entities with name \"Countries\"",
+                    value = "$.name == \"Countries\""
+                ),
+                @ExampleObject(
+                    name = "Example 2",
+                    description = "Get all hoverable layers",
+                    value = "$.clientConfig.hoverable == true"
+                ),
+                @ExampleObject(
+                    name = "Example 3",
+                    description = "Get all layers with a greater minResolution of 100 and of type TILEWMS",
+                    value = "$.clientConfig.minResolution > 100 && $.type == \"TILEWMS\""
+                ),
+                @ExampleObject(
+                    name = "Example 4",
+                    description = "Get all entities with the names \"Countries\" or \"World Map\"",
+                    value = "$.name == \"Countries\" || $.name == \"World Map\""
+                )
+            }
+        )
+    )
     @ApiResponses(value = {
         @ApiResponse(
             responseCode = "200",
@@ -80,14 +112,21 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
         ),
         @ApiResponse(
             responseCode = "500",
-            description = "Internal Server Error: Something internal went wrong while deleting the entity"
+            description = "Internal Server Error: Something internal went wrong while getting the entity list"
         )
     })
-    public Page<S> findAll(@PageableDefault(Integer.MAX_VALUE) @ParameterObject Pageable pageable) {
+    public Page<S> findAll(@PageableDefault(Integer.MAX_VALUE) @ParameterObject Pageable pageable, @RequestParam(required = false) String filter) {
         log.trace("Requested to return all entities of type {}", getGenericClassName());
 
         try {
-            Page<S> persistedEntities = service.findAll(pageable);
+            Filter compiledFilter = null;
+            if (StringUtils.isNotEmpty(filter)) {
+                compiledFilter = Filter.parse(String.format("[?(%s)]", filter));
+
+                log.trace("Got filter " + compiledFilter.toString().replace("'", "\""));
+            }
+
+            Page<S> persistedEntities = service.findAll(pageable, compiledFilter);
 
             log.trace("Successfully got all entities of type {} (count: {})",
                 getGenericClassName(), persistedEntities.getTotalElements());

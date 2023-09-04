@@ -16,6 +16,7 @@
  */
 package de.terrestris.shogun.lib.security.access.entity;
 
+import com.jayway.jsonpath.Filter;
 import de.terrestris.shogun.lib.enumeration.PermissionType;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.Group;
@@ -167,7 +168,6 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
         log.trace("Evaluating whether user with ID '{}' has permission '{}' on class '{}'",
             user.getId(), permission, clazz.getCanonicalName());
 
-
         Optional<UserClassPermission> userClassPermission = userClassPermissionService.findFor((Class<? extends BaseEntity>) clazz, user);
         Optional<GroupClassPermission> groupClassPermission = groupClassPermissionService.findFor((Class<? extends BaseEntity>) clazz, user);
 
@@ -255,7 +255,7 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
      * @return A page of entities.
      */
     @Override
-    public Page<E> findAll(User user, Pageable pageable, BaseCrudRepository<E, Long> repository, Class<E> baseEntityClass) {
+    public Page<E> findAll(User user, Pageable pageable, Filter filter, BaseCrudRepository<E, Long> repository, Class<E> baseEntityClass) {
         if (user == null) {
             throw new RuntimeException("No user provided!");
         }
@@ -269,7 +269,7 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
         );
 
         if (isAdmin) {
-            return repository.findAll(pageable);
+            return repository.findAll(pageable, filter);
         }
 
         // option B: user has permission through class permissions
@@ -277,20 +277,20 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
         Optional<GroupClassPermission> groupClassPermission = groupClassPermissionService.findFor(baseEntityClass, user);
 
         if (containsReadPermission(userClassPermission.orElse(null), groupClassPermission.orElse(null))) {
-            return repository.findAll(pageable);
+            return repository.findAll(pageable, filter);
         }
 
         // option C: check instance permissions for each entity with a single query
         List<Group<GroupRepresentation>> userGroups = groupProviderService.getGroupsForUser();
         if (userGroups.isEmpty()) {
             // user has no groups so only user instance permissions have to be checked
-            return repository.findAll(pageable, user.getId());
+            return repository.findAll(pageable, filter, user.getId());
         } else {
             // check both user and group instance permissions
             List<Long> groupIds = userGroups.stream()
                 .map(BaseEntity::getId)
                 .toList();
-            return repository.findAll(pageable, user.getId(), groupIds);
+            return repository.findAll(pageable, filter, user.getId(), groupIds);
         }
     }
 

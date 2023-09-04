@@ -16,6 +16,7 @@
  */
 package de.terrestris.shogun.lib.security.access.entity;
 
+import com.jayway.jsonpath.Filter;
 import de.terrestris.shogun.lib.enumeration.PermissionType;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.BaseCrudRepository;
@@ -37,5 +38,5 @@ public interface EntityPermissionEvaluator<E> {
      * with pagination. See {@link BaseEntityPermissionEvaluator#findAll(User, Pageable, BaseCrudRepository)} for the
      * default implementation for {@link de.terrestris.shogun.lib.model.BaseEntity}.
      */
-    Page<E> findAll(User user, Pageable pageable, BaseCrudRepository<E, Long> repository, Class<E> baseEntityClass);
+    Page<E> findAll(User user, Pageable pageable, Filter filter, BaseCrudRepository<E, Long> repository, Class<E> baseEntityClass);
 }
