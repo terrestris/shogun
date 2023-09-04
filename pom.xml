@@ -111,9 +111,9 @@
     <!-- Mail -->
     <jakarta-mail.version>2.0.1</jakarta-mail.version>
 
-    <!-- Hibernate -->
+    <!-- Hibernate, Jackson, JAXB etc. -->
     <jackson-bom.version>2.13.2.20220328</jackson-bom.version>
-
+    <jackson-module-jakarta-xmlbind-annotations.version>2.13.2</jackson-module-jakarta-xmlbind-annotations.version>
     <jaxb.version>2.3.1</jaxb.version>
 
     <!-- Security -->
@@ -518,7 +518,7 @@
       <dependency>
         <groupId>com.fasterxml.jackson.module</groupId>
         <artifactId>jackson-module-jakarta-xmlbind-annotations</artifactId>
-        <version>2.13.2</version>
+        <version>${jackson-module-jakarta-xmlbind-annotations.version}</version>
       </dependency>
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
