@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatchException;
 import com.github.fge.jsonpatch.mergepatch.JsonMergePatch;
+import com.jayway.jsonpath.Filter;
 import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.User;
@@ -89,7 +90,7 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
     }
 
     @Transactional(readOnly = true)
-    public Page<S> findAll(Pageable pageable) {
+    public Page<S> findAll(Pageable pageable, Filter filter) {
         // note: security check is done in permission evaluator
         Optional<User> userOpt = userProviderService.getUserBySession();
 
@@ -99,7 +100,12 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
         BaseEntityPermissionEvaluator entityPermissionEvaluator =
             this.getPermissionEvaluatorForClass(entityClass.getCanonicalName());
 
-        return entityPermissionEvaluator.findAll(userOpt.orElse(null), pageable, repository, entityClass);
+        return entityPermissionEvaluator.findAll(userOpt.orElse(null), pageable, filter, repository, entityClass);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<S> findAll(Pageable pageable) {
+        return this.findAll(pageable, null);
     }
 
     @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
