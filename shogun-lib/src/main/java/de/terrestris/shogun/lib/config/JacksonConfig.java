@@ -65,6 +65,7 @@ public class JacksonConfig implements ObjectMapperSupplier {
     public ObjectMapper get() {
         return objectMapper();
     }
+
     public void init(ObjectMapper objectMapper) {
         if (!initialized) {
             GeometryFactory geomFactory = new GeometryFactory(new PrecisionModel(coordinatePrecisionScale), srid);
