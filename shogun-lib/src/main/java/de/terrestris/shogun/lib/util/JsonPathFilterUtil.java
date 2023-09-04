@@ -1,6 +1,6 @@
 /* SHOGun, https://terrestris.github.io/shogun/
  *
- * Copyright © 2020-present terrestris GmbH & Co. KG
+ * Copyright © 2023-present terrestris GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,24 +34,6 @@ public class JsonPathFilterUtil {
      */
     public static String writeFilter(Filter filter) {
         String placeholder = "$";
-
-//        try {
-//            Field predicateField = filter.getClass().getDeclaredField("predicate");
-//            predicateField.setAccessible(true);
-//            Object predicate = predicateField.get(filter);
-//
-//            if (predicate.getClass().isAssignableFrom(LogicalExpressionNode.class)) {
-//                LogicalExpressionNode prd = ((LogicalExpressionNode) predicate);
-//                System.out.println(prd);
-//            }
-//
-//            if (predicate.getClass().isAssignableFrom(RelationalExpressionNode.class)) {
-//                RelationalExpressionNode prd = ((RelationalExpressionNode) predicate);
-//                System.out.println(prd);
-//            }
-//        } catch (NoSuchFieldException | IllegalAccessException e) {
-//            throw new RuntimeException(e);
-//        }
 
         if (filter == null) {
             return placeholder;
