@@ -20,7 +20,9 @@ import de.terrestris.shogun.lib.model.jsonb.ApplicationClientConfig;
 import de.terrestris.shogun.lib.model.jsonb.ApplicationToolConfig;
 import de.terrestris.shogun.lib.model.jsonb.LayerConfig;
 import de.terrestris.shogun.lib.model.jsonb.LayerTree;
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.Cache;
@@ -30,7 +32,6 @@ import org.hibernate.annotations.Type;
 import org.hibernate.envers.AuditTable;
 import org.hibernate.envers.Audited;
 
-import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
 
@@ -64,8 +65,8 @@ public class Application extends BaseEntity {
     )
     private Boolean stateOnly;
 
-    @Type(type = "jsonb")
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "jsonb", name = "client_config")
+    @Type(JsonBinaryType.class)
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
     @Schema(
@@ -74,8 +75,8 @@ public class Application extends BaseEntity {
     )
     private ApplicationClientConfig clientConfig;
 
-    @Type(type = "jsonb")
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "jsonb", name = "layer_tree")
+    @Type(JsonBinaryType.class)
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
     @Schema(
@@ -83,8 +84,8 @@ public class Application extends BaseEntity {
     )
     private LayerTree layerTree;
 
-    @Type(type = "jsonb")
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "jsonb", name = "layer_config")
+    @Type(JsonBinaryType.class)
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
     @Schema(
@@ -93,8 +94,8 @@ public class Application extends BaseEntity {
     )
     private List<LayerConfig> layerConfig;
 
-    @Type(type = "jsonb")
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "jsonb", name = "tool_config")
+    @Type(JsonBinaryType.class)
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
     @Schema(

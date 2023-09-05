@@ -24,6 +24,7 @@ import de.terrestris.shogun.lib.repository.BaseCrudRepository;
 import de.terrestris.shogun.lib.service.BaseService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
 
@@ -38,6 +39,7 @@ import java.util.Optional;
 public abstract class BaseGraphQLController<E extends BaseEntity, S extends BaseService<? extends BaseCrudRepository<E, Long>, E>> {
 
     @Autowired
+    @Lazy
     protected ObjectMapper objectMapper;
 
     @Autowired

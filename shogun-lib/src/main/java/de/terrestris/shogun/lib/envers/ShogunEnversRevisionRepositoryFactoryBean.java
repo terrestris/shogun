@@ -17,6 +17,7 @@
 package de.terrestris.shogun.lib.envers;
 
 import de.terrestris.shogun.lib.repository.impl.ShogunRevisionRepositoryImpl;
+import jakarta.persistence.EntityManager;
 import org.hibernate.envers.DefaultRevisionEntity;
 import org.springframework.data.envers.repository.support.EnversRevisionRepositoryFactoryBean;
 import org.springframework.data.envers.repository.support.ReflectionRevisionEntityInformation;
@@ -27,7 +28,6 @@ import org.springframework.data.repository.core.support.RepositoryFactorySupport
 import org.springframework.data.repository.history.RevisionRepository;
 import org.springframework.data.repository.history.support.RevisionEntityInformation;
 
-import javax.persistence.EntityManager;
 import java.util.Optional;
 
 public class ShogunEnversRevisionRepositoryFactoryBean<T extends RevisionRepository<S, ID, N>, S, ID, N extends Number & Comparable<N>>
@@ -55,7 +55,7 @@ public class ShogunEnversRevisionRepositoryFactoryBean<T extends RevisionReposit
 
     /*
      * (non-Javadoc)
-     * @see org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean#createRepositoryFactory(javax.persistence.EntityManager)
+     * @see org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean#createRepositoryFactory(jakarta.persistence.EntityManager)
      */
     @Override
     protected RepositoryFactorySupport createRepositoryFactory(EntityManager entityManager) {

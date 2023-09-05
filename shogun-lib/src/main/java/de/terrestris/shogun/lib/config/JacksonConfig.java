@@ -22,8 +22,8 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.vladmihalcea.hibernate.type.util.ObjectMapperSupplier;
 import de.terrestris.shogun.lib.annotation.JsonSuperType;
+import io.hypersistence.utils.hibernate.type.util.ObjectMapperSupplier;
 import lombok.extern.log4j.Log4j2;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.PrecisionModel;
@@ -35,7 +35,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,6 +50,7 @@ public class JacksonConfig implements ObjectMapperSupplier {
     public ObjectMapper objectMapper() {
         if (mapper == null) {
             mapper = new ObjectMapper();
+            init(mapper);
         }
         return mapper;
     }
@@ -66,22 +66,21 @@ public class JacksonConfig implements ObjectMapperSupplier {
         return objectMapper();
     }
 
-    @PostConstruct
-    public void init() {
+    public void init(ObjectMapper objectMapper) {
         if (!initialized) {
             GeometryFactory geomFactory = new GeometryFactory(new PrecisionModel(coordinatePrecisionScale), srid);
-            JacksonConfig.mapper.registerModule(new JtsModule(geomFactory));
+            objectMapper.registerModule(new JtsModule(geomFactory));
 
             var javaTimeModule = new JavaTimeModule();
-            JacksonConfig.mapper.registerModule(javaTimeModule);
-            JacksonConfig.mapper.configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false);
+            objectMapper.registerModule(javaTimeModule);
+            objectMapper.configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false);
 
-            JacksonConfig.mapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false);
-            JacksonConfig.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            JacksonConfig.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+            objectMapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false);
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 
             for (var entry : findAnnotatedClasses().entrySet()) {
-                JacksonConfig.mapper.addMixIn(entry.getKey(), entry.getValue());
+                objectMapper.addMixIn(entry.getKey(), entry.getValue());
             }
         }
         initialized = true;
@@ -102,7 +101,7 @@ public class JacksonConfig implements ObjectMapperSupplier {
 
         Map<Class<?>, Class<?>> implementers = new HashMap<>();
 
-        // this finds the type furthest down along the implementation chain
+        // this finds the type the furthest down along the implementation chain
         for (var cl : reflections.getTypesAnnotatedWith(JsonSuperType.class)) {
             var annotation = cl.getAnnotation(JsonSuperType.class);
             var superType = annotation.type();

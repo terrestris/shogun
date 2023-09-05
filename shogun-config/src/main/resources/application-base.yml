@@ -31,14 +31,14 @@ spring:
     # Show SQL statements
     show-sql: true
     open-in-view: true
-    database-platform: org.hibernate.spatial.dialect.postgis.PostgisPG95Dialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       jdbc:
         lob:
           non_contextual_creation: true
       ddl-auto: none
     properties:
-      javax:
+      jakarta:
         persistence:
           sharedCache:
             # Only entities with @Cacheable annotation will use L2 cache
@@ -51,7 +51,9 @@ spring:
             audit_table_suffix: _rev
             global_with_modified_flag: true
       hibernate:
-        javax:
+        id:
+          db_structure_naming_strategy: single
+        jakarta:
           cache:
             provider: org.ehcache.jsr107.EhcacheCachingProvider
             uri: ehcache.xml

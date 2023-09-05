@@ -18,12 +18,13 @@ package de.terrestris.shogun.lib.repository.security.permission;
 
 import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.model.security.permission.GroupInstancePermission;
+import jakarta.persistence.QueryHint;
+import org.hibernate.jpa.AvailableHints;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.QueryHint;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,13 +33,13 @@ public interface GroupInstancePermissionRepository extends BasePermissionReposit
     JpaSpecificationExecutor<GroupInstancePermission> {
 
     @Query("Select gip from groupinstancepermissions gip where gip.group.id = ?1 and gip.entityId = ?2")
-    @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
+    @QueryHints(@QueryHint(name = AvailableHints.HINT_CACHEABLE, value = "true"))
     Optional<GroupInstancePermission> findByGroupIdAndEntityId(Long groupId, Long entityId);
 
-    @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
+    @QueryHints(@QueryHint(name = AvailableHints.HINT_CACHEABLE, value = "true"))
     List<GroupInstancePermission> findByEntityId(Long entityId);
 
-    @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
+    @QueryHints(@QueryHint(name = AvailableHints.HINT_CACHEABLE, value = "true"))
     List<GroupInstancePermission> findAllByGroup(Group group);
 
 }

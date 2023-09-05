@@ -29,8 +29,8 @@ import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
-import org.springdoc.core.SpringDocUtils;
-import org.springdoc.core.customizers.OpenApiCustomiser;
+import org.springdoc.core.customizers.OpenApiCustomizer;
+import org.springdoc.core.utils.SpringDocUtils;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -193,7 +193,7 @@ public abstract class SwaggerConfig {
      * }
      */
     @Bean
-    public OpenApiCustomiser enableArbitraryObjects() {
+    public OpenApiCustomizer enableArbitraryObjects() {
         return openApi -> openApi.getComponents().getSchemas().values().forEach( s -> enableArbitraryObjects(s));
     }
 

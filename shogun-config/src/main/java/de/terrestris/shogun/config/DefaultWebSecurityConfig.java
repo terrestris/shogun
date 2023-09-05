@@ -19,6 +19,7 @@ package de.terrestris.shogun.config;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 public interface DefaultWebSecurityConfig extends WebSecurityConfig {
 
@@ -27,8 +28,8 @@ public interface DefaultWebSecurityConfig extends WebSecurityConfig {
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-            .authorizeRequests()
-                .antMatchers(
+            .authorizeHttpRequests()
+                .requestMatchers(
                     "/",
                     "/auth/**",
                     "/info/**",
@@ -45,7 +46,7 @@ public interface DefaultWebSecurityConfig extends WebSecurityConfig {
                     "/graphiql/**"
                 )
                     .permitAll()
-                .antMatchers(
+                .requestMatchers(
                     "/actuator/**",
                     "/cache/**",
                     "/webhooks/**",
@@ -57,11 +58,16 @@ public interface DefaultWebSecurityConfig extends WebSecurityConfig {
             .and()
                 .csrf()
                     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                    .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
                     .ignoringRequestMatchers(csrfRequestMatcher)
-                    .ignoringAntMatchers("/graphql")
-                    .ignoringAntMatchers("/actuator/**")
-                    .ignoringAntMatchers("/sso/**")
-                    .ignoringAntMatchers("/ws/**");
+                    .ignoringRequestMatchers("/graphql")
+                    .ignoringRequestMatchers("/actuator/**")
+                    .ignoringRequestMatchers("/sso/**")
+                    .ignoringRequestMatchers("/ws/**");
+    }
+
+    default void configure(HttpSecurity http) throws Exception {
+        customHttpConfiguration(http);
     }
 
 }

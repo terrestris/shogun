@@ -16,12 +16,12 @@
  */
 package de.terrestris.shogun.lib.model.security.permission;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.envers.Audited;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
 import java.util.Objects;
 
 @MappedSuperclass
