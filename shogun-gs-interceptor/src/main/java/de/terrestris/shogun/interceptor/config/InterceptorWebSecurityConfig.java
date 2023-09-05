@@ -33,30 +33,29 @@ public class InterceptorWebSecurityConfig implements DefaultWebSecurityConfig {
         return StringUtils.equalsIgnoreCase(refererHeader, "Shogun-Manager-Client");
     };
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    @Override
+    public void customHttpConfiguration(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests()
-            .requestMatchers(
-                // Allow access to swagger interface
-                "/swagger-ui/index.html",
-                "/swagger-resources/**",
-                "/webjars/**",
-                "/v2/**",
-                "/csrf/**"
-            )
-            .permitAll()
-            .requestMatchers("/interceptorrules/**")
-            .hasRole("INTERCEPTOR_ADMIN")
-            .anyRequest()
-            .authenticated()
-            .and()
-            .httpBasic()
-            .and()
-            .csrf()
-            .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-            .ignoringRequestMatchers(csrfRequestMatcher);
-        return http.build();
+                .requestMatchers(
+                    // Allow access to swagger interface
+                    "/swagger-ui/index.html",
+                    "/swagger-resources/**",
+                    "/webjars/**",
+                    "/v3/**",
+                    "/csrf/**"
+                )
+                    .permitAll()
+                .requestMatchers("/interceptorrules/**")
+                    .hasRole("INTERCEPTOR_ADMIN")
+                .anyRequest()
+                    .authenticated()
+                .and()
+                    .httpBasic()
+                .and()
+                    .csrf()
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .ignoringRequestMatchers(csrfRequestMatcher);
     }
 
 }

@@ -49,7 +49,7 @@ public class KeycloakWebSecurityConfig implements DefaultWebSecurityConfig {
     }
 
     @Override
-    public void customHttpConfiguration(HttpSecurity http) throws Exception {
+    public void configure(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests((auths) -> auths
                 .requestMatchers("/webhooks/keycloak/**")
@@ -58,7 +58,7 @@ public class KeycloakWebSecurityConfig implements DefaultWebSecurityConfig {
                 ))
             );
 
-        DefaultWebSecurityConfig.super.customHttpConfiguration(http);
+        customHttpConfiguration(http);
 
         KeycloakJwtAuthenticationConverter authConverter = new KeycloakJwtAuthenticationConverter(
             keycloakProperties.getClientId(),

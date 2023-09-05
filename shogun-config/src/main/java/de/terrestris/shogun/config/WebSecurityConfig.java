@@ -36,9 +36,11 @@ public interface WebSecurityConfig {
     @Bean
     @ConditionalOnMissingBean
     default SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        customHttpConfiguration(http);
+        configure(http);
         return http.getOrBuild();
     }
+
+    void configure(HttpSecurity http) throws Exception;
 
     void customHttpConfiguration(HttpSecurity http) throws Exception;
 

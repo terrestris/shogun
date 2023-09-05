@@ -66,4 +66,8 @@ public interface DefaultWebSecurityConfig extends WebSecurityConfig {
                     .ignoringRequestMatchers("/ws/**");
     }
 
+    default void configure(HttpSecurity http) throws Exception {
+        customHttpConfiguration(http);
+    }
+
 }
