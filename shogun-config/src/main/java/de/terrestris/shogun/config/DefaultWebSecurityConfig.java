@@ -28,7 +28,7 @@ public interface DefaultWebSecurityConfig extends WebSecurityConfig {
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-            .authorizeHttpRequests()
+            .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(
                     "/",
                     "/auth/**",
@@ -55,15 +55,16 @@ public interface DefaultWebSecurityConfig extends WebSecurityConfig {
                     .hasRole("ADMIN")
                 .anyRequest()
                     .authenticated()
-            .and()
-                .csrf()
-                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                    .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
-                    .ignoringRequestMatchers(csrfRequestMatcher)
-                    .ignoringRequestMatchers("/graphql")
-                    .ignoringRequestMatchers("/actuator/**")
-                    .ignoringRequestMatchers("/sso/**")
-                    .ignoringRequestMatchers("/ws/**");
+            )
+            .csrf(csrf -> csrf
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
+                .ignoringRequestMatchers(csrfRequestMatcher)
+                .ignoringRequestMatchers("/graphql")
+                .ignoringRequestMatchers("/actuator/**")
+                .ignoringRequestMatchers("/sso/**")
+                .ignoringRequestMatchers("/ws/**")
+            );
     }
 
     default void configure(HttpSecurity http) throws Exception {

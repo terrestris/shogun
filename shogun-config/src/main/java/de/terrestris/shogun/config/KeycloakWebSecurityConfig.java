@@ -66,13 +66,12 @@ public class KeycloakWebSecurityConfig implements DefaultWebSecurityConfig {
         );
 
         http
-            .csrf()
+            .csrf(csrf -> csrf
                 .ignoringRequestMatchers("/webhooks/**")
-            .and()
-                .oauth2ResourceServer()
-                    .jwt()
-                    .jwtAuthenticationConverter(authConverter);
-
+            )
+            .oauth2ResourceServer(oauth -> oauth
+                .jwt(jwt -> jwt.jwtAuthenticationConverter(authConverter))
+            );
     }
 
 }

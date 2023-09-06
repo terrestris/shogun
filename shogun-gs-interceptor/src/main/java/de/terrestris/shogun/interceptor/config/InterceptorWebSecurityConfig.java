@@ -18,10 +18,9 @@ package de.terrestris.shogun.interceptor.config;
 
 import de.terrestris.shogun.config.DefaultWebSecurityConfig;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
@@ -36,7 +35,7 @@ public class InterceptorWebSecurityConfig implements DefaultWebSecurityConfig {
     @Override
     public void customHttpConfiguration(HttpSecurity http) throws Exception {
         http
-            .authorizeHttpRequests()
+            .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(
                     // Allow access to swagger interface
                     "/swagger-ui/index.html",
@@ -50,12 +49,12 @@ public class InterceptorWebSecurityConfig implements DefaultWebSecurityConfig {
                     .hasRole("INTERCEPTOR_ADMIN")
                 .anyRequest()
                     .authenticated()
-                .and()
-                    .httpBasic()
-                .and()
-                    .csrf()
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .ignoringRequestMatchers(csrfRequestMatcher);
+            )
+            .httpBasic(Customizer.withDefaults())
+            .csrf(csrf -> csrf
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .ignoringRequestMatchers(csrfRequestMatcher)
+            );
     }
 
 }
