@@ -17,7 +17,10 @@
 package de.terrestris.shogun.lib.model.jsonb.layer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.terrestris.shogun.lib.enumeration.EditFormComponentType;
+import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,7 +32,78 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class PropertyFormItemEditConfig extends PropertyFormItemReadConfig {
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    property = "component",
+    include = JsonTypeInfo.As.EXISTING_PROPERTY,
+    visible = true,
+    defaultImpl = PropertyFormItemEditDefaultConfig.class
+)
+@JsonSubTypes({
+    @JsonSubTypes.Type(
+        value = PropertyFormItemEditReferenceTableConfig.class,
+        name = "REFERENCE_TABLE"
+    ),
+    @JsonSubTypes.Type(
+        value = PropertyFormItemEditDefaultConfig.class,
+        names = {
+            "CHECKBOX",
+            "DATE",
+            "DISPLAY",
+            "INPUT",
+            "NUMBER",
+            "SELECT",
+            "SWITCH",
+            "TEXTAREA",
+            "UPLOAD"
+        }
+    )
+})
+@Schema(
+    discriminatorMapping = {
+        @DiscriminatorMapping(
+            value = "REFERENCE_TABLE",
+            schema = PropertyFormItemEditReferenceTableConfig.class
+        ),
+        @DiscriminatorMapping(
+            value = "CHECKBOX",
+            schema = PropertyFormItemEditDefaultConfig.class
+        ),
+        @DiscriminatorMapping(
+            value = "DATE",
+            schema = PropertyFormItemEditDefaultConfig.class
+        ),
+        @DiscriminatorMapping(
+            value = "DISPLAY",
+            schema = PropertyFormItemEditDefaultConfig.class
+        ),
+        @DiscriminatorMapping(
+            value = "INPUT",
+            schema = PropertyFormItemEditDefaultConfig.class
+        ),
+        @DiscriminatorMapping(
+            value = "NUMBER",
+            schema = PropertyFormItemEditDefaultConfig.class
+        ),
+        @DiscriminatorMapping(
+            value = "SELECT",
+            schema = PropertyFormItemEditDefaultConfig.class
+        ),
+        @DiscriminatorMapping(
+            value = "SWITCH",
+            schema = PropertyFormItemEditDefaultConfig.class
+        ),
+        @DiscriminatorMapping(
+            value = "TEXTAREA",
+            schema = PropertyFormItemEditDefaultConfig.class
+        ),
+        @DiscriminatorMapping(
+            value = "UPLOAD",
+            schema = PropertyFormItemEditDefaultConfig.class
+        )
+    }
+)
+public abstract class PropertyFormItemEditConfig extends PropertyFormItemReadConfig {
 
     @Schema(
         description = "The identifier of the component to render for this property.",
