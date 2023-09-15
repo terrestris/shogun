@@ -228,6 +228,11 @@
       <artifactId>tika-core</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.apache.tika</groupId>
+      <artifactId>tika-parsers-standard-package</artifactId>
+    </dependency>
+
     <!-- Testing -->
     <dependency>
       <groupId>org.springframework</groupId>
