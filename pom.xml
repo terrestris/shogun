@@ -137,7 +137,7 @@
 
     <!-- Utils -->
     <commons.io.version>2.13.0</commons.io.version>
-    <tika.core.version>2.9.0</tika.core.version>
+    <tika.version>2.9.0</tika.version>
     <reflections.version>0.10.2</reflections.version>
     <evo-inflector.version>1.3</evo-inflector.version>
 
@@ -511,7 +511,12 @@
       <dependency>
         <groupId>org.apache.tika</groupId>
         <artifactId>tika-core</artifactId>
-        <version>${tika.core.version}</version>
+        <version>${tika.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tika</groupId>
+        <artifactId>tika-parsers-standard-package</artifactId>
+        <version>${tika.version}</version>
       </dependency>
 
       <!-- Jackson -->
