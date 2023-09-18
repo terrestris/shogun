@@ -1,3 +1,62 @@
+# [18.0.0](https://github.com/terrestris/shogun/compare/v17.2.0...v18.0.0) (2023-09-18)
+
+
+### Bug Fixes
+
+* adds missing git-commit-id-maven-plugin in gs-interceptor ([a6b390a](https://github.com/terrestris/shogun/commit/a6b390a3cf477cd9894c220dc638650d79be1899))
+* allow extending WebSecurityConfig ([10cb4e4](https://github.com/terrestris/shogun/commit/10cb4e4503c6817017bcfa518395879e048863a7))
+* circular dependency problems ([53aa861](https://github.com/terrestris/shogun/commit/53aa86172f1af78b0210bd504b38798b21dad31d))
+* cleanup ([2db9a60](https://github.com/terrestris/shogun/commit/2db9a60aacd5e883a9a6691d6d7366f75bafd233))
+* extract xmlbind version to property ([e37392f](https://github.com/terrestris/shogun/commit/e37392f75cceeb8b3e93262f73683b17ed64c570))
+* fix http proxy tests ([b9e8be4](https://github.com/terrestris/shogun/commit/b9e8be46777c638dac94ff35135da834fab73166))
+* fix hypersistence-utils version ([7958976](https://github.com/terrestris/shogun/commit/7958976e6e1cb65d97483990bb6c29a16d911e59))
+* fix queryHints import ([7df2511](https://github.com/terrestris/shogun/commit/7df2511cb171dd9b52b1bf435fb78d6dcfa6152b))
+* optimize imports ([d0e84f5](https://github.com/terrestris/shogun/commit/d0e84f5148aab56fd622c5893d397b368c45b6b5))
+* reenable csrfTokenRequestHandler ([b32f02c](https://github.com/terrestris/shogun/commit/b32f02cf66c98f445275690926c3c36c45a339c8))
+* remove commented code ([c3d5f7a](https://github.com/terrestris/shogun/commit/c3d5f7a1cc2c71ed3bd0480c042e97bb6f5a64e4))
+* remove newline ([53673e0](https://github.com/terrestris/shogun/commit/53673e0fac288e79094cae9f5f107a860922c839))
+* remove not needed hibernate version ([7b0abc4](https://github.com/terrestris/shogun/commit/7b0abc42f1e215a89a96eb672f6d3c87a7204bc4))
+* remove unneeded parameter ([4565f49](https://github.com/terrestris/shogun/commit/4565f498025e51a35f095f5a19eaf5e4ed0e88d8))
+* reorganize imports ([6fc6f8c](https://github.com/terrestris/shogun/commit/6fc6f8c2d28f70c9b4015f94ff819516b244d4c5))
+* set correct creation time for docker images ([8be68e5](https://github.com/terrestris/shogun/commit/8be68e562aa330d8e08138a69164ec9f70c9d71a))
+* temporarily allow circular references ([4aefc55](https://github.com/terrestris/shogun/commit/4aefc554273ab2ecb6ff57250d6cfd26d13295e1))
+* temproarily allow circular references ([98f731d](https://github.com/terrestris/shogun/commit/98f731d2b711901eb0f42b7ce5584ac46d2a46ce))
+* update dependency versions ([e468350](https://github.com/terrestris/shogun/commit/e4683505a14d38aaf985dc0a53c47ff0c8bf2c49))
+* update git-commit-id plugin ([104b0b3](https://github.com/terrestris/shogun/commit/104b0b33eb38d2a295fe2bfc6f3f6baeb08e2b16))
+* update java base image ([caba9ce](https://github.com/terrestris/shogun/commit/caba9ce66248ec133dc72b679eb25d10b56d319c))
+* update to apache httpUtil5 ([8661561](https://github.com/terrestris/shogun/commit/8661561b799877307681d3361e2ced1f9f0ebe95))
+* web security setup ([b4979bc](https://github.com/terrestris/shogun/commit/b4979bc61723d4333d6541a49382961ed8d3b972))
+
+
+### Features
+
+* allow to only override security filterchain ([4b37639](https://github.com/terrestris/shogun/commit/4b37639b233764ad4b88e4c760148d1bbdefa2ca))
+* improve content type detection ([4b754e3](https://github.com/terrestris/shogun/commit/4b754e3397088f851483e70bf49537c749f9a5d2))
+* include REFERENCE_TABLE and make PropertyFormItemEditConfig abstract ([e4bbaf5](https://github.com/terrestris/shogun/commit/e4bbaf53556f4df767b995072be5d27f18417618))
+* update for hibernate 6.1 and hibernate-types ([b105159](https://github.com/terrestris/shogun/commit/b105159c493869b8293acfa639e8be6ba67cddfe))
+* update keycloak to 21.0.1 ([f90de77](https://github.com/terrestris/shogun/commit/f90de77515a6cc9a6163789bb7ad9f4bc697bbb5))
+* update spring-boot to 3.0.x ([f95fcaf](https://github.com/terrestris/shogun/commit/f95fcaf0b4ef4cbf07c9e7dfc3e9d41d382ae431))
+
+
+### BREAKING CHANGES
+
+* requires migration for spring / spring-security 6 and hibernate 6 updates
+
+Migration guide:
+
+- update java EE 8 dependencies to jakarta EE 9 (see https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Migration-Guide#jakarta-ee)
+- update repositories
+  - update `@QueryHints` annotations
+  - e.g. `org.hibernate.annotations.QueryHints.CACHEABLE` -> `AvailableHints.HINT_CACHEABLE`
+  - if you use custom data fetching methods, migration steps for hibernate 6 / 6.1 / 6.2 might be necessary
+    - especially consider https://github.com/hibernate/hibernate-orm/blob/6.0/migration-guide.adoc#removals
+    - for more information see the hibernate migration guides listed below
+- update your SecurityConfigs which extend `KeycloakWebSecurityConfig` or `SimpleWebSecurityConfig`
+   - update your filter chain according to the the spring security migration guides below
+   - replace `antMatchers` with `requestMatchers`, ignoringAntMatchers with ignoringRequestMatchers
+   - update your rules for swagger (`/v3/api-docs`) if they're not already updated
+- update your `git-commit-id-plugin` configuration and check if the version set in shogun is overridden (for more information see  https://github.com/terrestris/shogun/pull/730)
+
 # [17.2.0](https://github.com/terrestris/shogun/compare/v17.1.1...v17.2.0) (2023-07-18)
 
 
