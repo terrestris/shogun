@@ -23,7 +23,7 @@
   <parent>
     <groupId>de.terrestris</groupId>
     <artifactId>shogun</artifactId>
-    <version>18.0.0</version>
+    <version>18.0.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>shogun-config</artifactId>
