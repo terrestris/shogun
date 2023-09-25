@@ -113,7 +113,7 @@
 
     <!-- Hibernate, Jackson, JAXB etc. -->
     <jackson-bom.version>2.13.2.20220328</jackson-bom.version>
-    <jackson-module-jakarta-xmlbind-annotations.version>2.13.2</jackson-module-jakarta-xmlbind-annotations.version>
+    <jackson-module-jakarta-xmlbind-annotations.version>2.15.2</jackson-module-jakarta-xmlbind-annotations.version>
     <jaxb.version>2.3.1</jaxb.version>
 
     <!-- Security -->
