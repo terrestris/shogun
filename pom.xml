@@ -117,7 +117,7 @@
     <jaxb.version>2.3.1</jaxb.version>
 
     <!-- Security -->
-    <keycloak.version>22.0.3</keycloak.version>
+    <keycloak.version>22.0.4</keycloak.version>
 
     <!-- Database -->
     <hypersistence-utils.version>3.5.3</hypersistence-utils.version>
