@@ -120,7 +120,7 @@
     <keycloak.version>22.0.4</keycloak.version>
 
     <!-- Database -->
-    <hypersistence-utils.version>3.5.3</hypersistence-utils.version>
+    <hypersistence-utils.version>3.6.0</hypersistence-utils.version>
 
     <!-- GraphQL -->
     <graphql-java-extended-scalars.version>21.0</graphql-java-extended-scalars.version>
