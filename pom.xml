@@ -148,7 +148,7 @@
     <testcontainers.version>1.19.1</testcontainers.version>
     <junit.jupiter.version>5.7.1</junit.jupiter.version>
     <mockito.version>5.6.0</mockito.version>
-    <maven-dependency-plugin.version>3.6.0</maven-dependency-plugin.version>
+    <maven-dependency-plugin.version>3.6.1</maven-dependency-plugin.version>
     <maven-project-info-reports-plugin.version>3.2.1</maven-project-info-reports-plugin.version>
     <archunit.version>1.1.0</archunit.version>
     <sonar-maven-plugin.version>3.10.0.2594</sonar-maven-plugin.version>
