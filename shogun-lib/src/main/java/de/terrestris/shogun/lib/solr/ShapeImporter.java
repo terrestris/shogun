@@ -76,7 +76,7 @@ public class ShapeImporter {
         WKTWriter2 wkt = new WKTWriter2();
         doc.addField("id", String.format("%s_%s", prefix, feature.getID()));
         doc.addField("category", category);
-        doc.addField("title", feature.getProperty("EBENE").getValue() + " " + feature.getProperty("NAME").getValue());
+        doc.addField("title", feature.getProperty("NAME").getValue());
         for (Property prop : feature.getProperties()) {
             if (prop.getName().getLocalPart().equals("the_geom")) {
                 continue;
@@ -117,9 +117,11 @@ public class ShapeImporter {
         Filter filter = Filter.INCLUDE;
 
         FeatureCollection<SimpleFeatureType, SimpleFeature> collection = new ReprojectingFeatureCollection(source.getFeatures(filter),  CRS.decode("CRS:84"));
-        try (Http2SolrClient solr = new Http2SolrClient.Builder(solrUrl).build();
-             FeatureIterator<SimpleFeature> features = collection.features()) {
-            solr.setParser(new XMLResponseParser());
+
+        try (
+            Http2SolrClient solr = new Http2SolrClient.Builder(solrUrl).withResponseParser(new XMLResponseParser()).build();
+            FeatureIterator<SimpleFeature> features = collection.features()
+        ) {
             solr.deleteByQuery("id:" + prefix + "*");
             while (features.hasNext()) {
                 try {
