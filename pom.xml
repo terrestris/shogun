@@ -155,7 +155,7 @@
 
     <!-- Jib -->
     <image>docker-public.terrestris.de/shogun/${project.artifactId}:latest</image>
-    <solr-solrj.version>9.0.0</solr-solrj.version>
+    <solr-solrj.version>9.3.0</solr-solrj.version>
     <geotools.version>27.1</geotools.version>
   </properties>
 
