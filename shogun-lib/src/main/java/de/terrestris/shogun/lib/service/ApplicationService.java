@@ -16,8 +16,8 @@
  */
 package de.terrestris.shogun.lib.service;
 
-import de.terrestris.shogun.lib.repository.ApplicationRepository;
 import de.terrestris.shogun.lib.model.Application;
+import de.terrestris.shogun.lib.repository.ApplicationRepository;
 import org.springframework.stereotype.Service;
 
 @Service

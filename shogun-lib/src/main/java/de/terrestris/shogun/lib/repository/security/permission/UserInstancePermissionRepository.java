@@ -19,6 +19,8 @@ package de.terrestris.shogun.lib.repository.security.permission;
 import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.model.security.permission.UserInstancePermission;
+import jakarta.persistence.QueryHint;
+import org.hibernate.jpa.AvailableHints;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -26,7 +28,6 @@ import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.QueryHint;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,20 +36,20 @@ public interface UserInstancePermissionRepository extends BasePermissionReposito
     JpaSpecificationExecutor<UserInstancePermission> {
 
     @Query("Select uip from userinstancepermissions uip where uip.user.id = ?1 and uip.entityId = ?2")
-    @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
+    @QueryHints(@QueryHint(name = AvailableHints.HINT_CACHEABLE, value = "true"))
     Optional<UserInstancePermission> findByUserIdAndEntityId(Long userId, Long entityId);
 
-    @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
+    @QueryHints(@QueryHint(name = AvailableHints.HINT_CACHEABLE, value = "true"))
     List<UserInstancePermission> findByEntityId(Long entityId);
 
     @Query("SELECT u FROM userinstancepermissions u LEFT JOIN u.permission p WHERE u.entityId = :entityId AND p.name = :permissionCollectionType")
-    @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
+    @QueryHints(@QueryHint(name = AvailableHints.HINT_CACHEABLE, value = "true"))
     List<UserInstancePermission> findByEntityAndPermissionCollectionType(
         @Param("entityId") Long entityId,
         @Param("permissionCollectionType") PermissionCollectionType permissionCollectionType
     );
 
-    @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
+    @QueryHints(@QueryHint(name = AvailableHints.HINT_CACHEABLE, value = "true"))
     List<UserInstancePermission> findAllByUser(User user);
 
     @Modifying

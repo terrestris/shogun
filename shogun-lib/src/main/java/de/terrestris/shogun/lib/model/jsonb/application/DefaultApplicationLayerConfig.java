@@ -23,22 +23,24 @@ import de.terrestris.shogun.lib.model.jsonb.LayerConfig;
 import de.terrestris.shogun.lib.model.jsonb.layer.DefaultLayerClientConfig;
 import de.terrestris.shogun.lib.model.jsonb.layer.DefaultLayerSourceConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 @Data
 @JsonDeserialize(as = DefaultApplicationLayerConfig.class)
 @JsonSuperType(type = LayerConfig.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@ToString
-@EqualsAndHashCode
+@NoArgsConstructor(force = true)
+@AllArgsConstructor
 public class DefaultApplicationLayerConfig implements LayerConfig {
 
     @Schema(
         description = "The ID of the layer to apply the custom configuration to.",
-        required = true
+        requiredMode = Schema.RequiredMode.REQUIRED
     )
+    @NonNull
     private Integer layerId;
 
     @Schema(

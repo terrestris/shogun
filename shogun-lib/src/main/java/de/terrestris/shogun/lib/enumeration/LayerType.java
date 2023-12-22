@@ -22,6 +22,7 @@ public enum LayerType {
     WFS("WFS"),
     WMS("WMS"),
     WMTS("WMTS"),
+    WMSTIME("WMSTime"),
     XYZ("XYZ");
 
     private final String type;

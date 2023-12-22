@@ -23,15 +23,31 @@
   <parent>
     <groupId>de.terrestris</groupId>
     <artifactId>shogun</artifactId>
-    <version>16.2.1-SNAPSHOT</version>
+    <version>18.0.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>shogun-config</artifactId>
   <name>SHOGun Config</name>
   <packaging>jar</packaging>
 
-  <dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>com.google.cloud.tools</groupId>
+        <artifactId>jib-maven-plugin</artifactId>
+        <configuration>
+          <!-- we don't want jib to execute on this module -->
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
+  <dependencies>
     <!-- Spring Boot -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -49,6 +65,7 @@
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-oauth2-resource-server</artifactId>
     </dependency>
+
     <dependency>
       <groupId>com.fasterxml.jackson.dataformat</groupId>
       <artifactId>jackson-dataformat-yaml</artifactId>
@@ -57,7 +74,7 @@
     <!-- Swagger -->
     <dependency>
       <groupId>org.springdoc</groupId>
-      <artifactId>springdoc-openapi-ui</artifactId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
     </dependency>
 
     <!-- Lombok -->

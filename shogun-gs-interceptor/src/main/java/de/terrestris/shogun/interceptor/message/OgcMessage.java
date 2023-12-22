@@ -18,12 +18,11 @@ package de.terrestris.shogun.interceptor.message;
 
 import de.terrestris.shogun.interceptor.enumeration.InterceptorEnum;
 import de.terrestris.shogun.interceptor.enumeration.OgcEnum;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 
 public class OgcMessage {
 

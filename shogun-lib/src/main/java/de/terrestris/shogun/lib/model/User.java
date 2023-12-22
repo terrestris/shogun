@@ -18,7 +18,9 @@ package de.terrestris.shogun.lib.model;
 
 import de.terrestris.shogun.lib.model.jsonb.UserClientConfig;
 import de.terrestris.shogun.lib.model.jsonb.UserDetails;
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.Cache;
@@ -28,7 +30,6 @@ import org.hibernate.annotations.Type;
 import org.hibernate.envers.AuditTable;
 import org.hibernate.envers.Audited;
 
-import javax.persistence.*;
 import java.util.Objects;
 
 @Entity(name = "users")
@@ -48,7 +49,7 @@ public class User<T> extends BaseEntity {
     @Column(unique = true, nullable = false)
     @Schema(
         description = "The backend ID of the user.",
-        required = true
+        requiredMode = Schema.RequiredMode.REQUIRED
     )
     private String authProviderId;
 
@@ -59,8 +60,8 @@ public class User<T> extends BaseEntity {
     )
     private T providerDetails;
 
-    @Type(type = "jsonb")
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "jsonb", name = "details")
+    @Type(JsonBinaryType.class)
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
     @Schema(
@@ -68,8 +69,8 @@ public class User<T> extends BaseEntity {
     )
     private UserDetails details;
 
-    @Type(type = "jsonb")
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "jsonb", name = "client_config")
+    @Type(JsonBinaryType.class)
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
     @Schema(

@@ -16,7 +16,6 @@
  */
 package de.terrestris.shogun.boot.architecture;
 
-import com.tngtech.archunit.base.DescribedPredicate;
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
@@ -31,7 +30,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
 @AnalyzeClasses(packages = "de.terrestris", importOptions = { ImportOption.DoNotIncludeTests.class })
 public class DependencyRulesTest {

@@ -19,7 +19,9 @@ package de.terrestris.shogun.lib.model;
 import de.terrestris.shogun.lib.enumeration.LayerType;
 import de.terrestris.shogun.lib.model.jsonb.LayerClientConfig;
 import de.terrestris.shogun.lib.model.jsonb.LayerSourceConfig;
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
 import lombok.*;
 import org.geojson.GeoJsonObject;
 import org.hibernate.Hibernate;
@@ -30,7 +32,6 @@ import org.hibernate.annotations.Type;
 import org.hibernate.envers.AuditTable;
 import org.hibernate.envers.Audited;
 
-import javax.persistence.*;
 import java.util.Objects;
 
 @Entity(name = "layers")
@@ -54,8 +55,8 @@ public class Layer extends BaseEntity {
     )
     private String name;
 
-    @Type(type = "jsonb")
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "jsonb", name = "client_config")
+    @Type(JsonBinaryType.class)
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
     @Schema(
@@ -64,19 +65,19 @@ public class Layer extends BaseEntity {
     )
     private LayerClientConfig clientConfig;
 
-    @Type(type = "jsonb")
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "jsonb", name = "source_config")
+    @Type(JsonBinaryType.class)
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
     @Schema(
         description = "The configuration of the datasource of the layer, e.g. the URL of the server, the name or " +
             "the grid configuration.",
-        required = true
+        requiredMode = Schema.RequiredMode.REQUIRED
     )
     private LayerSourceConfig sourceConfig;
 
-    @Type(type = "jsonb")
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "jsonb", name = "features")
+    @Type(JsonBinaryType.class)
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
     @Schema(
@@ -89,7 +90,7 @@ public class Layer extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Schema(
         description = "The type of the layer. Currently one of `TileWMS`, `VectorTile`, `WFS`, `WMS`, `WMTS` or `XYZ`.",
-        required = true
+        requiredMode = Schema.RequiredMode.REQUIRED
     )
     private LayerType type;
 

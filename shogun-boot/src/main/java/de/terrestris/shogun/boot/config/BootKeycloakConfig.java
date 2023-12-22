@@ -22,4 +22,4 @@ import org.springframework.context.annotation.Configuration;
 
 @ConditionalOnExpression("${keycloak.enabled:true}")
 @Configuration
-public class BootKeycloakConfig extends KeycloakConfig { }
+public class BootKeycloakConfig extends KeycloakConfig {}

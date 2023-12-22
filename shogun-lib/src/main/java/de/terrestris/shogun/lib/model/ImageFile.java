@@ -18,14 +18,14 @@ package de.terrestris.shogun.lib.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity(name = "imagefiles")

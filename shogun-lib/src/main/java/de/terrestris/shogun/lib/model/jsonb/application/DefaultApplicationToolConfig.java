@@ -21,9 +21,10 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.terrestris.shogun.lib.annotation.JsonSuperType;
 import de.terrestris.shogun.lib.model.jsonb.ApplicationToolConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import java.util.HashMap;
 
@@ -31,14 +32,16 @@ import java.util.HashMap;
 @JsonDeserialize(as = DefaultApplicationToolConfig.class)
 @JsonSuperType(type = ApplicationToolConfig.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@ToString
-@EqualsAndHashCode
+@NoArgsConstructor(force = true)
+@AllArgsConstructor
 public class DefaultApplicationToolConfig implements ApplicationToolConfig {
+
     @Schema(
         description = "The name of the tool.",
         example = "map-tool",
-        required = true
+        requiredMode = Schema.RequiredMode.REQUIRED
     )
+    @NonNull
     private String name;
 
     @Schema(

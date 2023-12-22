@@ -18,7 +18,6 @@ package de.terrestris.shogun.boot.controller;
 
 import de.terrestris.shogun.lib.controller.ApplicationController;
 import de.terrestris.shogun.lib.model.Application;
-import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.repository.ApplicationRepository;
 
 import java.util.ArrayList;

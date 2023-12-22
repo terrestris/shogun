@@ -18,22 +18,22 @@ package de.terrestris.shogun.lib.model.jsonb.layer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@ToString
-@EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor
 public class DownloadConfig implements Serializable {
 
     @Schema(
         description = "URL which allows to download the layer data.",
         example = "https://example.com/geoserver/SHOGUN/ows?service=WFS&version=1.0.0&request=GetFeature&outputFormat=application%2Fjson",
-        required = true
+        requiredMode = Schema.RequiredMode.REQUIRED
     )
     private String downloadUrl;
 
@@ -44,4 +44,3 @@ public class DownloadConfig implements Serializable {
     private String formatName;
 
 }
-

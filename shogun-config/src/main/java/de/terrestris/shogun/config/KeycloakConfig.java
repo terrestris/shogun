@@ -17,7 +17,8 @@
 package de.terrestris.shogun.config;
 
 import de.terrestris.shogun.properties.KeycloakProperties;
-import org.jboss.resteasy.client.jaxrs.ResteasyClient;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
@@ -39,7 +40,7 @@ public abstract class KeycloakConfig {
 
     @Bean
     public Keycloak keycloakAdminClient() {
-        ResteasyClient restClient = new ResteasyClientBuilder()
+        Client restClient = ((ResteasyClientBuilder) ClientBuilder.newBuilder())
             .hostnameVerification(ResteasyClientBuilder.HostnameVerificationPolicy.ANY)
             .build();
 

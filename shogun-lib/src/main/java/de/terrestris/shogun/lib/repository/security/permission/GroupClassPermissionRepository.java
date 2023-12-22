@@ -18,23 +18,25 @@ package de.terrestris.shogun.lib.repository.security.permission;
 
 import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.model.security.permission.GroupClassPermission;
-import java.util.List;
-import java.util.Optional;
-import javax.persistence.QueryHint;
+import jakarta.persistence.QueryHint;
+import org.hibernate.jpa.AvailableHints;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface GroupClassPermissionRepository extends BasePermissionRepository<GroupClassPermission, Long>,
     JpaSpecificationExecutor<GroupClassPermission> {
 
     @Query("Select gcp from groupclasspermissions gcp where gcp.group.id = ?1 and gcp.className = ?2")
-    @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
+    @QueryHints(@QueryHint(name = AvailableHints.HINT_CACHEABLE, value = "true"))
     Optional<GroupClassPermission> findByGroupIdAndClassName(Long groupId, String className);
 
-    @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
+    @QueryHints(@QueryHint(name = AvailableHints.HINT_CACHEABLE, value = "true"))
     List<GroupClassPermission> findAllByGroup(Group group);
 
     List<GroupClassPermission> findByClassName(String className);

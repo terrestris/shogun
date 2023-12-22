@@ -21,22 +21,24 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.terrestris.shogun.lib.annotation.JsonSuperType;
 import de.terrestris.shogun.lib.model.jsonb.ApplicationClientConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 @Data
 @JsonDeserialize(as = DefaultApplicationClientConfig.class)
 @JsonSuperType(type = ApplicationClientConfig.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@ToString
-@EqualsAndHashCode
+@NoArgsConstructor(force = true)
+@AllArgsConstructor
 public class DefaultApplicationClientConfig implements ApplicationClientConfig {
 
     @Schema(
         description = "The configuration of the map view.",
-        required = true
+        requiredMode = Schema.RequiredMode.REQUIRED
     )
+    @NonNull
     private DefaultMapView mapView;
 
     @Schema(
@@ -53,5 +55,10 @@ public class DefaultApplicationClientConfig implements ApplicationClientConfig {
         description = "The configuration of the applications theme."
     )
     private DefaultApplicationTheme theme;
+
+    @Schema(
+        description = "The default language of the application (ISO 639-1)."
+    )
+    private String defaultLanguage;
 
 }

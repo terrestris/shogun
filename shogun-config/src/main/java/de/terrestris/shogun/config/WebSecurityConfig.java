@@ -16,7 +16,10 @@
  */
 package de.terrestris.shogun.config;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 public interface WebSecurityConfig {
@@ -27,9 +30,14 @@ public interface WebSecurityConfig {
         return refererHeader != null && refererHeader.endsWith("swagger-ui/index.html");
     };
 
-    default void configure(HttpSecurity http) throws Exception {
-        customHttpConfiguration(http);
+    @Bean
+    @ConditionalOnMissingBean
+    default SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        configure(http);
+        return http.getOrBuild();
     }
+
+    void configure(HttpSecurity http) throws Exception;
 
     void customHttpConfiguration(HttpSecurity http) throws Exception;
 

@@ -17,6 +17,10 @@
 package de.terrestris.shogun.lib.model.security.permission;
 
 import de.terrestris.shogun.lib.model.Group;
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.Cache;
@@ -25,10 +29,6 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.envers.AuditTable;
 import org.hibernate.envers.Audited;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity(name = "groupclasspermissions")

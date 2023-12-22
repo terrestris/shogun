@@ -21,20 +21,20 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.terrestris.shogun.lib.annotation.JsonSuperType;
 import de.terrestris.shogun.lib.model.jsonb.LayerClientConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 @Data
 @JsonDeserialize(as = DefaultLayerClientConfig.class)
 @JsonSuperType(type = LayerClientConfig.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@ToString
-@EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor
 public class DefaultLayerClientConfig implements LayerClientConfig {
+
     @Schema(
         description = "The minimum resolution of the layer (at what resolution/zoom level the layer should become visible).",
         example = "305.74811309814453"
@@ -67,12 +67,22 @@ public class DefaultLayerClientConfig implements LayerClientConfig {
     @Schema(
         description = "The search configuration."
     )
-    private Map<String, Object> searchConfig;
+    private SearchConfig searchConfig;
 
     @Schema(
-        description = "The property configuration."
+        description = "The shared property configuration that should be used application wide."
     )
     private ArrayList<DefaultLayerPropertyConfig> propertyConfig;
+
+    @Schema(
+        description = "The configuration for the feature info form/view."
+    )
+    private ArrayList<PropertyFormTabConfig<PropertyFormItemReadConfig>> featureInfoFormConfig;
+
+    @Schema(
+        description = "The configuration for the feature edit form."
+    )
+    private ArrayList<PropertyFormTabConfig<PropertyFormItemEditConfig>> editFormConfig;
 
     @Schema(
         description = "The cross Origin mode to use.",
@@ -85,5 +95,11 @@ public class DefaultLayerClientConfig implements LayerClientConfig {
         example = "1"
     )
     private Float opacity;
-}
 
+    @Schema(
+        description = "Whether the layer is editable or not.",
+        example = "true"
+    )
+    private Boolean editable;
+
+}

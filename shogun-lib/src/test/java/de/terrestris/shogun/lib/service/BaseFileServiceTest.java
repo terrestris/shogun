@@ -16,24 +16,14 @@
  */
 package de.terrestris.shogun.lib.service;
 
-import de.terrestris.shogun.properties.FileUploadProperties;
-import de.terrestris.shogun.properties.UploadProperties;
 import org.apache.tomcat.util.http.fileupload.InvalidFileNameException;
-import org.apache.tomcat.util.http.fileupload.impl.InvalidContentTypeException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BaseFileServiceTest {

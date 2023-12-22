@@ -19,31 +19,31 @@ package de.terrestris.shogun.lib.controller;
 import com.github.fge.jsonpatch.mergepatch.JsonMergePatch;
 import de.terrestris.shogun.lib.controller.security.permission.BasePermissionController;
 import de.terrestris.shogun.lib.model.BaseEntity;
-import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.service.BaseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.log4j.Log4j2;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.GenericTypeResolver;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.lang.reflect.ParameterizedType;
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.Optional;
 
 // TODO Specify and type extension of BaseService
@@ -83,14 +83,14 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
             description = "Internal Server Error: Something internal went wrong while deleting the entity"
         )
     })
-    public List<S> findAll() {
+    public Page<S> findAll(@PageableDefault(Integer.MAX_VALUE) @ParameterObject Pageable pageable) {
         log.trace("Requested to return all entities of type {}", getGenericClassName());
 
         try {
-            List<S> persistedEntities = service.findAll();
+            Page<S> persistedEntities = service.findAll(pageable);
 
             log.trace("Successfully got all entities of type {} (count: {})",
-                getGenericClassName(), persistedEntities.size());
+                getGenericClassName(), persistedEntities.getTotalElements());
 
             return persistedEntities;
         } catch (AccessDeniedException ade) {

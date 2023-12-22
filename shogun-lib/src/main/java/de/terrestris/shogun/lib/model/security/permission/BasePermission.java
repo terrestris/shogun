@@ -18,15 +18,14 @@
 package de.terrestris.shogun.lib.model.security.permission;
 
 import de.terrestris.shogun.lib.model.BaseEntity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.OneToOne;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.envers.Audited;
-
-import javax.persistence.FetchType;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.OneToOne;
 
 import java.util.Objects;
 

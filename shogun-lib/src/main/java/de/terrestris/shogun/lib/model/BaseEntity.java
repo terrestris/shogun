@@ -18,26 +18,20 @@ package de.terrestris.shogun.lib.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.envers.Audited;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
 @MappedSuperclass
 @Audited
-@TypeDefs({
-    @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
-})
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
@@ -51,8 +45,7 @@ public abstract class BaseEntity implements Serializable {
     @Getter
     @Schema(
         description = "The ID of the entity.",
-        accessMode = Schema.AccessMode.READ_ONLY,
-        readOnly = true
+        accessMode = Schema.AccessMode.READ_ONLY
     )
     private Long id;
 
@@ -61,8 +54,7 @@ public abstract class BaseEntity implements Serializable {
     @Getter @Setter
     @Schema(
         description = "The timestamp of creation.",
-        accessMode = Schema.AccessMode.READ_ONLY,
-        readOnly = true
+        accessMode = Schema.AccessMode.READ_ONLY
     )
     private OffsetDateTime created;
 
@@ -71,8 +63,7 @@ public abstract class BaseEntity implements Serializable {
     @Getter @Setter
     @Schema(
         description = "The timestamp of the last modification.",
-        accessMode = Schema.AccessMode.READ_ONLY,
-        readOnly = true
+        accessMode = Schema.AccessMode.READ_ONLY
     )
     private OffsetDateTime modified;
 

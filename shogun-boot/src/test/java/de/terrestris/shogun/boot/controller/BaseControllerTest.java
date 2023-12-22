@@ -225,8 +225,9 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
             )
             .andExpect(MockMvcResultMatchers.status().isOk())
             .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$").isArray())
-            .andExpect(jsonPath("$", hasSize(0)));
+            .andExpect(jsonPath("$").isMap())
+            .andExpect(jsonPath("$.content").isArray())
+            .andExpect(jsonPath("$.content", hasSize(0)));
     }
 
     @Test
@@ -242,8 +243,27 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
             )
             .andExpect(MockMvcResultMatchers.status().isOk())
             .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$").isArray())
-            .andExpect(jsonPath("$", hasSize(1)));
+            .andExpect(jsonPath("$").isMap())
+            .andExpect(jsonPath("$.content").isArray())
+            .andExpect(jsonPath("$.content", hasSize(1)));
+    }
+
+    @Test
+    public void findAll_shouldReturnAllAvailableEntitiesWithUserClassPermissions() throws Exception {
+
+        userClassPermissionService.setPermission(entityClass, this.user, PermissionCollectionType.READ);
+
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .get(basePath)
+                    .with(authentication(getMockAuthentication(this.user)))
+            )
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$").isMap())
+            .andExpect(jsonPath("$.content").isArray())
+            .andExpect(jsonPath("$.content", hasSize(testData.size())));
     }
 
     @Test
@@ -256,8 +276,9 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
             )
             .andExpect(MockMvcResultMatchers.status().isOk())
             .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$").isArray())
-            .andExpect(jsonPath("$", hasSize(testData.size())));
+            .andExpect(jsonPath("$").isMap())
+            .andExpect(jsonPath("$.content").isArray())
+            .andExpect(jsonPath("$.content", hasSize(testData.size())));
     }
 
     @Test

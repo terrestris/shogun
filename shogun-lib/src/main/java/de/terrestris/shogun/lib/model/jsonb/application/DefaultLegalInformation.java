@@ -16,16 +16,18 @@
  */
 package de.terrestris.shogun.lib.model.jsonb.application;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 @Data
-@ToString
-@EqualsAndHashCode
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@NoArgsConstructor
+@AllArgsConstructor
 public class DefaultLegalInformation implements Serializable {
 
     @Schema(
@@ -42,4 +44,5 @@ public class DefaultLegalInformation implements Serializable {
         description = "URL to data privacy."
     )
     private String privacy;
+
 }

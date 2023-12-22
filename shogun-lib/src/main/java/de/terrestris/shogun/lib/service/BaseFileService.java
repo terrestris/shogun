@@ -21,12 +21,11 @@ import de.terrestris.shogun.lib.repository.BaseFileRepository;
 import de.terrestris.shogun.properties.UploadProperties;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.FileUtils;
-import org.apache.tika.config.TikaConfig;
-import org.apache.tika.exception.TikaException;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.tika.Tika;
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.metadata.TikaCoreProperties;
-import org.apache.tika.mime.MediaType;
 import org.apache.tomcat.util.http.fileupload.InvalidFileNameException;
 import org.apache.tomcat.util.http.fileupload.impl.InvalidContentTypeException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,21 +65,23 @@ public abstract class BaseFileService<T extends BaseFileRepository<S, Long> & Jp
         this.verifyContentType(file);
     }
 
-    public void verifyContentType(MultipartFile file) throws IOException, TikaException {
+    public void verifyContentType(MultipartFile file) throws IOException {
         String contentType = file.getContentType();
         String name = file.getName();
         Metadata metadata = new Metadata();
         metadata.set(TikaCoreProperties.RESOURCE_NAME_KEY, name);
-        TikaConfig tika = new TikaConfig();
-        MediaType mediaType = tika.getDetector().detect(TikaInputStream.get(file.getBytes()), metadata);
-        if (!mediaType.toString().equals(contentType)) {
-            throw new IOException("Mediatype validation failed. Passed content type is " + contentType + " but detected mediatype is " + mediaType);
+
+        Tika tika = new Tika();
+        String detectedMediaType = tika.detect(TikaInputStream.get(file.getBytes()), metadata);
+
+        if (!StringUtils.equalsIgnoreCase(detectedMediaType, contentType)) {
+            throw new IOException("Media type validation failed. Passed content type is " + contentType + " but detected media type is " + detectedMediaType);
         }
     }
 
     public void isValidType(String contentType) throws InvalidContentTypeException {
         List<String> supportedContentTypes = getSupportedContentTypes();
-        boolean isMatch = PatternMatchUtils.simpleMatch(supportedContentTypes.toArray(new String[supportedContentTypes.size()]), contentType);
+        boolean isMatch = PatternMatchUtils.simpleMatch(supportedContentTypes.toArray(new String[0]), contentType);
         if (!isMatch) {
             log.warn("Unsupported content type {} for upload", contentType);
             throw new InvalidContentTypeException("Unsupported content type for upload!");
@@ -90,7 +91,7 @@ public abstract class BaseFileService<T extends BaseFileRepository<S, Long> & Jp
     public void isValidFileName(String fileName) throws InvalidFileNameException {
         List<String> illegalCharacters = Arrays.asList("\\", "/", ":", "*", "?", "\"", "<", ">", "|", "\\0", "\\n");
         if (illegalCharacters.stream().anyMatch(fileName::contains)) {
-            throw new InvalidFileNameException(fileName, "Filename contains illegal chracters. [\\, /, :, *, ?, \", <, >, |, \\0, \\n]");
+            throw new InvalidFileNameException(fileName, "Filename contains illegal characters. [\\, /, :, *, ?, \", <, >, |, \\0, \\n]");
         }
     }
 

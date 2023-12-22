@@ -22,7 +22,7 @@
   <parent>
     <groupId>de.terrestris</groupId>
     <artifactId>shogun</artifactId>
-    <version>16.2.1-SNAPSHOT</version>
+    <version>18.0.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>shogun-boot</artifactId>
@@ -68,6 +68,10 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-validation</artifactId>
+    </dependency>
 
     <!-- Spring -->
     <dependency>
@@ -77,6 +81,10 @@
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-test</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-data</artifactId>
     </dependency>
 
     <!-- Database driver -->
@@ -93,8 +101,8 @@
 
     <!-- Hibernate -->
     <dependency>
-      <groupId>com.vladmihalcea</groupId>
-      <artifactId>hibernate-types-52</artifactId>
+      <groupId>io.hypersistence</groupId>
+      <artifactId>hypersistence-utils-hibernate-62</artifactId>
     </dependency>
 
     <!-- Lombok -->
@@ -106,7 +114,7 @@
     <!-- Swagger -->
     <dependency>
       <groupId>org.springdoc</groupId>
-      <artifactId>springdoc-openapi-ui</artifactId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
     </dependency>
 
     <!-- GeoServer Manager-->
@@ -152,7 +160,6 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
-          <fork>true</fork>
           <skip>false</skip>
         </configuration>
       </plugin>
@@ -172,11 +179,26 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>pl.project13.maven</groupId>
-        <artifactId>git-commit-id-plugin</artifactId>
+        <groupId>io.github.git-commit-id</groupId>
+        <artifactId>git-commit-id-maven-plugin</artifactId>
+        <version>${git-commit-id-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>get-the-git-infos</id>
+            <goals>
+              <goal>revision</goal>
+            </goals>
+            <phase>initialize</phase>
+          </execution>
+        </executions>
         <configuration>
-          <offline>true</offline>
-          <abbrevLength>8</abbrevLength>
+          <generateGitPropertiesFile>true</generateGitPropertiesFile>
+          <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
+          <includeOnlyProperties>
+            <includeOnlyProperty>^git.build.(time|version)$</includeOnlyProperty>
+            <includeOnlyProperty>^git.commit.id.(abbrev|full)$</includeOnlyProperty>
+          </includeOnlyProperties>
+          <commitIdGenerationMode>full</commitIdGenerationMode>
         </configuration>
       </plugin>
       <plugin>

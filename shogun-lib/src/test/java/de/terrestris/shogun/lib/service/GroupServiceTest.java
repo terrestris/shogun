@@ -29,7 +29,6 @@ import org.mockito.Mock;
 
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 public class GroupServiceTest extends BaseServiceTest<GroupService, Group> {

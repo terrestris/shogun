@@ -18,22 +18,22 @@ package de.terrestris.shogun.lib.model.jsonb.layer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@ToString
-@EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor
 public class DefaultLayerPropertyConfig implements Serializable {
 
     @Schema(
         description = "The name of the property.",
-        example = "description",
-        required = true
+        example = "name",
+        requiredMode = Schema.RequiredMode.REQUIRED
     )
     private String propertyName;
 
@@ -43,10 +43,4 @@ public class DefaultLayerPropertyConfig implements Serializable {
     )
     private String displayName;
 
-    @Schema(
-        description = "Whether the attribute should be shown or not.",
-        example = "true"
-    )
-    private boolean visible = true;
 }
-

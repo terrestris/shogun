@@ -17,45 +17,46 @@
 package de.terrestris.shogun.lib.util;
 
 import de.terrestris.shogun.lib.dto.HttpResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Part;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.*;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.Credentials;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.AuthCache;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.*;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.ByteArrayBody;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.impl.auth.BasicScheme;
-import org.apache.http.impl.client.BasicAuthCache;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.auth.AuthCache;
+import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.Credentials;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.classic.methods.*;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
+import org.apache.hc.client5.http.entity.mime.ByteArrayBody;
+import org.apache.hc.client5.http.entity.mime.FileBody;
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
+import org.apache.hc.client5.http.impl.auth.BasicAuthCache;
+import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
+import org.apache.hc.client5.http.impl.auth.BasicScheme;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.protocol.HttpClientContext;
+import org.apache.hc.core5.http.*;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.message.BasicHeader;
+import org.apache.hc.core5.net.URIBuilder;
+import org.apache.hc.core5.util.Timeout;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.Part;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Log4j2
@@ -174,7 +175,7 @@ public class HttpUtil {
      * @throws URISyntaxException
      */
     public static HttpResponse get(String url, String username, String password) throws URISyntaxException, HttpException {
-        return send(new HttpGet(url), new UsernamePasswordCredentials(username, password), null);
+        return send(new HttpGet(url), new UsernamePasswordCredentials(username, password.toCharArray()), null);
     }
 
     /**
@@ -189,7 +190,7 @@ public class HttpUtil {
      */
     public static HttpResponse get(String url, String username, String password, Header[] requestHeaders)
         throws URISyntaxException, HttpException {
-        return send(new HttpGet(url), new UsernamePasswordCredentials(username, password), requestHeaders);
+        return send(new HttpGet(url), new UsernamePasswordCredentials(username, password.toCharArray()), requestHeaders);
     }
 
     /**
@@ -232,7 +233,7 @@ public class HttpUtil {
      */
     public static HttpResponse get(URI uri, String username, String password)
         throws URISyntaxException, HttpException {
-        return send(new HttpGet(uri), new UsernamePasswordCredentials(username, password), null);
+        return send(new HttpGet(uri), new UsernamePasswordCredentials(username, password.toCharArray()), null);
     }
 
     /**
@@ -249,7 +250,7 @@ public class HttpUtil {
      */
     public static HttpResponse get(URI uri, String username, String password, Header[] requestHeaders)
         throws URISyntaxException, HttpException {
-        return send(new HttpGet(uri), new UsernamePasswordCredentials(username, password), requestHeaders);
+        return send(new HttpGet(uri), new UsernamePasswordCredentials(username, password.toCharArray()), requestHeaders);
     }
 
     /**
@@ -348,7 +349,7 @@ public class HttpUtil {
      */
     public static HttpResponse post(String url, String password, String username)
         throws URISyntaxException, UnsupportedEncodingException, HttpException {
-        return postParams(new HttpPost(url), new ArrayList<NameValuePair>(), new UsernamePasswordCredentials(username, password), null);
+        return postParams(new HttpPost(url), new ArrayList<NameValuePair>(), new UsernamePasswordCredentials(username, password.toCharArray()), null);
     }
 
     /**
@@ -366,7 +367,7 @@ public class HttpUtil {
      */
     public static HttpResponse post(String url, String password, String username, Header[] requestHeaders)
         throws URISyntaxException, UnsupportedEncodingException, HttpException {
-        return postParams(new HttpPost(url), new ArrayList<NameValuePair>(), new UsernamePasswordCredentials(username, password), requestHeaders);
+        return postParams(new HttpPost(url), new ArrayList<NameValuePair>(), new UsernamePasswordCredentials(username, password.toCharArray()), requestHeaders);
     }
 
     /**
@@ -445,7 +446,7 @@ public class HttpUtil {
      */
     public static HttpResponse post(URI uri, String username, String password)
         throws URISyntaxException, UnsupportedEncodingException, HttpException {
-        return postParams(new HttpPost(uri), new ArrayList<NameValuePair>(), new UsernamePasswordCredentials(username, password), null);
+        return postParams(new HttpPost(uri), new ArrayList<NameValuePair>(), new UsernamePasswordCredentials(username, password.toCharArray()), null);
     }
 
     /**
@@ -463,7 +464,7 @@ public class HttpUtil {
      */
     public static HttpResponse post(URI uri, String username, String password, Header[] requestHeaders)
         throws URISyntaxException, UnsupportedEncodingException, HttpException {
-        return postParams(new HttpPost(uri), new ArrayList<NameValuePair>(), new UsernamePasswordCredentials(username, password), requestHeaders);
+        return postParams(new HttpPost(uri), new ArrayList<NameValuePair>(), new UsernamePasswordCredentials(username, password.toCharArray()), requestHeaders);
     }
 
     /**
@@ -545,7 +546,7 @@ public class HttpUtil {
      */
     public static HttpResponse post(String url, List<NameValuePair> queryParams, String username, String password) throws URISyntaxException,
         UnsupportedEncodingException, HttpException {
-        return postParams(new HttpPost(url), queryParams, new UsernamePasswordCredentials(username, password), null);
+        return postParams(new HttpPost(url), queryParams, new UsernamePasswordCredentials(username, password.toCharArray()), null);
     }
 
     /**
@@ -564,7 +565,7 @@ public class HttpUtil {
      */
     public static HttpResponse post(String url, List<NameValuePair> queryParams, String username, String password, Header[] requestHeaders) throws URISyntaxException,
         UnsupportedEncodingException, HttpException {
-        return postParams(new HttpPost(url), queryParams, new UsernamePasswordCredentials(username, password), requestHeaders);
+        return postParams(new HttpPost(url), queryParams, new UsernamePasswordCredentials(username, password.toCharArray()), requestHeaders);
     }
 
     /**
@@ -646,7 +647,7 @@ public class HttpUtil {
      */
     public static HttpResponse post(URI uri, List<NameValuePair> queryParams, String username, String password) throws URISyntaxException,
         UnsupportedEncodingException, HttpException {
-        return postParams(new HttpPost(uri), queryParams, new UsernamePasswordCredentials(username, password), null);
+        return postParams(new HttpPost(uri), queryParams, new UsernamePasswordCredentials(username, password.toCharArray()), null);
     }
 
     /**
@@ -665,7 +666,7 @@ public class HttpUtil {
      */
     public static HttpResponse post(URI uri, List<NameValuePair> queryParams, String username, String password, Header[] requestHeaders) throws URISyntaxException,
         UnsupportedEncodingException, HttpException {
-        return postParams(new HttpPost(uri), queryParams, new UsernamePasswordCredentials(username, password), requestHeaders);
+        return postParams(new HttpPost(uri), queryParams, new UsernamePasswordCredentials(username, password.toCharArray()), requestHeaders);
     }
 
     /**
@@ -751,7 +752,7 @@ public class HttpUtil {
                                     ContentType contentType, String username, String password, boolean chunked) throws
         URISyntaxException, HttpException {
         return postBody(new HttpPost(url), body, contentType,
-            new UsernamePasswordCredentials(username, password), null, chunked);
+            new UsernamePasswordCredentials(username, password.toCharArray()), null, chunked);
     }
 
     /**
@@ -772,7 +773,7 @@ public class HttpUtil {
                                     ContentType contentType, String username, String password, Header[] requestHeaders, boolean chunked)
         throws URISyntaxException, HttpException {
         return postBody(new HttpPost(url), body, contentType,
-            new UsernamePasswordCredentials(username, password), requestHeaders, chunked);
+            new UsernamePasswordCredentials(username, password.toCharArray()), requestHeaders, chunked);
     }
 
     /**
@@ -857,7 +858,7 @@ public class HttpUtil {
     public static HttpResponse post(URI uri, String body,
                                     ContentType contentType, String username, String password, boolean chunked) throws URISyntaxException, HttpException {
         return postBody(new HttpPost(uri), body, contentType,
-            new UsernamePasswordCredentials(username, password), null, chunked);
+            new UsernamePasswordCredentials(username, password.toCharArray()), null, chunked);
     }
 
     /**
@@ -878,7 +879,7 @@ public class HttpUtil {
                                     ContentType contentType, String username, String password, Header[] requestHeaders, boolean chunked)
         throws URISyntaxException, HttpException {
         return postBody(new HttpPost(uri), body, contentType,
-            new UsernamePasswordCredentials(username, password), requestHeaders, chunked);
+            new UsernamePasswordCredentials(username, password.toCharArray()), requestHeaders, chunked);
     }
 
     /**
@@ -956,7 +957,7 @@ public class HttpUtil {
      * @throws HttpException
      */
     public static HttpResponse post(String url, File file, String username, String password) throws URISyntaxException, HttpException {
-        return postMultiPart(new HttpPost(url), new FileBody(file), new UsernamePasswordCredentials(username, password), null);
+        return postMultiPart(new HttpPost(url), new FileBody(file), new UsernamePasswordCredentials(username, password.toCharArray()), null);
     }
 
     /**
@@ -973,7 +974,7 @@ public class HttpUtil {
      * @throws HttpException
      */
     public static HttpResponse post(String url, File file, String username, String password, Header[] requestHeaders) throws URISyntaxException, HttpException {
-        return postMultiPart(new HttpPost(url), new FileBody(file), new UsernamePasswordCredentials(username, password), requestHeaders);
+        return postMultiPart(new HttpPost(url), new FileBody(file), new UsernamePasswordCredentials(username, password.toCharArray()), requestHeaders);
     }
 
     /**
@@ -1047,7 +1048,7 @@ public class HttpUtil {
      * @throws HttpException
      */
     public static HttpResponse post(URI uri, File file, String username, String password) throws URISyntaxException, HttpException {
-        return postMultiPart(new HttpPost(uri), new FileBody(file), new UsernamePasswordCredentials(username, password), null);
+        return postMultiPart(new HttpPost(uri), new FileBody(file), new UsernamePasswordCredentials(username, password.toCharArray()), null);
     }
 
     /**
@@ -1064,7 +1065,7 @@ public class HttpUtil {
      * @throws HttpException
      */
     public static HttpResponse post(URI uri, File file, String username, String password, Header[] requestHeaders) throws URISyntaxException, HttpException {
-        return postMultiPart(new HttpPost(uri), new FileBody(file), new UsernamePasswordCredentials(username, password), requestHeaders);
+        return postMultiPart(new HttpPost(uri), new FileBody(file), new UsernamePasswordCredentials(username, password.toCharArray()), requestHeaders);
     }
 
     /**
@@ -1205,8 +1206,7 @@ public class HttpUtil {
                                          ContentType contentType, Credentials credentials, Header[] requestHeaders, boolean chunked)
         throws URISyntaxException, HttpException {
 
-        StringEntity stringEntity = new StringEntity(body, contentType);
-        stringEntity.setChunked(chunked);
+        StringEntity stringEntity = new StringEntity(body, contentType, chunked);
         httpRequest.setEntity(stringEntity);
 
         return send(httpRequest, credentials, requestHeaders);
@@ -1226,7 +1226,7 @@ public class HttpUtil {
         throws URISyntaxException, UnsupportedEncodingException, HttpException {
 
         if (!queryParams.isEmpty()) {
-            HttpEntity httpEntity = new UrlEncodedFormEntity(queryParams, "UTF-8");
+            HttpEntity httpEntity = new UrlEncodedFormEntity(queryParams, StandardCharsets.UTF_8);
             httpRequest.setEntity(httpEntity);
         }
 
@@ -1338,7 +1338,7 @@ public class HttpUtil {
      * @throws HttpException
      */
     public static HttpResponse put(URI uri, String username, String password, boolean chunked) throws URISyntaxException, HttpException {
-        return putBody(new HttpPut(uri), null, null, new UsernamePasswordCredentials(username, password), null, chunked);
+        return putBody(new HttpPut(uri), null, null, new UsernamePasswordCredentials(username, password.toCharArray()), null, chunked);
     }
 
     /**
@@ -1354,7 +1354,7 @@ public class HttpUtil {
      * @throws HttpException
      */
     public static HttpResponse put(URI uri, String username, String password, Header[] requestHeaders, boolean chunked) throws URISyntaxException, HttpException {
-        return putBody(new HttpPut(uri), null, null, new UsernamePasswordCredentials(username, password), requestHeaders, chunked);
+        return putBody(new HttpPut(uri), null, null, new UsernamePasswordCredentials(username, password.toCharArray()), requestHeaders, chunked);
     }
 
     /**
@@ -1395,7 +1395,7 @@ public class HttpUtil {
      * @throws URISyntaxException
      */
     public static HttpResponse put(String uriString, String username, String password, boolean chunked) throws URISyntaxException, HttpException {
-        return putBody(new HttpPut(uriString), null, null, new UsernamePasswordCredentials(username, password), null, chunked);
+        return putBody(new HttpPut(uriString), null, null, new UsernamePasswordCredentials(username, password.toCharArray()), null, chunked);
     }
 
     /**
@@ -1410,7 +1410,7 @@ public class HttpUtil {
      * @throws URISyntaxException
      */
     public static HttpResponse put(String uriString, String username, String password, Header[] requestHeaders, boolean chunked) throws URISyntaxException, HttpException {
-        return putBody(new HttpPut(uriString), null, null, new UsernamePasswordCredentials(username, password), requestHeaders, chunked);
+        return putBody(new HttpPut(uriString), null, null, new UsernamePasswordCredentials(username, password.toCharArray()), requestHeaders, chunked);
     }
 
     /**
@@ -1484,7 +1484,7 @@ public class HttpUtil {
      * @throws HttpException
      */
     public static HttpResponse put(String uriString, String body, ContentType contentType, String username, String password, boolean chunked) throws URISyntaxException, HttpException {
-        return putBody(new HttpPut(uriString), body, contentType, new UsernamePasswordCredentials(username, password), null, chunked);
+        return putBody(new HttpPut(uriString), body, contentType, new UsernamePasswordCredentials(username, password.toCharArray()), null, chunked);
     }
 
     /**
@@ -1501,7 +1501,7 @@ public class HttpUtil {
      * @throws HttpException
      */
     public static HttpResponse put(String uriString, String body, ContentType contentType, String username, String password, Header[] requestHeaders, boolean chunked) throws URISyntaxException, HttpException {
-        return putBody(new HttpPut(uriString), body, contentType, new UsernamePasswordCredentials(username, password), requestHeaders, chunked);
+        return putBody(new HttpPut(uriString), body, contentType, new UsernamePasswordCredentials(username, password.toCharArray()), requestHeaders, chunked);
     }
 
     /**
@@ -1579,7 +1579,7 @@ public class HttpUtil {
      * @throws HttpException
      */
     public static HttpResponse put(URI uri, String body, ContentType contentType, String username, String password, boolean chunked) throws URISyntaxException, HttpException {
-        return putBody(new HttpPut(uri), body, contentType, new UsernamePasswordCredentials(username, password), null, chunked);
+        return putBody(new HttpPut(uri), body, contentType, new UsernamePasswordCredentials(username, password.toCharArray()), null, chunked);
     }
 
     /**
@@ -1596,7 +1596,7 @@ public class HttpUtil {
      * @throws HttpException
      */
     public static HttpResponse put(URI uri, String body, ContentType contentType, String username, String password, Header[] requestHeaders, boolean chunked) throws URISyntaxException, HttpException {
-        return putBody(new HttpPut(uri), body, contentType, new UsernamePasswordCredentials(username, password), requestHeaders, chunked);
+        return putBody(new HttpPut(uri), body, contentType, new UsernamePasswordCredentials(username, password.toCharArray()), requestHeaders, chunked);
     }
 
     /**
@@ -1667,7 +1667,7 @@ public class HttpUtil {
      */
     public static HttpResponse delete(String url, String username, String password)
         throws URISyntaxException, HttpException {
-        return send(new HttpDelete(url), new UsernamePasswordCredentials(username, password), null);
+        return send(new HttpDelete(url), new UsernamePasswordCredentials(username, password.toCharArray()), null);
     }
 
     /**
@@ -1683,7 +1683,7 @@ public class HttpUtil {
      */
     public static HttpResponse delete(String url, String username, String password, Header[] requestHeaders)
         throws URISyntaxException, HttpException {
-        return send(new HttpDelete(url), new UsernamePasswordCredentials(username, password), requestHeaders);
+        return send(new HttpDelete(url), new UsernamePasswordCredentials(username, password.toCharArray()), requestHeaders);
     }
 
     /**
@@ -1752,7 +1752,7 @@ public class HttpUtil {
      * @throws HttpException
      */
     public static HttpResponse delete(URI uri, String username, String password) throws URISyntaxException, HttpException {
-        return send(new HttpDelete(uri), new UsernamePasswordCredentials(username, password), null);
+        return send(new HttpDelete(uri), new UsernamePasswordCredentials(username, password.toCharArray()), null);
     }
 
     /**
@@ -1768,7 +1768,7 @@ public class HttpUtil {
      * @throws HttpException
      */
     public static HttpResponse delete(URI uri, String username, String password, Header[] requestHeaders) throws URISyntaxException, HttpException {
-        return send(new HttpDelete(uri), new UsernamePasswordCredentials(username, password), requestHeaders);
+        return send(new HttpDelete(uri), new UsernamePasswordCredentials(username, password.toCharArray()), requestHeaders);
     }
 
     /**
@@ -1817,8 +1817,7 @@ public class HttpUtil {
                                         boolean chunked) throws URISyntaxException, HttpException {
 
         if (contentType != null && !StringUtils.isEmpty(body)) {
-            StringEntity stringEntity = new StringEntity(body, contentType);
-            stringEntity.setChunked(chunked);
+            StringEntity stringEntity = new StringEntity(body, contentType, chunked);
             httpRequest.setEntity(stringEntity);
         }
 
@@ -1834,15 +1833,16 @@ public class HttpUtil {
      * @param requestHeaders Additional HTTP headers added to the request
      * @return The HTTP response as Response object.
      * @throws HttpException
+     * @throws URISyntaxException
      */
-    private static HttpResponse send(HttpRequestBase httpRequest, Credentials credentials,
-                                     Header[] requestHeaders) throws HttpException {
+    private static HttpResponse send(HttpUriRequestBase httpRequest, Credentials credentials,
+                                     Header[] requestHeaders) throws HttpException, URISyntaxException {
 
         CloseableHttpClient httpClient = null;
         CloseableHttpResponse httpResponse = null;
         HttpResponse response = new HttpResponse();
         HttpClientContext httpContext = HttpClientContext.create();
-        URI uri = httpRequest.getURI();
+        URI uri = httpRequest.getUri();
 
         HttpHost systemProxy = null;
         AuthScope proxyAuthScope = null;
@@ -1872,7 +1872,7 @@ public class HttpUtil {
 
                     if (!StringUtils.isEmpty(httpProxyUser) && !StringUtils.isEmpty(httpProxyPassword)) {
                         log.debug("Using proxy user and password for the http proxy " + proxyHostName);
-                        proxyCredentials = new UsernamePasswordCredentials(httpProxyUser, httpProxyPassword);
+                        proxyCredentials = new UsernamePasswordCredentials(httpProxyUser, httpProxyPassword.toCharArray());
                     }
 
                 } else if (StringUtils.equalsIgnoreCase(uriScheme, "https")) {
@@ -1880,7 +1880,7 @@ public class HttpUtil {
 
                     if (!StringUtils.isEmpty(httpsProxyUser) && !StringUtils.isEmpty(httpsProxyPassword)) {
                         log.debug("Using proxy user and password for the https proxy " + proxyHostName);
-                        proxyCredentials = new UsernamePasswordCredentials(httpsProxyUser, httpsProxyPassword);
+                        proxyCredentials = new UsernamePasswordCredentials(httpsProxyUser, httpsProxyPassword.toCharArray());
                     }
                 }
             }
@@ -1888,11 +1888,12 @@ public class HttpUtil {
             log.error("Error while detecting system wide proxy: " + e.getMessage());
         }
 
-        // set the request configuration that will passed to the httpRequest
+
+        // set the request configuration that will be passed to the httpRequest
         RequestConfig requestConfig = RequestConfig.custom()
-            .setConnectionRequestTimeout(httpTimeout)
-            .setConnectTimeout(httpTimeout)
-            .setSocketTimeout(httpTimeout)
+            .setConnectionRequestTimeout(Timeout.ofMilliseconds(httpTimeout))
+            .setConnectTimeout(Timeout.ofMilliseconds(httpTimeout))
+            .setResponseTimeout(Timeout.ofMilliseconds(httpTimeout))
             .setProxy(systemProxy)
             .build();
 
@@ -1900,7 +1901,7 @@ public class HttpUtil {
             // set (preemptive) authentication if credentials are given
             if (credentials != null || (proxyAuthScope != null && proxyCredentials != null)) {
 
-                CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+                BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
 
                 if (proxyAuthScope != null && proxyCredentials != null) {
                     credentialsProvider.setCredentials(
@@ -1916,8 +1917,7 @@ public class HttpUtil {
                     );
                 }
 
-                HttpHost targetHost = new HttpHost(uri.getHost(), uri.getPort(),
-                    uri.getScheme());
+                HttpHost targetHost = new HttpHost(uri.getScheme(), uri.getHost(), uri.getPort());
 
                 AuthCache authCache = new BasicAuthCache();
                 authCache.put(targetHost, new BasicScheme());
@@ -1942,11 +1942,13 @@ public class HttpUtil {
                 httpRequest.setHeaders(requestHeaders);
             }
 
+            // todo: pass additional argument HttpClientResponseHandler
             httpResponse = httpClient.execute(httpRequest, httpContext);
 
             HttpStatus httpStatus = HttpStatus.valueOf(
-                httpResponse.getStatusLine().getStatusCode());
-            Header[] headers = httpResponse.getAllHeaders();
+                httpResponse.getCode()
+            );
+            Header[] headers = httpResponse.getHeaders();
             HttpEntity httpResponseEntity = httpResponse.getEntity();
 
             response.setStatusCode(httpStatus);
@@ -2170,8 +2172,11 @@ public class HttpUtil {
                     "  * Port: " + address.getPort()
                 );
 
-                systemProxy = new HttpHost(InetAddress.getByName(address.getHostName()),
-                    address.getPort(), "http");
+                systemProxy = new HttpHost(
+                    "http",
+                    InetAddress.getByName(address.getHostName()),
+                    address.getPort()
+                );
                 break;
 
             }
@@ -2203,7 +2208,7 @@ public class HttpUtil {
 
     /**
      * Note: The value annotation is set to the setter of httpTimeout here as
-     * we can't autowire any value to its static field (but the field has to be
+     * we can't auto-wire any value to its static field (but the field has to be
      * static itself).
      *
      * @param httpTimeout the httpTimeout to set

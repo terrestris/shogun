@@ -18,7 +18,9 @@ package de.terrestris.shogun.lib.security.access.entity;
 
 import de.terrestris.shogun.lib.enumeration.PermissionType;
 import de.terrestris.shogun.lib.model.BaseEntity;
+import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.model.User;
+import de.terrestris.shogun.lib.model.security.permission.ClassPermission;
 import de.terrestris.shogun.lib.model.security.permission.GroupClassPermission;
 import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
 import de.terrestris.shogun.lib.model.security.permission.UserClassPermission;
@@ -27,15 +29,21 @@ import de.terrestris.shogun.lib.service.security.permission.GroupClassPermission
 import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionService;
 import de.terrestris.shogun.lib.service.security.permission.UserClassPermissionService;
 import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
+import de.terrestris.shogun.lib.service.security.provider.GroupProviderService;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
+import org.keycloak.representations.idm.GroupRepresentation;
+import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Log4j2
 public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implements EntityPermissionEvaluator<E> {
@@ -51,6 +59,9 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
 
     @Autowired
     protected GroupClassPermissionService groupClassPermissionService;
+
+    @Autowired
+    protected GroupProviderService<UserRepresentation, GroupRepresentation> groupProviderService;
 
     @Autowired
     protected List<BaseCrudRepository> baseCrudRepositories;
@@ -229,5 +240,85 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
         // if the group has the ADMIN permission
         return groupClassPermissions.contains(permission) ||
             groupClassPermissions.contains(PermissionType.ADMIN);
+    }
+
+    /**
+     * Default <code>findAll</code> implementation which supports pagination.
+     * Speeds up the permission check by utilizing two simplifications:
+     * 1) If the authenticated user has role `ADMIN` or has class-level permission it skips further permission checks.
+     * 2) Otherwise, user and group instance permissions are checked while querying the data. This removes the need for
+     * any additional filtering.
+     *
+     * @param user The authenticated user.
+     * @param pageable The pagination configuration.
+     * @param repository The base entity repository used to fetch the entities.
+     * @return A page of entities.
+     */
+    @Override
+    public Page<E> findAll(User user, Pageable pageable, BaseCrudRepository<E, Long> repository, Class<E> baseEntityClass) {
+        if (user == null) {
+            throw new RuntimeException("No user provided!");
+        }
+
+        // option A: user has role `ADMIN`
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        List<GrantedAuthority> authorities = new ArrayList<>(authentication.getAuthorities());
+        var isAdmin = authorities.stream().anyMatch(
+            grantedAuthority -> StringUtils.equalsIgnoreCase(grantedAuthority.getAuthority(), "ROLE_ADMIN")
+        );
+
+        if (isAdmin) {
+            return repository.findAll(pageable);
+        }
+
+        // option B: user has permission through class permissions
+        Optional<UserClassPermission> userClassPermission = userClassPermissionService.findFor(baseEntityClass, user);
+        Optional<GroupClassPermission> groupClassPermission = groupClassPermissionService.findFor(baseEntityClass, user);
+
+        if (containsReadPermission(userClassPermission.orElse(null), groupClassPermission.orElse(null))) {
+            return repository.findAll(pageable);
+        }
+
+        // option C: check instance permissions for each entity with a single query
+        List<Group<GroupRepresentation>> userGroups = groupProviderService.getGroupsForUser();
+        if (userGroups.isEmpty()) {
+            // user has no groups so only user instance permissions have to be checked
+            return repository.findAll(pageable, user.getId());
+        } else {
+            // check both user and group instance permissions
+            List<Long> groupIds = userGroups.stream()
+                .map(BaseEntity::getId)
+                .toList();
+            return repository.findAll(pageable, user.getId(), groupIds);
+        }
+    }
+
+    private boolean containsReadPermission(ClassPermission ...classPermissions) {
+        return Arrays.stream(classPermissions).anyMatch(classPermission -> {
+            if (classPermission == null) {
+                return false;
+            }
+            Set<PermissionType> permissions = classPermission.getPermission().getPermissions();
+            return permissions.contains(PermissionType.READ) ||
+                permissions.contains(PermissionType.ADMIN);
+        });
+    }
+
+    /**
+     * Returns the class of the {@link BaseEntity} this abstract class
+     * has been declared with, e.g. 'Application.class'.
+     *
+     * @return The class.
+     */
+    public Class<? extends BaseEntity> getBaseEntityClass() {
+        Class<? extends BaseEntity>[] resolvedTypeArguments = (Class<? extends BaseEntity>[]) GenericTypeResolver.resolveTypeArguments(getClass(),
+            BaseEntityPermissionEvaluator.class);
+
+        if (resolvedTypeArguments != null && resolvedTypeArguments.length == 1) {
+            return resolvedTypeArguments[0];
+        } else {
+            return null;
+        }
     }
 }
