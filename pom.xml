@@ -142,7 +142,7 @@
     <evo-inflector.version>1.3</evo-inflector.version>
 
     <!-- Logging -->
-    <log4j2.version>2.22.0</log4j2.version>
+    <log4j2.version>2.22.1</log4j2.version>
 
     <!-- Testing -->
     <testcontainers.version>1.19.3</testcontainers.version>
