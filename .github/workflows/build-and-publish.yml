@@ -8,17 +8,17 @@ jobs:
 
     steps:
     - name: Checkout sources
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
-        # Disabling shallow clone is recommended for improving relevancy of reporting
+        # Disabling shallow clone is needed for correctly determing next release with semantic release
         fetch-depth: 0
         persist-credentials: false
 
     - name: Set up Java 17
-      uses: actions/setup-java@v1.4.3
+      uses: actions/setup-java@v4
       with:
+        distribution: temurin
         java-version: 17
-        java-package: jdk
         architecture: x64
 
     - name: Restore cache
@@ -51,15 +51,15 @@ jobs:
 
     - name: Semantic release
       id: semantic
-      uses: cycjimmy/semantic-release-action@v3
+      uses: cycjimmy/semantic-release-action@v4
       with:
-        semantic_version: 19
+        semantic_version: 23
         extra_plugins: |
           @semantic-release/changelog@6
           @terrestris/maven-semantic-release@2
           @semantic-release/git@10
       env:
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Scan for unit tests
       if: steps.semantic.outputs.new_release_published == 'true'
