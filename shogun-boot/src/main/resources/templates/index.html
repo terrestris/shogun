@@ -163,7 +163,9 @@
       const appInfos = applications.map(app => ({
         id: app.id,
         name: app.name,
-        description: app.clientConfig.description
+        description: app.clientConfig && app.clientConfig.description
+          ? app.clientConfig.description
+          : ''
       }));
       const appsEl = document.querySelector('.apps');
 
