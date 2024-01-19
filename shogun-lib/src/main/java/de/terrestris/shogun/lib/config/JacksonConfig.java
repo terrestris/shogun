@@ -76,7 +76,6 @@ public class JacksonConfig implements ObjectMapperSupplier {
             objectMapper.configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false);
 
             JacksonConfig.mapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false);
-            JacksonConfig.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             JacksonConfig.mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
             JacksonConfig.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 
