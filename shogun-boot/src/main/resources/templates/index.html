@@ -204,6 +204,7 @@
       if (hasAdminRole) {
         document.querySelectorAll(".admin-btn").forEach(btn => {
           btn.style.visibility = 'visible';
+          btn.addEventListener('click', (e) => e.stopPropagation());
         });
       };
     }
