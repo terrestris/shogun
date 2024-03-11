@@ -102,7 +102,7 @@
     <jacoco-plugin.version>0.8.11</jacoco-plugin.version>
     <maven-project-info-reports-plugin.version>3.5.0</maven-project-info-reports-plugin.version>
     <jib-maven-plugin.version>3.4.1</jib-maven-plugin.version>
-    <git-commit-id-maven-plugin.version>8.0.0</git-commit-id-maven-plugin.version>
+    <git-commit-id-maven-plugin.version>8.0.1</git-commit-id-maven-plugin.version>
 
     <!-- Spring -->
     <spring-boot.version>3.1.5</spring-boot.version>
