@@ -90,11 +90,11 @@ jobs:
         working-directory: ../
 
       - name: Checkout specific commit to ensure reproducibility
-        run: git checkout 4fdcbc51fa2d20bcfb0bcafafdfdece83c863819
+        run: git checkout bd6ce1bc64caaee29fe1fb4afb2785b705d57067
         working-directory: ../shogun-docker
 
       - name: Set environment variables
-        run: ./setEnvironment.sh
+        run: ./setEnvironment.sh create -y
         working-directory: ../shogun-docker
 
       - name: Show environment variables
@@ -102,7 +102,7 @@ jobs:
         working-directory: ../shogun-docker
 
       - name: Start containers
-        run: docker-compose -f docker-compose.yml -f docker-compose-dev.yml up -d
+        run: docker compose up -d shogun-postgis shogun-boot shogun-gs-interceptor
         working-directory: ../shogun-docker
 
       - name: Inspect network
@@ -114,7 +114,7 @@ jobs:
 
       - name: Docker logs
         if: always()
-        run: docker-compose -f docker-compose.yml -f docker-compose-dev.yml logs
+        run: docker compose logs
         working-directory: ../shogun-docker
 
       - name: Maven output
