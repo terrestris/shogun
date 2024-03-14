@@ -102,7 +102,7 @@ jobs:
         working-directory: ../shogun-docker
 
       - name: Start containers
-        run: docker-compose up -d
+        run: docker-compose up -d shogun-postgis shogun-boot shogun-gs-interceptor
         working-directory: ../shogun-docker
 
       - name: Inspect network
