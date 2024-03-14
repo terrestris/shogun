@@ -102,7 +102,7 @@ jobs:
         working-directory: ../shogun-docker
 
       - name: Start containers
-        run: docker-compose -f docker-compose.yml -f docker-compose-dev.yml up -d
+        run: docker-compose up -d
         working-directory: ../shogun-docker
 
       - name: Inspect network
@@ -114,7 +114,7 @@ jobs:
 
       - name: Docker logs
         if: always()
-        run: docker-compose -f docker-compose.yml -f docker-compose-dev.yml logs
+        run: docker-compose logs
         working-directory: ../shogun-docker
 
       - name: Maven output
