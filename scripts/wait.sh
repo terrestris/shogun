@@ -14,11 +14,11 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-URL="https://localhost/"
+URL="http://$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' shogun-boot):8080/"
 TIMEOUT=360
 seconds=0
 
-echo 'Waiting up to' $TIMEOUT 'seconds for HTTP 200 from' $URL 
+echo 'Waiting up to' $TIMEOUT 'seconds for HTTP 200 from' $URL
 until [ "$seconds" -gt "$TIMEOUT" ] || $(curl --insecure --location --output /dev/null --silent --max-time $TIMEOUT --head --fail $URL); do
   sleep 5
   seconds=$((seconds+5))
