@@ -90,7 +90,7 @@ jobs:
         working-directory: ../
 
       - name: Checkout specific commit to ensure reproducibility
-        run: git checkout 4fdcbc51fa2d20bcfb0bcafafdfdece83c863819
+        run: git checkout d02a88ad9b1583b1f7c05407d944b5ff91585765
         working-directory: ../shogun-docker
 
       - name: Set environment variables
