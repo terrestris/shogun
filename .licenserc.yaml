@@ -1,4 +1,5 @@
 header:
+  spdx-id: Apache-2.0
   pattern: |
     SHOGun, https://terrestris.github.io/shogun/
 
