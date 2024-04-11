@@ -95,7 +95,7 @@
     <sonar.login>terrestris</sonar.login>
     <sonar.sources>src/main/</sonar.sources>
     <project.encoding>UTF-8</project.encoding>
-    <java.version>17</java.version>
+    <java.version>21</java.version>
 
     <!-- Plugins -->
     <maven-site-plugin.version>3.12.1</maven-site-plugin.version>
@@ -238,7 +238,7 @@
           </executions>
           <configuration>
             <from>
-              <image>eclipse-temurin:17-jdk-alpine@sha256:61bf57c1550b428c4e0e49339ff7e23964fed193b50734bf1f8854b3fd19f765</image>
+              <image>eclipse-temurin:21-jdk-alpine@sha256:8d6a992f7d6fe014f070a81a7f1f74afcd9bb7ace568773e44025819ba745174</image>
             </from>
             <to>
               <image>${image}</image>
