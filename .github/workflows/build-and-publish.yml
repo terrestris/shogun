@@ -14,15 +14,15 @@ jobs:
         fetch-depth: 0
         persist-credentials: false
 
-    - name: Set up Java 17
+    - name: Set up Java 21
       uses: actions/setup-java@v4
       with:
         distribution: temurin
-        java-version: 17
+        java-version: '21'
         architecture: x64
 
     - name: Restore cache
-      uses: actions/cache/restore@v3
+      uses: actions/cache/restore@v4
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -30,7 +30,7 @@ jobs:
           ${{ runner.os }}-maven-
 
     - name: Create maven settings.xml with credentials
-      uses: whelk-io/maven-settings-xml-action@v2
+      uses: whelk-io/maven-settings-xml-action@v22
       with:
         servers: |
           [
@@ -44,7 +44,7 @@ jobs:
       run: mvn compile --batch-mode
 
     - name: Save cache
-      uses: actions/cache/save@v3
+      uses: actions/cache/save@v4
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -70,7 +70,7 @@ jobs:
       run: mvn compile sonar:sonar --batch-mode -Dsonar.projectKey=SHOGun -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }} -Dsonar.login="${{ secrets.SONARQUBE_TOKEN }}"
 
     - name: Save cache
-      uses: actions/cache/save@v3
+      uses: actions/cache/save@v4
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}

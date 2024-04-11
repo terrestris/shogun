@@ -14,7 +14,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-FROM eclipse-temurin:17-jdk-alpine@sha256:61bf57c1550b428c4e0e49339ff7e23964fed193b50734bf1f8854b3fd19f765
+FROM eclipse-temurin:21-jdk-alpine@sha256:8d6a992f7d6fe014f070a81a7f1f74afcd9bb7ace568773e44025819ba745174
 
 WORKDIR /shogun/shogun-boot
 
