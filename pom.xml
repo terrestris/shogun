@@ -112,7 +112,7 @@
     <jakarta-mail.version>2.0.1</jakarta-mail.version>
 
     <!-- Hibernate, Jackson, JAXB etc. -->
-    <jackson-module-jakarta-xmlbind-annotations.version>2.15.3</jackson-module-jakarta-xmlbind-annotations.version>
+    <jackson-module-jakarta-xmlbind-annotations.version>2.17.0</jackson-module-jakarta-xmlbind-annotations.version>
     <jaxb.version>2.3.1</jaxb.version>
 
     <!-- Security -->
