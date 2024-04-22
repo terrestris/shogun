@@ -55,6 +55,14 @@ public class File extends BaseEntity {
     )
     private Boolean active;
 
+    @Column
+    @Getter @Setter
+    @Schema(
+        description = "Whether the file is secured or accessible for public.",
+        example = "true"
+    )
+    private Boolean publicAccess;
+
     @Column(nullable = false)
     @Getter @Setter
     @Schema(
