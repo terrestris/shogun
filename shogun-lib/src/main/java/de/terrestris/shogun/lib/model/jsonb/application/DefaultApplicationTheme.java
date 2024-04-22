@@ -50,4 +50,9 @@ public class DefaultApplicationTheme implements Serializable {
     )
     private String logoPath;
 
+    @Schema(
+        description = "The path to the favicon."
+    )
+    private String faviconPath;
+
 }
