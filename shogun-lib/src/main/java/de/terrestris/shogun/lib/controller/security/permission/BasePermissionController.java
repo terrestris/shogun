@@ -30,10 +30,7 @@ import de.terrestris.shogun.lib.model.security.permission.UserInstancePermission
 import de.terrestris.shogun.lib.service.BaseService;
 import de.terrestris.shogun.lib.service.GroupService;
 import de.terrestris.shogun.lib.service.UserService;
-import de.terrestris.shogun.lib.service.security.permission.GroupClassPermissionServiceSecured;
-import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionServiceSecured;
-import de.terrestris.shogun.lib.service.security.permission.UserClassPermissionServiceSecured;
-import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionServiceSecured;
+import de.terrestris.shogun.lib.service.security.permission.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -60,6 +57,9 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
 
     @Autowired
     protected GroupService groupService;
+
+    @Autowired
+    protected PublicEntityService publicEntityService;
 
     @Autowired
     protected UserInstancePermissionServiceSecured userInstancePermissionService;
@@ -750,6 +750,26 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
             throw rse;
         }  catch (Exception e) {
             throw new DeletePermissionException(e, messageSource);
+        }
+    }
+
+    @PostMapping("/{id}/permissions/public")
+    public void setPublic(
+        @PathVariable("id") Long entityId,
+        @RequestBody Boolean publicFlag
+    ) {
+        try {
+            Optional<S> entity = service.findOne(entityId);
+
+            if (entity.isEmpty()) {
+                throw new EntityNotFoundException(entityId, getGenericClassName(), messageSource);
+            }
+
+            publicEntityService.setPublic(entity.get(), publicFlag);
+        } catch (AccessDeniedException ade) {
+            throw new EntityAccessDeniedException(entityId, getGenericClassName(), messageSource);
+        } catch (ResponseStatusException rse) {
+            throw rse;
         }
     }
 

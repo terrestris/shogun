@@ -21,6 +21,7 @@ import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.security.access.entity.BaseEntityPermissionEvaluator;
 import de.terrestris.shogun.lib.security.access.entity.DefaultPermissionEvaluator;
+import de.terrestris.shogun.lib.service.security.permission.PublicEntityService;
 import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,12 +46,20 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
     @Autowired
     private UserProviderService userProviderService;
 
+    @Autowired
+    private PublicEntityService publicEntityService;
+
+
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject,
             Object permissionObject) {
 
         log.trace("About to evaluate permission for user '{}' targetDomainObject '{}' " +
             "and permissionObject '{}'", authentication, targetDomainObject, permissionObject);
+
+        if (hasPublicPermission(targetDomainObject)) {
+            return true;
+        }
 
         if (authentication == null) {
             log.trace("Restricting access since no authentication is available.");
@@ -164,5 +173,12 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
                 .orElse(defaultPermissionEvaluator);
 
         return entityPermissionEvaluator;
+    }
+
+    protected boolean hasPublicPermission(Object targetDomainObject) {
+        if (targetDomainObject instanceof BaseEntity) {
+            return publicEntityService.getPublic((BaseEntity) targetDomainObject);
+        }
+        return false;
     }
 }
