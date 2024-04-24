@@ -212,7 +212,7 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
                 MockMvcRequestBuilders
                     .get(basePath)
             )
-            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+            .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
@@ -288,7 +288,7 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
                 MockMvcRequestBuilders
                     .get(String.format("%s/%s", basePath, testData.get(0).getId()))
             )
-            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+            .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     @Test
@@ -348,7 +348,7 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
                     .content(objectMapper.writeValueAsString(insertNode))
                     .with(csrf())
             )
-            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+            .andExpect(MockMvcResultMatchers.status().isNotFound());
 
         List<S> persistedEntities = repository.findAll();
         assertEquals(3, persistedEntities.size());
@@ -444,7 +444,7 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
                     .content(objectMapper.writeValueAsString(updateNode))
                     .with(csrf())
             )
-            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+            .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     @Test
@@ -527,7 +527,7 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
                     .delete(String.format("%s/%s", basePath, testData.get(0).getId()))
                     .with(csrf())
             )
-            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+            .andExpect(MockMvcResultMatchers.status().isNotFound());
 
         List<S> persistedEntities = repository.findAll();
         assertEquals(3, persistedEntities.size());

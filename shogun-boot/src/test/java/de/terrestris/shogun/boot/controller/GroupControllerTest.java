@@ -16,13 +16,23 @@
  */
 package de.terrestris.shogun.boot.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.terrestris.shogun.lib.controller.GroupController;
 import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.repository.GroupRepository;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.web.servlet.server.Encoding;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import static org.junit.Assert.assertEquals;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 public class GroupControllerTest extends BaseControllerTest<GroupController, GroupRepository, Group> {
 
@@ -50,6 +60,84 @@ public class GroupControllerTest extends BaseControllerTest<GroupController, Gro
         entities.add(entity3);
 
         testData = (List<Group>) repository.saveAll(entities);
+    }
+
+    @Test
+    @Override
+    public void findOne_shouldDenyAccessForRoleAnonymous() throws Exception {
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .get(String.format("%s/%s", basePath, testData.get(0).getId()))
+            )
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    }
+
+    @Test
+    @Override
+    public void delete_shouldDenyAccessForRoleAnonymous() throws Exception {
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .delete(String.format("%s/%s", basePath, testData.get(0).getId()))
+                    .with(csrf())
+            )
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+
+        List<Group> persistedEntities = repository.findAll();
+        assertEquals(3, persistedEntities.size());
+    }
+
+    @Test
+    @Override
+    public void update_shouldDenyAccessForRoleAnonymous() throws Exception {
+        JsonNode updateNode = objectMapper.valueToTree(testData.get(0));
+        List<String> fieldsToRemove = List.of("created", "modified");
+        updateNode = ((ObjectNode) updateNode).remove(fieldsToRemove);
+
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .put(String.format("%s/%s", basePath, testData.get(0).getId()))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding(Encoding.DEFAULT_CHARSET.toString())
+                    .content(objectMapper.writeValueAsString(updateNode))
+                    .with(csrf())
+            )
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    }
+
+    @Test
+    @Override
+    public void add_shouldDenyAccessForRoleAnonymous() throws Exception {
+        JsonNode insertNode = objectMapper.valueToTree(testData.get(0));
+        List<String> fieldsToRemove = List.of("id", "created", "modified");
+        insertNode = ((ObjectNode) insertNode).remove(fieldsToRemove);
+
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .post(String.format("%s", basePath))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding(Encoding.DEFAULT_CHARSET.toString())
+                    .content(objectMapper.writeValueAsString(insertNode))
+                    .with(csrf())
+            )
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+
+        List<Group> persistedEntities = repository.findAll();
+        assertEquals(3, persistedEntities.size());
+    }
+
+    @Test
+    @Override
+    public void findAll_shouldDenyAccessForRoleAnonymous() throws Exception {
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .get(basePath)
+            )
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 
 }

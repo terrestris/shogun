@@ -25,10 +25,7 @@ import de.terrestris.shogun.lib.model.security.permission.GroupClassPermission;
 import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
 import de.terrestris.shogun.lib.model.security.permission.UserClassPermission;
 import de.terrestris.shogun.lib.repository.BaseCrudRepository;
-import de.terrestris.shogun.lib.service.security.permission.GroupClassPermissionService;
-import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionService;
-import de.terrestris.shogun.lib.service.security.permission.UserClassPermissionService;
-import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
+import de.terrestris.shogun.lib.service.security.permission.*;
 import de.terrestris.shogun.lib.service.security.provider.GroupProviderService;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
@@ -64,6 +61,9 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
     protected GroupProviderService<UserRepresentation, GroupRepresentation> groupProviderService;
 
     @Autowired
+    private PublicEntityService publicEntityService;
+
+    @Autowired
     protected List<BaseCrudRepository> baseCrudRepositories;
 
     @Override
@@ -74,6 +74,16 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
     @Override
     public boolean hasPermission(User user, E entity, PermissionType permission) {
         final String simpleClassName = entity.getClass().getSimpleName();
+
+        if (hasPublicPermission(entity)) {
+            log.trace("Granting access as entity {} is public", entity.getId());
+            return true;
+        }
+
+        if (user == null) {
+            log.trace("Restricting access since no user is available and entity {} is not public.", entity.getId());
+            return false;
+        }
 
         log.trace("Evaluating whether user with ID '{}' has permission '{}' on entity '{}' with ID {}",
             user.getId(), permission, simpleClassName, entity.getId());
@@ -303,6 +313,10 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
             return permissions.contains(PermissionType.READ) ||
                 permissions.contains(PermissionType.ADMIN);
         });
+    }
+
+    protected boolean hasPublicPermission(E entity) {
+        return publicEntityService.getPublic(entity);
     }
 
     /**
