@@ -43,7 +43,17 @@ public interface DefaultWebSecurityConfig extends WebSecurityConfig {
                     "/v3/api-docs",
                     "/v3/api-docs/swagger-config",
                     // Enable anonymous access to GraphiQL
-                    "/graphiql/**"
+                    "/graphiql/**",
+                    // Enable anonymous access to entity endpoints
+                    // will be secured via permission evaluators
+                    "/applications",
+                    "/applications/**",
+                    "/layers",
+                    "/layers/**",
+                    "/files/**",
+                    "/files",
+                    "/imagefiles/**",
+                    "/imagefiles"
                 )
                     .permitAll()
                 .requestMatchers(
