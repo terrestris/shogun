@@ -257,7 +257,7 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
     @Override
     public Page<E> findAll(User user, Pageable pageable, BaseCrudRepository<E, Long> repository, Class<E> baseEntityClass) {
         if (user == null) {
-            throw new RuntimeException("No user provided!");
+            return repository.findAll(pageable, null);
         }
 
         // option A: user has role `ADMIN`

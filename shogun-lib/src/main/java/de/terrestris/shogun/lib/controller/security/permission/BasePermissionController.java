@@ -754,9 +754,9 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
     }
 
     @PostMapping("/{id}/permissions/public")
+    @ResponseStatus(HttpStatus.OK)
     public void setPublic(
-        @PathVariable("id") Long entityId,
-        @RequestBody Boolean publicFlag
+        @PathVariable("id") Long entityId
     ) {
         try {
             Optional<S> entity = service.findOne(entityId);
@@ -765,11 +765,35 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
                 throw new EntityNotFoundException(entityId, getGenericClassName(), messageSource);
             }
 
-            publicEntityService.setPublic(entity.get(), publicFlag);
+            publicEntityService.setPublic(entity.get(), true);
         } catch (AccessDeniedException ade) {
             throw new EntityAccessDeniedException(entityId, getGenericClassName(), messageSource);
         } catch (ResponseStatusException rse) {
             throw rse;
+        }  catch (Exception e) {
+            throw new CreatePermissionException(e, messageSource);
+        }
+    }
+
+    @DeleteMapping("/{id}/permissions/public")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void revokePublic(
+        @PathVariable("id") Long entityId
+    ) {
+        try {
+            Optional<S> entity = service.findOne(entityId);
+
+            if (entity.isEmpty()) {
+                throw new EntityNotFoundException(entityId, getGenericClassName(), messageSource);
+            }
+
+            publicEntityService.setPublic(entity.get(), false);
+        } catch (AccessDeniedException ade) {
+            throw new EntityAccessDeniedException(entityId, getGenericClassName(), messageSource);
+        } catch (ResponseStatusException rse) {
+            throw rse;
+        }  catch (Exception e) {
+            throw new DeletePermissionException(e, messageSource);
         }
     }
 

@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -15,11 +16,21 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(callSuper = true)
+@EqualsAndHashCode
 public class PublicEntity implements Serializable {
 
     @Id
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy= GenerationType.SEQUENCE)
+    @Column(unique = true, nullable = false)
+    @Getter
+    @Schema(
+        description = "The ID.",
+        accessMode = Schema.AccessMode.READ_ONLY
+    )
     private Long id;
+
+    @Column(unique = true, nullable = false)
+    private Long entityId;
 
     @CreationTimestamp
     @Column(updatable = false)
@@ -29,5 +40,14 @@ public class PublicEntity implements Serializable {
         accessMode = Schema.AccessMode.READ_ONLY
     )
     private OffsetDateTime created;
+
+    @UpdateTimestamp
+    @Column
+    @Getter @Setter
+    @Schema(
+        description = "The timestamp of the last modification.",
+        accessMode = Schema.AccessMode.READ_ONLY
+    )
+    private OffsetDateTime modified;
 
 }
