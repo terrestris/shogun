@@ -348,7 +348,7 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
                     .content(objectMapper.writeValueAsString(insertNode))
                     .with(csrf())
             )
-            .andExpect(MockMvcResultMatchers.status().isNotFound());
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
 
         List<S> persistedEntities = repository.findAll();
         assertEquals(3, persistedEntities.size());
@@ -444,7 +444,7 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
                     .content(objectMapper.writeValueAsString(updateNode))
                     .with(csrf())
             )
-            .andExpect(MockMvcResultMatchers.status().isNotFound());
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 
     @Test
@@ -527,7 +527,7 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
                     .delete(String.format("%s/%s", basePath, testData.get(0).getId()))
                     .with(csrf())
             )
-            .andExpect(MockMvcResultMatchers.status().isNotFound());
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
 
         List<S> persistedEntities = repository.findAll();
         assertEquals(3, persistedEntities.size());

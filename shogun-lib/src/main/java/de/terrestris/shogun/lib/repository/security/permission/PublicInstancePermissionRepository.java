@@ -16,16 +16,16 @@
  */
 package de.terrestris.shogun.lib.repository.security.permission;
 
-import de.terrestris.shogun.lib.model.security.permission.PublicEntity;
+import de.terrestris.shogun.lib.model.security.permission.PublicInstancePermission;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface PublicEntityRepository extends CrudRepository<PublicEntity, Long> {
+public interface PublicInstancePermissionRepository extends CrudRepository<PublicInstancePermission, Long> {
     void deleteByEntityId(Long entityId);
 
-    Optional<PublicEntity> findByEntityId(Long entityId);
+    Optional<PublicInstancePermission> findByEntityId(Long entityId);
 
 }

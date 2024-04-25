@@ -25,7 +25,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 
-@Entity(name = "publicentities")
+@Entity(name = "publicinstancepermissions")
 @Table(schema = "shogun")
 @Getter
 @Setter
@@ -33,7 +33,7 @@ import java.time.OffsetDateTime;
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode
-public class PublicEntity implements Serializable {
+public class PublicInstancePermission implements Serializable {
 
     @Id
     @GeneratedValue(strategy= GenerationType.SEQUENCE)

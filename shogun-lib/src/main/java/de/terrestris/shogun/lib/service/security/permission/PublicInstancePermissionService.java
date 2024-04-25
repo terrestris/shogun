@@ -17,8 +17,8 @@
 package de.terrestris.shogun.lib.service.security.permission;
 
 import de.terrestris.shogun.lib.model.BaseEntity;
-import de.terrestris.shogun.lib.model.security.permission.PublicEntity;
-import de.terrestris.shogun.lib.repository.security.permission.PublicEntityRepository;
+import de.terrestris.shogun.lib.model.security.permission.PublicInstancePermission;
+import de.terrestris.shogun.lib.repository.security.permission.PublicInstancePermissionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -28,28 +28,28 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
-public class PublicEntityService {
+public class PublicInstancePermissionService {
 
     @Autowired
-    private PublicEntityRepository publicEntityRepository;
+    private PublicInstancePermissionRepository publicInstancePermissionRepository;
 
     @PreAuthorize("hasRole('ADMIN') or hasPermission(#entity, 'UPDATE')")
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void setPublic(BaseEntity entity, boolean isPublic) {
         if (isPublic) {
-            Optional<PublicEntity> publicOpt = publicEntityRepository.findByEntityId(entity.getId());
+            Optional<PublicInstancePermission> publicOpt = publicInstancePermissionRepository.findByEntityId(entity.getId());
             if (publicOpt.isPresent()) {
                 return;
             }
-            PublicEntity publicEntity = new PublicEntity();
-            publicEntity.setEntityId(entity.getId());
-            publicEntityRepository.save(publicEntity);
+            PublicInstancePermission publicInstancePermission = new PublicInstancePermission();
+            publicInstancePermission.setEntityId(entity.getId());
+            publicInstancePermissionRepository.save(publicInstancePermission);
         } else {
-            publicEntityRepository.deleteByEntityId(entity.getId());
+            publicInstancePermissionRepository.deleteByEntityId(entity.getId());
         }
     }
 
-    public boolean getPublic(BaseEntity entityId) {
-        return publicEntityRepository.findByEntityId(entityId.getId()).isPresent();
+    public boolean getPublic(BaseEntity entity) {
+        return publicInstancePermissionRepository.findByEntityId(entity.getId()).isPresent();
     }
 }

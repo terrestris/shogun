@@ -61,7 +61,7 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
     protected GroupProviderService<UserRepresentation, GroupRepresentation> groupProviderService;
 
     @Autowired
-    private PublicEntityService publicEntityService;
+    private PublicInstancePermissionService publicInstancePermissionService;
 
     @Autowired
     protected List<BaseCrudRepository> baseCrudRepositories;
@@ -75,7 +75,7 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
     public boolean hasPermission(User user, E entity, PermissionType permission) {
         final String simpleClassName = entity.getClass().getSimpleName();
 
-        if (hasPublicPermission(entity)) {
+        if (permission.equals(PermissionType.READ) && hasPublicPermission(entity)) {
             log.trace("Granting access as entity {} is public", entity.getId());
             return true;
         }
@@ -316,7 +316,7 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
     }
 
     protected boolean hasPublicPermission(E entity) {
-        return publicEntityService.getPublic(entity);
+        return publicInstancePermissionService.getPublic(entity);
     }
 
     /**

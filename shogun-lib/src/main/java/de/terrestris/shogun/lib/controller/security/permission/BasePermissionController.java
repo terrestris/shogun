@@ -41,6 +41,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Log4j2
@@ -59,7 +60,7 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
     protected GroupService groupService;
 
     @Autowired
-    protected PublicEntityService publicEntityService;
+    protected PublicInstancePermissionService publicInstancePermissionService;
 
     @Autowired
     protected UserInstancePermissionServiceSecured userInstancePermissionService;
@@ -753,6 +754,28 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
         }
     }
 
+    @GetMapping("/{id}/permissions/public")
+    @ResponseStatus(HttpStatus.OK)
+    public Map<String, Boolean> isPublic(
+        @PathVariable("id") Long entityId
+    ) {
+        try {
+            Optional<S> entity = service.findOne(entityId);
+
+            if (entity.isEmpty()) {
+                throw new EntityNotFoundException(entityId, getGenericClassName(), messageSource);
+            }
+
+            return Map.of("public", publicInstancePermissionService.getPublic(entity.get()));
+        } catch (AccessDeniedException ade) {
+            throw new EntityAccessDeniedException(entityId, getGenericClassName(), messageSource);
+        } catch (ResponseStatusException rse) {
+            throw rse;
+        }  catch (Exception e) {
+            throw new CreatePermissionException(e, messageSource);
+        }
+    }
+
     @PostMapping("/{id}/permissions/public")
     @ResponseStatus(HttpStatus.OK)
     public void setPublic(
@@ -765,7 +788,7 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
                 throw new EntityNotFoundException(entityId, getGenericClassName(), messageSource);
             }
 
-            publicEntityService.setPublic(entity.get(), true);
+            publicInstancePermissionService.setPublic(entity.get(), true);
         } catch (AccessDeniedException ade) {
             throw new EntityAccessDeniedException(entityId, getGenericClassName(), messageSource);
         } catch (ResponseStatusException rse) {
@@ -787,7 +810,7 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
                 throw new EntityNotFoundException(entityId, getGenericClassName(), messageSource);
             }
 
-            publicEntityService.setPublic(entity.get(), false);
+            publicInstancePermissionService.setPublic(entity.get(), false);
         } catch (AccessDeniedException ade) {
             throw new EntityAccessDeniedException(entityId, getGenericClassName(), messageSource);
         } catch (ResponseStatusException rse) {
