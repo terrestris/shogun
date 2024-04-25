@@ -301,7 +301,6 @@ public class UserControllerTest extends BaseControllerTest<UserController, UserR
     }
 
     @Test
-    @Override
     public void findAll_shouldDenyAccessForRoleAnonymous() throws Exception {
         this.mockMvc
             .perform(
@@ -310,4 +309,55 @@ public class UserControllerTest extends BaseControllerTest<UserController, UserR
             )
             .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
+
+    @Test
+    @Override
+    public void findAll_shouldReturnOnlyPublicEntitiesForRoleAnonymous() throws Exception {
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .get(basePath)
+            )
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    }
+
+    @Test
+    @Override
+    public void post_permission_public_shouldAddPublicReadPermission() throws Exception {
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .post(String.format("%s/%s/permissions/public", basePath, testData.get(0).getId()))
+                    .with(authentication(getMockAuthentication(this.adminUser)))
+                    .with(csrf())
+            )
+            .andExpect(MockMvcResultMatchers.status().isForbidden());
+    }
+
+    @Test
+    @Override
+    public void delete_permission_public_shouldRemovePublicReadPermission() throws Exception {
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .delete(String.format("%s/%s/permissions/public", basePath, testData.get(0).getId()))
+                    .with(authentication(getMockAuthentication(this.adminUser)))
+                    .with(csrf())
+            )
+            .andExpect(MockMvcResultMatchers.status().isForbidden());
+    }
+
+    @Test
+    @Override
+    public void get_permission_public_shouldReturnPublicReadPermission() throws Exception {
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .get(String.format("%s/%s/permissions/public", basePath, testData.get(0).getId()))
+                    .with(authentication(getMockAuthentication(this.adminUser)))
+                    .with(csrf())
+            )
+            .andExpect(MockMvcResultMatchers.status().isForbidden());
+    }
+
 }

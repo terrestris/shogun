@@ -31,8 +31,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 public class GroupControllerTest extends BaseControllerTest<GroupController, GroupRepository, Group> {
 
@@ -130,7 +133,6 @@ public class GroupControllerTest extends BaseControllerTest<GroupController, Gro
     }
 
     @Test
-    @Override
     public void findAll_shouldDenyAccessForRoleAnonymous() throws Exception {
         this.mockMvc
             .perform(
@@ -138,6 +140,56 @@ public class GroupControllerTest extends BaseControllerTest<GroupController, Gro
                     .get(basePath)
             )
             .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    }
+
+    @Test
+    @Override
+    public void findAll_shouldReturnOnlyPublicEntitiesForRoleAnonymous() throws Exception {
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .get(basePath)
+            )
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    }
+
+    @Test
+    @Override
+    public void post_permission_public_shouldAddPublicReadPermission() throws Exception {
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .post(String.format("%s/%s/permissions/public", basePath, testData.get(0).getId()))
+                    .with(authentication(getMockAuthentication(this.adminUser)))
+                    .with(csrf())
+            )
+            .andExpect(MockMvcResultMatchers.status().isForbidden());
+    }
+
+    @Test
+    @Override
+    public void delete_permission_public_shouldRemovePublicReadPermission() throws Exception {
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .delete(String.format("%s/%s/permissions/public", basePath, testData.get(0).getId()))
+                    .with(authentication(getMockAuthentication(this.adminUser)))
+                    .with(csrf())
+            )
+            .andExpect(MockMvcResultMatchers.status().isForbidden());
+    }
+
+    @Test
+    @Override
+    public void get_permission_public_shouldReturnPublicReadPermission() throws Exception {
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .get(String.format("%s/%s/permissions/public", basePath, testData.get(0).getId()))
+                    .with(authentication(getMockAuthentication(this.adminUser)))
+                    .with(csrf())
+            )
+            .andExpect(MockMvcResultMatchers.status().isForbidden());
     }
 
 }

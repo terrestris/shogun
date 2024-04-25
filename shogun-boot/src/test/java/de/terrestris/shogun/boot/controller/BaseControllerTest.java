@@ -29,6 +29,7 @@ import de.terrestris.shogun.lib.repository.BaseCrudRepository;
 import de.terrestris.shogun.lib.repository.UserRepository;
 import de.terrestris.shogun.lib.repository.security.permission.UserClassPermissionRepository;
 import de.terrestris.shogun.lib.repository.security.permission.UserInstancePermissionRepository;
+import de.terrestris.shogun.lib.service.security.permission.PublicInstancePermissionService;
 import de.terrestris.shogun.lib.service.security.permission.UserClassPermissionService;
 import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
 import org.junit.jupiter.api.AfterEach;
@@ -87,6 +88,9 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
 
     @Autowired
     protected UserInstancePermissionService userInstancePermissionService;
+
+    @Autowired
+    protected PublicInstancePermissionService publicInstancePermissionService;
 
     @Autowired
     protected UserClassPermissionService userClassPermissionService;
@@ -206,13 +210,20 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
     }
 
     @Test
-    public void findAll_shouldDenyAccessForRoleAnonymous() throws Exception {
+    public void findAll_shouldReturnOnlyPublicEntitiesForRoleAnonymous() throws Exception {
+
+        publicInstancePermissionService.setPublic(this.testData.get(0), true);
+
         this.mockMvc
             .perform(
                 MockMvcRequestBuilders
                     .get(basePath)
             )
-            .andExpect(MockMvcResultMatchers.status().isOk());
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$").isMap())
+            .andExpect(jsonPath("$.content").isArray())
+            .andExpect(jsonPath("$.content", hasSize(1)));
     }
 
     @Test
@@ -579,6 +590,55 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
 
         List<S> persistedEntities = repository.findAll();
         assertEquals(2, persistedEntities.size());
+    }
+
+    @Test
+    public void post_permission_public_shouldAddPublicReadPermission() throws Exception {
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .post(String.format("%s/%s/permissions/public", basePath, testData.get(0).getId()))
+                    .with(authentication(getMockAuthentication(this.adminUser)))
+                    .with(csrf())
+            )
+            .andExpect(MockMvcResultMatchers.status().isOk());
+
+        boolean isPublic = publicInstancePermissionService.getPublic(testData.get(0));
+        assertEquals(true, isPublic);
+    }
+
+    @Test
+    public void delete_permission_public_shouldRemovePublicReadPermission() throws Exception {
+        publicInstancePermissionService.setPublic(testData.get(0), true);
+
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .delete(String.format("%s/%s/permissions/public", basePath, testData.get(0).getId()))
+                    .with(authentication(getMockAuthentication(this.adminUser)))
+                    .with(csrf())
+            )
+            .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+        boolean isPublic = publicInstancePermissionService.getPublic(testData.get(0));
+        assertEquals(false, isPublic);
+    }
+
+    @Test
+    public void get_permission_public_shouldReturnPublicReadPermission() throws Exception {
+        publicInstancePermissionService.setPublic(testData.get(0), true);
+
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .get(String.format("%s/%s/permissions/public", basePath, testData.get(0).getId()))
+                    .with(authentication(getMockAuthentication(this.adminUser)))
+                    .with(csrf())
+            )
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$").exists())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.public", is(true)));
     }
 
 }
