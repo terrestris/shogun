@@ -21,12 +21,16 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.envers.AuditTable;
+import org.hibernate.envers.Audited;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 
 @Entity(name = "publicinstancepermissions")
 @Table(schema = "shogun")
+@Audited
+@AuditTable(value = "publicinstancepermissions_rev", schema = "shogun_rev")
 @Getter
 @Setter
 @AllArgsConstructor
