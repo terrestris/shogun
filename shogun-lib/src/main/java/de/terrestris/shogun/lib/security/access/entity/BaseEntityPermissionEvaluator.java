@@ -316,6 +316,11 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
     }
 
     protected boolean hasPublicPermission(E entity) {
+
+        if (entity.getClass().equals(Group.class) || entity.getClass().equals(User.class)) {
+            return false;
+        }
+
         return publicInstancePermissionService.getPublic(entity);
     }
 

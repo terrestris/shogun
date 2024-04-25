@@ -17,6 +17,8 @@
 package de.terrestris.shogun.lib.service.security.permission;
 
 import de.terrestris.shogun.lib.model.BaseEntity;
+import de.terrestris.shogun.lib.model.Group;
+import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.model.security.permission.PublicInstancePermission;
 import de.terrestris.shogun.lib.repository.security.permission.PublicInstancePermissionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,11 @@ public class PublicInstancePermissionService {
     @PreAuthorize("hasRole('ADMIN') or hasPermission(#entity, 'UPDATE')")
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void setPublic(BaseEntity entity, boolean isPublic) {
+
+        if (entity.getClass().equals(Group.class) || entity.getClass().equals(User.class)) {
+            throw new IllegalArgumentException("Public permissions are not allowed for this entity type.");
+        }
+
         if (isPublic) {
             Optional<PublicInstancePermission> publicOpt = publicInstancePermissionRepository.findByEntityId(entity.getId());
             if (publicOpt.isPresent()) {
@@ -50,6 +57,11 @@ public class PublicInstancePermissionService {
     }
 
     public boolean getPublic(BaseEntity entity) {
+
+        if (entity.getClass().equals(Group.class) || entity.getClass().equals(User.class)) {
+            throw new IllegalArgumentException("Public permissions are not allowed for this entity type.");
+        }
+
         return publicInstancePermissionRepository.findByEntityId(entity.getId()).isPresent();
     }
 }

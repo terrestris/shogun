@@ -769,6 +769,8 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
             return Map.of("public", publicInstancePermissionService.getPublic(entity.get()));
         } catch (AccessDeniedException ade) {
             throw new EntityAccessDeniedException(entityId, getGenericClassName(), messageSource);
+        } catch (IllegalArgumentException iae) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, iae.getMessage());
         } catch (ResponseStatusException rse) {
             throw rse;
         }  catch (Exception e) {
@@ -793,7 +795,9 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
             throw new EntityAccessDeniedException(entityId, getGenericClassName(), messageSource);
         } catch (ResponseStatusException rse) {
             throw rse;
-        }  catch (Exception e) {
+        }  catch (IllegalArgumentException iae) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, iae.getMessage());
+        } catch (Exception e) {
             throw new CreatePermissionException(e, messageSource);
         }
     }
@@ -815,7 +819,9 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
             throw new EntityAccessDeniedException(entityId, getGenericClassName(), messageSource);
         } catch (ResponseStatusException rse) {
             throw rse;
-        }  catch (Exception e) {
+        } catch (IllegalArgumentException iae) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, iae.getMessage());
+        } catch (Exception e) {
             throw new DeletePermissionException(e, messageSource);
         }
     }
