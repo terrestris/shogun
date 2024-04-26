@@ -774,7 +774,9 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
         } catch (ResponseStatusException rse) {
             throw rse;
         }  catch (Exception e) {
-            throw new CreatePermissionException(e, messageSource);
+            log.error("Error while checking if entity is public: {}", e.getMessage());
+            log.trace("Full stack trace: ", e);
+            throw e;
         }
     }
 
