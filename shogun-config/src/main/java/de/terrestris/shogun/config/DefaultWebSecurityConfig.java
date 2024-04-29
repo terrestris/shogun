@@ -16,6 +16,7 @@
  */
 package de.terrestris.shogun.config;
 
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
@@ -46,6 +47,20 @@ public interface DefaultWebSecurityConfig extends WebSecurityConfig {
                     "/graphiql/**"
                 )
                     .permitAll()
+                // Enable anonymous read access to entity endpoints
+                // will be secured via permission evaluators
+                .requestMatchers(
+                    HttpMethod.GET,
+                    "/applications",
+                    "/applications/*",
+                    "/layers",
+                    "/layers/*",
+                    "/files",
+                    "/files/*",
+                    "/imagefiles",
+                    "/imagefiles/*"
+                )
+                .permitAll()
                 .requestMatchers(
                     "/actuator/**",
                     "/cache/**",

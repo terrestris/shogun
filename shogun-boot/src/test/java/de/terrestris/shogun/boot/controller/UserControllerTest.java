@@ -269,4 +269,95 @@ public class UserControllerTest extends BaseControllerTest<UserController, UserR
         List<User> persistedEntities = repository.findAll();
         assertEquals(4, persistedEntities.size());
     }
+
+    @Test
+    @Override
+    public void findOne_shouldDenyAccessForRoleAnonymous() throws Exception {
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .get(String.format("%s/%s", basePath, testData.get(0).getId()))
+            )
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    }
+
+    @Test
+    @Override
+    public void update_shouldDenyAccessForRoleAnonymous() throws Exception {
+        JsonNode updateNode = objectMapper.valueToTree(testData.get(0));
+        List<String> fieldsToRemove = List.of("created", "modified");
+        updateNode = ((ObjectNode) updateNode).remove(fieldsToRemove);
+
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .put(String.format("%s/%s", basePath, testData.get(0).getId()))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding(Encoding.DEFAULT_CHARSET.toString())
+                    .content(objectMapper.writeValueAsString(updateNode))
+                    .with(csrf())
+            )
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    }
+
+    @Test
+    public void findAll_shouldDenyAccessForRoleAnonymous() throws Exception {
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .get(basePath)
+            )
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    }
+
+    @Test
+    @Override
+    public void findAll_shouldReturnOnlyPublicEntitiesForRoleAnonymous() throws Exception {
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .get(basePath)
+            )
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    }
+
+    @Test
+    @Override
+    public void post_permission_public_shouldAddPublicReadPermission() throws Exception {
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .post(String.format("%s/%s/permissions/public", basePath, testData.get(0).getId()))
+                    .with(authentication(getMockAuthentication(this.adminUser)))
+                    .with(csrf())
+            )
+            .andExpect(MockMvcResultMatchers.status().isForbidden());
+    }
+
+    @Test
+    @Override
+    public void delete_permission_public_shouldRemovePublicReadPermission() throws Exception {
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .delete(String.format("%s/%s/permissions/public", basePath, testData.get(0).getId()))
+                    .with(authentication(getMockAuthentication(this.adminUser)))
+                    .with(csrf())
+            )
+            .andExpect(MockMvcResultMatchers.status().isForbidden());
+    }
+
+    @Test
+    @Override
+    public void get_permission_public_shouldReturnPublicReadPermission() throws Exception {
+        this.mockMvc
+            .perform(
+                MockMvcRequestBuilders
+                    .get(String.format("%s/%s/permissions/public", basePath, testData.get(0).getId()))
+                    .with(authentication(getMockAuthentication(this.adminUser)))
+                    .with(csrf())
+            )
+            .andExpect(MockMvcResultMatchers.status().isForbidden());
+    }
+
 }

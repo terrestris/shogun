@@ -47,7 +47,11 @@ public interface BaseCrudRepository<T, ID> extends
      */
     @Query("""
         FROM #{#entityName} m
-        WHERE EXISTS (
+        WHERE
+        EXISTS (
+            SELECT 1 FROM publicinstancepermissions pip
+            WHERE m.id = pip.entityId
+        ) OR EXISTS (
             SELECT 1 FROM userinstancepermissions uip
             WHERE uip.user.id = :userId
             AND uip.entityId = m.id
@@ -67,7 +71,11 @@ public interface BaseCrudRepository<T, ID> extends
      */
     @Query("""
         FROM #{#entityName} m
-        WHERE EXISTS (
+        WHERE
+        EXISTS (
+            SELECT 1 FROM publicinstancepermissions pip
+            WHERE m.id = pip.entityId
+        ) OR EXISTS (
             SELECT 1 FROM userinstancepermissions uip
             WHERE uip.user.id = :userId
             AND uip.entityId = m.id

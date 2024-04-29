@@ -165,4 +165,5 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
 
         return entityPermissionEvaluator;
     }
+
 }

@@ -30,10 +30,7 @@ import de.terrestris.shogun.lib.model.security.permission.UserInstancePermission
 import de.terrestris.shogun.lib.service.BaseService;
 import de.terrestris.shogun.lib.service.GroupService;
 import de.terrestris.shogun.lib.service.UserService;
-import de.terrestris.shogun.lib.service.security.permission.GroupClassPermissionServiceSecured;
-import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionServiceSecured;
-import de.terrestris.shogun.lib.service.security.permission.UserClassPermissionServiceSecured;
-import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionServiceSecured;
+import de.terrestris.shogun.lib.service.security.permission.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -44,6 +41,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Log4j2
@@ -60,6 +58,9 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
 
     @Autowired
     protected GroupService groupService;
+
+    @Autowired
+    protected PublicInstancePermissionService publicInstancePermissionService;
 
     @Autowired
     protected UserInstancePermissionServiceSecured userInstancePermissionService;
@@ -749,6 +750,80 @@ public abstract class BasePermissionController<T extends BaseService<?, S>, S ex
         } catch (ResponseStatusException rse) {
             throw rse;
         }  catch (Exception e) {
+            throw new DeletePermissionException(e, messageSource);
+        }
+    }
+
+    @GetMapping("/{id}/permissions/public")
+    @ResponseStatus(HttpStatus.OK)
+    public Map<String, Boolean> isPublic(
+        @PathVariable("id") Long entityId
+    ) {
+        try {
+            Optional<S> entity = service.findOne(entityId);
+
+            if (entity.isEmpty()) {
+                throw new EntityNotFoundException(entityId, getGenericClassName(), messageSource);
+            }
+
+            return Map.of("public", publicInstancePermissionService.getPublic(entity.get()));
+        } catch (AccessDeniedException ade) {
+            throw new EntityAccessDeniedException(entityId, getGenericClassName(), messageSource);
+        } catch (IllegalArgumentException iae) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, iae.getMessage());
+        } catch (ResponseStatusException rse) {
+            throw rse;
+        }  catch (Exception e) {
+            log.error("Error while checking if entity is public: {}", e.getMessage());
+            log.trace("Full stack trace: ", e);
+            throw e;
+        }
+    }
+
+    @PostMapping("/{id}/permissions/public")
+    @ResponseStatus(HttpStatus.OK)
+    public void setPublic(
+        @PathVariable("id") Long entityId
+    ) {
+        try {
+            Optional<S> entity = service.findOne(entityId);
+
+            if (entity.isEmpty()) {
+                throw new EntityNotFoundException(entityId, getGenericClassName(), messageSource);
+            }
+
+            publicInstancePermissionService.setPublic(entity.get(), true);
+        } catch (AccessDeniedException ade) {
+            throw new EntityAccessDeniedException(entityId, getGenericClassName(), messageSource);
+        } catch (ResponseStatusException rse) {
+            throw rse;
+        }  catch (IllegalArgumentException iae) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, iae.getMessage());
+        } catch (Exception e) {
+            throw new CreatePermissionException(e, messageSource);
+        }
+    }
+
+    @DeleteMapping("/{id}/permissions/public")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void revokePublic(
+        @PathVariable("id") Long entityId
+    ) {
+        try {
+            Optional<S> entity = service.findOne(entityId);
+
+            if (entity.isEmpty()) {
+                throw new EntityNotFoundException(entityId, getGenericClassName(), messageSource);
+            }
+
+            publicInstancePermissionService.setPublic(entity.get(), false);
+        } catch (AccessDeniedException ade) {
+            throw new EntityAccessDeniedException(entityId, getGenericClassName(), messageSource);
+        } catch (ResponseStatusException rse) {
+            throw rse;
+        } catch (IllegalArgumentException iae) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, iae.getMessage());
+        } catch (Exception e) {
             throw new DeletePermissionException(e, messageSource);
         }
     }
