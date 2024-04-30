@@ -1,9 +1,3 @@
-![build-and-publish]
-(https://github.com/terrestris/shogun/actions/workflows/build-and-publish.yml/badge.svg)
-
-![test]
-(https://github.com/terrestris/shogun/actions/workflows/test.yml/badge.svg)
-
 # ![SHOGun Logo](./docs/assets/img/shogun_logo_thumb.png) SHOGun
 
 ![](https://img.shields.io/github/license/terrestris/shogun)

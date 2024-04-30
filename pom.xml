@@ -123,6 +123,7 @@
     <hypersistence-utils.version>3.7.5</hypersistence-utils.version>
 
     <!-- GraphQL -->
+    <!-- Please note: This must be compatible with the graphql-java version used by Spring Boot.-->
     <graphql-java-extended-scalars.version>21.0</graphql-java-extended-scalars.version>
 
     <!-- Swagger/REST -->
