@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.2.4</version>
+    <version>3.2.5</version>
   </parent>
 
   <groupId>de.terrestris</groupId>
@@ -112,8 +112,9 @@
     <jakarta-mail.version>2.0.1</jakarta-mail.version>
 
     <!-- Hibernate, Jackson, JAXB etc. -->
-    <jackson-module-jakarta-xmlbind-annotations.version>2.15.3</jackson-module-jakarta-xmlbind-annotations.version>
-    <jaxb.version>2.3.1</jaxb.version>
+    <jaxb-api.version>2.3.1</jaxb-api.version>
+    <!-- Please note: This must be compatible with ${jackson-bom.version}. -->
+    <jackson-datatype-jts.version>2.15.3</jackson-datatype-jts.version>
 
     <!-- Security -->
     <keycloak.version>24.0.3</keycloak.version>
@@ -454,19 +455,19 @@
       <dependency>
         <groupId>javax.xml.bind</groupId>
         <artifactId>jaxb-api</artifactId>
-        <version>${jaxb.version}</version>
+        <version>${jaxb-api.version}</version>
       </dependency>
 
       <dependency>
         <groupId>com.sun.xml.bind</groupId>
         <artifactId>jaxb-impl</artifactId>
-        <version>${jaxb.version}</version>
+        <version>${glassfish-jaxb.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.glassfish.jaxb</groupId>
         <artifactId>jaxb-runtime</artifactId>
-        <version>${jaxb.version}</version>
+        <version>${glassfish-jaxb.version}</version>
       </dependency>
 
       <!-- GraphQL -->
@@ -521,22 +522,22 @@
       <dependency>
         <groupId>com.fasterxml.jackson.module</groupId>
         <artifactId>jackson-module-jakarta-xmlbind-annotations</artifactId>
-        <version>${jackson-module-jakarta-xmlbind-annotations.version}</version>
+        <version>${jackson-bom.version}</version>
       </dependency>
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
-        <version>2.15.3</version>
+        <version>${jackson-bom.version}</version>
       </dependency>
       <dependency>
         <groupId>com.fasterxml.jackson.dataformat</groupId>
         <artifactId>jackson-dataformat-yaml</artifactId>
-        <version>2.15.3</version>
+        <version>${jackson-bom.version}</version>
       </dependency>
       <dependency>
         <groupId>de.terrestris.jackson</groupId>
         <artifactId>jackson-datatype-jts</artifactId>
-        <version>2.15.3</version>
+        <version>${jackson-datatype-jts.version}</version>
       </dependency>
       <dependency>
         <groupId>de.grundid.opendatalab</groupId>
