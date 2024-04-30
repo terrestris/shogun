@@ -112,7 +112,7 @@
     <jakarta-mail.version>2.0.1</jakarta-mail.version>
 
     <!-- Hibernate, Jackson, JAXB etc. -->
-    <jaxb.version>2.3.1</jaxb.version>
+    <jaxb-api.version>2.3.1</jaxb-api.version>
     <!-- Please note: This must be compatible with ${jackson-bom.version}. -->
     <jackson-datatype-jts.version>2.15.3</jackson-datatype-jts.version>
 
