@@ -1,0 +1,4 @@
+ALTER TABLE IF EXISTS shogun_rev.publicinstancepermissions_rev
+ADD COLUMN IF NOT EXISTS created_mod BOOLEAN NULL,
+ADD COLUMN IF NOT EXISTS modified_mod BOOLEAN NULL,
+ADD COLUMN IF NOT EXISTS entity_id_mod BOOLEAN NULL;
