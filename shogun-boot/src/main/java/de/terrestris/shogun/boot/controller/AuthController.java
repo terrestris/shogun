@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     @GetMapping("/isSessionValid")
-    public ResponseEntity<?> isSessionValid(Authentication authentication) {
+    public ResponseEntity<String> isSessionValid(Authentication authentication) {
         log.debug("Checking if user is logged in.");
 
         if (authentication != null && authentication.isAuthenticated()) {

@@ -20,6 +20,7 @@ import de.terrestris.shogun.lib.dto.HttpResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.Part;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -65,6 +66,7 @@ public class HttpUtil {
     /**
      * The timeout for all outgoing HTTP connections.
      */
+    @Getter
     private static int httpTimeout;
     /**
      * The default timeout given by the config beans.
@@ -76,14 +78,14 @@ public class HttpUtil {
     private static String AUTHORIZATION_HEADER = "authorization";
 
     /**
-     * Returns the full webapplication URI from a given request.
+     * Returns the full web application URI from a given request.
      * <p>
      * Example:
      * <p>
      * The following GET-request:
-     * http://localhost:8080/shogun/user/resetPassword.action
+     * <a href="http://localhost:8080/shogun/user/resetPassword.action">...</a>
      * will result in
-     * http://localhost:8080/shogun/
+     * <a href="http://localhost:8080/shogun/">...</a>
      *
      * @param request
      * @return
@@ -2183,13 +2185,6 @@ public class HttpUtil {
         }
 
         return systemProxy;
-    }
-
-    /**
-     * @return the httpTimeout
-     */
-    public static int getHttpTimeout() {
-        return httpTimeout;
     }
 
     /**

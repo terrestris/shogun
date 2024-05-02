@@ -125,7 +125,7 @@ public class KeycloakUtil {
         if (!availableGroups.isEmpty()) {
             log.debug("Group {} already exists.", groupName);
 
-            return availableGroups.get(0);
+            return availableGroups.getFirst();
         }
 
         GroupRepresentation group = new GroupRepresentation();
