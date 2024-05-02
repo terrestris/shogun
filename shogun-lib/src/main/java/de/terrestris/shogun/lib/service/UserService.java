@@ -19,7 +19,6 @@ package de.terrestris.shogun.lib.service;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.UserRepository;
 import de.terrestris.shogun.lib.service.security.permission.UserClassPermissionService;
-import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -36,9 +35,6 @@ import java.util.Optional;
 @Service
 @Log4j2
 public class UserService extends BaseService<UserRepository, User> {
-
-    @Autowired
-    UserProviderService userProviderService;
 
     @Autowired
     UserClassPermissionService userClassPermissionService;

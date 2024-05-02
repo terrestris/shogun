@@ -42,7 +42,7 @@
   <header
     class="container d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
     <a href="/" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
-      <img class="header-image" src="./assets/img/shogun_logo.png">
+      <img class="header-image" src="./assets/img/shogun_logo.png" alt="SHOGun logo">
     </a>
     <ul class="nav col-md-3">
       <li class="nav-item">
@@ -103,7 +103,7 @@
       <div style="display: none" id="keycloak-host" th:text="${@environment.getProperty('KEYCLOAK_HOST')}"></div>
       <a href="/admin">
         <button id="admin-panel-btn" class="btn btn-primary">
-          Open Admin Panel <i class="fas fa-lock"></i>
+          Open Admin Panel <em class="fas fa-lock"></em>
         </button>
       </a>
       <h3 class="pb-2 pt-4">Applications</h3>
@@ -117,15 +117,15 @@
       &copy; 2021 - present <a href="https://www.terrestris.de">terrestris GmbH & Co. KG</a>
     </p>
     <p class="col-md-3 mb-0 text-muted">
-      <i class="fas fa-plug"></i>
+      <em class="fas fa-plug"></em>
       <a href="./swagger-ui/index.html">Swagger / OpenAPI</a>
     </p>
     <p class="col-md-3 mb-0 text-muted">
-      <i class="fas fa-project-diagram"></i>
+      <em class="fas fa-project-diagram"></em>
       <a href="./graphiql">GraphiQL</a>
     </p>
     <p class="col-md-3 mb-0 text-muted">
-      <i class="fab fa-github"></i>
+      <em class="fab fa-github"></em>
       <a href="https://github.com/terrestris/shogun">GitHub</a>
     </p>
   </footer>
@@ -191,7 +191,7 @@
         appInfos.forEach(app => {
           const html = `<shogun-app app='${app.id}'>` +
             `<a style='visibility: hidden' class='admin-btn' title='Edit application' slot='admin-btn' href='/admin/portal/application/${app.id}'>` +
-            `<i class='fas fa-cog'></i></a>` +
+            `<em class='fas fa-cog'></em></a>` +
             `<span slot='app-title'>${app.name}</span>` +
             `<span slot='app-info'>${app.description}</span>` +
             `</shogun-app>`;

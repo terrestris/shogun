@@ -28,8 +28,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.log4j.Log4j2;
 import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.data.domain.Page;
@@ -49,12 +47,6 @@ import java.util.Optional;
 // TODO Specify and type extension of BaseService
 @Log4j2
 public abstract class BaseController<T extends BaseService<?, S>, S extends BaseEntity> extends BasePermissionController<T, S> {
-
-    @Autowired
-    protected T service;
-
-    @Autowired
-    protected MessageSource messageSource;
 
     @GetMapping(
         produces = { "application/json" }
@@ -584,7 +576,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
         log.trace("Requested to partially update entity of type {} with ID {} ({})", getGenericClassName(), entityId, patch);
 
         try {
-            S persistedEntity = service.findOne(entityId).orElseThrow();
+            S persistedEntity = service.findOne(entityId).orElse(null);
             if (persistedEntity != null) {
                 S updatedEntity = service.updatePartial(persistedEntity, patch);
 

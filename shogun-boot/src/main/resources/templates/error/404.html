@@ -56,7 +56,6 @@
           border-radius: 8px;
           -moz-border-radius: 8px;
           margin: auto 70px auto 70px;
-          #padding: 50px;
           top: 50%;
           position: absolute;
           transform: translate(0, -50%);
@@ -86,6 +85,7 @@
             margin-left: auto;
         }
     </style>
+    <title>SHOGun - Error</title>
 </head>
 <body>
 <div id="error">
@@ -94,14 +94,14 @@
             <h1>Oops!</h1>
         </div>
         <div class="error-code">
-            <p th:text="${status}"/>
+            <p th:text="${status}"></p>
         </div>
         <div class="error-text">
           The page you're looking for is not available.
         </div>
         <div class="error-img">
             <!--<img th:src="@{404.gif}"/>-->
-            <img src="https://media.tenor.com/images/2e7080b4048c2975ab525027a5af85f2/tenor.gif">
+            <img src="https://media.tenor.com/images/2e7080b4048c2975ab525027a5af85f2/tenor.gif" alt="Error">
         </div>
     </div>
 

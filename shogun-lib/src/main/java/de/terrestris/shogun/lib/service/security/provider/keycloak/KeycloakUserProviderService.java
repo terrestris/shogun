@@ -64,7 +64,6 @@ public class KeycloakUserProviderService implements UserProviderService<UserRepr
 
     /**
      * Finds a User by the passed keycloak ID. If it does not exist in the SHOGun DB it gets created.
-     *
      * The groups of the user are also checked and created if needed.
      *
      * @param keycloakUserId UUID of keycloak user to find or create.
@@ -122,6 +121,7 @@ public class KeycloakUserProviderService implements UserProviderService<UserRepr
     }
 
     @Override
+    @Transactional
     public Optional<User<UserRepresentation>> getUserBySession() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String keycloakUserId = getKeycloakUserIdFromAuthentication(authentication);
