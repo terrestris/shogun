@@ -1,3 +1,47 @@
+# [19.0.0](https://github.com/terrestris/shogun/compare/v18.0.0...v19.0.0) (2024-05-02)
+
+
+### Bug Fixes
+
+* add audit annoations to PublicInstancePermission ([94cffac](https://github.com/terrestris/shogun/commit/94cffac7d101303e6b89e3461d280ed12bce79eb))
+* add info for graphql version ([46dd0a5](https://github.com/terrestris/shogun/commit/46dd0a51cfcee309eb6550faa4c4c07f36f1ee61))
+* add logging for unknown exception ([a38e1ab](https://github.com/terrestris/shogun/commit/a38e1ab4d2bdaf6553aa8491679c39e78fc34492))
+* add missing columns for revision table ([ebbfaf9](https://github.com/terrestris/shogun/commit/ebbfaf9d336bac5e575ac3a8c0965794f5c1391e))
+* clarify jts version comment ([bd9d412](https://github.com/terrestris/shogun/commit/bd9d41244b61475659865402b47d1b2ac3d1b480))
+* clean up dependencies ([cdf7fd1](https://github.com/terrestris/shogun/commit/cdf7fd11121dc2ecf9ad52273ead76e8e1bf0054))
+* code smells ([c819531](https://github.com/terrestris/shogun/commit/c819531b464ba25709cb8fc3098296291723d780))
+* consistent transactional annotations ([32619fa](https://github.com/terrestris/shogun/commit/32619fa098b88392694ac7e0965f606b7a556b93))
+* fix licenserc pattern location ([3f20985](https://github.com/terrestris/shogun/commit/3f20985421b79bb18d8e10fd8d577b34d61cdbfd))
+* fixes admin-btn from opening multiple links when clicked ([778e9f6](https://github.com/terrestris/shogun/commit/778e9f6fcc2e5f590104659c427ebd5fcdca4f51))
+* jaxb-api version identifier ([64ec323](https://github.com/terrestris/shogun/commit/64ec32368fa1be9652c11b5a4f89d8a951d1cfd7))
+* remove duplicated badges ([143eddb](https://github.com/terrestris/shogun/commit/143eddb082bac20d9d40ba52ed4bd0d6285db940))
+* remove duplicated fields ([89fe47d](https://github.com/terrestris/shogun/commit/89fe47d62fbfbb05bbb528c2a518306e7e2e319b))
+* rename PublicEntity to PublicInstancePermission ([4a8aca1](https://github.com/terrestris/shogun/commit/4a8aca1905093d01714dd5448819cdf2c2f72fa1))
+* show applications despite empty configuration or description ([47512f7](https://github.com/terrestris/shogun/commit/47512f71b14a989feac05a736b053626ad3da8f6))
+* specify spdx id ([6f7799d](https://github.com/terrestris/shogun/commit/6f7799d4801b67d44d3be2d167644a7050da7e77))
+* use instanceof checks instead of class comparison ([3f473cf](https://github.com/terrestris/shogun/commit/3f473cf7da329f21d00e1137bb6767412540490e))
+
+
+### chore
+
+* update to java 21 ([084491d](https://github.com/terrestris/shogun/commit/084491dd664248e510a3d707174745bdfd65d4b8))
+
+
+### Features
+
+* add migration for publicentities ([9a1d35e](https://github.com/terrestris/shogun/commit/9a1d35e78f5f55a1ff0195d960a549390ad4c692))
+* configurable favicon ([bf6a1b9](https://github.com/terrestris/shogun/commit/bf6a1b95815b9bdde5ef6706dff13d0ba10369af))
+* introduce PublicEntity ([53d1941](https://github.com/terrestris/shogun/commit/53d1941cbfa4108f139c359f69550a06813a0879))
+* permitAll for entity endpoints ([90474d0](https://github.com/terrestris/shogun/commit/90474d082b4c2c3c8a3a4483f8e06647cbe1c10f))
+* prevent public permission for User and Group ([732ecf2](https://github.com/terrestris/shogun/commit/732ecf2a443340b7be976f8fc840425b9551dd08))
+* update permission handling for PublicEntity ([f40b9f7](https://github.com/terrestris/shogun/commit/f40b9f7445ab1e554ff90143f3c621f13b43f42a))
+
+
+### BREAKING CHANGES
+
+* This changes a crucial security setting an might need adjustments in projects.
+* requires java 21
+
 # [18.0.0](https://github.com/terrestris/shogun/compare/v17.2.0...v18.0.0) (2023-09-18)
 
 
