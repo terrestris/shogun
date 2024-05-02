@@ -21,9 +21,7 @@ import de.terrestris.shogun.lib.model.File;
 import de.terrestris.shogun.lib.service.BaseFileService;
 import lombok.extern.log4j.Log4j2;
 import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.data.domain.Page;
@@ -43,12 +41,6 @@ public abstract class BaseFileController<T extends BaseFileService<?, S>, S exte
 
     @Value("${upload.basePath}")
     protected String uploadBasePath;
-
-    @Autowired
-    protected T service;
-
-    @Autowired
-    protected MessageSource messageSource;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
