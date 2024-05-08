@@ -1,3 +1,10 @@
+# [19.1.0](https://github.com/terrestris/shogun/compare/v19.0.0...v19.1.0) (2024-05-08)
+
+
+### Features
+
+* allow configuration of role extraction from jwt ([23247c7](https://github.com/terrestris/shogun/commit/23247c78e2fbfe238e75c64e6b3aa8fd6c9a8484))
+
 # [19.0.0](https://github.com/terrestris/shogun/compare/v18.0.0...v19.0.0) (2024-05-02)
 
 
