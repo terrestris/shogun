@@ -23,9 +23,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class KeycloakJwtAuthenticationConverter implements Converter<Jwt, AbstractAuthenticationToken> {
@@ -33,14 +31,26 @@ public class KeycloakJwtAuthenticationConverter implements Converter<Jwt, Abstra
 
     private final String principalClaimName;
 
-    public KeycloakJwtAuthenticationConverter(String resourceId, String principalClaimName) {
+    private final boolean fromRealm;
+
+    private final boolean fromResource;
+
+    public KeycloakJwtAuthenticationConverter(String resourceId, String principalClaimName, boolean fromRealm, boolean fromResource) {
         this.resourceId = resourceId;
         this.principalClaimName = principalClaimName;
+        this.fromRealm = fromRealm;
+        this.fromResource = fromResource;
     }
 
     @Override
     public AbstractAuthenticationToken convert(final Jwt jwt) {
-        Collection<GrantedAuthority> authorities = (Collection<GrantedAuthority>) extractResourceRoles(jwt, resourceId);
+        Set<GrantedAuthority> authorities = new HashSet<>();
+        if (fromRealm) {
+            authorities.addAll(extractRealmRoles(jwt));
+        }
+        if (fromResource) {
+            authorities.addAll(extractResourceRoles(jwt, resourceId));
+        }
 
         String principalClaimValue = jwt.getClaimAsString(this.principalClaimName);
 
@@ -61,4 +71,19 @@ public class KeycloakJwtAuthenticationConverter implements Converter<Jwt, Abstra
             .map(role -> new SimpleGrantedAuthority(String.format("ROLE_%s", role).toUpperCase()))
             .collect(Collectors.toSet());
     }
+
+    private Collection<? extends GrantedAuthority> extractRealmRoles(final Jwt jwt) {
+        Map<String, Object> resourceAccess = jwt.getClaim("realm_access");
+
+        if (resourceAccess == null || resourceAccess.get("roles") == null) {
+            return Collections.emptySet();
+        }
+
+        Collection<String> resourceRoles = (Collection<String>) resourceAccess.get("roles");
+
+        return resourceRoles.stream()
+            .map(role -> new SimpleGrantedAuthority(String.format("ROLE_%s", role).toUpperCase()))
+            .collect(Collectors.toSet());
+    }
+
 }

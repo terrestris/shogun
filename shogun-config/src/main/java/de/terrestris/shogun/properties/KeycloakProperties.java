@@ -49,4 +49,8 @@ public class KeycloakProperties {
 
     private String internalServerUrl;
 
+    private Boolean extractRolesFromResource = true;
+
+    private Boolean extractRolesFromRealm = false;
+
 }
