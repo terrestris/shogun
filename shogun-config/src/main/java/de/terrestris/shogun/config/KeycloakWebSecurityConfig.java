@@ -62,7 +62,9 @@ public class KeycloakWebSecurityConfig implements DefaultWebSecurityConfig {
 
         KeycloakJwtAuthenticationConverter authConverter = new KeycloakJwtAuthenticationConverter(
             keycloakProperties.getClientId(),
-            keycloakProperties.getPrincipalAttribute()
+            keycloakProperties.getPrincipalAttribute(),
+            keycloakProperties.getExtractRolesFromRealm(),
+            keycloakProperties.getExtractRolesFromResource()
         );
 
         http
