@@ -47,8 +47,7 @@ public interface DefaultWebSecurityConfig extends WebSecurityConfig {
                     "/graphiql/**"
                 )
                     .permitAll()
-                // Enable anonymous read access to entity endpoints
-                // will be secured via permission evaluators
+                // Enable anonymous read access to entity endpoints (secured via permission evaluators)
                 .requestMatchers(
                     HttpMethod.GET,
                     "/applications",
@@ -59,6 +58,12 @@ public interface DefaultWebSecurityConfig extends WebSecurityConfig {
                     "/files/*",
                     "/imagefiles",
                     "/imagefiles/*"
+                )
+                .permitAll()
+                // Enable anonymous access to graphql (secured via permission evaluators)
+                .requestMatchers(
+                    HttpMethod.POST,
+                    "/graphql"
                 )
                 .permitAll()
                 .requestMatchers(
