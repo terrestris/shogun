@@ -1,3 +1,15 @@
+# [20.0.0](https://github.com/terrestris/shogun/compare/v19.1.0...v20.0.0) (2024-05-14)
+
+
+### Features
+
+* anonymous access to graphql interface ([58d1c68](https://github.com/terrestris/shogun/commit/58d1c685bb30d9fbb39f224e5cf6f341c445daa9))
+
+
+### BREAKING CHANGES
+
+* anonymous access to graphql interface
+
 # [19.1.0](https://github.com/terrestris/shogun/compare/v19.0.0...v19.1.0) (2024-05-08)
 
 
