@@ -62,7 +62,7 @@ public class DefaultApplicationClientConfig implements ApplicationClientConfig {
     private String defaultLanguage;
 
     @Schema(
-        description = "The configuration of the print tool templates"
+        description = "The name of the mapfish printapp to use."
     )
     private String printApp;
 
