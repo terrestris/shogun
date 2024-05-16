@@ -158,4 +158,9 @@ public class KeycloakUserProviderService implements UserProviderService<UserRepr
         return (Optional) userRepository.findByAuthProviderId(keycloakUserId);
     }
 
+    @Override
+    public void createAllUsers() {
+        var userIds = keycloakUtil.getAllUserIds();
+        userIds.forEach(this::findOrCreateByProviderId);
+    }
 }

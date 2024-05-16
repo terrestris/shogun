@@ -19,9 +19,11 @@ package de.terrestris.shogun.lib.controller;
 import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.service.GroupService;
+import de.terrestris.shogun.lib.service.security.provider.GroupProviderService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
@@ -36,11 +38,14 @@ import java.util.Optional;
 @ConditionalOnExpression("${controller.groups.enabled:true}")
 @Log4j2
 @Tag(
-    name = "Users",
-    description = "The endpoints to manage users"
+    name = "Groups",
+    description = "The endpoints to manage groups"
 )
 @SecurityRequirement(name = "bearer-key")
 public class GroupController extends BaseController<GroupService, Group> {
+
+    @Autowired
+    private GroupProviderService groupProviderService;
 
     @GetMapping("/user/{id}")
     @ResponseStatus(HttpStatus.OK)
@@ -93,4 +98,9 @@ public class GroupController extends BaseController<GroupService, Group> {
         }
     }
 
+    @PostMapping("/createFromProvider")
+    @ResponseStatus(HttpStatus.OK)
+    public void createFromProvider() {
+        groupProviderService.createAllGroups();
+    }
 }
