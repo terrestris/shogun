@@ -114,8 +114,9 @@ public class KeycloakGroupProviderService implements GroupProviderService<UserRe
         List<GroupRepresentation> groupRepresentations = keycloakUtil.getKeycloakUserGroups(user.get());
 
         return (List) groupRepresentations.stream().
-            map(groupRepresentation -> repository.findByAuthProviderId(groupRepresentation.getId()).orElseThrow()).
-            collect(Collectors.toList());
+            map(groupRepresentation -> repository.findByAuthProviderId(groupRepresentation.getId()).orElse(null))
+                .filter(group -> group != null)
+                .collect(Collectors.toList());
     }
 
     public void setTransientRepresentations(Group<GroupRepresentation> group) {
