@@ -1,3 +1,15 @@
+# [20.1.0](https://github.com/terrestris/shogun/compare/v20.0.0...v20.1.0) (2024-05-21)
+
+
+### Bug Fixes
+
+* prevent exception when keycloak group does not exist ([9fb7732](https://github.com/terrestris/shogun/commit/9fb77322208f5ad7af8d4c82437870348f4a32c3))
+
+
+### Features
+
+* add printApp to DefaultApplicationClientConfig ([#862](https://github.com/terrestris/shogun/issues/862)) ([83f8ecb](https://github.com/terrestris/shogun/commit/83f8ecbc1f0ef4c5138bd697b7b0701f7daf75c3))
+
 # [20.0.0](https://github.com/terrestris/shogun/compare/v19.1.0...v20.0.0) (2024-05-14)
 
 
