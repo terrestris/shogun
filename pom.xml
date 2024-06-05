@@ -117,7 +117,7 @@
     <jackson-datatype-jts.version>2.15.3</jackson-datatype-jts.version>
 
     <!-- Security -->
-    <keycloak.version>24.0.4</keycloak.version>
+    <keycloak.version>24.0.5</keycloak.version>
 
     <!-- Database -->
     <hypersistence-utils.version>3.7.5</hypersistence-utils.version>
