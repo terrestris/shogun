@@ -135,24 +135,6 @@ public class RoleClassPermissionService extends BasePermissionService<RoleClassP
         return getPermissionCollection(roleClassPermission);
     }
 
-    // TODO makes no sense for roles class?
-//    /**
-//     * Sets the given {@link PermissionCollectionType} for the given class and the currently
-//     * logged in user.
-//     *
-//     * @param clazz                    The class to set the permission for.
-//     * @param permissionCollectionType The permission to set.
-//     */
-//    public void setPermission(Class<? extends BaseEntity> clazz, PermissionCollectionType permissionCollectionType) {
-//        Optional<User> activeUser = userProviderService.getUserBySession();
-//
-//        if (activeUser.isEmpty()) {
-//            throw new RuntimeException("Could not detect the logged in user.");
-//        }
-//
-//        setPermission(clazz, activeUser.get(), permissionCollectionType);
-//    }
-
     /**
      * Sets the given {@link PermissionCollectionType} for the given class and role.
      *

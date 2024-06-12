@@ -41,7 +41,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Log4j2
 public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implements EntityPermissionEvaluator<E> {
@@ -369,15 +368,11 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
             return repository.findAll(pageable);
         }
 
-        // TODO take into account the role permissions
-        // TODO das sollte der letzte notwendige Schritt sein.
-        // option D: user has permission through role instance permissions.
-
         List<Long> roleIds = roles.stream()
             .map(BaseEntity::getId)
             .toList();
 
-        // option E: check instance permissions for each entity with a single query.
+        // option D: check instance permissions for each entity with a single query.
         List<Group<GroupRepresentation>> userGroups = groupProviderService.getGroupsForUser();
         if (userGroups.isEmpty()) {
             // user has no groups so only user instance permissions have to be checked
@@ -409,25 +404,6 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
 
         return publicInstancePermissionService.getPublic(entity);
     }
-
-//    /**
-//     * Returns the roles of the currently authenticated user.
-//     * @return
-//     */
-//    protected List<Role> getUserRoles() {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//
-//        Collection<? extends GrantedAuthority> grantedAuthorities = authentication.getAuthorities();
-//
-//        return grantedAuthorities.stream()
-//            .map(grantedAuthority -> {
-//                String authority = grantedAuthority.getAuthority();
-//                return roleRepository.findByName(authority);
-//            })
-//            .filter(Optional::isPresent)
-//            .map(Optional::get)
-//            .toList();
-//    }
 
     /**
      * Returns the class of the {@link BaseEntity} this abstract class
