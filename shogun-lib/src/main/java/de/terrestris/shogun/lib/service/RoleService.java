@@ -88,26 +88,4 @@ public class RoleService extends BaseService<RoleRepository, Role> {
         return role;
     }
 
-    /**
-     *  Delete a role from the SHOGun DB by its provider Id.
-     *
-     * @param authProviderId
-     */
-    @Transactional
-//    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#keycloakUserId, 'DELETE')")
-    public void deleteByAuthProviderId(String authProviderId) {
-        Optional<Role> roleOptional = repository.findByAuthProviderId(authProviderId);
-        Role role = roleOptional.orElse(null);
-
-        if (role == null) {
-            log.debug("Role with keycloak id {} was deleted in Keycloak. It did not exists in SHOGun DB. No action needed.", authProviderId);
-            return;
-        }
-
-        // TODO
-//        roleInstancePermissionService.deleteAllFor(role);
-        repository.delete(role);
-        log.info("Role with keycloak id {} was deleted in Keycloak and was therefore deleted in SHOGun DB, too.", authProviderId);
-    }
-
 }

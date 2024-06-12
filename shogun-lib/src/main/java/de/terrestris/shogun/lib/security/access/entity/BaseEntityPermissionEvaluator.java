@@ -23,7 +23,6 @@ import de.terrestris.shogun.lib.model.Role;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.model.security.permission.*;
 import de.terrestris.shogun.lib.repository.BaseCrudRepository;
-import de.terrestris.shogun.lib.repository.RoleRepository;
 import de.terrestris.shogun.lib.service.security.permission.*;
 import de.terrestris.shogun.lib.service.security.provider.GroupProviderService;
 import de.terrestris.shogun.lib.service.security.provider.RoleProviderService;
@@ -52,10 +51,16 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
     protected GroupInstancePermissionService groupInstancePermissionService;
 
     @Autowired
+    protected RoleInstancePermissionService roleInstancePermissionService;
+
+    @Autowired
     protected UserClassPermissionService userClassPermissionService;
 
     @Autowired
     protected GroupClassPermissionService groupClassPermissionService;
+
+    @Autowired
+    protected RoleClassPermissionService roleClassPermissionService;
 
     @Autowired
     protected GroupProviderService<UserRepresentation, GroupRepresentation> groupProviderService;
@@ -64,19 +69,10 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
     protected RoleProviderService roleProviderService;
 
     @Autowired
-    protected RoleInstancePermissionService roleInstancePermissionService;
-
-    @Autowired
-    protected RoleClassPermissionService roleClassPermissionService;
-
-    @Autowired
     private PublicInstancePermissionService publicInstancePermissionService;
 
     @Autowired
     protected List<BaseCrudRepository> baseCrudRepositories;
-
-    @Autowired
-    protected RoleRepository roleRepository;
 
     @Override
     public Class<E> getEntityClassName() {
@@ -202,7 +198,6 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
     public boolean hasPermission(User user, Class<?> clazz, PermissionType permission) {
         log.trace("Evaluating whether user with ID '{}' has permission '{}' on class '{}'",
             user.getId(), permission, clazz.getCanonicalName());
-
 
         Optional<UserClassPermission> userClassPermission = userClassPermissionService.findFor((Class<? extends BaseEntity>) clazz, user);
         Optional<GroupClassPermission> groupClassPermission = groupClassPermissionService.findFor((Class<? extends BaseEntity>) clazz, user);

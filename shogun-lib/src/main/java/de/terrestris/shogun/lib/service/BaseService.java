@@ -27,6 +27,7 @@ import de.terrestris.shogun.lib.repository.BaseCrudRepository;
 import de.terrestris.shogun.lib.security.access.entity.BaseEntityPermissionEvaluator;
 import de.terrestris.shogun.lib.security.access.entity.DefaultPermissionEvaluator;
 import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionService;
+import de.terrestris.shogun.lib.service.security.permission.RoleInstancePermissionService;
 import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
 import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import lombok.extern.log4j.Log4j2;
@@ -72,6 +73,10 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
     @Autowired
     @Lazy
     protected GroupInstancePermissionService groupInstancePermissionService;
+
+    @Autowired
+    @Lazy
+    protected RoleInstancePermissionService roleInstancePermissionService;
 
     @Autowired
     @Lazy
@@ -183,9 +188,12 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#entity, 'DELETE')")
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void delete(S entity) {
+        // TODO What about the class permissions?
         userInstancePermissionService.deleteAllFor(entity);
 
         groupInstancePermissionService.deleteAllFor(entity);
+
+        roleInstancePermissionService.deleteAllFor(entity);
 
         repository.delete(entity);
     }
