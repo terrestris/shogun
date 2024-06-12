@@ -10,8 +10,8 @@ CREATE TABLE IF NOT EXISTS shogun.roleclasspermissions (
     created TIMESTAMP WITHOUT TIME ZONE,
     modified TIMESTAMP WITHOUT TIME ZONE,
     class_name TEXT,
-    permission_id BIGINT NOT NULL REFERENCES permissions (id),
-    role_id BIGINT NOT NULL REFERENCES roles (id)
+    permission_id BIGINT NOT NULL REFERENCES shogun.permissions (id),
+    role_id BIGINT NOT NULL REFERENCES shogun.roles (id)
 );
 
 CREATE TABLE IF NOT EXISTS shogun.roleinstancepermissions (
@@ -19,8 +19,8 @@ CREATE TABLE IF NOT EXISTS shogun.roleinstancepermissions (
     created TIMESTAMP WITHOUT TIME ZONE,
     modified TIMESTAMP WITHOUT TIME ZONE,
     entity_id bigint NOT NULL,
-    permission_id bigint NOT NULL REFERENCES permissions (id),
-    role_id BIGINT NOT NULL REFERENCES roles (id)
+    permission_id bigint NOT NULL REFERENCES shogun.permissions (id),
+    role_id BIGINT NOT NULL REFERENCES shogun.roles (id)
 );
 
 CREATE TABLE IF NOT EXISTS shogun_rev.roles_rev (
