@@ -120,6 +120,7 @@
 
     <!-- Database -->
     <hibernate-extra-types.version>2.14.1</hibernate-extra-types.version>
+    <postgresql.version>42.2.28</postgresql.version>
 
     <!-- GraphQL -->
     <graphql-spring-boot-starter.version>5.0.2</graphql-spring-boot-starter.version>
