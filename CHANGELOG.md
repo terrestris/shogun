@@ -1,3 +1,17 @@
+# [20.2.0](https://github.com/terrestris/shogun/compare/v20.1.0...v20.2.0) (2024-06-13)
+
+
+### Bug Fixes
+
+* add missing Query annotation ([dfc296c](https://github.com/terrestris/shogun/commit/dfc296c615d9b454c3436e0ea5be99f9af66c469))
+* remove role permissions before removing the role ([3b596b4](https://github.com/terrestris/shogun/commit/3b596b45ba39498ae69c4344e3c4d03198fa8018))
+* set schema ([30be7e6](https://github.com/terrestris/shogun/commit/30be7e6c07aa7375b732f52c19aef25c035f58d6))
+
+
+### Features
+
+* init Role, RoleInstancePermission and RoleClassPermission ([48042db](https://github.com/terrestris/shogun/commit/48042dbb44050f735a97c4c03093a1838aea18a4))
+
 # [20.1.0](https://github.com/terrestris/shogun/compare/v20.0.0...v20.1.0) (2024-05-21)
 
 
