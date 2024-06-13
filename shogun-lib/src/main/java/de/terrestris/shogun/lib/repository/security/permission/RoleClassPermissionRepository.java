@@ -45,5 +45,6 @@ public interface RoleClassPermissionRepository extends BasePermissionRepository<
     @Query(value = "DELETE FROM {h-schema}roleclasspermissions u WHERE u.role_id=:roleId", nativeQuery = true)
     void deleteAllByRoleId(@Param("roleId") Long roleId);
 
+    @QueryHints(@QueryHint(name = AvailableHints.HINT_CACHEABLE, value = "true"))
     List<RoleClassPermission> findByClassName(String className);
 }

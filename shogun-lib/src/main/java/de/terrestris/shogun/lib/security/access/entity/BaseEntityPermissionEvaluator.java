@@ -133,7 +133,7 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
 
         // CHECK ROLE CLASS PERMISSIONS
         if (this.hasPermissionByRoleClassPermission(user, entity, permission)) {
-            log.trace("Granting {} access by role instance permissions", permission);
+            log.trace("Granting {} access by role class permissions", permission);
 
             return true;
         }
