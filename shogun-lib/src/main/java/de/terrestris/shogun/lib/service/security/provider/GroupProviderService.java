@@ -33,4 +33,5 @@ public interface GroupProviderService<UserType, GroupType> {
 
     Group<GroupType> findOrCreateByProviderId(String providerGroupId);
 
+    void createAllGroups();
 }
