@@ -137,6 +137,8 @@ controller:
     enabled: true
   resource:
     enabled: true
+  roles:
+    enabled: true
 
 upload:
   file:

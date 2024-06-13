@@ -85,6 +85,21 @@ public class WebhookController {
                     ));
                 }
             }
+            case "REALM_ROLE" -> {
+                if (StringUtils.equals(eventType, "CREATE")) {
+                    applicationEventPublisher.publishEvent(new KeycloakEvent(
+                        this,
+                        KeycloakEventType.REALM_ROLE_CREATED,
+                        split[1]
+                    ));
+                } else if (StringUtils.equals(eventType, "DELETE")) {
+                    applicationEventPublisher.publishEvent(new KeycloakEvent(
+                        this,
+                        KeycloakEventType.REALM_ROLE_DELETED,
+                        split[1]
+                    ));
+                }
+            }
             case "REALM_ROLE_MAPPING", "CLIENT_ROLE_MAPPING" -> {
                 if (split[0].equals("users")) {
                     applicationEventPublisher.publishEvent(new KeycloakEvent(

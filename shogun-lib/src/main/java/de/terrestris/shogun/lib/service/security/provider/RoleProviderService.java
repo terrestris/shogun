@@ -1,6 +1,6 @@
 /* SHOGun, https://terrestris.github.io/shogun/
  *
- * Copyright © 2020-present terrestris GmbH & Co. KG
+ * Copyright © 2024-present terrestris GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package de.terrestris.shogun.lib.service.security.provider;
 
-package de.terrestris.shogun.lib.event;
+import de.terrestris.shogun.lib.model.Role;
+import de.terrestris.shogun.lib.model.User;
 
-public enum KeycloakEventType {
-    USER_CREATED,
-    USER_ROLES_CHANGED,
-    USER_DELETED,
-    USER_GROUP_MEMBERSHIP_CHANGED,
-    GROUP_CREATED,
-    GROUP_DELETED,
-    GROUP_ROLES_CHANGED,
-    REALM_ROLE_CREATED,
-    REALM_ROLE_DELETED
+import java.util.List;
+
+public interface RoleProviderService<RoleType, UserType> {
+
+    void setTransientRepresentations(Role<RoleType> role);
+
+    List<Role> getRolesForUser(User<UserType> user);
+
+    Role<RoleType> findOrCreateByProviderId(String providerRoleId);
 }

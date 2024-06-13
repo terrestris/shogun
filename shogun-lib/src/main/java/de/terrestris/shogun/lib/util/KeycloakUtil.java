@@ -17,6 +17,7 @@
 package de.terrestris.shogun.lib.util;
 
 import de.terrestris.shogun.lib.model.Group;
+import de.terrestris.shogun.lib.model.Role;
 import de.terrestris.shogun.lib.model.User;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
@@ -154,6 +155,12 @@ public class KeycloakUtil {
         return keycloakRealm.roles();
     }
 
+    public RoleRepresentation getRoleRepresentation(Role<RoleRepresentation> role) {
+        RoleByIdResource roleByIdResource = keycloakRealm.rolesById();
+
+        return roleByIdResource.getRole(role.getAuthProviderId());
+    }
+
     public boolean isUserInGroup(User<UserRepresentation> user, Group<GroupRepresentation> group) {
         UserResource kcUser = this.getUserResource(user);
         return kcUser.groups().stream()
@@ -212,6 +219,7 @@ public class KeycloakUtil {
     public List<RoleRepresentation> getKeycloakUserRoles(User<UserRepresentation> user) {
         UserResource userResource = this.getUserResource(user);
         List<RoleRepresentation> roles = new ArrayList<>();
+
         try {
             roles = userResource.roles().getAll().getRealmMappings();
         } catch (Exception e) {
@@ -220,6 +228,7 @@ public class KeycloakUtil {
                      user.getId(), user.getAuthProviderId());
             log.trace("Full stack trace: ", e);
         }
+
         return roles;
     }
 

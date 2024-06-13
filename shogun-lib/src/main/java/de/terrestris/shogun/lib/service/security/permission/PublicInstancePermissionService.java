@@ -18,6 +18,7 @@ package de.terrestris.shogun.lib.service.security.permission;
 
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.Group;
+import de.terrestris.shogun.lib.model.Role;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.model.security.permission.PublicInstancePermission;
 import de.terrestris.shogun.lib.repository.security.permission.PublicInstancePermissionRepository;
@@ -39,7 +40,7 @@ public class PublicInstancePermissionService {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void setPublic(BaseEntity entity, boolean isPublic) {
 
-        if (entity instanceof Group || entity instanceof User) {
+        if (entity instanceof Group || entity instanceof User || entity instanceof Role) {
             throw new IllegalArgumentException("Public permissions are not allowed for this entity type.");
         }
 
