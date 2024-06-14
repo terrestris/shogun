@@ -65,9 +65,9 @@ public class KeycloakRoleProviderService implements RoleProviderService<RoleRepr
         List<Role> roles = new ArrayList<>();
 
         try {
-            List<RoleRepresentation> rolesA = keycloakUtil.getKeycloakUserRoles(user);
+            List<RoleRepresentation> roleRepresentations = keycloakUtil.getKeycloakUserRoles(user);
 
-            roles = rolesA.stream()
+            roles = roleRepresentations.stream()
                 .map(role -> roleRepository.findByAuthProviderId(role.getId()))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
@@ -87,7 +87,7 @@ public class KeycloakRoleProviderService implements RoleProviderService<RoleRepr
         Role<RoleRepresentation> role = roleOptional.orElse(null);
 
         if (role == null) {
-            role = new Role<RoleRepresentation>(providerRoleId, null);
+            role = new Role(providerRoleId, null);
             roleRepository.save(role);
 
             log.info("Role with Keycloak ID {} did not yet exist in the SHOGun DB and was therefore created.", providerRoleId);
