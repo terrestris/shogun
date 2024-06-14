@@ -253,6 +253,20 @@ public class RoleInstancePermissionService extends BasePermissionService<RoleIns
     }
 
     /**
+     * Deletes all {@link RoleInstancePermission} for the given role.
+     *
+     * @param role The role to clear the permissions for.
+     */
+    public void deleteAllFor(Role role) {
+        List<RoleInstancePermission> roleInstancePermissions = this.findFor(role);
+
+        repository.deleteAll(roleInstancePermissions);
+
+        log.info("Successfully deleted all role instance permissions for role with ID {}",
+            role.getId());
+    }
+
+    /**
      * Deletes the {@link RoleInstancePermission} for the given entity and role.
      *
      * @param persistedEntity The entity to clear the permissions for.

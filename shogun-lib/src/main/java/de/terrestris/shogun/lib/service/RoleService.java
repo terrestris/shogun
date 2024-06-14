@@ -18,13 +18,16 @@ package de.terrestris.shogun.lib.service;
 
 import de.terrestris.shogun.lib.model.Role;
 import de.terrestris.shogun.lib.repository.RoleRepository;
+import de.terrestris.shogun.lib.service.security.permission.RoleClassPermissionService;
 import de.terrestris.shogun.lib.service.security.provider.RoleProviderService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -36,6 +39,9 @@ public class RoleService extends BaseService<RoleRepository, Role> {
 
     @Autowired
     RoleProviderService roleProviderService;
+
+    @Autowired
+    RoleClassPermissionService roleClassPermissionService;
 
     @PostFilter("hasRole('ROLE_ADMIN') or hasPermission(filterObject, 'READ')")
     @Transactional(readOnly = true)
@@ -86,6 +92,15 @@ public class RoleService extends BaseService<RoleRepository, Role> {
         }
 
         return role;
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#role, 'DELETE')")
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public void delete(Role role) {
+        roleClassPermissionService.deleteAllFor(role);
+        roleInstancePermissionService.deleteAllFor(role);
+
+        repository.delete(role);
     }
 
 }
