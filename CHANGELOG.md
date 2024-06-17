@@ -1,3 +1,11 @@
+## [20.2.1](https://github.com/terrestris/shogun/compare/v20.2.0...v20.2.1) (2024-06-17)
+
+
+### Bug Fixes
+
+* check against the client role instead of the realm role ([a1aa970](https://github.com/terrestris/shogun/commit/a1aa9708dfc4179801e53ca04763763d0074e9c7))
+* remove role permissions before removing the role ([9716cec](https://github.com/terrestris/shogun/commit/9716cecf1099424fc008fcdccba04afbe8059d65))
+
 # [20.2.0](https://github.com/terrestris/shogun/compare/v20.1.0...v20.2.0) (2024-06-13)
 
 
