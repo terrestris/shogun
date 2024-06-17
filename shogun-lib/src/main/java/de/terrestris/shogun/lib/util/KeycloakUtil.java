@@ -19,6 +19,7 @@ package de.terrestris.shogun.lib.util;
 import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.model.Role;
 import de.terrestris.shogun.lib.model.User;
+import de.terrestris.shogun.properties.KeycloakProperties;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.log4j.Log4j2;
@@ -26,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.resource.*;
 import org.keycloak.representations.IDToken;
+import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -44,6 +46,9 @@ import java.util.stream.Collectors;
 @Log4j2
 @Component
 public class KeycloakUtil {
+
+    @Autowired
+    private KeycloakProperties keycloakProperties;
 
     @Autowired
     protected RealmResource keycloakRealm;
@@ -211,7 +216,7 @@ public class KeycloakUtil {
     }
 
     /**
-     * Get the Keycloak RoleRepresentations from a user instance.
+     * Get the Keycloak RoleRepresentations (for the specified client) from a user instance.
      *
      * @param user
      * @return
@@ -221,7 +226,13 @@ public class KeycloakUtil {
         List<RoleRepresentation> roles = new ArrayList<>();
 
         try {
-            roles = userResource.roles().getAll().getRealmMappings();
+            ClientRepresentation clientRepresentation = getClientRepresentationFromClientId();
+
+            if (clientRepresentation == null) {
+                return roles;
+            }
+
+            roles = userResource.roles().clientLevel(clientRepresentation.getId()).listEffective();
         } catch (Exception e) {
             log.warn("Could not get the RoleMappingResource for the user with SHOGun ID {} and " +
                     "Keycloak ID {}. This may happen if the user is not available in Keycloak.",
@@ -230,6 +241,47 @@ public class KeycloakUtil {
         }
 
         return roles;
+    }
+
+    /**
+     * Returns the client representation for the client the shogun instance is configured with (see keycloak.clientId
+     * in properties).
+     *
+     * @return
+     */
+    public ClientRepresentation getClientRepresentationFromClientId() {
+        List<ClientRepresentation> clientRepresentations = keycloakRealm.clients().findByClientId(keycloakProperties.getClientId());
+
+        if (clientRepresentations.size() != 1) {
+            log.error("Could not find client with clientId {} in Keycloak. " +
+                "Expected to find exactly one client with this clientId, but found {} clients.",
+                 keycloakProperties.getClientId(), clientRepresentations.size());
+
+            return null;
+        }
+
+        return clientRepresentations.getFirst();
+    }
+
+    public RoleRepresentation getRoleByName(String roleName) {
+        ClientRepresentation clientRepresentation = getClientRepresentationFromClientId();
+
+        if (clientRepresentation == null) {
+            return null;
+        }
+
+        RoleResource roleResource = keycloakRealm.clients().get(clientRepresentation.getId()).roles().get(roleName);
+
+        RoleRepresentation roleRepresentation = null;
+
+        try {
+            roleRepresentation = roleResource.toRepresentation();
+        } catch (Exception e) {
+            log.error("Could not get the RoleRepresentation for role with name {}. This may happen if " +
+                "the role is not available in Keycloak.", roleName);
+        }
+
+        return roleRepresentation;
     }
 
     /**

@@ -59,5 +59,4 @@ public abstract class KeycloakConfig {
         return kc.realm(keycloakProperties.getRealm());
     }
 
-
 }

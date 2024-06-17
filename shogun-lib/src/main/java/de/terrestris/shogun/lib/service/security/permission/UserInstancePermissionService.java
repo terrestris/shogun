@@ -254,7 +254,7 @@ public class UserInstancePermissionService extends BasePermissionService<UserIns
     /**
      * Deletes all {@link UserInstancePermission} for the given user.
      *
-     * @param user The entity to clear the permissions for.
+     * @param user The user to clear the permissions for.
      */
     public void deleteAllFor(User user) {
         List<UserInstancePermission> userInstancePermissions = this.findFor(user);
