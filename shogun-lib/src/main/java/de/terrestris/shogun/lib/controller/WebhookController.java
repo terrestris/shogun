@@ -39,8 +39,19 @@ public class WebhookController {
     @PostMapping(value = "/keycloak")
     public void handleKeyCloakEvent(@RequestBody KeycloakEventDto event) {
         log.debug("Keycloak webhook called with event: {}", event);
+
         String resourceType = event.getResourceType();
         String eventType = event.getType();
+
+        if (eventType.equalsIgnoreCase("REGISTER") && resourceType == null) {
+            applicationEventPublisher.publishEvent(new KeycloakEvent(
+                this,
+                KeycloakEventType.USER_REGISTERED,
+                event.getUserId()
+            ));
+
+            return;
+        }
 
         String resourcePath = event.getResourcePath();
         if (StringUtils.isEmpty(resourcePath)) {

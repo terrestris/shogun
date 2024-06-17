@@ -42,7 +42,7 @@ public class KeycloakEventListener {
     @EventListener
     public void onKeycloakEvent(KeycloakEvent event) {
         switch (event.getEventType()) {
-            case USER_CREATED -> userProviderService.findOrCreateByProviderId(event.getKeycloakId());
+            case USER_CREATED, USER_REGISTERED -> userProviderService.findOrCreateByProviderId(event.getKeycloakId());
             case GROUP_CREATED -> groupProviderService.findOrCreateByProviderId(event.getKeycloakId());
         }
     }
