@@ -94,7 +94,9 @@ public abstract class BaseService<T extends BaseCrudRepository<S, Long> & JpaSpe
         return (List<S>) repository.findAll();
     }
 
-    @Transactional(readOnly = true)
+    // It's intentional to not have this method annotated with readOnly = true since getUserBySession might create
+    // the currently logged-in user if it's not available already.
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Page<S> findAll(Pageable pageable) {
         // note: security check is done in permission evaluator
         Optional<User> userOpt = userProviderService.getUserBySession();
