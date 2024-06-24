@@ -53,6 +53,14 @@ public class KeycloakUtil {
     @Autowired
     protected RealmResource keycloakRealm;
 
+    public List<UserRepresentation> getRealmUsers() {
+        return this.keycloakRealm.users().list();
+    }
+
+    public List<GroupRepresentation> getRealmGroups() {
+        return this.keycloakRealm.groups().groups();
+    }
+
     public UserResource getUserResource(User<UserRepresentation> user) {
         UsersResource kcUsers = this.keycloakRealm.users();
         return kcUsers.get(user.getAuthProviderId());
@@ -261,6 +269,22 @@ public class KeycloakUtil {
         }
 
         return clientRepresentations.getFirst();
+    }
+
+    /**
+     * Returns the list of (client) roles for the client the shogun instance is configured with
+     * (see keycloak.clientId in properties).
+     *
+     * @return
+     */
+    public List<RoleRepresentation> getClientRoles() {
+        ClientRepresentation clientRepresentation = getClientRepresentationFromClientId();
+
+        if (clientRepresentation == null) {
+            return null;
+        }
+
+        return keycloakRealm.clients().get(clientRepresentation.getId()).roles().list();
     }
 
     public RoleRepresentation getRoleByName(String roleName) {
