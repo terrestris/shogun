@@ -1,3 +1,16 @@
+# [20.3.0](https://github.com/terrestris/shogun/compare/v20.2.1...v20.3.0) (2024-06-24)
+
+
+### Bug Fixes
+
+* remove read only transaction ([7f90d6a](https://github.com/terrestris/shogun/commit/7f90d6aeb4d031e2b43faccaba375a9aa283c68f))
+
+
+### Features
+
+* add methods to util ([5c1e94e](https://github.com/terrestris/shogun/commit/5c1e94ea1d3d4b9ebc96517c513a0387f39d2122))
+* create user on registration ([7aa0dd6](https://github.com/terrestris/shogun/commit/7aa0dd66ab8ea3f88ffc8bb8a0dbc6b922d3ea4b))
+
 ## [20.2.1](https://github.com/terrestris/shogun/compare/v20.2.0...v20.2.1) (2024-06-17)
 
 
