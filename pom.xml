@@ -105,7 +105,7 @@
     <git-commit-id-maven-plugin.version>9.0.0</git-commit-id-maven-plugin.version>
 
     <!-- Spring -->
-    <spring-boot.version>3.3.0</spring-boot.version>
+    <spring-boot.version>3.3.1</spring-boot.version>
     <spring-data.version>3.3.1</spring-data.version>
 
     <!-- Mail -->
