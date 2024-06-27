@@ -91,7 +91,7 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: https://${KEYCLOAK_HOST:shogun-keycloak}/auth/realms/SHOGun
-          jwk-set-uri: https://${KEYCLOAK_HOST:shogun-keycloak}/auth/realms/SHOGun/protocol/openid-connect/certs
+          jwk-set-uri: http://shogun-keycloak:8080/auth/realms/SHOGun/protocol/openid-connect/certs
   graphql:
     schema:
       locations: classpath*:graphql/**/
@@ -112,7 +112,7 @@ keycloak:
   client-id: shogun-boot
   principal-attribute: preferred_username
   disableHostnameVerification: true
-  internal-server-url: shogun-keycloak
+  internal-server-url: "shogun-keycloak:8080"
   extract-roles-from-resource: true
   extract-roles-from-realm: false
 
