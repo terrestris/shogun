@@ -109,7 +109,7 @@
     <spring-data.version>3.3.1</spring-data.version>
 
     <!-- Mail -->
-    <jakarta-mail.version>2.0.1</jakarta-mail.version>
+    <sun-jakarta-mail.version>2.0.1</sun-jakarta-mail.version>
 
     <!-- Hibernate, Jackson, JAXB etc. -->
     <jaxb-api.version>2.3.1</jaxb-api.version>
@@ -567,9 +567,15 @@
       </dependency>
 
       <dependency>
+        <groupId>jakarta.mail</groupId>
+        <artifactId>jakarta.mail-api</artifactId>
+        <version>${jakarta-mail.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>com.sun.mail</groupId>
         <artifactId>jakarta.mail</artifactId>
-        <version>${jakarta-mail.version}</version>
+        <version>${sun-jakarta-mail.version}</version>
       </dependency>
 
       <dependency>
