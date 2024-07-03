@@ -1,3 +1,10 @@
+## [20.3.1](https://github.com/terrestris/shogun/compare/v20.3.0...v20.3.1) (2024-07-03)
+
+
+### Bug Fixes
+
+* use correct mail dependencies ([2b452e3](https://github.com/terrestris/shogun/commit/2b452e3afaf0caa8eacc383952699ffb69d782db))
+
 # [20.3.0](https://github.com/terrestris/shogun/compare/v20.2.1...v20.3.0) (2024-06-24)
 
 
