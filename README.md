@@ -205,3 +205,8 @@ Auditing is enabled by default and can be disabled by setting `spring.jpa.proper
 If envers is enabled mid-way and there is already data this can result in errors when querying audit data. To fix this, a revision with revision type `0` (created) has to be manually inserted for each existing entity into the respective audit table.
 
 See https://discourse.hibernate.org/t/safe-envers-queries-when-the-audit-history-is-incomplete/771.
+
+## SOLR search index
+
+If you have a solr running, you can use the `MetadataImporter` and `ShapeImporter` classes to import metadata
+documents from a CSW or shape file features into it.
