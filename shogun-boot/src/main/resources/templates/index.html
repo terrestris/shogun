@@ -209,9 +209,9 @@
       };
     }
 
-    //fetches all applications depending on authentication status
+    // fetches all applications depending on authentication status
     const getApplications = async (token) => {
-      if (token){
+      if (token) {
         try {
           const response = await fetch('/applications', {
             headers: {
