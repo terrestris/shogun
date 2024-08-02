@@ -209,16 +209,41 @@
       };
     }
 
+    // fetches all applications depending on authentication status
     const getApplications = async (token) => {
-      try {
-        const response = await fetch('/applications', {
-          headers: {
-            'Authorization': `Bearer ${token}`
+      if (token) {
+        try {
+          const response = await fetch('/applications', {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          const applications = await response.json();
+          if (applications && applications.content) {
+            return applications.content;
+          } else {
+            throw new Error('Error while fetching applications');
           }
-        });
-        const applications = await response.json();
-        if (applications && applications.content) {
-          return applications.content;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+      else {
+        const graphqlQuery = { 
+        query:'query{allApplications{id name clientConfig}}'
+      }
+      const requestInit = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(graphqlQuery),
+        }
+      try {
+        const response = await fetch('/graphql', requestInit);
+        const graphqlResponse = await response.json();
+        if (graphqlResponse && graphqlResponse.data && graphqlResponse.data.allApplications) {
+          return  graphqlResponse.data.allApplications;
         } else {
           throw new Error('Error while fetching applications');
         }
@@ -226,6 +251,7 @@
         console.error(error);
       }
     }
+  }
   </script>
 </body>
 
