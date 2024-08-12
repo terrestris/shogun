@@ -40,6 +40,11 @@ public class WebhookController {
     public void handleKeyCloakEvent(@RequestBody KeycloakEventDto event) {
         log.debug("Keycloak webhook called with event: {}", event);
 
+        if (!event.getRealmId().equalsIgnoreCase("shogun")){
+            log.debug("Ignoring event for realm: {}", event.getRealmId());
+            return;
+        }
+
         String resourceType = event.getResourceType();
         String eventType = event.getType();
 
