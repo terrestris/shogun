@@ -1,3 +1,10 @@
+## [20.4.1](https://github.com/terrestris/shogun/compare/v20.4.0...v20.4.1) (2024-08-20)
+
+
+### Bug Fixes
+
+* downgrade openapi (again) ([33648c2](https://github.com/terrestris/shogun/commit/33648c2818e173537385838f1e2736d5f8d31024))
+
 # [20.4.0](https://github.com/terrestris/shogun/compare/v20.3.1...v20.4.0) (2024-08-20)
 
 
