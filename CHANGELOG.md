@@ -1,3 +1,15 @@
+# [20.4.0](https://github.com/terrestris/shogun/compare/v20.3.1...v20.4.0) (2024-08-20)
+
+
+### Bug Fixes
+
+* **deps:** downgrade springdoc ([65e20ed](https://github.com/terrestris/shogun/commit/65e20ed7c996bac2ecf0f616432f99a98b3837ef))
+
+
+### Features
+
+* show public applications when signed out ([d1ee3ef](https://github.com/terrestris/shogun/commit/d1ee3efcb128061c1ab42b12d10f0a2f10eee437))
+
 ## [20.3.1](https://github.com/terrestris/shogun/compare/v20.3.0...v20.3.1) (2024-07-03)
 
 
