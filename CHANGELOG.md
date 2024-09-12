@@ -1,3 +1,10 @@
+## [20.4.2](https://github.com/terrestris/shogun/compare/v20.4.1...v20.4.2) (2024-09-12)
+
+
+### Bug Fixes
+
+* **HttpProxy:** use override instead of bean creation for HttpSecurity ([62cd974](https://github.com/terrestris/shogun/commit/62cd9743252e21274af5a01fb88e514d25f4f16a))
+
 ## [20.4.1](https://github.com/terrestris/shogun/compare/v20.4.0...v20.4.1) (2024-08-20)
 
 
