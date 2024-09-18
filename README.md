@@ -98,6 +98,12 @@ Install a new version of SHOGun to your local maven repository with
   mvn clean install
   ```
 
+or
+
+   ```bash
+   maven clean install -DskipTests -Djib.skip=true
+   ```
+
 #### Application restart
 
 To apply any changes made, a restart of the application is required. A restart can easily be accomplished by
