@@ -136,7 +136,7 @@
     <geoserver-manager.version>1.7.0</geoserver-manager.version>
 
     <!-- Utils -->
-    <commons.io.version>2.16.1</commons.io.version>
+    <commons.io.version>2.17.0</commons.io.version>
     <tika.version>2.9.2</tika.version>
     <reflections.version>0.10.2</reflections.version>
     <evo-inflector.version>1.3</evo-inflector.version>
