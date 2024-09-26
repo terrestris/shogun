@@ -59,7 +59,7 @@ public class JdbcConfiguration {
         if (postgreSQLContainer != null) {
             return postgreSQLContainer;
         }
-        DockerImageName postgis = DockerImageName.parse("postgis/postgis:13-3.1-alpine").asCompatibleSubstituteFor("postgres");
+        DockerImageName postgis = DockerImageName.parse("postgis/postgis:16-3.4-alpine").asCompatibleSubstituteFor("postgres");
         postgreSQLContainer = new PostgreSQLContainer(postgis);
         postgreSQLContainer.start();
         return postgreSQLContainer;
