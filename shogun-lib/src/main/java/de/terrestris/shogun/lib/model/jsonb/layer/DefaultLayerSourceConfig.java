@@ -96,4 +96,10 @@ public class DefaultLayerSourceConfig implements LayerSourceConfig {
         example = "false"
     )
     private Boolean useBearerToken;
+
+    @Schema(
+        description = "Dimension parameters to be replaced for WMTS requests",
+        example = "{\"Time\": \"2010\"}"
+    )
+    private HashMap<String, String> wmtsDimensions;
 }
