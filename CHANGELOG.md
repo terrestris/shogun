@@ -1,3 +1,17 @@
+# [21.0.0](https://github.com/terrestris/shogun/compare/v20.4.2...v21.0.0) (2024-09-26)
+
+
+### Bug Fixes
+
+* inherit versions from spring-boot-dependencies if possible ([0921b29](https://github.com/terrestris/shogun/commit/0921b2918df0b452f4a163d09f88cbd02a653e43))
+* use correct version of spring-boot-starter-parent ([872c744](https://github.com/terrestris/shogun/commit/872c744cc67e23e05dccdf603f6e7e1bb33f099b))
+* use flyway progresql module ([484e417](https://github.com/terrestris/shogun/commit/484e41745e225085f3cc5035943bcf7f7a80e959))
+
+
+### BREAKING CHANGES
+
+* Upgrade to flyway 10 requires database specific modules
+
 ## [20.4.2](https://github.com/terrestris/shogun/compare/v20.4.1...v20.4.2) (2024-09-12)
 
 
