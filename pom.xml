@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.2.5</version>
+    <version>3.3.4</version>
   </parent>
 
   <groupId>de.terrestris</groupId>
@@ -81,10 +81,10 @@
   </distributionManagement>
 
   <modules>
-    <module>shogun-lib</module>
     <module>shogun-boot</module>
-    <module>shogun-gs-interceptor</module>
     <module>shogun-config</module>
+    <module>shogun-gs-interceptor</module>
+    <module>shogun-lib</module>
     <module>shogun-manager</module>
     <module>shogun-proxy</module>
   </modules>
@@ -102,7 +102,6 @@
     <jacoco-plugin.version>0.8.12</jacoco-plugin.version>
     <maven-project-info-reports-plugin.version>3.7.0</maven-project-info-reports-plugin.version>
     <jib-maven-plugin.version>3.4.3</jib-maven-plugin.version>
-    <git-commit-id-maven-plugin.version>9.0.1</git-commit-id-maven-plugin.version>
 
     <!-- Spring -->
     <spring-boot.version>3.3.4</spring-boot.version>
@@ -114,7 +113,7 @@
     <!-- Hibernate, Jackson, JAXB etc. -->
     <jaxb-api.version>2.3.1</jaxb-api.version>
     <!-- Please note: This must be compatible with ${jackson-bom.version}. -->
-    <jackson-datatype-jts.version>2.15.3</jackson-datatype-jts.version>
+    <jackson-datatype-jts.version>2.17.2</jackson-datatype-jts.version>
 
     <!-- Security -->
     <keycloak.version>25.0.6</keycloak.version>
@@ -141,14 +140,7 @@
     <reflections.version>0.10.2</reflections.version>
     <evo-inflector.version>1.3</evo-inflector.version>
 
-    <!-- Logging -->
-    <log4j2.version>2.24.0</log4j2.version>
-
     <!-- Testing -->
-    <testcontainers.version>1.20.1</testcontainers.version>
-    <junit.jupiter.version>5.7.1</junit.jupiter.version>
-    <mockito.version>5.13.0</mockito.version>
-    <maven-dependency-plugin.version>3.8.0</maven-dependency-plugin.version>
     <maven-project-info-reports-plugin.version>3.7.0</maven-project-info-reports-plugin.version>
     <archunit.version>1.3.0</archunit.version>
     <sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
@@ -175,7 +167,6 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>${maven-compiler-plugin.version}</version>
           <configuration>
-            <compilerVersion>${java.version}</compilerVersion>
             <source>${java.version}</source>
             <target>${java.version}</target>
             <showWarnings>true</showWarnings>
@@ -450,7 +441,13 @@
       <dependency>
         <groupId>org.ehcache</groupId>
         <artifactId>ehcache</artifactId>
-        <version>3.10.8</version>
+        <version>${ehcache3.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.flywaydb</groupId>
+        <artifactId>flyway-database-postgresql</artifactId>
+        <version>${flyway.version}</version>
       </dependency>
 
       <dependency>
