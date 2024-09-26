@@ -48,9 +48,7 @@ public class ApplicationControllerTest extends BaseControllerTest<ApplicationCon
         entities.add(entity2);
         entities.add(entity3);
 
-        List<Application> persistedEntities = (List<Application>) repository.saveAll(entities);
-
-        testData = persistedEntities;
+        testData = (List<Application>) repository.saveAll(entities);
     }
 
 }
