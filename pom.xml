@@ -81,10 +81,10 @@
   </distributionManagement>
 
   <modules>
-    <module>shogun-lib</module>
     <module>shogun-boot</module>
-    <module>shogun-gs-interceptor</module>
     <module>shogun-config</module>
+    <module>shogun-gs-interceptor</module>
+    <module>shogun-lib</module>
     <module>shogun-manager</module>
     <module>shogun-proxy</module>
   </modules>
@@ -175,7 +175,6 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>${maven-compiler-plugin.version}</version>
           <configuration>
-            <compilerVersion>${java.version}</compilerVersion>
             <source>${java.version}</source>
             <target>${java.version}</target>
             <showWarnings>true</showWarnings>
