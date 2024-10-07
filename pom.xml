@@ -119,7 +119,7 @@
     <keycloak.version>25.0.6</keycloak.version>
 
     <!-- Database -->
-    <hypersistence-utils.version>3.8.2</hypersistence-utils.version>
+    <hypersistence-utils.version>3.8.3</hypersistence-utils.version>
 
     <!-- GraphQL -->
     <!-- Please note: This must be compatible with the graphql-java version used by Spring Boot.-->
