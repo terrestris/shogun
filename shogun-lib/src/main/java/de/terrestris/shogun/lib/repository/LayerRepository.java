@@ -17,8 +17,26 @@
 package de.terrestris.shogun.lib.repository;
 
 import de.terrestris.shogun.lib.model.Layer;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface LayerRepository extends BaseCrudRepository<Layer, Long>, JpaSpecificationExecutor<Layer> { }
+public interface LayerRepository extends BaseCrudRepository<Layer, Long>, JpaSpecificationExecutor<Layer> {
+
+    @Query(
+        value = "SELECT * FROM shogun.layers WHERE source_config ->> 'layerNames' = :layerName LIMIT 1",
+        nativeQuery = true
+    )
+    Optional<Layer> findFirstByLayerName(@Param("layerName") String layerName);
+
+    @Query(
+        value = "SELECT * FROM shogun.layers WHERE source_config ->> 'layerNames' = :layerName",
+        nativeQuery = true
+    )
+    List<Layer> findByLayerName(@Param("layerName") String layerName);
+
+}
