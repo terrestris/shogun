@@ -111,7 +111,7 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
         BaseEntityPermissionEvaluator entityPermissionEvaluator =
             this.getPermissionEvaluatorForClass(persistentObject.getClass().getCanonicalName());
 
-        log.warn("Checking permissions with permission evaluator '{}'",
+        log.debug("Checking permissions with permission evaluator '{}'",
             entityPermissionEvaluator.getClass().getSimpleName());
 
         return entityPermissionEvaluator.hasPermission(user, persistentObject, permission);
