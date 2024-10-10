@@ -1,3 +1,15 @@
+# [21.1.0](https://github.com/terrestris/shogun/compare/v21.0.0...v21.1.0) (2024-10-10)
+
+
+### Bug Fixes
+
+* **log:** decrease log level in base permission evaluator ([3716046](https://github.com/terrestris/shogun/commit/3716046e5fdf87c71d41cebaa832f262535e7b28))
+
+
+### Features
+
+* **repository:** introduce search by layername parameter ([c0b157f](https://github.com/terrestris/shogun/commit/c0b157fdd8dfd3a5f12c8eea5f5184fa84c11a02))
+
 # [21.0.0](https://github.com/terrestris/shogun/compare/v20.4.2...v21.0.0) (2024-09-26)
 
 
