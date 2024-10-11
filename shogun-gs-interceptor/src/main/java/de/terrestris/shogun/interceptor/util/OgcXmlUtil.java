@@ -85,15 +85,21 @@ public class OgcXmlUtil {
             InputSource source = new InputSource(new StringReader(xml));
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
-            // limit resolution of external entities, see https://rules.sonarsource.com/c/type/Vulnerability/RSPEC-2755
-            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+            try {
+                // limit resolution of external entities, see https://rules.sonarsource.com/c/type/Vulnerability/RSPEC-2755
+                factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+                factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+            } catch (IllegalArgumentException e) {
+                log.error("External DTD/Schema access properties not supported:"
+                    + e.getMessage());
+            }
 
             DocumentBuilder builder = factory.newDocumentBuilder();
             document = builder.parse(source);
-        } catch (ParserConfigurationException | SAXException | IOException e) {
-            throw new IOException("Could not parse input body " +
-                "as XML: " + e.getMessage());
+        } catch (IllegalArgumentException | ParserConfigurationException
+            | SAXException | IOException e) {
+            throw new IOException("Could not parse input body as XML: "
+                + e.getMessage());
         }
         return document;
     }
