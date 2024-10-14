@@ -1,3 +1,10 @@
+## [21.1.1](https://github.com/terrestris/shogun/compare/v21.1.0...v21.1.1) (2024-10-14)
+
+
+### Bug Fixes
+
+* handle unsupported external DTD and schema properties ([0450f3c](https://github.com/terrestris/shogun/commit/0450f3c0c27f0a61136f8647a492e99297fed36e))
+
 # [21.1.0](https://github.com/terrestris/shogun/compare/v21.0.0...v21.1.0) (2024-10-10)
 
 
