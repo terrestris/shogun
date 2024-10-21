@@ -28,8 +28,16 @@ import org.springframework.web.servlet.ModelAndView;
 @ConditionalOnExpression("${controller.resource.enabled:true}")
 public class ResourceController {
 
-    @Value("${KEYCLOAK_HOST:1.2.3.4}")
-    String keycloakHost;
+    // TODO Read from properties, not from env
+    @Value("${KEYCLOAK_URL:https://localhost/auth}")
+    String keycloakUrl;
+
+    @Value("${KEYCLOAK_REALM:SHOGun}")
+    String keycloakRealm;
+
+    // TODO Was shogun-client before
+    @Value("${KEYCLOAK_CLIENT_ID:shogun-client}")
+    String keycloakClientId;
 
     @Autowired(required = false)
     BuildProperties buildProperties;
@@ -40,18 +48,24 @@ public class ResourceController {
         if (buildProperties != null) {
             buildVersion = buildProperties.getVersion();
         }
+
         modelAndView.addObject("version", buildVersion);
+        modelAndView.addObject("keycloakUrl", keycloakUrl);
+        modelAndView.addObject("keycloakRealm", keycloakRealm);
+        modelAndView.addObject("keycloakClientId", keycloakClientId);
+
         modelAndView.setViewName("index");
 
         return modelAndView;
     }
 
-    @GetMapping(value = "/config/admin-client-config.js", produces = "application/javascript")
-    public ModelAndView getAdminClientConfig(ModelAndView modelAndView) {
-        modelAndView.addObject("KEYCLOAK_HOST", keycloakHost);
-        modelAndView.setViewName("admin-client-config.js");
+    // TODO Is this still needed? I assume not
+    // @GetMapping(value = "/config/admin-client-config.js", produces = "application/javascript")
+    // public ModelAndView getAdminClientConfig(ModelAndView modelAndView) {
+    //     modelAndView.addObject("KEYCLOAK_HOST", keycloakHost);
+    //     modelAndView.setViewName("admin-client-config.js");
 
-        return modelAndView;
-    }
+    //     return modelAndView;
+    // }
 
 }

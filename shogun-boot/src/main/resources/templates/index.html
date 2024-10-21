@@ -34,7 +34,7 @@
   <!-- Font Awesome 5.15.4 -->
   <link href="./assets/lib/fontawesome/css/all.min.css" rel="stylesheet">
   <link href="./index.css" rel="stylesheet">
-  <script src="/auth/js/keycloak.js"></script>
+  <script th:src="${keycloakUrl + '/js/keycloak.js'}"></script>
 </head>
 
 <body>
@@ -100,7 +100,6 @@
 
     <div class="container px-4 py-5">
       <h2 class="pb-2">Welcome to SHOGun</h2>
-      <div style="display: none" id="keycloak-host" th:text="${@environment.getProperty('KEYCLOAK_HOST')}"></div>
       <a href="/admin">
         <button id="admin-panel-btn" class="btn btn-primary">
           Open Admin Panel <em class="fas fa-lock"></em>
@@ -132,11 +131,10 @@
 
   <script th:inline="javascript">
     window.onload = async () => {
-      const keycloakHost = [[${@environment.getProperty('KEYCLOAK_HOST')}]];
       const keycloak = new Keycloak({
-        url: `https://${keycloakHost}/auth`,
-        realm: 'SHOGun',
-        clientId: 'shogun-client'
+        url: [[${keycloakUrl}]],
+        realm: [[${keycloakRealm}]],
+        clientId: [[${keycloakClientId}]]
       });
       try {
         const authenticated = await keycloak.init({
