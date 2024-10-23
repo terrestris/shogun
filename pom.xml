@@ -141,7 +141,7 @@
     <evo-inflector.version>1.3</evo-inflector.version>
 
     <!-- Testing -->
-    <maven-project-info-reports-plugin.version>3.7.0</maven-project-info-reports-plugin.version>
+    <maven-project-info-reports-plugin.version>3.8.0</maven-project-info-reports-plugin.version>
     <archunit.version>1.3.0</archunit.version>
     <sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
 
