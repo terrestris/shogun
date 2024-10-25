@@ -44,6 +44,8 @@ Configuration:
         level: info
       - name: org.hibernate.type.descriptor.sql
         level: info
+      - name: org.ehcache
+        level: info
       - name: org.springframework.boot
         level: info
       - name: org.springframework
