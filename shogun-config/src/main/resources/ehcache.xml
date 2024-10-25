@@ -82,10 +82,14 @@
   <cache alias="permission" uses-template="default" />
   <cache alias="userclasspermissions" uses-template="default" />
   <cache alias="userinstancepermissions" uses-template="default" />
+  <cache alias="roleinstancepermissions" uses-template="default" />
+  <cache alias="roleclasspermissions" uses-template="default" />
+  <cache alias="publicinstancepermissions" uses-template="default" />
   <cache alias="applications" uses-template="default" />
   <cache alias="files" uses-template="default" />
   <cache alias="groups" uses-template="default" />
   <cache alias="layers" uses-template="default" />
+  <cache alias="roles" uses-template="default" />
   <cache alias="users" uses-template="default" />
 
 </config>
