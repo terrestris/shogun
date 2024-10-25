@@ -1,3 +1,10 @@
+## [21.1.2](https://github.com/terrestris/shogun/compare/v21.1.1...v21.1.2) (2024-10-25)
+
+
+### Bug Fixes
+
+* **ogcxmlutil:** replace unsupported XML properties with feature-based security settings ([801fde2](https://github.com/terrestris/shogun/commit/801fde2d95bac05d87c23d037b97f50de675e070))
+
 ## [21.1.1](https://github.com/terrestris/shogun/compare/v21.1.0...v21.1.1) (2024-10-14)
 
 
