@@ -26,6 +26,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.history.RevisionRepository;
+import org.springframework.lang.NonNull;
 
 import java.util.List;
 
@@ -36,6 +37,8 @@ public interface BaseCrudRepository<T, ID> extends
     PagingAndSortingRepository<T, ID> {
 
     @QueryHints(@QueryHint(name = AvailableHints.HINT_CACHEABLE, value = "true"))
+    @Override
+    @NonNull
     List<T> findAll();
 
     /**
@@ -63,7 +66,7 @@ public interface BaseCrudRepository<T, ID> extends
             AND rip.permission.name IN ('ADMIN', 'READ', 'CREATE_READ', 'CREATE_READ_UPDATE', 'CREATE_READ_DELETE', 'READ_UPDATE', 'READ_DELETE', 'READ_UPDATE_DELETE')
         )
     """)
-    @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
+    @QueryHints(@QueryHint(name = AvailableHints.HINT_CACHEABLE, value = "true"))
     Page<T> findAll(Pageable pageable, Long userId, List<Long> roleIds);
 
     /**
@@ -97,7 +100,7 @@ public interface BaseCrudRepository<T, ID> extends
             AND rip.permission.name IN ('ADMIN', 'READ', 'CREATE_READ', 'CREATE_READ_UPDATE', 'CREATE_READ_DELETE', 'READ_UPDATE', 'READ_DELETE', 'READ_UPDATE_DELETE')
         )
     """)
-    @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
+    @QueryHints(@QueryHint(name = AvailableHints.HINT_CACHEABLE, value = "true"))
     Page<T> findAll(Pageable pageable, Long userId, List<Long> groupIds, List<Long> roleIds);
 
     /**
@@ -107,7 +110,14 @@ public interface BaseCrudRepository<T, ID> extends
      *                 {@literal null}.
      * @return A page of entities.
      */
-    @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
-    Page<T> findAll(Pageable pageable);
+    @QueryHints(@QueryHint(name = AvailableHints.HINT_CACHEABLE, value = "true"))
+    @Override
+    @NonNull
+    Page<T> findAll(@NonNull Pageable pageable);
+
+    @QueryHints(@QueryHint(name = AvailableHints.HINT_CACHEABLE, value = "true"))
+    @Override
+    @NonNull
+    Iterable<T> findAllById(@NonNull Iterable<ID> ids);
 
 }
