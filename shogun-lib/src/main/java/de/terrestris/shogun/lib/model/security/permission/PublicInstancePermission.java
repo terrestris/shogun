@@ -19,6 +19,8 @@ package de.terrestris.shogun.lib.model.security.permission;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.envers.AuditTable;
@@ -31,6 +33,8 @@ import java.time.OffsetDateTime;
 @Table(schema = "shogun")
 @Audited
 @AuditTable(value = "publicinstancepermissions_rev", schema = "shogun_rev")
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="publicinstancepermissions")
 @Getter
 @Setter
 @AllArgsConstructor

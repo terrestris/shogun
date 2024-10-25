@@ -17,6 +17,9 @@
 package de.terrestris.shogun.lib.repository.security.permission;
 
 import de.terrestris.shogun.lib.model.security.permission.PublicInstancePermission;
+import jakarta.persistence.QueryHint;
+import org.hibernate.jpa.AvailableHints;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -26,6 +29,7 @@ import java.util.Optional;
 public interface PublicInstancePermissionRepository extends CrudRepository<PublicInstancePermission, Long> {
     void deleteByEntityId(Long entityId);
 
+    @QueryHints(@QueryHint(name = AvailableHints.HINT_CACHEABLE, value = "true"))
     Optional<PublicInstancePermission> findByEntityId(Long entityId);
 
 }
