@@ -53,10 +53,6 @@ spring:
       hibernate:
         id:
           db_structure_naming_strategy: single
-        jakarta:
-          cache:
-            provider: org.ehcache.jsr107.EhcacheCachingProvider
-            uri: ehcache.xml
         format_sql: true
         # Generate statistics to check if L2/query cache is actually being used
         generate_statistics: true
@@ -66,11 +62,16 @@ spring:
           # Enable query cache
           use_query_cache: true
           region:
-            factory_class: org.hibernate.cache.jcache.JCacheRegionFactory
+            factory_class: jcache
         integration:
           envers:
             # Set this to false to disable auditing entity changes
             enabled: true
+        javax:
+          cache:
+            uri: ehcache.xml
+            provider: org.ehcache.jsr107.EhcacheCachingProvider
+
   jackson:
     serialization:
       fail-on-empty-beans: false
