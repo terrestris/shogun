@@ -85,14 +85,10 @@ public class OgcXmlUtil {
             InputSource source = new InputSource(new StringReader(xml));
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
-            try {
-                // limit resolution of external entities, see https://rules.sonarsource.com/c/type/Vulnerability/RSPEC-2755
-                factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-                factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
-            } catch (IllegalArgumentException e) {
-                log.error("External DTD/Schema access properties not supported:"
-                    + e.getMessage());
-            }
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
 
             DocumentBuilder builder = factory.newDocumentBuilder();
             document = builder.parse(source);
