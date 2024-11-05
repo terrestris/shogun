@@ -19,12 +19,15 @@ package de.terrestris.shogun.lib.model.jsonb.application;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.terrestris.shogun.lib.annotation.JsonSuperType;
+import de.terrestris.shogun.lib.enumeration.MapInteraction;
 import de.terrestris.shogun.lib.model.jsonb.ApplicationClientConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+
+import java.util.ArrayList;
 
 @Data
 @JsonDeserialize(as = DefaultApplicationClientConfig.class)
@@ -40,6 +43,13 @@ public class DefaultApplicationClientConfig implements ApplicationClientConfig {
     )
     @NonNull
     private DefaultMapView mapView;
+
+    @Schema(
+        description = "The ol interactions added to the map",
+        defaultValue = "[\"DragRotate\",\"DoubleClickZoom\",\"DragPan\",\"PinchRotate\",\"PinchZoom\",\"KeyboardPan\",\"KeyboardZoom\",\"MouseWheelZoom\",\"DragZoom\"]",
+        example = "[\"DragPan\",\"MouseWheelZoom\"]"
+    )
+    private ArrayList<MapInteraction> mapInteractions;
 
     @Schema(
         description = "The description of the application."
