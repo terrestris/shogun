@@ -143,7 +143,7 @@
     <!-- Testing -->
     <maven-project-info-reports-plugin.version>3.8.0</maven-project-info-reports-plugin.version>
     <archunit.version>1.3.0</archunit.version>
-    <sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
+    <sonar-maven-plugin.version>5.0.0.4389</sonar-maven-plugin.version>
 
     <!-- Jib -->
     <image>docker-public.terrestris.de/shogun/${project.artifactId}:latest</image>
