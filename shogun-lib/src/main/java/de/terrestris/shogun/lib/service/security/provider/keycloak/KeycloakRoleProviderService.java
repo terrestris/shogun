@@ -96,4 +96,11 @@ public class KeycloakRoleProviderService implements RoleProviderService<RoleRepr
 
         return role;
     }
+
+    @Override
+    public void createAllRoles() {
+        var clientRoles = keycloakUtil.getClientRoles();
+        var clientRolesIds = clientRoles.stream().map(RoleRepresentation::getId).toList();
+        clientRolesIds.forEach(this::findOrCreateByProviderId);
+    }
 }

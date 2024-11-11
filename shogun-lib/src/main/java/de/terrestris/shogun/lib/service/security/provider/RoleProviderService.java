@@ -28,4 +28,6 @@ public interface RoleProviderService<RoleType, UserType> {
     List<Role> getRolesForUser(User<UserType> user);
 
     Role<RoleType> findOrCreateByProviderId(String providerRoleId);
+
+    void createAllRoles();
 }

@@ -59,18 +59,22 @@ public interface DefaultWebSecurityConfig extends WebSecurityConfig {
                     "/imagefiles",
                     "/imagefiles/*"
                 )
-                .permitAll()
+                    .permitAll()
                 // Enable anonymous access to graphql (secured via permission evaluators)
                 .requestMatchers(
                     HttpMethod.POST,
                     "/graphql"
                 )
-                .permitAll()
+                    .permitAll()
                 .requestMatchers(
                     "/actuator/**",
                     "/cache/**",
                     "/webhooks/**",
-                    "/ws/**"
+                    "/ws/**",
+                    // Explicitly require ADMIN role for the provider sync endpoints.
+                    "/users/createAllFromProvider",
+                    "/groups/createAllFromProvider",
+                    "/roles/createAllFromProvider"
                 )
                     .hasRole("ADMIN")
                 .anyRequest()

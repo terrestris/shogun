@@ -28,6 +28,7 @@ import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.resource.*;
 import org.keycloak.representations.IDToken;
 import org.keycloak.representations.idm.ClientRepresentation;
+import org.keycloak.representations.idm.AbstractUserRepresentation;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -71,6 +72,11 @@ public class KeycloakUtil {
         return kcUsers.get(id);
     }
 
+    public List<String> getAllUserIds() {
+        UsersResource kcUsers = this.keycloakRealm.users();
+        return kcUsers.list().stream().map(AbstractUserRepresentation::getId).toList();
+    }
+
     public GroupResource getGroupResource(Group<GroupRepresentation> group) {
         GroupsResource kcGroups = this.keycloakRealm.groups();
         return kcGroups.group(group.getAuthProviderId());
@@ -79,6 +85,11 @@ public class KeycloakUtil {
     public GroupResource getGroupResource(String id) {
         GroupsResource kcGroups = this.keycloakRealm.groups();
         return kcGroups.group(id);
+    }
+
+    public List<String> getAllGroupIds() {
+        GroupsResource kcGroups = this.keycloakRealm.groups();
+        return kcGroups.groups().stream().map(GroupRepresentation::getId).toList();
     }
 
     public void addUserToGroup(User<UserRepresentation> user, Group<GroupRepresentation> group) {

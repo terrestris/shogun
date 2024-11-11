@@ -123,4 +123,15 @@ public class UserService extends BaseService<UserRepository, User> {
         repository.delete(user);
     }
 
+    /**
+     * Reads all users from the configured group provider (usually Keycloak) and creates them in SHOGun.
+     *
+     * Note: Since the user provider service is not secured, this method just wraps it in a secured method and is
+     *       used in the public HTTP REST API.
+     */
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public void createAllFromProvider() {
+        userProviderService.createAllUsers();
+    }
+
 }
