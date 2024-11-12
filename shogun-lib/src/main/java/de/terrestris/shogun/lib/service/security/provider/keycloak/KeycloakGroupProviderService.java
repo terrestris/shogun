@@ -151,4 +151,9 @@ public class KeycloakGroupProviderService implements GroupProviderService<UserRe
         return group;
     }
 
+    @Override
+    public void createAllGroups() {
+        var groupIds = keycloakUtil.getAllGroupIds();
+        groupIds.forEach(this::findOrCreateByProviderId);
+    }
 }

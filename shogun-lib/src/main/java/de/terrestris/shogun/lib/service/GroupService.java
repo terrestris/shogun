@@ -107,7 +107,7 @@ public class GroupService extends BaseService<GroupRepository, Group> {
     }
 
     /**
-     *  Delete a group from the SHOGun DB by its keycloak Id.
+     * Delete a group from the SHOGun DB by its keycloak Id.
      *
      * @param keycloakGroupId
      */
@@ -136,5 +136,16 @@ public class GroupService extends BaseService<GroupRepository, Group> {
         groupInstancePermissionService.deleteAllFor(group);
 
         repository.delete(group);
+    }
+
+    /**
+     * Reads all groups from the configured group provider (usually Keycloak) and creates them in SHOGun.
+     *
+     * Note: Since the group provider service is not secured, this method just wraps it in a secured method and is
+     *       used in the public HTTP REST API.
+     */
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public void createAllFromProvider() {
+        groupProviderService.createAllGroups();
     }
 }

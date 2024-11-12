@@ -31,4 +31,5 @@ public interface UserProviderService<T> {
 
     Optional<User<T>> getUserFromAuthentication(Authentication authentication);
 
+    void createAllUsers();
 }

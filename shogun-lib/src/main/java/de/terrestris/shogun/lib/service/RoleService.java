@@ -103,4 +103,15 @@ public class RoleService extends BaseService<RoleRepository, Role> {
         repository.delete(role);
     }
 
+    /**
+     * Reads all roles from the configured group provider (usually Keycloak) and creates them in SHOGun.
+     *
+     * Note: Since the role provider service is not secured, this method just wraps it in a secured method and is
+     *       used in the public HTTP REST API.
+     */
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public void createAllFromProvider() {
+        roleProviderService.createAllRoles();
+    }
+
 }
