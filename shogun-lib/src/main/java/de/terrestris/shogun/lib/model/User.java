@@ -75,7 +75,7 @@ public class User<T> extends BaseEntity {
     @ToString.Exclude
     @Schema(
         description = "The configuration of the user which should be used to define client specific aspects of " +
-            "the user. This may include the locale set by the user, the last application visited by the user or similiar."
+            "the user. This may include the locale set by the user, the last application visited by the user or similar."
     )
     private UserClientConfig clientConfig;
 
