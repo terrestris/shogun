@@ -82,7 +82,7 @@ public class Layer extends BaseEntity {
     @ToString.Exclude
     @Schema(
         description = "Custom features for the layers that aren't available in the datasource. This might be used " +
-            "for custom draw layers or similiar. It's advised to store the features using the GeoJSON format."
+            "for custom draw layers or similar. It's advised to store the features using the GeoJSON format."
     )
     private GeoJsonObject features;
 
