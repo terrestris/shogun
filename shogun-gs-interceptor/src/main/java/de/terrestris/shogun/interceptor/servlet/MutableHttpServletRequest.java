@@ -166,13 +166,17 @@ public class MutableHttpServletRequest extends HttpServletRequestWrapper {
                     if (StringUtils.isEmpty(value)) {
                         value = OgcXmlUtil.getPathInDocument(document, "//@typeName | //@typeNames");
                     }
+                    if (StringUtils.isEmpty(value)) {
+                        log.debug("Check for first feature type in WFS-T insert request");
+                        value = OgcXmlUtil.getPathInDocument(document, "name(//Transaction/Insert/*[1])");
+                    }
                 }
             } else {
                 log.error("No body found in the request.");
             }
         }
 
-        log.trace("Found the request parameter value: " + value);
+        log.trace("Found the request parameter value: {}", value);
         return value;
     }
 

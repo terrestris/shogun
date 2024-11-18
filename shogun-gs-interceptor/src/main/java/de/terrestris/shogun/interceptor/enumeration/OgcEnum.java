@@ -259,7 +259,7 @@ public class OgcEnum {
     }
 
     /**
-     * A enum type for the allowed endPoint format.
+     * An enum type for the allowed endPoint format.
      */
     public enum EndPoint {
         LAYERS("LAYERS"),
