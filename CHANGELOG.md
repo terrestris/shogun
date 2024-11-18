@@ -1,3 +1,22 @@
+# [21.2.0](https://github.com/terrestris/shogun/compare/v21.1.2...v21.2.0) (2024-11-18)
+
+
+### Bug Fixes
+
+* add classifier ([aadf6a8](https://github.com/terrestris/shogun/commit/aadf6a8f6dd6d3480cb4f4160c3d0959368702cd))
+* add missing annotations and make findAllById cacheable ([00b1459](https://github.com/terrestris/shogun/commit/00b145944d9077d2e82c0d736c3fd438f391bc89))
+* add missing cache annotations ([764b832](https://github.com/terrestris/shogun/commit/764b8327a8583deaf525244d293c07c64fff6ce2))
+* add missing cache regions ([6362f59](https://github.com/terrestris/shogun/commit/6362f596a2b8f595881eb728f3e161d680763135))
+* adds missing lecense header ([ac7b4e1](https://github.com/terrestris/shogun/commit/ac7b4e1196306d690d1678a7ddaad5ae9184e333))
+* extract typename in WFS Transaction insert queries correctly ([1cf15cb](https://github.com/terrestris/shogun/commit/1cf15cb01db5b45181301324daee82b9795b333b))
+* typo ([12705ae](https://github.com/terrestris/shogun/commit/12705aebec13360c34cb9722a165615f121548ca))
+
+
+### Features
+
+* adds endpoints to manually create users, groups and roles from the provider ([7dd043e](https://github.com/terrestris/shogun/commit/7dd043eaa4b20ec24fb6c4ba119b756f454a8bbb))
+* introduces "mapInteractions" config ([a5b3859](https://github.com/terrestris/shogun/commit/a5b3859f3bbe5fe803be2c576cda9c969a39a05b))
+
 ## [21.1.2](https://github.com/terrestris/shogun/compare/v21.1.1...v21.1.2) (2024-10-25)
 
 
