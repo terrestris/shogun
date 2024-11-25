@@ -126,7 +126,7 @@
     <graphql-java-extended-scalars.version>22.0</graphql-java-extended-scalars.version>
 
     <!-- Swagger/REST -->
-    <springdoc-openapi.version>2.5.0</springdoc-openapi.version>
+    <springdoc-openapi.version>2.7.0</springdoc-openapi.version>
 
     <!-- JSON/Dataformats -->
     <geojson-jackson.version>1.14</geojson-jackson.version>
