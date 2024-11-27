@@ -106,9 +106,12 @@
         </button>
       </a>
       <h3 class="pb-2 pt-4">Applications</h3>
-      <p id="app-label-visibility" hidden>
-        <slot name="app-info">You are not able to preview applications at this time. </br>
-          Note: You are either logged-out or this site has no (public) applications.
+      <div id="login-alert" class="container alert alert-warning alert-dismissible fade show" role="alert" style="margin-top: 13px;" hidden>
+        You are not able to preview applications at this time. </br>
+        Note: You are either logged-out or this site has no (public) applications.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+        <slot name="app-info">
         </slot>
       </p>
       <div class="row row-cols-1 row-cols-md-3 g-4 apps" />
@@ -176,8 +179,9 @@
         : ''
     }));
     if (!keycloak.authenticated || !applications) {
-      document.querySelector('#app-label-visibility').hidden = false;
+      document.querySelector('#login-alert').hidden = false;
     }
+
     const appsEl = document.querySelector('.apps');
 
     // Create web components
@@ -197,20 +201,19 @@
         }
       });
 
-
-    if (appsEl) {
-      appInfos.forEach(app => {
-        const html = `<shogun-app app='${app.id}'>` +
-          `<a style='visibility: hidden' class='admin-btn' title='Edit application' slot='admin-btn' href='/admin/portal/application/${app.id}'>` +
-          `<em class='fas fa-cog'></em></a>` +
-          `<span>${app.logo}</span>` +
-          `<img class='app-icon' slot='app-logoPath' src='${app.logo}' alt=''>` +
-          `<span slot='app-title'>${app.name}</span>` +
-          `<span slot='app-info'>${app.description}</span>` +
-          `</shogun-app>`;
-        appsEl.insertAdjacentHTML('beforeend', html);
-      });
-    }
+      if (appsEl) {
+        appInfos.forEach(app => {
+          const html = `<shogun-app app='${app.id}'>` +
+            `<a style='visibility: hidden' class='admin-btn' title='Edit application' slot='admin-btn' href='/admin/portal/application/${app.id}'>` +
+            `<em class='fas fa-cog'></em></a>` +
+            `<span>${app.logo}</span>` +
+            `<img class='app-icon' slot='app-logoPath' src='${app.logo}' alt=''>` +
+            `<span slot='app-title'>${app.name}</span>` +
+            `<span slot='app-info'>${app.description}</span>` +
+            `</shogun-app>`;
+          appsEl.insertAdjacentHTML('beforeend', html);
+        });
+      }
 
     // Check for admin role
     const hasAdminRole = keycloak.hasResourceRole('admin', 'shogun-admin');
