@@ -29,3 +29,7 @@
   color: #fff;
   border-radius: .75rem;
 }
+
+.app-icon {
+  max-height: 25px;
+}
