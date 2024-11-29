@@ -113,7 +113,7 @@ keycloak:
   client-id: shogun-boot
   principal-attribute: preferred_username
   disableHostnameVerification: true
-  internal-server-url: shogun-keycloak
+  internal-server-url: http://shogun-keycloak:8080/auth
   extract-roles-from-resource: true
   extract-roles-from-realm: false
 

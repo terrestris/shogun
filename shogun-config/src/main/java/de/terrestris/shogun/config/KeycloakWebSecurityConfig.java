@@ -22,9 +22,11 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.access.expression.DefaultHttpSecurityExpressionHandler;
 import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -33,6 +35,18 @@ import javax.net.ssl.HttpsURLConnection;
 @Configuration
 @EnableWebSecurity
 public class KeycloakWebSecurityConfig implements DefaultWebSecurityConfig {
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    // https://stackoverflow.com/questions/74710493/spring-boot-3-0-security-6-0-migration-el1057e-no-bean-resolver-registered-i
+    private WebExpressionAuthorizationManager getWebExpressionAuthorizationManager(final String expression) {
+        final var expressionHandler = new DefaultHttpSecurityExpressionHandler();
+        expressionHandler.setApplicationContext(applicationContext);
+        final var authorizationManager = new WebExpressionAuthorizationManager(expression);
+        authorizationManager.setExpressionHandler(expressionHandler);
+        return authorizationManager;
+    }
 
     @Autowired
     private KeycloakProperties keycloakProperties;
@@ -53,9 +67,9 @@ public class KeycloakWebSecurityConfig implements DefaultWebSecurityConfig {
         http
             .authorizeHttpRequests((auths) -> auths
                 .requestMatchers("/webhooks/keycloak/**")
-                .access(new WebExpressionAuthorizationManager(
-                    "authenticated or hasIpAddress('%s')".formatted(keycloakProperties.getInternalServerUrl())
-                ))
+                    .access(getWebExpressionAuthorizationManager(
+                        "hasRole('ROLE_ADMIN') or @keycloakUtil.isInternalKeycloakRequest(request)")
+                    )
             );
 
         customHttpConfiguration(http);

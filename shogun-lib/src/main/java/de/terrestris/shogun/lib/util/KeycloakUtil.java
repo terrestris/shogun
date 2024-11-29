@@ -20,6 +20,7 @@ import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.model.Role;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.properties.KeycloakProperties;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.log4j.Log4j2;
@@ -27,17 +28,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.resource.*;
 import org.keycloak.representations.IDToken;
-import org.keycloak.representations.idm.ClientRepresentation;
-import org.keycloak.representations.idm.AbstractUserRepresentation;
-import org.keycloak.representations.idm.GroupRepresentation;
-import org.keycloak.representations.idm.RoleRepresentation;
-import org.keycloak.representations.idm.UserRepresentation;
+import org.keycloak.representations.idm.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 
+import java.net.InetAddress;
+import java.net.URI;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -334,4 +334,21 @@ public class KeycloakUtil {
         return (String) ((JwtAuthenticationToken) authentication).getTokenAttributes().get("sub");
     }
 
+    /**
+     * Checks if a given request is originating from the internal keycloak server.
+     *
+     * @param request The HttpServletRequest to check.
+     * @return True if the request is internal, false otherwise.
+     * @throws UnknownHostException If the remote address cannot be resolved to a hostname.
+     */
+    public boolean isInternalKeycloakRequest(HttpServletRequest request) throws UnknownHostException {
+        String remoteAddress = request.getRemoteAddr();
+        // In the common docker scenario this is something like "shogun-keycloak.shogun-docker_default".
+        String remoteHostName = InetAddress.getByName(remoteAddress).getHostName();
+
+        // This is the hostname of the internal keycloak server, usually "shogun-keycloak".
+        String internalKeycloakHost = URI.create(keycloakProperties.getInternalServerUrl()).getHost();
+
+        return remoteHostName.contains(internalKeycloakHost);
+    }
 }
