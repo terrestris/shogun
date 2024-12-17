@@ -1,3 +1,17 @@
+# [21.3.0](https://github.com/terrestris/shogun/compare/v21.2.0...v21.3.0) (2024-12-17)
+
+
+### Bug Fixes
+
+* center link and remove github link ([ca32f52](https://github.com/terrestris/shogun/commit/ca32f52181afcad20dfc019c909e186999f1aa19))
+* move links from landing page to admin client ([51c81d6](https://github.com/terrestris/shogun/commit/51c81d613c5ad597192cbb248b59f58c6a8f8dd4))
+
+
+### Features
+
+* add wmtsDimensions parameter for layer source ([c6fab88](https://github.com/terrestris/shogun/commit/c6fab886fec7404ec4d6aab2f991a9a90b6cb4bc))
+* adds app logo in preview on landing page ([e4b82e7](https://github.com/terrestris/shogun/commit/e4b82e77b31ce3e9b5174a4bdd6f382cc3eee4bf))
+
 # [21.2.0](https://github.com/terrestris/shogun/compare/v21.1.2...v21.2.0) (2024-11-18)
 
 
