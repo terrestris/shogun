@@ -136,8 +136,7 @@
 
   <script th:inline="javascript">
     window.onload = async () => {
-      const keycloakHost = [[${@environment.getProperty('KEYCLOAK_HOST')
-    }]];
+    const keycloakHost = [[${@environment.getProperty('KEYCLOAK_HOST')}]];
     const keycloak = new Keycloak({
       url: `https://${keycloakHost}/auth`,
       realm: 'SHOGun',
@@ -168,7 +167,7 @@
     const appInfos = applications.map(app => ({
       id: app.id,
       name: app.name,
-      logo: app.clientConfig && app.clientConfig.theme
+      logo: app.clientConfig && app.clientConfig.theme && app.clientConfig.theme.logoPath
         ? app.clientConfig.theme.logoPath
         : '',
       description: app.clientConfig && app.clientConfig.description
