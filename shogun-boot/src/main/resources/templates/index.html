@@ -62,6 +62,7 @@
           <slot name="admin-btn"></slot>
         </div>
         <div class="app-info">
+          <slot name="app-logoPath">Default logo</slot>
           <h4>
             <slot name="app-title">Default Title</slot>
           </h4>
@@ -107,6 +108,9 @@
         </button>
       </a>
       <h3 class="pb-2 pt-4">Applications</h3>
+      <p id="app-info-visibility" hidden>
+        No applications available.
+      </p>
       <div class="row row-cols-1 row-cols-md-3 g-4 apps" />
     </div>
 
@@ -151,14 +155,22 @@
       const appInfos = applications.map(app => ({
         id: app.id,
         name: app.name,
+        logo: app.clientConfig && app.clientConfig.theme && app.clientConfig.theme.logoPath
+          ? app.clientConfig.theme.logoPath
+          : '',
         description: app.clientConfig && app.clientConfig.description
           ? app.clientConfig.description
           : ''
       }));
+      if (applications.length <= 0) {
+        document.querySelector('#app-info-visibility').hidden = false;
+      }
+
       const appsEl = document.querySelector('.apps');
 
       // Create web components
-      customElements.define('shogun-app',
+      customElements.define(
+        'shogun-app',
         class extends HTMLElement {
           constructor() {
             super();
@@ -172,14 +184,16 @@
           connectedCallback() {
             this.onclick = () => window.open(`/client?applicationId=${this.getAttribute('app')}`);
           }
-        });
-
+        }
+      );
 
       if (appsEl) {
         appInfos.forEach(app => {
           const html = `<shogun-app app='${app.id}'>` +
             `<a style='visibility: hidden' class='admin-btn' title='Edit application' slot='admin-btn' href='/admin/portal/application/${app.id}'>` +
             `<em class='fas fa-cog'></em></a>` +
+            `<span>${app.logo}</span>` +
+            `<img class='app-icon' slot='app-logoPath' src='${app.logo}' alt=''>` +
             `<span slot='app-title'>${app.name}</span>` +
             `<span slot='app-info'>${app.description}</span>` +
             `</shogun-app>`;
@@ -215,31 +229,30 @@
         } catch (error) {
           console.error(error);
         }
-      }
-      else {
-        const graphqlQuery = { 
-        query:'query{allApplications{id name clientConfig}}'
-      }
-      const requestInit = {
+      } else {
+        const graphqlQuery = {
+          query: 'query{allApplications{id name clientConfig}}'
+        }
+        const requestInit = {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(graphqlQuery),
         }
-      try {
-        const response = await fetch('/graphql', requestInit);
-        const graphqlResponse = await response.json();
-        if (graphqlResponse && graphqlResponse.data && graphqlResponse.data.allApplications) {
-          return  graphqlResponse.data.allApplications;
-        } else {
-          throw new Error('Error while fetching applications');
+        try {
+          const response = await fetch('/graphql', requestInit);
+          const graphqlResponse = await response.json();
+          if (graphqlResponse && graphqlResponse.data && graphqlResponse.data.allApplications) {
+            return graphqlResponse.data.allApplications;
+          } else {
+            throw new Error('Error while fetching applications');
+          }
+        } catch (error) {
+          console.error(error);
         }
-      } catch (error) {
-        console.error(error);
       }
     }
-  }
   </script>
 </body>
 
