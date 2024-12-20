@@ -104,7 +104,7 @@
     <jib-maven-plugin.version>3.4.4</jib-maven-plugin.version>
 
     <!-- Spring -->
-    <spring-boot.version>3.4.0</spring-boot.version>
+    <spring-boot.version>3.4.1</spring-boot.version>
     <spring-data.version>3.3.5</spring-data.version>
 
     <!-- Mail -->
