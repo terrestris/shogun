@@ -47,8 +47,6 @@ public class KeycloakProperties {
 
     private Boolean disableHostnameVerification;
 
-    private String internalServerUrl;
-
     private Boolean extractRolesFromResource = true;
 
     private Boolean extractRolesFromRealm = false;

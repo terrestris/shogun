@@ -85,6 +85,7 @@ public interface DefaultWebSecurityConfig extends WebSecurityConfig {
                 .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
                 .ignoringRequestMatchers(csrfRequestMatcher)
                 .ignoringRequestMatchers("/graphql")
+                .ignoringRequestMatchers("/webhooks/**")
                 .ignoringRequestMatchers("/actuator/**")
                 .ignoringRequestMatchers("/sso/**")
                 .ignoringRequestMatchers("/ws/**")
