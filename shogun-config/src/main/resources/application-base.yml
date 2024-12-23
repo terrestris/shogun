@@ -113,7 +113,6 @@ keycloak:
   client-id: shogun-boot
   principal-attribute: preferred_username
   disableHostnameVerification: true
-  internal-server-url: shogun-keycloak
   extract-roles-from-resource: true
   extract-roles-from-realm: false
 

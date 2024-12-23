@@ -25,7 +25,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -50,14 +49,6 @@ public class KeycloakWebSecurityConfig implements DefaultWebSecurityConfig {
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        http
-            .authorizeHttpRequests((auths) -> auths
-                .requestMatchers("/webhooks/keycloak/**")
-                .access(new WebExpressionAuthorizationManager(
-                    "authenticated or hasIpAddress('%s')".formatted(keycloakProperties.getInternalServerUrl())
-                ))
-            );
-
         customHttpConfiguration(http);
 
         KeycloakJwtAuthenticationConverter authConverter = new KeycloakJwtAuthenticationConverter(
@@ -68,9 +59,6 @@ public class KeycloakWebSecurityConfig implements DefaultWebSecurityConfig {
         );
 
         http
-            .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/webhooks/**")
-            )
             .oauth2ResourceServer(oauth -> oauth
                 .jwt(jwt -> jwt.jwtAuthenticationConverter(authConverter))
             );
