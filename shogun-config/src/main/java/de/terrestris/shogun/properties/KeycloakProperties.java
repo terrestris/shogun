@@ -31,13 +31,11 @@ public class KeycloakProperties {
 
     private String serverUrl;
 
-    private String username;
-
-    private String password;
-
     private String masterRealm;
 
     private String adminClientId;
+
+    private String adminClientSecret;
 
     private String realm;
 
