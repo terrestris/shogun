@@ -16,14 +16,13 @@
 keycloak:
   enabled: false
   server-url: https://localhost/auth
-  username: admin
-  password: shogun
   master-realm: master
   admin-client-id: admin-cli
+  admin-client-secret: supersecret
   realm: SHOGun
   client-id: shogun-boot
   principal-attribute: preferred_username
-  disableHostnameVerification: true
+  disable-hostname-verification: true
 
 spring:
   session:
