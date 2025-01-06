@@ -147,6 +147,7 @@
 
     <!-- Jib -->
     <image>docker-public.terrestris.de/shogun/${project.artifactId}:latest</image>
+    <geotools.version>33-SNAPSHOT</geotools.version>
   </properties>
 
   <build>
@@ -618,6 +619,21 @@
         <artifactId>archunit-junit5</artifactId>
         <version>${archunit.version}</version>
         <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.geotools</groupId>
+        <artifactId>gt-epsg-hsql</artifactId>
+        <version>${geotools.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.geotools</groupId>
+        <artifactId>gt-referencing</artifactId>
+        <version>${geotools.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.geotools</groupId>
+        <artifactId>gt-main</artifactId>
+        <version>${geotools.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
