@@ -18,7 +18,17 @@ package de.terrestris.shogun.lib.service;
 
 import de.terrestris.shogun.lib.model.Application;
 import de.terrestris.shogun.lib.repository.ApplicationRepository;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
-public class ApplicationService extends BaseService<ApplicationRepository, Application> { }
+public class ApplicationService extends BaseService<ApplicationRepository, Application> {
+    @PostAuthorize("hasRole('ROLE_ADMIN') or hasPermission(returnObject.orElse(null), 'READ')")
+    @Transactional(readOnly = true)
+    public Optional<Application> findOne(String name) {
+        return repository.findByName(name);
+    }
+}
