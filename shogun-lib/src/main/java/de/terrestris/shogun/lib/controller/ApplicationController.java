@@ -19,6 +19,9 @@ package de.terrestris.shogun.lib.controller;
 import de.terrestris.shogun.lib.model.Application;
 import de.terrestris.shogun.lib.service.ApplicationService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.log4j.Log4j2;
@@ -41,9 +44,28 @@ import java.util.Optional;
 @SecurityRequirement(name = "bearer-key")
 @Log4j2
 public class ApplicationController extends BaseController<ApplicationService, Application> {
-    @GetMapping("/name/{name}")
+    @GetMapping("/findByName/{name}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Ok: Successfully returned the application with the given name"
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized: You need to provide a bearer token",
+            content = @Content
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Not found: An application with the provided name does not exist (or you don't have the permission to open it)"
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error: Something internal went wrong while returning the entity"
+        )
+    })
     public Application findOne(@PathVariable("name") String applicationName) {
         log.trace("Requested to return application with name {}", applicationName);
 
