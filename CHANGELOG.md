@@ -1,3 +1,15 @@
+# [21.4.0](https://github.com/terrestris/shogun/compare/v21.3.0...v21.4.0) (2025-01-15)
+
+
+### Bug Fixes
+
+* don't allow requests from internal keycloak anonymously anymore ([34fb42a](https://github.com/terrestris/shogun/commit/34fb42a98e572b177d591a0b0e60ff5a6d9a726c))
+
+
+### Features
+
+* add epsg service ([8ba1606](https://github.com/terrestris/shogun/commit/8ba1606efdf17202ba61f4fcb841390effa58086))
+
 # [21.3.0](https://github.com/terrestris/shogun/compare/v21.2.0...v21.3.0) (2024-12-17)
 
 
