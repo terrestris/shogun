@@ -1,3 +1,10 @@
+# [21.5.0](https://github.com/terrestris/shogun/compare/v21.4.0...v21.5.0) (2025-01-16)
+
+
+### Features
+
+* extend the api with a application name endpoint ([#966](https://github.com/terrestris/shogun/issues/966)) ([de669ef](https://github.com/terrestris/shogun/commit/de669ef9a01b1b6d2f2a55995130ed7b8997ba64))
+
 # [21.4.0](https://github.com/terrestris/shogun/compare/v21.3.0...v21.4.0) (2025-01-15)
 
 
