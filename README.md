@@ -101,7 +101,7 @@ Install a new version of SHOGun to your local maven repository with
 or
 
    ```bash
-   maven clean install -DskipTests -Djib.skip=true
+   mvn clean install -DskipTests -Djib.skip=true
    ```
 
 #### Application restart
