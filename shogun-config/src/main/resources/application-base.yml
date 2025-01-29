@@ -71,10 +71,6 @@ spring:
           cache:
             uri: ehcache.xml
             provider: org.ehcache.jsr107.EhcacheCachingProvider
-
-  jackson:
-    serialization:
-      fail-on-empty-beans: false
   flyway:
     enabled: true
     baselineOnMigrate: true
