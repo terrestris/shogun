@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.terrestris.shogun.lib.annotation.JsonSuperType;
 import io.hypersistence.utils.hibernate.type.util.ObjectMapperSupplier;
@@ -71,13 +72,14 @@ public class JacksonConfig implements ObjectMapperSupplier {
             GeometryFactory geomFactory = new GeometryFactory(new PrecisionModel(coordinatePrecisionScale), srid);
             objectMapper.registerModule(new JtsModule(geomFactory));
 
-            var javaTimeModule = new JavaTimeModule();
-            objectMapper.registerModule(javaTimeModule);
+            objectMapper.registerModule(new JavaTimeModule());
+            objectMapper.registerModule(new Jdk8Module());
             objectMapper.configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false);
 
             objectMapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false);
             objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+            objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
             for (var entry : findAnnotatedClasses().entrySet()) {
                 objectMapper.addMixIn(entry.getKey(), entry.getValue());
