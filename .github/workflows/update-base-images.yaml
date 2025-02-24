@@ -1,0 +1,119 @@
+name: Update docker base images
+
+on:
+  workflow_dispatch: # allow manual trigger
+  schedule:
+    - cron: '0 3 * * 0'  # every sunday at 03:00 UTC
+
+jobs:
+  latest-tags:
+    runs-on: ubuntu-latest
+    outputs:
+      latest_tags: ${{ steps.latest_tags.outputs.latest_tags }}
+    steps:
+      - name: Checkout sources 🔰
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get latest tags
+        id: latest_tags
+        run: |
+          # The command lists the latest 10 Git tags, filtered and sorted by the following rules:
+          #
+          # * Minimum version: Only tags with a major version >= v21 are included (where the docker base image feature has been introduced)
+          # * Only one "-next" version: Displays only the latest -next.x tag, if present.
+          # * Limit Per Major Line: Shows up to 3 tags per major version.
+          # * The final output is limited to 10 tags.
+          git tag -l "v*" \
+            | sort -r -V \
+            | awk '
+              BEGIN {
+                # Flag to ensure only one "-next" version is included
+                next_used = 0
+              }
+              {
+                # Extract the major version
+                match($0, /^v([0-9]+)\./, m)
+                major = m[1]
+
+                # Skip versions below v21
+                if (major < 21) {
+                  next
+                }
+
+                # remove the v prefix
+                clean_tag = $0
+                sub(/^v/, "", clean_tag)
+
+                # Check if the tag is a "-next" version
+                if ($0 ~ /-next\./) {
+                  if (next_used == 0) {
+                    # Use only the latest "-next" version and set the flag
+                    print "Found -next version: clean_tag" > "/dev/stderr"
+                    print "\"" clean_tag "\""
+                    next_used = 1
+                  }
+                } else {
+                  # Allow up to 3 versions per major version line
+                  if (count[major] < 3) {
+                    print "Adding version: clean_tag" > "/dev/stderr"
+                    print "\"" clean_tag "\""
+                    count[major]++
+                  }
+                }
+              }
+            ' \
+            | head -n 10 \
+            | paste -sd "," - \
+            | awk '{print "latest_tags=["$0"]"}' | tee -a $GITHUB_OUTPUT
+
+  run-for-tag:
+    needs: latest-tags
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        tag: ${{ fromJSON(needs.latest-tags.outputs.latest_tags) }}
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+        with:
+          ref: v${{ matrix.tag }}
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          architecture: x64
+
+      - name: Restore cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Create maven settings.xml with credentials
+        uses: whelk-io/maven-settings-xml-action@v22
+        with:
+          servers: |
+            [
+              { "id": "nexus.terrestris.de", "username": "${{ secrets.NEXUS_USER }}", "password": "${{ secrets.NEXUS_PASSWORD }}" },
+              { "id": "docker-public.terrestris.de", "username": "${{ secrets.NEXUS_DOCKER_USER }}", "password": "${{ secrets.NEXUS_DOCKER_PASSWORD }}" },
+              { "id": "terrestris-nexus", "username": "${{ secrets.NEXUS_USER }}", "password": "${{ secrets.NEXUS_PASSWORD }}" },
+              { "id": "terrestris-nexus-snapshots", "username": "${{ secrets.NEXUS_USER }}", "password": "${{ secrets.NEXUS_PASSWORD }}" }
+            ]
+
+      - name: Install dependencies
+        run: mvn compile --batch-mode
+
+      - name: Save cache
+        uses: actions/cache/save@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+
+      - name: Deploy dependencies and docker release
+        run: mvn deploy --batch-mode
