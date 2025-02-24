@@ -13,7 +13,14 @@ updates:
     time: "04:00"
   open-pull-requests-limit: 10
 - package-ecosystem: "docker"
-  directory: "/"
+  directory: "/shogun-boot"
   schedule:
     interval: "daily"
     time: "04:00"
+  open-pull-requests-limit: 10
+- package-ecosystem: "docker"
+  directory: "/shogun-gs-interceptor"
+  schedule:
+    interval: "daily"
+    time: "04:00"
+  open-pull-requests-limit: 10
