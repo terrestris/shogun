@@ -34,7 +34,6 @@
   <!-- Font Awesome 5.15.4 -->
   <link href="./assets/lib/fontawesome/css/all.min.css" rel="stylesheet">
   <link href="./index.css" rel="stylesheet">
-  <script src="/auth/js/keycloak.js"></script>
 </head>
 
 <body>
@@ -122,7 +121,9 @@
     </p>
   </footer>
 
-  <script th:inline="javascript">
+  <script th:inline="javascript" type="module">
+    import Keycloak from './assets/lib/keycloak/keycloak.js';
+
     window.onload = async () => {
       const keycloakHost = [[${@environment.getProperty('KEYCLOAK_HOST')}]];
       const keycloak = new Keycloak({
