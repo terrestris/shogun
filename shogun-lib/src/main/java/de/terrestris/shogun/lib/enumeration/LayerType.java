@@ -18,11 +18,14 @@ package de.terrestris.shogun.lib.enumeration;
 
 public enum LayerType {
     TILEWMS("TileWMS"),
+    @Deprecated
     VECTORTILE("VectorTile"),
     WFS("WFS"),
     WMS("WMS"),
     WMTS("WMTS"),
     WMSTIME("WMSTime"),
+    MAPBOXSTYLE("MapboxStyle"),
+    MVT("MVT"),
     XYZ("XYZ");
 
     private final String type;
