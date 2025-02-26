@@ -1,3 +1,10 @@
+## [21.5.1](https://github.com/terrestris/shogun/compare/v21.5.0...v21.5.1) (2025-02-26)
+
+
+### Bug Fixes
+
+* apply jdk8 module ([706f3ee](https://github.com/terrestris/shogun/commit/706f3eeb5146902ae02bfd5fb4c6cbac4668dbd2))
+
 # [21.5.0](https://github.com/terrestris/shogun/compare/v21.4.0...v21.5.0) (2025-01-16)
 
 
