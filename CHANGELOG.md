@@ -1,3 +1,10 @@
+## [21.5.2](https://github.com/terrestris/shogun/compare/v21.5.1...v21.5.2) (2025-02-26)
+
+
+### Bug Fixes
+
+* update spring-boot parent to 3.4.3 ([f64cab1](https://github.com/terrestris/shogun/commit/f64cab1bc2705df3126d7f87f6ff16046b4f9710))
+
 ## [21.5.1](https://github.com/terrestris/shogun/compare/v21.5.0...v21.5.1) (2025-02-26)
 
 
