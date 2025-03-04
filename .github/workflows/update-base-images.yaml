@@ -76,8 +76,8 @@ jobs:
           LATEST_TAG=$(echo "$LATEST_TAGS" | jq -r '.[0]')
           REMAINING_LATEST_TAGS=$(echo "$LATEST_TAGS" | jq -c '.[1:]')
 
-          echo "latest_tag=$LATEST_TAG" >> "$GITHUB_OUTPUT"
-          echo "remaining_latest_tags=$REMAINING_LATEST_TAGS" >> "$GITHUB_OUTPUT"
+          echo "latest_tag=$LATEST_TAG" | tee -a $GITHUB_OUTPUT
+          echo "remaining_latest_tags=$REMAINING_LATEST_TAGS" | tee -a $GITHUB_OUTPUT
 
   run-for-tag:
     needs: latest-tags
