@@ -1,0 +1,54 @@
+name: Build and Deploy for Tag
+on:
+  workflow_call:
+    inputs:
+      tag:
+        required: true
+        type: string
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+        with:
+          ref: v${{ inputs.tag }}
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          architecture: x64
+
+      - name: Restore cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Create maven settings.xml with credentials
+        uses: whelk-io/maven-settings-xml-action@v22
+        with:
+          servers: |
+            [
+              { "id": "nexus.terrestris.de", "username": "${{ secrets.NEXUS_USER }}", "password": "${{ secrets.NEXUS_PASSWORD }}" },
+              { "id": "docker-public.terrestris.de", "username": "${{ secrets.NEXUS_DOCKER_USER }}", "password": "${{ secrets.NEXUS_DOCKER_PASSWORD }}" },
+              { "id": "terrestris-nexus", "username": "${{ secrets.NEXUS_USER }}", "password": "${{ secrets.NEXUS_PASSWORD }}" },
+              { "id": "terrestris-nexus-snapshots", "username": "${{ secrets.NEXUS_USER }}", "password": "${{ secrets.NEXUS_PASSWORD }}" }
+            ]
+
+      - name: Install dependencies
+        run: mvn compile --batch-mode
+
+      - name: Save cache
+        uses: actions/cache/save@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+
+      - name: Deploy dependencies and docker release
+        run: mvn deploy --batch-mode

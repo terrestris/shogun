@@ -9,7 +9,8 @@ jobs:
   latest-tags:
     runs-on: ubuntu-latest
     outputs:
-      latest_tags: ${{ steps.latest_tags.outputs.latest_tags }}
+      latest_tag: ${{ steps.set-tags.outputs.latest_tag }}
+      remaining_latest_tags: ${{ steps.set-tags.outputs.remaining_latest_tags }}
     steps:
       - name: Checkout sources 🔰
         uses: actions/checkout@v4
@@ -68,52 +69,27 @@ jobs:
             | paste -sd "," - \
             | awk '{print "latest_tags=["$0"]"}' | tee -a $GITHUB_OUTPUT
 
+      - name: Extract first and remaining tags
+        id: set-tags
+        run: |
+          LATEST_TAGS='${{ steps.latest_tags.outputs.latest_tags }}'
+          LATEST_TAG=$(echo "$LATEST_TAGS" | jq -r '.[0]')
+          REMAINING_LATEST_TAGS=$(echo "$LATEST_TAGS" | jq -c '.[1:]')
+
+          echo "latest_tag=$LATEST_TAG" >> "$GITHUB_OUTPUT"
+          echo "remaining_latest_tags=$REMAINING_LATEST_TAGS" >> "$GITHUB_OUTPUT"
+
   run-for-tag:
     needs: latest-tags
-    runs-on: ubuntu-latest
     strategy:
       matrix:
-        tag: ${{ fromJSON(needs.latest-tags.outputs.latest_tags) }}
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v4
-        with:
-          ref: v${{ matrix.tag }}
+        tag: ${{ fromJSON(needs.latest-tags.outputs.remaining_latest_tags) }}
+    uses: ./.github/workflows/build-tag.yml
+    with:
+      tag: ${{ matrix.tag }}
 
-      - name: Set up Java 21
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '21'
-          architecture: x64
-
-      - name: Restore cache
-        uses: actions/cache/restore@v4
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
-      - name: Create maven settings.xml with credentials
-        uses: whelk-io/maven-settings-xml-action@v22
-        with:
-          servers: |
-            [
-              { "id": "nexus.terrestris.de", "username": "${{ secrets.NEXUS_USER }}", "password": "${{ secrets.NEXUS_PASSWORD }}" },
-              { "id": "docker-public.terrestris.de", "username": "${{ secrets.NEXUS_DOCKER_USER }}", "password": "${{ secrets.NEXUS_DOCKER_PASSWORD }}" },
-              { "id": "terrestris-nexus", "username": "${{ secrets.NEXUS_USER }}", "password": "${{ secrets.NEXUS_PASSWORD }}" },
-              { "id": "terrestris-nexus-snapshots", "username": "${{ secrets.NEXUS_USER }}", "password": "${{ secrets.NEXUS_PASSWORD }}" }
-            ]
-
-      - name: Install dependencies
-        run: mvn compile --batch-mode
-
-      - name: Save cache
-        uses: actions/cache/save@v4
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-
-      - name: Deploy dependencies and docker release
-        run: mvn deploy --batch-mode
+  run-latest-tag:
+    needs: [latest-tags, run-for-tag]
+    uses: ./.github/workflows/build-tag.yml
+    with:
+      tag: ${{ needs.latest-tags.outputs.latest_tag }}
