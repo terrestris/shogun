@@ -5,6 +5,15 @@ on:
       tag:
         required: true
         type: string
+    secrets:
+      nexus_user:
+          required: true
+      nexus_docker_user:
+        required: true
+      nexus_pass:
+          required: true
+      nexus_docker_password:
+        required: true
 
 jobs:
   build-deploy:
@@ -35,10 +44,10 @@ jobs:
         with:
           servers: |
             [
-              { "id": "nexus.terrestris.de", "username": "${{ secrets.NEXUS_USER }}", "password": "${{ secrets.NEXUS_PASSWORD }}" },
-              { "id": "docker-public.terrestris.de", "username": "${{ secrets.NEXUS_DOCKER_USER }}", "password": "${{ secrets.NEXUS_DOCKER_PASSWORD }}" },
-              { "id": "terrestris-nexus", "username": "${{ secrets.NEXUS_USER }}", "password": "${{ secrets.NEXUS_PASSWORD }}" },
-              { "id": "terrestris-nexus-snapshots", "username": "${{ secrets.NEXUS_USER }}", "password": "${{ secrets.NEXUS_PASSWORD }}" }
+              { "id": "nexus.terrestris.de", "username": "${{ secrets.nexus_user }}", "password": "${{ secrets.nexus_pass }}" },
+              { "id": "docker-public.terrestris.de", "username": "${{ secrets.nexus_docker_user }}", "password": "${{ secrets.nexus_docker_password }}" },
+              { "id": "terrestris-nexus", "username": "${{ secrets.nexus_user }}", "password": "${{ secrets.nexus_pass }}" },
+              { "id": "terrestris-nexus-snapshots", "username": "${{ secrets.nexus_user }}", "password": "${{ secrets.nexus_pass }}" }
             ]
 
       - name: Install dependencies
