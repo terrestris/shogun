@@ -41,7 +41,7 @@
 
   <header
     class="container d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
-    <a href="/" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
+    <a href="./" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
       <img class="header-image" src="./assets/img/shogun_logo.png" alt="SHOGun logo">
     </a>
     <ul class="nav col-md-3">
@@ -215,7 +215,7 @@
     const getApplications = async (token) => {
       if (token) {
         try {
-          const response = await fetch('/applications', {
+          const response = await fetch('./applications', {
             headers: {
               'Authorization': `Bearer ${token}`
             }
@@ -241,7 +241,7 @@
           body: JSON.stringify(graphqlQuery),
         }
         try {
-          const response = await fetch('/graphql', requestInit);
+          const response = await fetch('./graphql', requestInit);
           const graphqlResponse = await response.json();
           if (graphqlResponse && graphqlResponse.data && graphqlResponse.data.allApplications) {
             return graphqlResponse.data.allApplications;
