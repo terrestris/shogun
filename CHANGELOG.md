@@ -1,3 +1,11 @@
+## [21.5.3](https://github.com/terrestris/shogun/compare/v21.5.2...v21.5.3) (2025-03-12)
+
+
+### Bug Fixes
+
+* adds missing layer types for tile layers and mark VECTORTILE as deprecated ([2eefdd4](https://github.com/terrestris/shogun/commit/2eefdd4b43c9913bfb4bfa20184ed10b87a14811))
+* set relative paths ([605efdb](https://github.com/terrestris/shogun/commit/605efdbfdfb97d6eb3673e2c604e3ff55ce513df))
+
 ## [21.5.2](https://github.com/terrestris/shogun/compare/v21.5.1...v21.5.2) (2025-02-26)
 
 
