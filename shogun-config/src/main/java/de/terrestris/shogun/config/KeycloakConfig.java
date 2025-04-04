@@ -28,6 +28,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import static org.keycloak.OAuth2Constants.CLIENT_CREDENTIALS;
+
 /**
  * Credits to https://stackoverflow.com/questions/57787768/issues-running-example-keycloak-spring-boot-app
  */
@@ -47,9 +49,9 @@ public abstract class KeycloakConfig {
         return KeycloakBuilder.builder()
             .serverUrl(keycloakProperties.getServerUrl())
             .realm(keycloakProperties.getMasterRealm())
-            .username(keycloakProperties.getUsername())
-            .password(keycloakProperties.getPassword())
             .clientId(keycloakProperties.getAdminClientId())
+            .clientSecret(keycloakProperties.getAdminClientSecret())
+            .grantType(CLIENT_CREDENTIALS)
             .resteasyClient(restClient)
             .build();
     }
