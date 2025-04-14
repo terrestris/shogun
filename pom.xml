@@ -147,7 +147,7 @@
 
     <!-- Jib -->
     <image>docker-public.terrestris.de/shogun/${project.artifactId}:latest</image>
-    <geotools.version>33-SNAPSHOT</geotools.version>
+    <geotools.version>33.0</geotools.version>
   </properties>
 
   <build>
