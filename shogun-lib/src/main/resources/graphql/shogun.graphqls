@@ -1433,6 +1433,7 @@ type Layer implements BaseEntity {
       private Boolean hoverable;
       private Boolean searchable;
       private Map<String, Object> searchConfig;
+      private Map<String, Object> searchFeatureConfig;
     }
     ```
     """
