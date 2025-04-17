@@ -80,6 +80,11 @@ public class DefaultLayerClientConfig implements LayerClientConfig {
     private ArrayList<PropertyFormTabConfig<PropertyFormItemReadConfig>> featureInfoFormConfig;
 
     @Schema(
+        description = "The configuration for displaying search results in the result drawer."
+    )
+    private PropertyFormTabConfig<PropertyFormItemReadConfig> searchFeatureConfig;
+
+    @Schema(
         description = "The configuration for the feature edit form."
     )
     private ArrayList<PropertyFormTabConfig<PropertyFormItemEditConfig>> editFormConfig;
