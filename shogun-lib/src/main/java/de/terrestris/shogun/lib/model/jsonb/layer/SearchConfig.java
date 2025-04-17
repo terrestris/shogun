@@ -17,6 +17,7 @@
 package de.terrestris.shogun.lib.model.jsonb.layer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -43,4 +44,10 @@ public class SearchConfig implements Serializable {
     )
     private String displayTemplate;
 
+    @Schema(
+        description = "The configuration for displaying search results in the result drawer.",
+        example = "{\"title\":\"{name}\",\"children\":[{\"propertyName\":\"link\",\"displayName\":\"Details\",\"fieldProps\":{\"urlDisplayValue\":\"Click here\"}}]}"
+    )
+
+    private JsonNode resultDrawerConfig;
 }
