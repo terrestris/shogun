@@ -48,6 +48,5 @@ public class SearchConfig implements Serializable {
         description = "The configuration for displaying search results in the result drawer.",
         example = "{\"title\":\"{name}\",\"children\":[{\"propertyName\":\"link\",\"displayName\":\"Details\",\"fieldProps\":{\"urlDisplayValue\":\"Click here\"}}]}"
     )
-
     private JsonNode resultDrawerConfig;
 }
