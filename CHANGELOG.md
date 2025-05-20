@@ -1,3 +1,21 @@
+# [22.0.0](https://github.com/terrestris/shogun/compare/v21.5.3...v22.0.0) (2025-05-20)
+
+
+### Bug Fixes
+
+* uses a type for resultDrawerConfig instead of generic JsonNode ([95f7071](https://github.com/terrestris/shogun/commit/95f7071ace741c1865491c65278e86b30bf0822d))
+
+
+### Features
+
+* introduces resultDrawerConfig in searchConfig for a layer ([7af230d](https://github.com/terrestris/shogun/commit/7af230d1038ae5743334e6bbbe297f2ecaa540b0))
+* make use of client-credentials in the keycloak admin client ([ae42666](https://github.com/terrestris/shogun/commit/ae42666ef4363f07ae69a79e2b65ad436e6a8175))
+
+
+### BREAKING CHANGES
+
+* username password combination in the keycloak admin client is no longer supported
+
 ## [21.5.3](https://github.com/terrestris/shogun/compare/v21.5.2...v21.5.3) (2025-03-12)
 
 
