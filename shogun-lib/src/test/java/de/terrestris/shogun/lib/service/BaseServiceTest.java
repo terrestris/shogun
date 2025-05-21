@@ -22,29 +22,34 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.terrestris.shogun.lib.model.BaseEntity;
+import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.BaseCrudRepository;
-import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionService;
-import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
+import de.terrestris.shogun.lib.service.security.permission.*;
+import de.terrestris.shogun.lib.service.security.provider.GroupProviderService;
+import de.terrestris.shogun.lib.service.security.provider.RoleProviderService;
+import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import de.terrestris.shogun.lib.util.IdHelper;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public abstract class BaseServiceTest<U extends BaseService, S extends BaseEntity> implements IBaseServiceTest {
 
     protected Class<S> entityClass;
@@ -61,9 +66,46 @@ public abstract class BaseServiceTest<U extends BaseService, S extends BaseEntit
     @Mock
     private GroupInstancePermissionService groupInstancePermissionServiceMock;
 
+    @Mock
+    private RoleInstancePermissionService roleInstancePermissionServiceMock;
+
+    @Mock
+    private UserProviderService userProviderService;
+
+    @Mock
+    private GroupProviderService GroupProviderService;
+
+    @Mock
+    private RoleProviderService roleProviderService;
+
+    @Mock
+    private UserClassPermissionService userClassPermissionService;
+
+    @Mock
+    private GroupClassPermissionService groupClassPermissionService;
+
+    @Mock
+    private RoleClassPermissionService roleClassPermissionService;
+
     private BaseCrudRepository baseCrudRepositoryMock;
 
     protected U service;
+
+    @BeforeEach
+    public void callInit() {
+        init();
+
+        // For some unknown reason Mockito can't inject the repository mock,
+        // very probably due to the fact that the repository is of generic type.
+        // See also https://github.com/mockito/mockito/issues/3207
+        try {
+            Field field = BaseService.class.getDeclaredField("repository");
+            field.setAccessible(true);
+            field.set(service, baseCrudRepositoryMock);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Test
     public void class_isAnnotatedAsService() {
@@ -139,6 +181,8 @@ public abstract class BaseServiceTest<U extends BaseService, S extends BaseEntit
 
     @Test
     public void create_ShouldCallCorrectRepositoryMethodAndShouldReturnTheCreatedEntityOfGivenBaseEntity() throws NoSuchFieldException {
+        when(userProviderService.getUserBySession()).thenReturn(Optional.of(new User()));
+
         S mockEntity = mock(entityClass, CALLS_REAL_METHODS);
         IdHelper.setIdForEntity(mockEntity, 1909L);
 

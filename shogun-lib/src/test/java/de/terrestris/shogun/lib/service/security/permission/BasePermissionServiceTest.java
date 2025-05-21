@@ -18,21 +18,24 @@ package de.terrestris.shogun.lib.service.security.permission;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
+import de.terrestris.shogun.lib.model.BaseEntity;
+import de.terrestris.shogun.lib.model.Group;
+import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.model.security.permission.BasePermission;
 import de.terrestris.shogun.lib.repository.security.permission.BasePermissionRepository;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PostFilter;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public abstract class BasePermissionServiceTest<U extends BasePermissionService, S extends BasePermission> implements IBasePermissionServiceTest {
 
     protected Class<S> entityClass;
@@ -53,15 +56,20 @@ public abstract class BasePermissionServiceTest<U extends BasePermissionService,
 
     protected U service;
 
+    @BeforeEach
+    public void callInit() {
+        init();
+    }
+
     @Test
     public void class_isAnnotatedAsService() {
         assertNotNull(service.getClass().getAnnotation(Service.class));
     }
 
     @Test
-    public void findAll_IsAnnotatedAsExpected() throws NoSuchMethodException {
-        PostFilter findAllPostFilter =
-            service.getClass().getMethod("findAll").getAnnotation(PostFilter.class);
+    public void findFor_BaseEntity_IsAnnotatedAsExpected() throws NoSuchMethodException {
+        PreAuthorize findAllPostFilter =
+            service.getClass().getMethod("findFor", BaseEntity.class).getAnnotation(PreAuthorize.class);
 
         assertNotNull(findAllPostFilter);
         assertTrue(findAllPostFilter.value().contains("hasRole"));
@@ -69,9 +77,9 @@ public abstract class BasePermissionServiceTest<U extends BasePermissionService,
     }
 
     @Test
-    public void findOne_IsAnnotatedAsExpected() throws NoSuchMethodException {
-        PostAuthorize findOnePostAuthorize =
-            service.getClass().getMethod("findOne", Long.class).getAnnotation(PostAuthorize.class);
+    public void findPermissionCollectionFor_BaseEntity_User_IsAnnotatedAsExpected() throws NoSuchMethodException {
+        PreAuthorize findOnePostAuthorize =
+            service.getClass().getMethod("findPermissionCollectionFor", BaseEntity.class, User.class).getAnnotation(PreAuthorize.class);
 
         assertNotNull(findOnePostAuthorize);
         assertTrue(findOnePostAuthorize.value().contains("hasRole"));
@@ -79,33 +87,13 @@ public abstract class BasePermissionServiceTest<U extends BasePermissionService,
     }
 
     @Test
-    public void create_IsAnnotatedAsExpected() throws NoSuchMethodException {
-        PreAuthorize createPreAuthorize =
-            service.getClass().getMethod("create", BasePermission.class).getAnnotation(PreAuthorize.class);
-
-        assertNotNull(createPreAuthorize);
-        assertTrue(createPreAuthorize.value().contains("hasRole"));
-        assertTrue(createPreAuthorize.value().contains("hasPermission"));
-    }
-
-    @Test
-    public void update_IsAnnotatedAsExpected() throws NoSuchMethodException {
+    public void deleteAllFor_BaseEntity_IsAnnotatedAsExpected() throws NoSuchMethodException {
         PreAuthorize updatePreAuthorize =
-            service.getClass().getMethod("update", Long.class, BasePermission.class).getAnnotation(PreAuthorize.class);
+            service.getClass().getMethod("deleteAllFor", BaseEntity.class).getAnnotation(PreAuthorize.class);
 
         assertNotNull(updatePreAuthorize);
         assertTrue(updatePreAuthorize.value().contains("hasRole"));
         assertTrue(updatePreAuthorize.value().contains("hasPermission"));
-    }
-
-    @Test
-    public void delete_IsAnnotatedAsExpected() throws NoSuchMethodException {
-        PreAuthorize deletePreAuthorize =
-            service.getClass().getMethod("delete", BasePermission.class).getAnnotation(PreAuthorize.class);
-
-        assertNotNull(deletePreAuthorize);
-        assertTrue(deletePreAuthorize.value().contains("hasRole"));
-        assertTrue(deletePreAuthorize.value().contains("hasPermission"));
     }
 
     protected void setService(U service) {

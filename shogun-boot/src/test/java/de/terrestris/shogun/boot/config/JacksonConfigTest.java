@@ -26,8 +26,8 @@ import org.locationtech.jts.geom.LineString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 @SpringBootTest(
     classes = {
@@ -40,7 +40,7 @@ import org.springframework.test.context.ActiveProfiles;
 public class JacksonConfigTest {
 
     // Replace ApplicationInitializer by functionless mock
-    @MockBean
+    @MockitoBean
     private ApplicationInitializer applicationInitializer;
 
     @Value("${shogun.srid}")

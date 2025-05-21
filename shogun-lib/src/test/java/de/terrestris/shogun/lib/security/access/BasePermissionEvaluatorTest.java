@@ -18,52 +18,48 @@ package de.terrestris.shogun.lib.security.access;
 
 import de.terrestris.shogun.lib.enumeration.PermissionType;
 import de.terrestris.shogun.lib.model.Application;
-import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.security.access.entity.BaseEntityPermissionEvaluator;
 import de.terrestris.shogun.lib.security.access.entity.DefaultPermissionEvaluator;
 import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
-import de.terrestris.shogun.lib.service.security.provider.keycloak.KeycloakUserProviderService;
 import de.terrestris.shogun.lib.util.IdHelper;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class BasePermissionEvaluatorTest {
 
     @Mock
     private DefaultPermissionEvaluator defaultPermissionEvaluatorMock;
 
     @Mock
-    private UserProviderService userProviderService = new KeycloakUserProviderService();
+    private UserProviderService userProviderService;
 
-    @Spy
-    private ArrayList<BaseEntityPermissionEvaluator> baseEntityPermissionEvaluatorMock;
+    @Mock
+    private List<BaseEntityPermissionEvaluator<?>> baseEntityPermissionEvaluatorMock;
 
     @InjectMocks
     private BasePermissionEvaluator permissionEvaluator;
 
     private String mockUserKeycloakId = "bf5efad6-50f5-448c-b808-60dc0259d70b";
+
     private User mockUser;
 
-    @Before
+    @BeforeEach
     public void setup() {
         mockUser = new User();
         mockUser.setAuthProviderId(mockUserKeycloakId);
-
-        when(defaultPermissionEvaluatorMock.getEntityClassName()).thenReturn(BaseEntity.class);
     }
 
     @Test
