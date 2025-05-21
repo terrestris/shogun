@@ -1,6 +1,6 @@
 /* SHOGun, https://terrestris.github.io/shogun/
  *
- * Copyright © 2020-present terrestris GmbH & Co. KG
+ * Copyright © 2024-present terrestris GmbH & Co. KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.terrestris.shogun.lib.service.security.permission;
+package de.terrestris.shogun.lib.service;
 
-import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
-import de.terrestris.shogun.lib.repository.security.permission.PermissionCollectionRepository;
-import de.terrestris.shogun.lib.service.BaseServiceTest;
+import de.terrestris.shogun.lib.model.Role;
+import de.terrestris.shogun.lib.repository.RoleRepository;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-public class PermissionCollectionServiceTest extends BaseServiceTest<PermissionCollectionService, PermissionCollection> {
+public class RoleServiceTest extends BaseServiceTest<RoleService, Role> {
 
     @Mock
-    PermissionCollectionRepository repositoryMock;
+    RoleRepository repositoryMock;
 
     @InjectMocks
-    PermissionCollectionService service;
+    RoleService service;
 
     public void init() {
         super.setRepository(repositoryMock);
         super.setService(service);
-        super.setEntityClass(PermissionCollection.class);
+        super.setEntityClass(Role.class);
     }
 
 }

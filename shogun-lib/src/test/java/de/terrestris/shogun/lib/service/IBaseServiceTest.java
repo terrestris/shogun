@@ -16,12 +16,9 @@
  */
 package de.terrestris.shogun.lib.service;
 
-import org.junit.Before;
-
 public interface IBaseServiceTest {
     /**
-     * All service tests must call the init method (including the {@link Before})
-     * to set the desired service, repository and entity.
+     * All service tests must call the init method to set the desired service, repository and entity.
      */
     void init();
 }

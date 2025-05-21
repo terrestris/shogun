@@ -19,7 +19,7 @@ package de.terrestris.shogun.boot.config;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy;
-import org.junit.AfterClass;
+import org.junit.jupiter.api.AfterAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy;
 import org.springframework.context.annotation.Bean;
@@ -116,7 +116,7 @@ public class JdbcConfiguration {
         return transactionManager;
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanup() {
         datasourcesForCleanup.forEach(HikariDataSource::close);
     }

@@ -18,34 +18,18 @@ package de.terrestris.shogun.lib.service;
 
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.UserRepository;
-import de.terrestris.shogun.lib.service.security.provider.keycloak.KeycloakUserProviderService;
-import de.terrestris.shogun.lib.util.KeycloakUtil;
-import org.junit.Before;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-
-import java.util.Optional;
-
-import static org.mockito.Mockito.when;
 
 public class UserServiceTest extends BaseServiceTest<UserService, User> {
 
     @Mock
     UserRepository repositoryMock;
 
-    @Mock
-    KeycloakUtil keycloakUtilMock;
-
     @InjectMocks
     UserService service;
 
-    @Mock
-    KeycloakUserProviderService userProviderService = new KeycloakUserProviderService();
-
-    @Before
     public void init() {
-        when(userProviderService.getUserBySession()).thenReturn(Optional.of(new User()));
-
         super.setRepository(repositoryMock);
         super.setService(service);
         super.setEntityClass(User.class);

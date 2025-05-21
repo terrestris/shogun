@@ -19,11 +19,11 @@ package de.terrestris.shogun.lib.service;
 import de.terrestris.shogun.properties.ImageFileUploadProperties;
 import de.terrestris.shogun.properties.UploadProperties;
 import org.apache.tomcat.util.http.fileupload.impl.InvalidContentTypeException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ImageFileServiceTest {
 
     @Mock

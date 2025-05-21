@@ -21,16 +21,14 @@ import de.terrestris.shogun.lib.enumeration.PermissionType;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.model.security.permission.PermissionCollection;
-import de.terrestris.shogun.lib.service.security.permission.GroupClassPermissionService;
-import de.terrestris.shogun.lib.service.security.permission.GroupInstancePermissionService;
-import de.terrestris.shogun.lib.service.security.permission.UserClassPermissionService;
-import de.terrestris.shogun.lib.service.security.permission.UserInstancePermissionService;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import de.terrestris.shogun.lib.service.security.permission.*;
+import de.terrestris.shogun.lib.service.security.provider.RoleProviderService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -41,7 +39,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class DefaultPermissionEvaluatorTest {
 
     @Mock
@@ -56,13 +54,19 @@ public class DefaultPermissionEvaluatorTest {
     @Mock
     private GroupClassPermissionService groupClassPermissionService;
 
+    @Mock
+    private RoleProviderService roleProviderService;
+
+    @Mock
+    private PublicInstancePermissionService publicInstancePermissionService;
+
     @InjectMocks
     private DefaultPermissionEvaluator defaultPermissionEvaluator;
 
     private String mockUserKeycloakId = "bf5efad6-50f5-448c-b808-60dc0259d70b";
     private User mockUser;
 
-    @Before
+    @BeforeEach
     public void setup() {
         mockUser = new User();
         mockUser.setAuthProviderId(mockUserKeycloakId);

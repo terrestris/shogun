@@ -16,10 +16,9 @@
  */
 package de.terrestris.shogun.manager;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ShogunClientBuilderTest {
 
@@ -72,25 +71,31 @@ public class ShogunClientBuilderTest {
             .build());
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void build_TypeMissing() {
-        ShogunClientBuilder.builder()
-            .password("test")
-            .username("peter")
-            .shogunServiceBaseUrl("https://shogun")
-            .build();
+        assertThrows(IllegalStateException.class, () -> {
+            ShogunClientBuilder.builder()
+                .password("test")
+                .username("peter")
+                .shogunServiceBaseUrl("https://shogun")
+                .build();
+        });
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void build_baseUrlRequired() {
-        ShogunClientBuilder.builder()
-            .password("test")
-            .username("peter")
-            .build();
+        assertThrows(IllegalStateException.class, () -> {
+            ShogunClientBuilder.builder()
+                .password("test")
+                .username("peter")
+                .build();
+        });
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void build_usernamePasswordRequired() {
-        ShogunClientBuilder.builder().build();
+        assertThrows(IllegalStateException.class, () -> {
+            ShogunClientBuilder.builder().build();
+        });
     }
 }

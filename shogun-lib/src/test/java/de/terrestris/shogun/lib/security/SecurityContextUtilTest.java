@@ -19,10 +19,12 @@ package de.terrestris.shogun.lib.security;
 import de.terrestris.shogun.lib.service.GroupService;
 import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import de.terrestris.shogun.lib.service.security.provider.keycloak.KeycloakGroupProviderService;
-import de.terrestris.shogun.lib.service.security.provider.keycloak.KeycloakUserProviderService;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -33,30 +35,27 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-/**
- * Test for {@link SecurityContextUtil}
- */
+@ExtendWith(MockitoExtension.class)
 public class SecurityContextUtilTest {
 
     @Mock
-    private final SecurityContextUtil securityContextUtilMock = mock(SecurityContextUtil.class);
+    private SecurityContextUtil securityContextUtilMock;
 
-    private final SecurityContextUtil securityContextUtil = new SecurityContextUtil();
-
-    @Mock
-    private final GroupService groupService = mock(GroupService.class);
+    private SecurityContextUtil securityContextUtil = new SecurityContextUtil();
 
     @Mock
-    private final KeycloakGroupProviderService groupProviderService = new KeycloakGroupProviderService();
+    private GroupService groupService;
 
     @Mock
-    private final UserProviderService userProviderService = new KeycloakUserProviderService();
+    private UserProviderService userProviderService;
 
-    @After
+    @InjectMocks
+    private KeycloakGroupProviderService groupProviderService;
+
+    @AfterEach
     public void logoutMockUser() {
         SecurityContextHolder.clearContext();
     }
@@ -104,8 +103,7 @@ public class SecurityContextUtilTest {
     @Test
     public void getGroupsForUser() {
         loginMockUser("USER");
-        Optional<de.terrestris.shogun.lib.model.User> user = Optional.of(new de.terrestris.shogun.lib.model.User());
-        when(userProviderService.getUserBySession()).thenReturn(user);
+
         assertNotNull(groupProviderService.getGroupsForUser());
     }
 
