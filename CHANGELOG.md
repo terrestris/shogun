@@ -1,3 +1,10 @@
+## [22.0.1](https://github.com/terrestris/shogun/compare/v22.0.0...v22.0.1) (2025-05-27)
+
+
+### Bug Fixes
+
+* make use of junit 5 and mockito 5 ([7aeca8e](https://github.com/terrestris/shogun/commit/7aeca8efc56e3d3870ed9d4b6dc464dc39fa2786))
+
 # [22.0.0](https://github.com/terrestris/shogun/compare/v21.5.3...v22.0.0) (2025-05-20)
 
 

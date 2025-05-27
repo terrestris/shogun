@@ -22,7 +22,7 @@
   <parent>
     <groupId>de.terrestris</groupId>
     <artifactId>shogun</artifactId>
-    <version>22.0.1-SNAPSHOT</version>
+    <version>22.0.1</version>
   </parent>
 
   <artifactId>shogun-gs-interceptor</artifactId>
