@@ -43,7 +43,7 @@ public class KeycloakProperties {
 
     private String principalAttribute;
 
-    private Boolean disableHostnameVerification;
+    private Boolean disableHostnameVerification = false;
 
     private Boolean extractRolesFromResource = true;
 
