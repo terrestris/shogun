@@ -2159,10 +2159,80 @@ public class HttpUtil {
         // If it is necessary that this property is set to true, it should be
         // configured on the JVM via -Djava.net.useSystemProxies=true
 
-        //	System.setProperty("java.net.useSystemProxies", "true");
+        String scheme = uri.getScheme();
+        String proxyHost = null;
+        int proxyPort = -1;
 
-        HttpHost systemProxy = null;
+        String nonProxyHosts = System.getProperty("http.nonProxyHosts");
+        String noProxyEnv = System.getenv("NO_PROXY");
 
+        if (StringUtils.isNotEmpty(nonProxyHosts) || StringUtils.isNotEmpty(noProxyEnv)) {
+            String host = uri.getHost();
+            String[] patterns;
+
+            if (StringUtils.isNotEmpty(nonProxyHosts)) {
+                patterns = nonProxyHosts.split("\\|");
+            } else {
+                patterns = noProxyEnv.split(",");
+            }
+
+            for (String pattern : patterns) {
+                pattern = pattern.trim();
+                String regex = pattern.replace(".", "\\.").replace("*", ".*");
+                if (host.matches(regex)) {
+                    log.debug("Host {} matches nonProxyHost pattern {} — skipping proxy.", host, pattern);
+                    return null;
+                }
+            }
+        }
+
+        // Check if the system properties for the proxy are set via JVM arguments
+        if (StringUtils.equalsIgnoreCase("http", scheme)) {
+            proxyHost = System.getProperty("http.proxyHost");
+            String port = System.getProperty("http.proxyPort");
+            if (StringUtils.isNotEmpty(port)) {
+                proxyPort = Integer.parseInt(port);
+            }
+        } else if (StringUtils.equalsIgnoreCase("https", scheme)) {
+            proxyHost = System.getProperty("https.proxyHost");
+            String port = System.getProperty("https.proxyPort");
+            if (StringUtils.isNotEmpty(port)) {
+                proxyPort = Integer.parseInt(port);
+            }
+        }
+
+        // Check if the system properties are empty, then try to get the proxy settings using the environment variables
+        if (StringUtils.isEmpty(proxyHost) && proxyPort <= 0) {
+            String envProxy = null;
+            if (StringUtils.equalsIgnoreCase("http", scheme)) {
+                envProxy = System.getenv("http_proxy");
+                if (StringUtils.isEmpty(envProxy)) {
+                    envProxy = System.getenv("HTTP_PROXY");
+                }
+            } else if (StringUtils.equalsIgnoreCase("https", scheme)) {
+                envProxy = System.getenv("https_proxy");
+                if (StringUtils.isEmpty(envProxy)) {
+                    envProxy = System.getenv("HTTPS_PROXY");
+                }
+            }
+
+            if (StringUtils.startsWith(envProxy, "http")) {
+                try {
+                    URI proxyUri = URI.create(envProxy);
+                    proxyHost = proxyUri.getHost();
+                    proxyPort = proxyUri.getPort();
+                } catch (IllegalArgumentException e) {
+                    log.warn("Invalid proxy URI in environment variable: " + envProxy, e);
+                }
+            }
+        }
+
+        if (proxyHost != null && proxyPort > 0) {
+            log.debug("Using proxy from system properties: Host=" + proxyHost + ", Port=" + proxyPort);
+            return new HttpHost(scheme, InetAddress.getByName(proxyHost), proxyPort);
+        }
+
+        log.debug("Attempting to detect system proxy via ProxySelector.");
         List<Proxy> proxyList = ProxySelector.getDefault().select(uri);
 
         for (Proxy proxy : proxyList) {
@@ -2174,17 +2244,15 @@ public class HttpUtil {
                     "  * Port: " + address.getPort()
                 );
 
-                systemProxy = new HttpHost(
-                    "http",
+                return new HttpHost(
+                    scheme,
                     InetAddress.getByName(address.getHostName()),
                     address.getPort()
                 );
-                break;
-
             }
         }
 
-        return systemProxy;
+        return null;
     }
 
     /**
