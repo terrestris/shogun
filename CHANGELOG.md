@@ -1,3 +1,11 @@
+## [22.0.2](https://github.com/terrestris/shogun/compare/v22.0.1...v22.0.2) (2025-06-18)
+
+
+### Bug Fixes
+
+* set false as default value for disableHostnameVerification ([f77cb13](https://github.com/terrestris/shogun/commit/f77cb136de2f3196728d335f3e8bebce13d17374))
+* use proxy settings if given in env / jvm parameters ([36af0b3](https://github.com/terrestris/shogun/commit/36af0b3154433b99f8a652b1e5a83aa0eb75d6d8))
+
 ## [22.0.1](https://github.com/terrestris/shogun/compare/v22.0.0...v22.0.1) (2025-05-27)
 
 
