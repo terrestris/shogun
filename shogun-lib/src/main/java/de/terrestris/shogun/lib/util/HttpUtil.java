@@ -2229,7 +2229,7 @@ public class HttpUtil {
 
         if (proxyHost != null && proxyPort > 0) {
             log.debug("Using proxy from system properties: Host=" + proxyHost + ", Port=" + proxyPort);
-            return new HttpHost(scheme, InetAddress.getByName(proxyHost), proxyPort);
+            return new HttpHost(InetAddress.getByName(proxyHost), proxyPort);
         }
 
         log.debug("Attempting to detect system proxy via ProxySelector.");
@@ -2245,7 +2245,6 @@ public class HttpUtil {
                 );
 
                 return new HttpHost(
-                    scheme,
                     InetAddress.getByName(address.getHostName()),
                     address.getPort()
                 );
