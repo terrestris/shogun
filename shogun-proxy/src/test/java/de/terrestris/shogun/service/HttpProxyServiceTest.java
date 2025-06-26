@@ -291,4 +291,49 @@ public class HttpProxyServiceTest {
             assertEquals("Returned Status matched", HttpProxyService.ERR_MSG_400_COMMON, responseEntity.getBody());
         }
     }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"http", "https"})
+    @DisplayName("Should use system proxy settings when forwarding request")
+    public void proxy_uses_system_proxy_settings(String scheme) throws Exception {
+        // Set system proxy properties
+        final String proxyHost = "1.2.2.4";
+        System.setProperty("%s.proxyHost".formatted(scheme), proxyHost);
+        System.setProperty("%s.proxyPort".formatted(scheme), "8888");
+
+        HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
+        final String baseUrl = "%s://my-test-example.org/resource".formatted(scheme);
+        final URI baseUri = new URI(baseUrl);
+        HttpResponse mockedResponse = mock(HttpResponse.class);
+
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, "text/plain");
+        HttpStatus status = HttpStatus.OK;
+
+        when(mockedResponse.getHeaders()).thenReturn(headers);
+        when(mockedResponse.getBody()).thenReturn("proxied".getBytes());
+        when(mockedResponse.getStatusCode()).thenReturn(status);
+
+        try (
+            MockedStatic<HttpUtil> httpUtilMock = mockStatic(HttpUtil.class)
+        ) {
+            httpUtilMock.when(() -> HttpUtil.isHttpGetRequest(mockedRequest)).thenReturn(true);
+            httpUtilMock.when(() -> HttpUtil.forwardGet(baseUri, mockedRequest, false)).thenAnswer(invocation -> {
+                // Assert system proxy properties are set
+                assertEquals("Proxy host does not match", proxyHost, System.getProperty("%s.proxyHost".formatted(scheme)));
+                assertEquals("Proxy port does not match", "8888", System.getProperty("%s.proxyPort".formatted(scheme)));
+                return mockedResponse;
+            });
+
+            final ResponseEntity<?> responseEntity = httpProxyService.doProxy(mockedRequest, baseUrl, null);
+            assertEquals("HttpStatus does not match", HttpStatus.OK, responseEntity.getStatusCode());
+            assertNotNull("Response body is null.", responseEntity.getBody());
+            assertEquals("Proxies request body does not match", "proxied", new String((byte[]) responseEntity.getBody()));
+        } finally {
+            // Cleanup system properties
+            System.clearProperty("%s.proxyHost".formatted(scheme));
+            System.clearProperty("%s.proxyPort".formatted(scheme));
+        }
+    }
+
 }

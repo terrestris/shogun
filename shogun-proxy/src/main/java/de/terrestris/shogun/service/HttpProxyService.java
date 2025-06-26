@@ -239,9 +239,15 @@ public class HttpProxyService {
             return url;
         }
         URIBuilder uriBuilder = new URIBuilder(url.toURI());
-        for (Map.Entry<String, String> entry : params.entrySet()) {
-            uriBuilder.addParameter(entry.getKey(), entry.getValue());
-        }
+
+        params.forEach((key, value) -> {
+            if (!StringUtils.equalsIgnoreCase(key, "baseUrl")) {
+                uriBuilder.addParameter(key, value);
+            } else {
+                log.warn("Skipping baseUrl empty parameter: baseUrl ={}", value);
+            }
+        });
+
         return uriBuilder.build().toURL();
     }
 

@@ -39,3 +39,4 @@ shogun-proxy:
     - localhost
     - localhost:8080
     - terrestris.de
+    - my-test-example.org
