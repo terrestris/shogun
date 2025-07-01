@@ -1,3 +1,10 @@
+## [22.0.3](https://github.com/terrestris/shogun/compare/v22.0.2...v22.0.3) (2025-07-01)
+
+
+### Bug Fixes
+
+* remove baseURL from request params and scheme from proxy host ([f4d55ba](https://github.com/terrestris/shogun/commit/f4d55ba30418c0c08c3ec08677d2bc4913a9b7f1))
+
 ## [22.0.2](https://github.com/terrestris/shogun/compare/v22.0.1...v22.0.2) (2025-06-18)
 
 
