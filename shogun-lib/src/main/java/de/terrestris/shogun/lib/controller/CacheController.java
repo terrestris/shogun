@@ -59,7 +59,7 @@ public class CacheController {
         log.info("Requested to evict the cache.");
 
         try {
-            if (regions == null && queryRegions == null) {
+            if ((regions == null || regions.isEmpty()) && (queryRegions == null || queryRegions.isEmpty())) {
                 service.evictCache();
                 log.info("Successfully evicted all cache regions.");
             } else {
