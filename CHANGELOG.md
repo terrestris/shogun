@@ -1,3 +1,15 @@
+# [22.1.0](https://github.com/terrestris/shogun/compare/v22.0.3...v22.1.0) (2025-07-30)
+
+
+### Bug Fixes
+
+* improve null check ([2186986](https://github.com/terrestris/shogun/commit/2186986e6bc2e8e3baf73d834c976a7feacc4481))
+
+
+### Features
+
+* allow to clear specific query cache regions ([75a817b](https://github.com/terrestris/shogun/commit/75a817b21eed7282c6c328dc32e46b23b839c8a1))
+
 ## [22.0.3](https://github.com/terrestris/shogun/compare/v22.0.2...v22.0.3) (2025-07-01)
 
 
