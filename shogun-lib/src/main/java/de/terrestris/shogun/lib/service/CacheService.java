@@ -19,6 +19,7 @@ package de.terrestris.shogun.lib.service;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.PersistenceContext;
+import java.util.List;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Cache;
@@ -35,7 +36,7 @@ public class CacheService {
     public void evictCache() throws Exception {
 
         if (entityManager == null) {
-           throw new Exception("Could not get the entity manager.");
+            throw new Exception("Could not get the entity manager.");
         }
 
         entityManager.clear();
@@ -47,8 +48,8 @@ public class CacheService {
         cache.evictAllRegions();
     }
 
-    public void evictCacheRegions(String... region) throws Exception {
-        if (region == null) {
+    public void evictCacheRegions(List<String> regions, List<String> queryRegions) throws Exception {
+        if (regions == null && queryRegions == null) {
             return;
         }
         if (entityManager == null) {
@@ -57,15 +58,32 @@ public class CacheService {
         EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
         SessionFactory sessionFactory = entityManagerFactory.unwrap(SessionFactory.class);
         Cache cache = sessionFactory.getCache();
-        for (String r : region) {
-            if (StringUtils.isEmpty(r)) {
-                continue;
+
+        if (regions != null) {
+            for (String region : regions) {
+                if (StringUtils.isEmpty(region)) {
+                    continue;
+                }
+                try {
+                    cache.evictRegion(region);
+                } catch (NullPointerException e) {
+                    log.error("Could not find cache region {}. Region was not cleared.", region);
+                    log.trace("Full stack trace", e);
+                }
             }
-            try {
-                cache.evictRegion(r);
-            } catch (NullPointerException e) {
-                log.error("Could not find cache region {}. Region was not cleared.", r);
-                log.trace("Full stack trace", e);
+        }
+
+        if (queryRegions != null) {
+            for (String queryRegion : queryRegions) {
+                if (StringUtils.isEmpty(queryRegion)) {
+                    continue;
+                }
+                try {
+                    cache.evictQueryRegion(queryRegion);
+                } catch (NullPointerException e) {
+                    log.error("Could not find query region {}. Region was not cleared.", queryRegion);
+                    log.trace("Full stack trace", e);
+                }
             }
         }
     }

@@ -19,6 +19,7 @@ package de.terrestris.shogun.lib.controller;
 import de.terrestris.shogun.lib.service.CacheService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -31,8 +32,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
 
 @Log4j2
 @RestController
@@ -52,16 +51,19 @@ public class CacheController {
     protected MessageSource messageSource;
 
     @PostMapping("/evict")
-    public ResponseEntity<?> evictCache(@RequestParam(required = false) List<String> regions) {
+    public ResponseEntity<?> evictCache(
+        @RequestParam(required = false) List<String> regions,
+        @RequestParam(required = false) List<String> queryRegions
+    ) {
 
         log.info("Requested to evict the cache.");
 
         try {
-            if (regions == null || regions.isEmpty()) {
+            if ((regions == null || regions.isEmpty()) && (queryRegions == null || queryRegions.isEmpty())) {
                 service.evictCache();
                 log.info("Successfully evicted all cache regions.");
             } else {
-                service.evictCacheRegions(regions.toArray(new String[]{}));
+                service.evictCacheRegions(regions, queryRegions);
                 log.info("Successfully evicted cache regions {}", regions);
             }
 
