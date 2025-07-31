@@ -115,7 +115,10 @@ public interface BaseCrudRepository<T, ID> extends
     @NonNull
     Page<T> findAll(@NonNull Pageable pageable);
 
-    @QueryHints(@QueryHint(name = AvailableHints.HINT_CACHEABLE, value = "true"))
+    @QueryHints({
+        @QueryHint(name = AvailableHints.HINT_CACHEABLE, value = "true"),
+        @QueryHint(name = AvailableHints.HINT_CACHE_REGION, value = "default-query-results-region")
+    })
     @Override
     @NonNull
     Iterable<T> findAllById(@NonNull Iterable<ID> ids);
