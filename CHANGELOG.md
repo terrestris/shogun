@@ -1,3 +1,10 @@
+## [22.1.1](https://github.com/terrestris/shogun/compare/v22.1.0...v22.1.1) (2025-07-31)
+
+
+### Bug Fixes
+
+* set query region for findAllById query ([a5a7d91](https://github.com/terrestris/shogun/commit/a5a7d91a7d6fa61f15be2d27dcd2566f641f3ef3))
+
 # [22.1.0](https://github.com/terrestris/shogun/compare/v22.0.3...v22.1.0) (2025-07-30)
 
 
