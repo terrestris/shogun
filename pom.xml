@@ -102,6 +102,7 @@
     <jacoco-plugin.version>0.8.13</jacoco-plugin.version>
     <maven-project-info-reports-plugin.version>3.9.0</maven-project-info-reports-plugin.version>
     <jib-maven-plugin.version>3.4.6</jib-maven-plugin.version>
+    <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
 
     <!-- Spring -->
     <spring-boot.version>3.5.5</spring-boot.version>
@@ -133,12 +134,14 @@
 
     <!-- GeoServer/Geodata -->
     <geoserver-manager.version>1.7.0</geoserver-manager.version>
+    <geotools.version>33.2</geotools.version>
 
     <!-- Utils -->
     <commons.io.version>2.20.0</commons.io.version>
     <tika.version>3.2.2</tika.version>
     <reflections.version>0.10.2</reflections.version>
     <evo-inflector.version>1.3</evo-inflector.version>
+    <commons-compress.version>1.28.0</commons-compress.version>
 
     <!-- Testing -->
     <maven-project-info-reports-plugin.version>3.9.0</maven-project-info-reports-plugin.version>
@@ -147,7 +150,10 @@
 
     <!-- Jib -->
     <image>docker-public.terrestris.de/shogun/${project.artifactId}:latest</image>
-    <geotools.version>33.2</geotools.version>
+
+    <!-- Frontend (Landing Page) -->
+    <bootstrap.version>5.1.1</bootstrap.version>
+    <fontawesome.version>5.15.4</fontawesome.version>
   </properties>
 
   <build>
@@ -499,6 +505,12 @@
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
         <version>${commons.io.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-compress</artifactId>
+        <version>${commons-compress.version}</version>
       </dependency>
 
       <!-- Apache Tika -->
