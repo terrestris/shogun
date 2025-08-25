@@ -13,7 +13,7 @@ jobs:
       remaining_tags: ${{ steps.set-tags.outputs.remaining_tags }}
     steps:
       - name: Checkout sources 🔰
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
