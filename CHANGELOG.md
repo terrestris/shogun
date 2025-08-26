@@ -1,3 +1,10 @@
+## [22.1.2](https://github.com/terrestris/shogun/compare/v22.1.1...v22.1.2) (2025-08-26)
+
+
+### Bug Fixes
+
+* include keycloak-js ([bb004ec](https://github.com/terrestris/shogun/commit/bb004ec2586b6bffcd4f641a07ec1a192fcc4665))
+
 ## [22.1.1](https://github.com/terrestris/shogun/compare/v22.1.0...v22.1.1) (2025-07-31)
 
 
