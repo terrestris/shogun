@@ -28,13 +28,10 @@
 
   <title>SHOGun</title>
 
-  <!-- Bootstrap 5.1.1  -->
-  <link href="./assets/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <script src="./assets/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <!-- Font Awesome 5.15.4 -->
-  <link href="./assets/lib/fontawesome/css/all.min.css" rel="stylesheet">
+  <link href="./assets/lib/bootstrap/package/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="./assets/lib/bootstrap/package/dist/js/bootstrap.bundle.min.js"></script>
+  <link href="./assets/lib/fontawesome/package/css/all.min.css" rel="stylesheet">
   <link href="./index.css" rel="stylesheet">
-  <script src="/auth/js/keycloak.js"></script>
 </head>
 
 <body>
@@ -56,7 +53,7 @@
   <main>
     <!-- web component template starts -->
     <template id="shogun-app" url="">
-      <link href="./assets/lib/fontawesome/css/all.min.css" rel="stylesheet">
+      <link href="./assets/lib/fontawesome/package/css/all.min.css" rel="stylesheet">
       <div class="app-card">
         <div class="app-buttons">
           <slot name="admin-btn"></slot>
@@ -122,7 +119,9 @@
     </p>
   </footer>
 
-  <script th:inline="javascript">
+  <script th:inline="javascript" type="module">
+    import Keycloak from './assets/lib/keycloak/package/lib/keycloak.js';
+
     window.onload = async () => {
       const keycloakHost = [[${@environment.getProperty('KEYCLOAK_HOST')}]];
       const keycloak = new Keycloak({

@@ -161,6 +161,11 @@
       <groupId>org.geotools</groupId>
       <artifactId>gt-main</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-compress</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
@@ -195,6 +200,58 @@
             <goals>
               <goal>enhance</goal>
             </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${exec-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>download-keycloak-js</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <mainClass>de.terrestris.shogun.boot.util.ResourceDownloader</mainClass>
+              <arguments>
+                <argument>https://registry.npmjs.org/keycloak-js/-/keycloak-js-${keycloak.version}.tgz</argument>
+                <argument>${project.build.directory}/classes/public/assets/lib/keycloak</argument>
+              </arguments>
+              <classpathScope>compile</classpathScope>
+            </configuration>
+          </execution>
+          <execution>
+            <id>download-bootstrap</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <mainClass>de.terrestris.shogun.boot.util.ResourceDownloader</mainClass>
+              <arguments>
+                <argument>https://registry.npmjs.org/bootstrap/-/bootstrap-${bootstrap.version}.tgz</argument>
+                <argument>${project.build.directory}/classes/public/assets/lib/bootstrap</argument>
+              </arguments>
+              <classpathScope>compile</classpathScope>
+            </configuration>
+          </execution>
+          <execution>
+            <id>download-fontawesome</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <mainClass>de.terrestris.shogun.boot.util.ResourceDownloader</mainClass>
+              <arguments>
+                <argument>https://registry.npmjs.org/@fortawesome/fontawesome-free/-/fontawesome-free-${fontawesome.version}.tgz</argument>
+                <argument>${project.build.directory}/classes/public/assets/lib/fontawesome</argument>
+              </arguments>
+              <classpathScope>compile</classpathScope>
+            </configuration>
           </execution>
         </executions>
       </plugin>
