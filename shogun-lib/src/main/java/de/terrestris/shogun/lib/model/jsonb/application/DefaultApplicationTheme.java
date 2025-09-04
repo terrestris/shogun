@@ -55,4 +55,8 @@ public class DefaultApplicationTheme implements Serializable {
     )
     private String faviconPath;
 
+    @Schema(
+        description = "The initial width of the tool menu."
+    )
+    private Integer toolMenuWidth;
 }
