@@ -17,24 +17,82 @@
 package de.terrestris.shogun.lib.model.jsonb.application;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.OptBoolean;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.terrestris.shogun.lib.annotation.JsonSuperType;
 import de.terrestris.shogun.lib.model.jsonb.ApplicationToolConfig;
+import de.terrestris.shogun.lib.model.jsonb.application.tool.DefaultTool;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-
-import java.util.HashMap;
+import lombok.*;
 
 @Data
 @JsonDeserialize(as = DefaultApplicationToolConfig.class)
 @JsonSuperType(type = ApplicationToolConfig.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@EqualsAndHashCode
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
-public class DefaultApplicationToolConfig implements ApplicationToolConfig {
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    property = "name",
+    include = JsonTypeInfo.As.EXISTING_PROPERTY,
+    visible = true,
+    defaultImpl = ToolConfig.class,
+    requireTypeIdForSubtypes = OptBoolean.FALSE
+)
+//@JsonSubTypes({
+//    @JsonSubTypes.Type(
+//        value = FeatureInfoToolConfig.class,
+//        name = "feature_Info"
+//    ),
+//    @JsonSubTypes.Type(
+//        value = ToolConfig.class,
+//        names = {
+//            "measure_tools",
+//            "measure_tools_distance",
+//            "measure_tools_area",
+//            "draw_tools",
+//            "draw_tools_point",
+//            "draw_tools_line",
+//            "draw_tools_polygon",
+//            "draw_tools_circle",
+//            "draw_tools_rectangle",
+//            "draw_tools_annotation",
+//            "draw_tools_modify",
+//            "draw_tools_upload",
+//            "draw_tools_download",
+//            "draw_tools_delete",
+//            "draw_tools_style",
+//            "print",
+//            "tree",
+//            "permalink",
+//            "language_selector",
+//            "search",
+//
+//            "hclim-feature-info-plugin",
+//            "diagram-plugin"
+//        }
+//    )
+//})
+//@Schema(
+//    discriminatorProperty = "name",
+//    discriminatorMapping = {
+//        @DiscriminatorMapping(
+//            value = "feature_Info",
+//            schema = FeatureInfoToolConfig.class
+//        ),
+//        @DiscriminatorMapping(
+//            value = "measure_tools",
+//            schema = ToolConfig.class
+//        ),
+//        @DiscriminatorMapping(
+//            value = "draw_tools",
+//            schema = ToolConfig.class
+//        )
+//    }
+//)
+public class DefaultApplicationToolConfig<T extends DefaultTool> implements ApplicationToolConfig {
 
     @Schema(
         description = "The name of the tool.",
@@ -48,5 +106,5 @@ public class DefaultApplicationToolConfig implements ApplicationToolConfig {
         description = "The configuration object of the tool.",
         example = "{\"visible\": true}"
     )
-    private HashMap<String, Object> config;
+    private T config;
 }

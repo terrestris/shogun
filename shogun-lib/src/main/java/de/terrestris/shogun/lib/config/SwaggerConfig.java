@@ -17,11 +17,15 @@
 package de.terrestris.shogun.lib.config;
 
 import de.terrestris.shogun.lib.annotation.JsonSuperType;
+import de.terrestris.shogun.lib.model.jsonb.application.FeatureInfoToolConfig;
+import de.terrestris.shogun.lib.model.jsonb.application.ToolConfig;
+import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.media.Discriminator;
 import io.swagger.v3.oas.models.media.MapSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.security.SecurityScheme;
@@ -96,7 +100,7 @@ public abstract class SwaggerConfig {
         var reflections = new Reflections(new ConfigurationBuilder()
             .setUrls(ClasspathHelper.forJavaClassPath())
             .setScanners(
-                Scanners.SubTypes,
+//                Scanners.SubTypes,
                 Scanners.TypesAnnotated
             )
         );
@@ -195,6 +199,35 @@ public abstract class SwaggerConfig {
     @Bean
     public OpenApiCustomizer enableArbitraryObjects() {
         return openApi -> openApi.getComponents().getSchemas().values().forEach( s -> enableArbitraryObjects(s));
+    }
+
+    @Bean
+    public OpenApiCustomizer registerToolSchemas() {
+        return openApi -> {
+            ModelConverters converters = ModelConverters.getInstance();
+            // TODO Determine dynamically via reflections / annotation @ToolSubType
+            converters.readAll(FeatureInfoToolConfig.class).forEach(openApi::schema);
+            converters.readAll(ToolConfig.class).forEach(openApi::schema);
+            // Add more tool config classes as needed
+        };
+    }
+
+    @Bean
+    public OpenApiCustomizer dynamicDiscriminatorCustomizer() {
+        return openApi -> {
+            Schema<?> schema = openApi.getComponents().getSchemas().get("DefaultApplicationToolConfig");
+            if (schema != null) {
+                schema.setDiscriminator(
+                    new Discriminator()
+                        .propertyName("name")
+                        // TODO Determine dynamically via reflections / annotation @ToolSubType
+                        .mapping(Map.of(
+                            "feature_info", "#/components/schemas/FeatureInfoToolConfig",
+                            "measure_tools", "#/components/schemas/ToolConfig"
+                        ))
+                );
+            }
+        };
     }
 
     private void enableArbitraryObjects(Schema schema) {

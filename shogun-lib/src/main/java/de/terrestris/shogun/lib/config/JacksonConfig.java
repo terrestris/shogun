@@ -21,9 +21,11 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.terrestris.shogun.lib.annotation.JsonSuperType;
+import de.terrestris.shogun.lib.annotation.ToolSubType;
 import io.hypersistence.utils.hibernate.type.util.ObjectMapperSupplier;
 import lombok.extern.log4j.Log4j2;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -38,6 +40,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 @Log4j2
 @Configuration
@@ -84,6 +87,24 @@ public class JacksonConfig implements ObjectMapperSupplier {
             for (var entry : findAnnotatedClasses().entrySet()) {
                 objectMapper.addMixIn(entry.getKey(), entry.getValue());
             }
+
+            var reflections = new Reflections(new ConfigurationBuilder()
+                .setUrls(ClasspathHelper.forJavaClassPath())
+                .setScanners(
+                    Scanners.SubTypes,
+                    Scanners.TypesAnnotated
+                )
+            );
+
+            Set<Class<?>> subtypes = reflections.getTypesAnnotatedWith(ToolSubType.class);
+
+            for (Class<?> subType : subtypes) {
+                ToolSubType annotation = subType.getAnnotation(ToolSubType.class);
+                if (annotation != null) {
+                    String typeName = annotation.value();
+                    objectMapper.registerSubtypes(new NamedType(subType, typeName));
+                }
+            }
         }
         initialized = true;
     }
@@ -96,7 +117,7 @@ public class JacksonConfig implements ObjectMapperSupplier {
         var reflections = new Reflections(new ConfigurationBuilder()
             .setUrls(ClasspathHelper.forJavaClassPath())
             .setScanners(
-                Scanners.SubTypes,
+//                Scanners.SubTypes,
                 Scanners.TypesAnnotated
             )
         );
