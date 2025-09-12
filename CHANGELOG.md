@@ -1,3 +1,10 @@
+# [22.2.0](https://github.com/terrestris/shogun/compare/v22.1.2...v22.2.0) (2025-09-12)
+
+
+### Features
+
+* add toolMenuWidth to the theme ([7a8320a](https://github.com/terrestris/shogun/commit/7a8320ac87a41d5d54cdb720d77b3d84444797bc))
+
 ## [22.1.2](https://github.com/terrestris/shogun/compare/v22.1.1...v22.1.2) (2025-08-26)
 
 
