@@ -102,4 +102,9 @@ public class DefaultLayerClientConfig implements LayerClientConfig {
     )
     private Boolean editable;
 
+    @Schema(
+        description = "The url to the associated SLD style document.",
+        example = "http://localhost/geoserver/ows?service=WMS&request=GetStyles&version=1.1.1&layers=SHOGUN:COUNTRIES"
+    )
+    private String styleUrl;
 }
