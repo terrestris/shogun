@@ -134,6 +134,8 @@ controller:
     enabled: true
   roles:
     enabled: true
+  textualcontents:
+    enabled: true
 
 upload:
   file:

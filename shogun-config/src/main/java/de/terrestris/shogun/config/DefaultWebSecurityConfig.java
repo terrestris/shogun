@@ -58,7 +58,9 @@ public interface DefaultWebSecurityConfig extends WebSecurityConfig {
                     "/files",
                     "/files/*",
                     "/imagefiles",
-                    "/imagefiles/*"
+                    "/imagefiles/*",
+                    "/textualcontents",
+                    "/textualcontents/*"
                 )
                     .permitAll()
                 // Enable anonymous access to graphql (secured via permission evaluators)

@@ -76,4 +76,9 @@ public class DefaultApplicationClientConfig implements ApplicationClientConfig {
     )
     private String printApp;
 
+    @Schema(
+        description = "The text which is shown in the modal."
+    )
+    private Integer newsText;
+
 }
