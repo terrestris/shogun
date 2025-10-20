@@ -1,15 +1,8 @@
--- shogun.textualcontents definition
-
--- Drop table
-
--- DROP TABLE shogun.textualcontents;
-
-CREATE TABLE shogun.textualcontents (
-	id int8 NOT NULL,
-	created timestamp NULL,
-	modified timestamp NULL,
+CREATE TABLE IF NOT EXISTS shogun.textualcontents (
+	id bigint PRIMARY KEY,
+	created timestamp without time zone NULL,
+	modified timestamp without time zone NULL,
 	markdown text NOT NULL,
 	title text NOT NULL,
-	category text NOT NULL,
-	CONSTRAINT textualcontents_pkey_1 PRIMARY KEY (id)
+	category text NOT NULL
 );

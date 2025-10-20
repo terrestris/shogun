@@ -17,13 +17,7 @@
 package de.terrestris.shogun.lib.enumeration;
 
 public enum TextualContentCategory {
-    NEWS("NEWS"),
-    MISC("MISC"),
-    TERMS("TERMS"),
-    CONTACT("CONTACT"),
-    PRIVACYPOLICY("PRIVACYPOLICY"),
-    LINK_ONLY("LINK_ONLY"),
-    IMPRINT("IMPRINT");
+    NEWS("NEWS");
     private final String category;
 
     TextualContentCategory(String category) {
