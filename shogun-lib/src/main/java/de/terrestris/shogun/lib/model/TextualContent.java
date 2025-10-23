@@ -16,8 +16,6 @@
  */
 package de.terrestris.shogun.lib.model;
 
-import de.terrestris.shogun.lib.enumeration.TextualContentCategory;
-import de.terrestris.shogun.lib.model.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
@@ -45,8 +43,7 @@ public class TextualContent extends BaseEntity {
         description = "The category of the textual content.",
         required = true
     )
-    @Enumerated(EnumType.STRING)
-    private TextualContentCategory category;
+    private String category;
 
     @Column(nullable = false)
     @Schema(
