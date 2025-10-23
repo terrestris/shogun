@@ -23,6 +23,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.envers.AuditTable;
+import org.hibernate.envers.Audited;
 
 @Entity(name = "textualcontents")
 @Table(schema = "shogun")
@@ -33,6 +35,9 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
+@Audited
+@AuditTable(value = "textualcontents_rev", schema = "shogun_rev")
+
 public class TextualContent extends BaseEntity {
 
     @Column(nullable = false)
