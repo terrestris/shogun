@@ -91,5 +91,6 @@
   <cache alias="layers" uses-template="default" />
   <cache alias="roles" uses-template="default" />
   <cache alias="users" uses-template="default" />
+  <cache alias="textualcontents" uses-template="default" />
 
 </config>

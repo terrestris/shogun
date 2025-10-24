@@ -76,4 +76,8 @@ public class DefaultApplicationClientConfig implements ApplicationClientConfig {
     )
     private String printApp;
 
+    @Schema(
+        description = "The texts which are shown in the NewsModal at the start of an application."
+    )
+    private ArrayList<Integer> newsTextIds;
 }
