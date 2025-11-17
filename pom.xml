@@ -101,7 +101,7 @@
     <maven-site-plugin.version>3.21.0</maven-site-plugin.version>
     <jacoco-plugin.version>0.8.14</jacoco-plugin.version>
     <maven-project-info-reports-plugin.version>3.9.0</maven-project-info-reports-plugin.version>
-    <jib-maven-plugin.version>3.4.6</jib-maven-plugin.version>
+    <jib-maven-plugin.version>3.5.0</jib-maven-plugin.version>
     <exec-maven-plugin.version>3.6.2</exec-maven-plugin.version>
 
     <!-- Spring -->
