@@ -1,3 +1,18 @@
+# [22.3.0](https://github.com/terrestris/shogun/compare/v22.2.0...v22.3.0) (2025-11-19)
+
+
+### Bug Fixes
+
+* add cache and rev ([d8b0584](https://github.com/terrestris/shogun/commit/d8b0584a5a3497398e62d1b89371a47a389c41e1))
+* add field styleUrl ([dc0c7bd](https://github.com/terrestris/shogun/commit/dc0c7bdbd2392f3e11d20b3eca3ea3f8928ebf7f))
+* apply suggestions ([8de6d9c](https://github.com/terrestris/shogun/commit/8de6d9c27922ffbf1efb9611fd51c34431663b73))
+* categories ([8f65829](https://github.com/terrestris/shogun/commit/8f6582990409ed8326c02c018b6585a6ac13fbc2))
+
+
+### Features
+
+* introduce textual contents ([491ded1](https://github.com/terrestris/shogun/commit/491ded1f2fdeb532fe91c0aeb79d97fad03b403d))
+
 # [22.2.0](https://github.com/terrestris/shogun/compare/v22.1.2...v22.2.0) (2025-09-12)
 
 
