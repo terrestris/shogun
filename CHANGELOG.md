@@ -1,3 +1,12 @@
+## [22.3.1](https://github.com/terrestris/shogun/compare/v22.3.0...v22.3.1) (2025-11-20)
+
+
+### Bug Fixes
+
+* adds missing license header ([aba3df8](https://github.com/terrestris/shogun/commit/aba3df873cc2f498e1bf4dc3ba251314d5ad4c05))
+* adds transactional annotation to interceptor url ([b8ad8cc](https://github.com/terrestris/shogun/commit/b8ad8cc8dce6828672d28b4b1000ab0a9505fedf))
+* set proper default values for HTTP client and feat bean injection ([c798abd](https://github.com/terrestris/shogun/commit/c798abd1c59257b45b92e868e531f68a9853238f))
+
 # [22.3.0](https://github.com/terrestris/shogun/compare/v22.2.0...v22.3.0) (2025-11-19)
 
 
