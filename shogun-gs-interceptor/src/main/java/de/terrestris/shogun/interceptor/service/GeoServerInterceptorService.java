@@ -41,6 +41,7 @@ import org.apache.hc.core5.net.URIBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -300,6 +301,7 @@ public class GeoServerInterceptorService {
      * @throws HttpException
      * @throws IOException
      */
+    @Transactional(readOnly = true)
     public HttpResponse interceptGeoServerRequest(HttpServletRequest request) throws InterceptorException, URISyntaxException, HttpException, IOException {
         return interceptGeoServerRequest(request, Optional.empty());
     }
@@ -313,6 +315,7 @@ public class GeoServerInterceptorService {
      * @throws HttpException
      * @throws IOException
      */
+    @Transactional(readOnly = true)
     public HttpResponse interceptGeoServerRequest(HttpServletRequest request, Optional<String> endpoint) throws InterceptorException, URISyntaxException, HttpException, IOException {
         // wrap the request, we want to manipulate it
         MutableHttpServletRequest mutableRequest =
