@@ -20,7 +20,6 @@ import de.terrestris.shogun.lib.dto.HttpResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.Part;
-import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -47,7 +46,6 @@ import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.message.BasicHeader;
 import org.apache.hc.core5.net.URIBuilder;
 import org.apache.hc.core5.util.Timeout;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -66,16 +64,11 @@ public class HttpUtil {
     /**
      * The timeout for all outgoing HTTP connections.
      */
-    @Getter
-    private static int httpTimeout;
+    static int httpTimeout;
     /**
      * The default timeout given by the config beans.
      */
-    private static int defaultHttpTimeout;
-    /**
-     * The name of the 'authorization' header
-     */
-    private static String AUTHORIZATION_HEADER = "authorization";
+    static int defaultHttpTimeout;
 
     /**
      * Returns the full web application URI from a given request.
@@ -2255,31 +2248,10 @@ public class HttpUtil {
     }
 
     /**
-     * @param httpTimeout the httpTimeout to set
-     */
-    public static void setHttpTimeout(int httpTimeout) {
-        HttpUtil.httpTimeout = httpTimeout;
-    }
-
-    /**
      * Resets the http timeout to the default one given by the app config.
      */
     public static void resetHttpTimeout() {
         HttpUtil.httpTimeout = HttpUtil.defaultHttpTimeout;
-    }
-
-    /**
-     * Note: The value annotation is set to the setter of httpTimeout here as
-     * we can't auto-wire any value to its static field (but the field has to be
-     * static itself).
-     *
-     * @param httpTimeout the httpTimeout to set
-     */
-    @Value("${http.timeout}")
-    @SuppressWarnings("static-method")
-    public void setDefaultHttpTimeout(int httpTimeout) {
-        HttpUtil.defaultHttpTimeout = httpTimeout;
-        HttpUtil.httpTimeout = httpTimeout;
     }
 
 }
