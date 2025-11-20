@@ -175,7 +175,7 @@ public class HttpProxyService {
         HttpResponse response;
         if (HttpUtil.isHttpGetRequest(request)) {
             try {
-                log.debug("Forwarding as GET to: " + url);
+                log.debug("Forwarding as GET to: {}", url);
                 response = HttpUtil.forwardGet(url.toURI(), request, false);
             } catch (URISyntaxException | HttpException e) {
                 String errorMessage = String.format("Error forwarding GET request: %s", e.getMessage());

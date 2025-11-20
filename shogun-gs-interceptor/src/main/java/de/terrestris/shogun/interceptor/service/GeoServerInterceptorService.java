@@ -605,16 +605,16 @@ public class GeoServerInterceptorService {
      * @throws InterceptorException
      */
     private URI getGeoServerBaseURI(OgcMessage message, boolean useWmsReflector) throws URISyntaxException, InterceptorException {
-        log.debug("Finding the GeoServer base URI by the provided EndPoint: " + message.getEndPoint());
+        log.debug("Finding the GeoServer base URI by the provided EndPoint: {}", message.getEndPoint());
 
         // get the namespace from the qualified endPoint name
         String geoServerNamespace = getGeoServerNameSpace(message.getEndPoint());
 
-        log.trace("Found the following GeoServer namespace set for endPoint: " + geoServerNamespace);
+        log.trace("Found the following GeoServer namespace set for endPoint: {}", geoServerNamespace);
 
         // set the GeoServer base URL
         URI geoServerBaseUri = getGeoServerBaseURIFromNameSpace(geoServerNamespace, useWmsReflector, message.isWms());
-        log.debug("The corresponding GeoServer base URI is: " + geoServerBaseUri);
+        log.debug("The corresponding GeoServer base URI is: {}", geoServerBaseUri);
         return geoServerBaseUri;
     }
 }

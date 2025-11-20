@@ -61,7 +61,7 @@ public class GeoServerInterceptorController {
             log.trace("Successfully intercepted a GeoServer resource.");
             return new ResponseEntity<>(responseBody, responseHeaders, responseStatus);
         } catch (NullPointerException | IOException | InterceptorException | HttpException | URISyntaxException e) {
-            log.error(ERROR_MESSAGE + e.getMessage());
+            log.error(ERROR_MESSAGE + "{}", e.getMessage());
             log.trace("Full stack trace: ", e);
             responseHeaders.setContentType(MediaType.APPLICATION_JSON);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ERROR_MESSAGE + e.getMessage(), e);
