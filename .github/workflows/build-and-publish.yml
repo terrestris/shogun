@@ -8,7 +8,7 @@ jobs:
 
     steps:
     - name: Checkout sources
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         # Disabling shallow clone is needed for correctly determing next release with semantic release
         fetch-depth: 0
