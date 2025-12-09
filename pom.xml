@@ -96,6 +96,8 @@
     <sonar.sources>src/main/</sonar.sources>
     <project.encoding>UTF-8</project.encoding>
     <java.version>21</java.version>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
 
     <!-- Plugins -->
     <maven-site-plugin.version>3.21.0</maven-site-plugin.version>
@@ -147,6 +149,15 @@
     <maven-project-info-reports-plugin.version>3.9.0</maven-project-info-reports-plugin.version>
     <archunit.version>1.4.1</archunit.version>
     <sonar-maven-plugin.version>5.4.0.6343</sonar-maven-plugin.version>
+
+    <!-- Code Quality -->
+    <checkstyle.version>12.2.0</checkstyle.version>
+    <findsecbugs-plugin.version>1.14.0</findsecbugs-plugin.version>
+    <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
+    <maven-pmd-plugin.version>3.28.0</maven-pmd-plugin.version>
+    <pmd.version>7.19.0</pmd.version>
+    <spotbugs-maven-plugin.version>4.9.8.2</spotbugs-maven-plugin.version>
+    <spotbugs.version>4.9.8</spotbugs.version>
 
     <!-- Jib -->
     <image>docker-public.terrestris.de/shogun/${project.artifactId}:latest</image>
@@ -292,6 +303,130 @@
 
   <profiles>
     <profile>
+      <id>ci</id>
+      <properties>
+        <javadoc.opts>-Xdoclint:none</javadoc.opts>
+      </properties>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-checkstyle-plugin</artifactId>
+              <version>${maven-checkstyle-plugin.version}</version>
+              <configuration>
+                <configLocation>checkstyle-shogun.xml</configLocation>
+                <consoleOutput>true</consoleOutput>
+                <failsOnError>true</failsOnError>
+                <linkXRef>false</linkXRef>
+              </configuration>
+              <dependencies>
+                <dependency>
+                  <groupId>com.puppycrawl.tools</groupId>
+                  <artifactId>checkstyle</artifactId>
+                  <version>${checkstyle.version}</version>
+                </dependency>
+              </dependencies>
+              <executions>
+                <execution>
+                  <id>validate</id>
+                  <phase>validate</phase>
+                  <goals>
+                    <goal>check</goal>
+                  </goals>
+                </execution>
+              </executions>
+            </plugin>
+            <plugin>
+              <groupId>com.github.spotbugs</groupId>
+              <artifactId>spotbugs-maven-plugin</artifactId>
+              <version>${spotbugs-maven-plugin.version}</version>
+              <executions>
+                <execution>
+                  <goals>
+                    <goal>check</goal>
+                  </goals>
+                </execution>
+              </executions>
+              <dependencies>
+                <!-- overwrite dependency on spotbugs if you want to specify the version of spotbugs -->
+                <dependency>
+                  <groupId>com.github.spotbugs</groupId>
+                  <artifactId>spotbugs</artifactId>
+                  <version>${spotbugs.version}</version>
+                </dependency>
+              </dependencies>
+              <configuration>
+                <xmlOutput>true</xmlOutput>
+                <maxRank>15</maxRank>
+                <fork>true</fork>
+                <threshold>High</threshold>
+                <effort>Max</effort>
+                <failOnError>true</failOnError>
+                <jvmArgs>-Djava.version=21</jvmArgs>
+                <includeFilterFile>${project.basedir}/../spotbugs-security-include.xml</includeFilterFile>
+                <excludeFilterFile>${project.basedir}/../spotbugs-security-exclude.xml</excludeFilterFile>
+                <plugins>
+                  <plugin>
+                    <groupId>com.h3xstream.findsecbugs</groupId>
+                    <artifactId>findsecbugs-plugin</artifactId>
+                    <version>${findsecbugs-plugin.version}</version>
+                  </plugin>
+                </plugins>
+              </configuration>
+            </plugin>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-pmd-plugin</artifactId>
+              <version>${maven-pmd-plugin.version}</version>
+              <configuration>
+                <analysisCache>true</analysisCache>
+                <targetJdk>${maven.compiler.target}</targetJdk>
+                <format>xml</format>
+                <outputDirectory>${project.build.directory}/pmd</outputDirectory>
+                <rulesets>
+                  <ruleset>${project.basedir}/../pmd-ruleset.xml</ruleset>
+                </rulesets>
+                <failurePriority>3</failurePriority>
+                <minimumPriority>3</minimumPriority>
+                <verbose>true</verbose>
+                <printFailingErrors>true</printFailingErrors>
+                <includeTests>true</includeTests>
+                <excludeRoots>
+                  <excludeRoot>target/generated-sources</excludeRoot>
+                </excludeRoots>
+              </configuration>
+              <dependencies>
+                <dependency>
+                  <groupId>net.sourceforge.pmd</groupId>
+                  <artifactId>pmd-core</artifactId>
+                  <version>${pmd.version}</version>
+                </dependency>
+                <dependency>
+                  <groupId>net.sourceforge.pmd</groupId>
+                  <artifactId>pmd-java</artifactId>
+                  <version>${pmd.version}</version>
+                </dependency>
+                <dependency>
+                  <groupId>net.sourceforge.pmd</groupId>
+                  <artifactId>pmd-javascript</artifactId>
+                  <version>${pmd.version}</version>
+                </dependency>
+              </dependencies>
+              <executions>
+                <execution>
+                  <phase>verify</phase>
+                  <goals>
+                    <goal>pmd</goal>
+                  </goals>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+    <profile>
       <id>reporting</id>
       <reporting>
         <plugins>
@@ -333,6 +468,19 @@
                 </reports>
               </reportSet>
             </reportSets>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-checkstyle-plugin</artifactId>
+            <version>${maven-checkstyle-plugin.version}</version>
+            <configuration>
+              <configLocation>checkstyle.xml</configLocation>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-pmd-plugin</artifactId>
+            <version>${maven-pmd-plugin.version}</version>
           </plugin>
         </plugins>
       </reporting>
