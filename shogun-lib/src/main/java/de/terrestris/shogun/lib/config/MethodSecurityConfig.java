@@ -17,32 +17,25 @@
 package de.terrestris.shogun.lib.config;
 
 import de.terrestris.shogun.lib.security.access.BasePermissionEvaluator;
-import de.terrestris.shogun.lib.security.access.entity.BaseEntityPermissionEvaluator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
-import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
-
-import java.util.List;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-public class MethodSecurityConfig extends GlobalMethodSecurityConfiguration {
+@EnableMethodSecurity
+public class MethodSecurityConfig {
 
     @Autowired
     private ApplicationContext appContext;
 
-    @Autowired
-    private BasePermissionEvaluator basePermissionEvaluator;
-
-    @Autowired
-    private List<BaseEntityPermissionEvaluator> permissionEvaluators;
-
-    @Override
-    protected MethodSecurityExpressionHandler createExpressionHandler() {
+    @Bean
+    public MethodSecurityExpressionHandler methodSecurityExpressionHandler(
+            @Lazy BasePermissionEvaluator basePermissionEvaluator) {
         DefaultMethodSecurityExpressionHandler expressionHandler =
                 new DefaultMethodSecurityExpressionHandler();
         expressionHandler.setPermissionEvaluator(basePermissionEvaluator);

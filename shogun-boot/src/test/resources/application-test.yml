@@ -18,8 +18,11 @@ shogun:
 
 spring:
   flyway:
+    enabled: true
     schemas: shogun, public
-    defaultSchema: shogun
+    default-schema: shogun
+    baseline-on-migrate: true
+    locations: classpath:db/migration
   session:
     store-type: none
   messages:

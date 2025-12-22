@@ -41,21 +41,21 @@ public class TextualContent extends BaseEntity {
     @Column(nullable = false)
     @Schema(
         description = "The category of the textual content.",
-        required = true
+        requiredMode = Schema.RequiredMode.REQUIRED
     )
     private String category;
 
     @Column(nullable = false)
     @Schema(
         description = "The title of the textual content.",
-        required = true
+        requiredMode = Schema.RequiredMode.REQUIRED
     )
     private String title;
 
     @Column(nullable = false)
     @Schema(
         description = "The textual content.",
-        required = true
+        requiredMode = Schema.RequiredMode.REQUIRED
     )
     private String markdown;
 

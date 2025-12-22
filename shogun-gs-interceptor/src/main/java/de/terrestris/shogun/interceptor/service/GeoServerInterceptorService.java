@@ -31,6 +31,7 @@ import de.terrestris.shogun.lib.util.HttpUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpException;
@@ -255,7 +256,7 @@ public class GeoServerInterceptorService {
 
         log.trace("Requested to filter the Headers to respond with:");
 
-        for (Entry<String, List<String>> header : headers.entrySet()) {
+        for (Entry<String, List<String>> header : headers.headerSet()) {
             String headerKey = header.getKey();
             String headerVal = StringUtils.join(header.getValue(), ",");
 
@@ -274,12 +275,12 @@ public class GeoServerInterceptorService {
                     String replaceCandidate = matcher.group(1);
                     String replacer;
 
-                    replacer = StringUtils.prependIfMissing(
+                    replacer = Strings.CS.prependIfMissing(
                         replaceCandidate, "\"");
-                    replacer = StringUtils.appendIfMissing(
+                    replacer = Strings.CS.appendIfMissing(
                         replacer, "\"");
 
-                    headerVal = StringUtils.replace(headerVal,
+                    headerVal = Strings.CS.replace(headerVal,
                         replaceCandidate, replacer);
                 }
 
@@ -509,7 +510,7 @@ public class GeoServerInterceptorService {
         interceptorRules.stream().forEach((rule) -> {
             int score = 0;
 
-            if (!StringUtils.isEmpty(rule.getEndPoint()) && !StringUtils.isEmpty(endPoint) && !StringUtils.equalsIgnoreCase(rule.getEndPoint(), endPoint)) {
+            if (!StringUtils.isEmpty(rule.getEndPoint()) && !StringUtils.isEmpty(endPoint) && !Strings.CI.equals(rule.getEndPoint(), endPoint)) {
                 return;
             }
             if (rule.getService() != null && !Objects.equals(rule.getService(), service) && service != null) {
@@ -586,13 +587,13 @@ public class GeoServerInterceptorService {
 
         if (useWmsReflector && isWMS) {
             log.trace("Will use WMS reflector endpoint");
-            if (StringUtils.endsWithIgnoreCase(geoServerUrl, "ows")) {
+            if (Strings.CI.endsWith(geoServerUrl, "ows")) {
                 StringBuilder builder = new StringBuilder();
                 int start = geoServerUrl.lastIndexOf("ows");
                 builder.append(geoServerUrl, 0, start);
                 builder.append("wms" + WMS_REFLECT_ENDPOINT);
                 geoServerUrl = builder.toString();
-            } else if (StringUtils.endsWithIgnoreCase(geoServerUrl, "wms")) {
+            } else if (Strings.CI.endsWith(geoServerUrl, "wms")) {
                 geoServerUrl += WMS_REFLECT_ENDPOINT;
             }
             log.trace("The modified endpoint is: " + geoServerUrl);

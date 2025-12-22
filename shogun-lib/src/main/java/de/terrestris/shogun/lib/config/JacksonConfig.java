@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.terrestris.shogun.lib.annotation.JsonSuperType;
@@ -47,45 +48,51 @@ public class JacksonConfig implements ObjectMapperSupplier {
 
     private static boolean initialized = false;
 
-    @Bean
-    public ObjectMapper objectMapper() {
-        if (mapper == null) {
-            mapper = new ObjectMapper();
-            init(mapper);
-        }
-        return mapper;
-    }
-
     @Value("${shogun.srid:4326}")
     private int srid;
 
     @Value("${shogun.coordinatePrecisionScale:10}")
     private int coordinatePrecisionScale;
 
-    @Override
-    public ObjectMapper get() {
-        return objectMapper();
+    @Bean
+    public ObjectMapper objectMapper() {
+        log.info("Initializing custom ObjectMapper");
+        if (mapper == null || !initialized) {
+            log.info("Creating new ObjectMapper instance");
+
+            GeometryFactory geomFactory = new GeometryFactory(new PrecisionModel(coordinatePrecisionScale), srid);
+
+            JsonMapper.Builder builder = JsonMapper.builder()
+                .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false)
+                .configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false)
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+                .addModule(new JavaTimeModule())
+                .addModule(new Jdk8Module())
+                .addModule(new JtsModule(geomFactory));
+
+            // Apply mixins after building to properly register @JsonDeserialize mappings
+            Map<Class<?>, Class<?>> mixins = findAnnotatedClasses();
+            for (Map.Entry<Class<?>, Class<?>> entry : mixins.entrySet()) {
+                log.info("Registering mixin: {} -> {}", entry.getKey().getSimpleName(), entry.getValue().getSimpleName());
+                builder.addMixIn(entry.getKey(), entry.getValue());
+            }
+
+            mapper = builder.build();
+
+            initialized = true;
+        }
+        return mapper;
     }
 
-    public void init(ObjectMapper objectMapper) {
-        if (!initialized) {
-            GeometryFactory geomFactory = new GeometryFactory(new PrecisionModel(coordinatePrecisionScale), srid);
-            objectMapper.registerModule(new JtsModule(geomFactory));
-
-            objectMapper.registerModule(new JavaTimeModule());
-            objectMapper.registerModule(new Jdk8Module());
-            objectMapper.configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false);
-
-            objectMapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false);
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-            objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-
-            for (var entry : findAnnotatedClasses().entrySet()) {
-                objectMapper.addMixIn(entry.getKey(), entry.getValue());
-            }
+    @Override
+    public ObjectMapper get() {
+        if (mapper == null || !initialized) {
+            // For cases where ObjectMapperSupplier is called before Spring bean initialization
+            return objectMapper();
         }
-        initialized = true;
+        return mapper;
     }
 
     /**

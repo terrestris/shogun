@@ -73,9 +73,9 @@ spring:
             provider: org.ehcache.jsr107.EhcacheCachingProvider
   flyway:
     enabled: true
-    baselineOnMigrate: true
+    baseline-on-migrate: true
     locations: classpath:db/migration
-    defaultSchema: shogun
+    default-schema: shogun
   datasource:
     platform: postgres
     url: jdbc:postgresql://shogun-postgis/shogun?currentSchema=shogun

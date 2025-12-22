@@ -21,6 +21,7 @@ import de.terrestris.shogun.lib.event.KeycloakEvent;
 import de.terrestris.shogun.lib.event.KeycloakEventType;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -68,13 +69,13 @@ public class WebhookController {
                 split[3]
             ));
             case "USER" -> {
-                if (StringUtils.equals(eventType, "CREATE")) {
+                if (Strings.CS.equals(eventType, "CREATE")) {
                     applicationEventPublisher.publishEvent(new KeycloakEvent(
                         this,
                         KeycloakEventType.USER_CREATED,
                         split[1]
                     ));
-                } else if (StringUtils.equals(eventType, "DELETE")) {
+                } else if (Strings.CS.equals(eventType, "DELETE")) {
                     applicationEventPublisher.publishEvent(new KeycloakEvent(
                         this,
                         KeycloakEventType.USER_DELETED,
@@ -83,13 +84,13 @@ public class WebhookController {
                 }
             }
             case "GROUP" -> {
-                if (StringUtils.equals(eventType, "CREATE")) {
+                if (Strings.CS.equals(eventType, "CREATE")) {
                     applicationEventPublisher.publishEvent(new KeycloakEvent(
                         this,
                         KeycloakEventType.GROUP_CREATED,
                         split[1]
                     ));
-                } else if (StringUtils.equals(eventType, "DELETE")) {
+                } else if (Strings.CS.equals(eventType, "DELETE")) {
                     applicationEventPublisher.publishEvent(new KeycloakEvent(
                         this,
                         KeycloakEventType.GROUP_DELETED,

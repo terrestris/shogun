@@ -16,10 +16,13 @@
  */
 package de.terrestris.shogun.lib.graphql.scalar;
 
+import graphql.GraphQLContext;
 import graphql.Internal;
+import graphql.execution.CoercedVariables;
 import graphql.language.StringValue;
 import graphql.language.Value;
 import graphql.schema.*;
+import org.jspecify.annotations.NonNull;
 
 import java.time.DateTimeException;
 import java.time.Instant;
@@ -28,6 +31,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
+import java.util.Locale;
 import java.util.function.Function;
 
 import static graphql.scalars.util.Kit.typeName;
@@ -51,19 +55,19 @@ public final class DateTimeScalar {
     static {
         Coercing<OffsetDateTime, String> coercing = new Coercing<OffsetDateTime, String>() {
             @Override
-            public String serialize(Object input) throws CoercingSerializeException {
+            public String serialize(@NonNull Object dataFetcherResult, @NonNull GraphQLContext graphQLContext, @NonNull Locale locale) throws CoercingSerializeException {
                 OffsetDateTime offsetDateTime;
-                if (input instanceof OffsetDateTime) {
-                    offsetDateTime = (OffsetDateTime) input;
-                } else if (input instanceof ZonedDateTime) {
-                    offsetDateTime = ((ZonedDateTime) input).toOffsetDateTime();
-                } else if (input instanceof Instant instant) {
+                if (dataFetcherResult instanceof OffsetDateTime) {
+                    offsetDateTime = (OffsetDateTime) dataFetcherResult;
+                } else if (dataFetcherResult instanceof ZonedDateTime) {
+                    offsetDateTime = ((ZonedDateTime) dataFetcherResult).toOffsetDateTime();
+                } else if (dataFetcherResult instanceof Instant instant) {
                     offsetDateTime = instant.atOffset(OffsetDateTime.now().getOffset());
-                } else if (input instanceof String) {
-                    offsetDateTime = parseOffsetDateTime(input.toString(), CoercingSerializeException::new);
+                } else if (dataFetcherResult instanceof String) {
+                    offsetDateTime = parseOffsetDateTime(dataFetcherResult.toString(), CoercingSerializeException::new);
                 } else {
                     throw new CoercingSerializeException(
-                        "Expected something we can convert to 'java.time.OffsetDateTime' but was '" + typeName(input) + "'."
+                        "Expected something we can convert to 'java.time.OffsetDateTime' but was '" + typeName(dataFetcherResult) + "'."
                     );
                 }
                 try {
@@ -76,7 +80,7 @@ public final class DateTimeScalar {
             }
 
             @Override
-            public OffsetDateTime parseValue(Object input) throws CoercingParseValueException {
+            public OffsetDateTime parseValue(@NonNull Object input, @NonNull GraphQLContext graphQLContext, @NonNull Locale locale) throws CoercingParseValueException {
                 OffsetDateTime offsetDateTime;
                 if (input instanceof OffsetDateTime) {
                     offsetDateTime = (OffsetDateTime) input;
@@ -95,7 +99,7 @@ public final class DateTimeScalar {
             }
 
             @Override
-            public OffsetDateTime parseLiteral(Object input) throws CoercingParseLiteralException {
+            public OffsetDateTime parseLiteral(@NonNull Value<?> input, @NonNull CoercedVariables variables, @NonNull GraphQLContext graphQLContext, @NonNull Locale locale) throws CoercingParseLiteralException {
                 if (!(input instanceof StringValue)) {
                     throw new CoercingParseLiteralException(
                         "Expected AST type 'StringValue' but was '" + typeName(input) + "'."
@@ -105,8 +109,9 @@ public final class DateTimeScalar {
             }
 
             @Override
-            public Value<?> valueToLiteral(Object input) {
-                String s = serialize(input);
+            @NonNull
+            public Value<?> valueToLiteral(@NonNull Object input, @NonNull GraphQLContext graphQLContext, @NonNull Locale locale) {
+                String s = serialize(input, graphQLContext, locale);
                 return StringValue.newStringValue(s).build();
             }
 

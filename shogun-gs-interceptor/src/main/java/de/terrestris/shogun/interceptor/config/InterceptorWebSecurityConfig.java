@@ -17,7 +17,7 @@
 package de.terrestris.shogun.interceptor.config;
 
 import de.terrestris.shogun.config.DefaultWebSecurityConfig;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -29,7 +29,7 @@ public class InterceptorWebSecurityConfig implements DefaultWebSecurityConfig {
 
     RequestMatcher csrfRequestMatcher = httpServletRequest -> {
         String refererHeader = httpServletRequest.getHeader("Referer");
-        return StringUtils.equalsIgnoreCase(refererHeader, "Shogun-Manager-Client");
+        return Strings.CI.equals(refererHeader, "Shogun-Manager-Client");
     };
 
     @Override
