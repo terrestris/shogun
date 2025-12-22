@@ -18,7 +18,7 @@ package de.terrestris.shogun.lib.security;
 
 import de.terrestris.shogun.lib.repository.UserRepository;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -51,8 +51,8 @@ public class SecurityContextUtil {
     public boolean isInterceptorAdmin() {
         List<GrantedAuthority> authorities = getGrantedAuthorities();
         return authorities.stream().anyMatch(
-            grantedAuthority -> StringUtils.endsWithIgnoreCase(grantedAuthority.getAuthority(), "INTERCEPTOR_ADMIN") ||
-                StringUtils.endsWithIgnoreCase(grantedAuthority.getAuthority(), "ADMIN")
+            grantedAuthority -> Strings.CI.endsWith(grantedAuthority.getAuthority(), "INTERCEPTOR_ADMIN") ||
+                Strings.CI.endsWith(grantedAuthority.getAuthority(), "ADMIN")
         );
     }
 

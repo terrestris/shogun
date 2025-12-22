@@ -22,20 +22,18 @@ import de.terrestris.shogun.lib.controller.GroupController;
 import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.repository.GroupRepository;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.web.servlet.server.Encoding;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 public class GroupControllerTest extends BaseControllerTest<GroupController, GroupRepository, Group> {
 
@@ -103,7 +101,7 @@ public class GroupControllerTest extends BaseControllerTest<GroupController, Gro
                 MockMvcRequestBuilders
                     .put(String.format("%s/%s", basePath, testData.get(0).getId()))
                     .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding(Encoding.DEFAULT_CHARSET.toString())
+                    .characterEncoding(Charset.defaultCharset())
                     .content(objectMapper.writeValueAsString(updateNode))
                     .with(csrf())
             )
@@ -122,7 +120,7 @@ public class GroupControllerTest extends BaseControllerTest<GroupController, Gro
                 MockMvcRequestBuilders
                     .post(String.format("%s", basePath))
                     .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding(Encoding.DEFAULT_CHARSET.toString())
+                    .characterEncoding(Charset.defaultCharset())
                     .content(objectMapper.writeValueAsString(insertNode))
                     .with(csrf())
             )

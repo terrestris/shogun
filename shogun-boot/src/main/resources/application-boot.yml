@@ -22,7 +22,7 @@ spring:
     url: jdbc:postgresql://shogun-postgis/shogun?currentSchema=shogun
   flyway:
     schemas: shogun, public
-    defaultSchema: shogun
+    default-schema: shogun
   messages:
     basename: org/springframework/security/messages, de/terrestris/shogun/lib/messages
   mail:

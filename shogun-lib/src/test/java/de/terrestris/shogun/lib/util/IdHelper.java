@@ -20,8 +20,6 @@ import de.terrestris.shogun.lib.model.BaseEntity;
 import lombok.extern.log4j.Log4j2;
 
 import java.lang.reflect.Field;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 
 @Log4j2
 public class IdHelper {
@@ -38,16 +36,13 @@ public class IdHelper {
         // use reflection to get the inaccessible final field 'id'
         Field idField = BaseEntity.class.getDeclaredField("id");
 
-        AccessController.doPrivileged((PrivilegedAction<BaseEntity>) () -> {
-            idField.setAccessible(true);
-            try {
-                idField.set(baseEntity, id);
-            } catch (IllegalAccessException e) {
-                log.error("Could not set ID field for persistent object", e);
-            }
-            idField.setAccessible(false);
-            return null;
-        });
+        idField.setAccessible(true);
+        try {
+            idField.set(baseEntity, id);
+        } catch (IllegalAccessException e) {
+            log.error("Could not set ID field for persistent object", e);
+        }
+        idField.setAccessible(false);
     }
 
 }
