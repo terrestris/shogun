@@ -83,7 +83,7 @@
     <!-- Hibernate -->
     <dependency>
       <groupId>io.hypersistence</groupId>
-      <artifactId>hypersistence-utils-hibernate-62</artifactId>
+      <artifactId>hypersistence-utils-hibernate-71</artifactId>
     </dependency>
 
     <!-- Lombok -->

@@ -17,7 +17,10 @@ spring:
   datasource:
     url: jdbc:postgresql://shogun-postgis:5432/shogun?currentSchema=interceptor
   flyway:
-    defaultSchema: interceptor
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+    default-schema: interceptor
     schemas: interceptor, public
 
 server:

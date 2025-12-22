@@ -18,7 +18,6 @@ package de.terrestris.shogun.lib.service;
 
 import de.terrestris.shogun.lib.model.Layer;
 import de.terrestris.shogun.lib.repository.LayerRepository;
-import org.junit.Before;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 

@@ -52,7 +52,7 @@ public class ValidationUtil {
         log.error("Found validation errors in bindingResult for entity {}: {}", bindingResult.getObjectName(),
             message.toString());
 
-        return ResponseEntity.unprocessableEntity().body(response);
+        return ResponseEntity.unprocessableContent().body(response);
     }
 
 }

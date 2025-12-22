@@ -22,6 +22,7 @@ import de.terrestris.shogun.properties.UploadProperties;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.tika.Tika;
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
@@ -74,7 +75,7 @@ public abstract class BaseFileService<T extends BaseFileRepository<S, Long> & Jp
         Tika tika = new Tika();
         String detectedMediaType = tika.detect(TikaInputStream.get(file.getBytes()), metadata);
 
-        if (!StringUtils.equalsIgnoreCase(detectedMediaType, contentType)) {
+        if (!Strings.CI.equals(detectedMediaType, contentType)) {
             throw new IOException("Media type validation failed. Passed content type is " + contentType + " but detected media type is " + detectedMediaType);
         }
     }

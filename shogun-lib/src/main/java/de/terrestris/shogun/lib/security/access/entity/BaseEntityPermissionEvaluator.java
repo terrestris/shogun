@@ -27,7 +27,7 @@ import de.terrestris.shogun.lib.service.security.permission.*;
 import de.terrestris.shogun.lib.service.security.provider.GroupProviderService;
 import de.terrestris.shogun.lib.service.security.provider.RoleProviderService;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.aop.framework.AopProxyUtils;
@@ -335,7 +335,7 @@ public abstract class BaseEntityPermissionEvaluator<E extends BaseEntity> implem
 
         List<GrantedAuthority> authorities = new ArrayList<>(authentication.getAuthorities());
         var isAdmin = authorities.stream().anyMatch(
-            grantedAuthority -> StringUtils.equalsIgnoreCase(grantedAuthority.getAuthority(), "ROLE_ADMIN")
+            grantedAuthority -> Strings.CI.equals(grantedAuthority.getAuthority(), "ROLE_ADMIN")
         );
 
         if (isAdmin) {
