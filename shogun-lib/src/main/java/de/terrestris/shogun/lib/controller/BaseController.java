@@ -18,6 +18,7 @@ package de.terrestris.shogun.lib.controller;
 
 import com.github.fge.jsonpatch.mergepatch.JsonMergePatch;
 import de.terrestris.shogun.lib.controller.security.permission.BasePermissionController;
+import de.terrestris.shogun.lib.mapper.BaseEntityMapper;
 import de.terrestris.shogun.lib.model.BaseEntity;
 import de.terrestris.shogun.lib.service.BaseService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,6 +29,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.log4j.Log4j2;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.data.domain.Page;
@@ -44,9 +46,18 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 
-// TODO Specify and type extension of BaseService
 @Log4j2
-public abstract class BaseController<T extends BaseService<?, S>, S extends BaseEntity> extends BasePermissionController<T, S> {
+public abstract class BaseController<
+    T extends BaseService<?, S>,
+    S extends BaseEntity,
+    R,  // Read DTO type (no bounds - allows inheritance)
+    C,  // Create DTO type (no bounds - allows inheritance)
+    U,  // Update DTO type (no bounds - allows inheritance)
+    M extends BaseEntityMapper<S, R, C, U>
+> extends BasePermissionController<T, S> {
+
+    @Autowired
+    protected M mapper;
 
     @GetMapping(
         produces = { "application/json" }
@@ -75,16 +86,19 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
             description = "Internal Server Error: Something internal went wrong while deleting the entity"
         )
     })
-    public Page<S> findAll(@PageableDefault(Integer.MAX_VALUE) @ParameterObject Pageable pageable) {
+    public Page<R> findAll(@PageableDefault(Integer.MAX_VALUE) @ParameterObject Pageable pageable) {
         log.trace("Requested to return all entities of type {}", getGenericClassName());
 
         try {
             Page<S> persistedEntities = service.findAll(pageable);
 
-            log.trace("Successfully got all entities of type {} (count: {})",
-                getGenericClassName(), persistedEntities.getTotalElements());
+            // Map entities to Read DTOs
+            Page<R> dtoPage = persistedEntities.map(entity -> mapper.toReadDto(entity));
 
-            return persistedEntities;
+            log.trace("Successfully got all entities of type {} (count: {})",
+                getGenericClassName(), dtoPage.getTotalElements());
+
+            return dtoPage;
         } catch (AccessDeniedException ade) {
             log.warn("Access to entity of type {} is denied", getGenericClassName());
 
@@ -119,7 +133,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
-    public S findOne(@PathVariable("id") Long entityId) {
+    public R findOne(@PathVariable("id") Long entityId) {
         log.trace("Requested to return entity of type {} with ID {}",
             getGenericClassName(), entityId);
 
@@ -129,10 +143,12 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
             if (entity.isPresent()) {
                 S persistedEntity = entity.get();
 
+                R readDto = mapper.toReadDto(persistedEntity);
+
                 log.trace("Successfully got entity of type {} with ID {}",
                     getGenericClassName(), entityId);
 
-                return persistedEntity;
+                return readDto;
             } else {
                 log.error("Could not find entity of type {} with ID {}",
                         getGenericClassName(), entityId);
@@ -181,7 +197,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
     @GetMapping("/{id}/rev")
     @ResponseStatus(HttpStatus.OK)
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
-    public Revisions<Integer, S> findRevisions(@PathVariable("id") Long entityId) {
+    public Revisions<Integer, R> findRevisions(@PathVariable("id") Long entityId) {
         log.trace("Requested to return all revisions for entity of type {} with ID {}",
             getGenericClassName(), entityId);
 
@@ -191,10 +207,18 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
             if (entity.isPresent()) {
                 Revisions<Integer, S> revisions = service.findRevisions(entity.get());
 
+                // Map each revision's entity to DTO
+                // We need to create new Revision objects with mapped entities
+                java.util.List<Revision<Integer, R>> mappedRevisions = revisions.stream()
+                    .map(rev -> Revision.of(rev.getMetadata(), mapper.toReadDto(rev.getEntity())))
+                    .collect(java.util.stream.Collectors.toList());
+
+                Revisions<Integer, R> dtoRevisions = Revisions.of(mappedRevisions);
+
                 log.trace("Successfully got all revisions for entity of type {} with ID {}",
                     getGenericClassName(), entityId);
 
-                return revisions;
+                return dtoRevisions;
             } else {
                 log.error("Could not find entity of type {} with ID {}",
                     getGenericClassName(), entityId);
@@ -243,7 +267,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
     @GetMapping("/{id}/rev/{rev}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
-    public Revision<Integer, S> findRevision(@PathVariable("id") Long entityId, @PathVariable("rev") Integer rev) {
+    public Revision<Integer, R> findRevision(@PathVariable("id") Long entityId, @PathVariable("rev") Integer rev) {
         log.trace("Requested to return revision {} for entity of type {} with ID {}",
             rev, getGenericClassName(), entityId);
 
@@ -254,10 +278,17 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
                 Optional<Revision<Integer, S>> revision = service.findRevision(entity.get(), rev);
 
                 if (revision.isPresent()) {
+                    // Map revision's entity to DTO
+                    Revision<Integer, S> entityRevision = revision.get();
+                    Revision<Integer, R> dtoRevision = Revision.of(
+                        entityRevision.getMetadata(),
+                        mapper.toReadDto(entityRevision.getEntity())
+                    );
+
                     log.trace("Successfully got revision {} for entity of type {} with ID {}",
                         rev, getGenericClassName(), entityId);
 
-                    return revision.get();
+                    return dtoRevision;
                 } else {
                     log.error("Could not find revision {} for entity with ID {}",
                         rev, entityId);
@@ -319,7 +350,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
     @GetMapping({"/{id}/forTime/{timeStamp}"})
     @ResponseStatus(HttpStatus.OK)
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
-    public S findOneByTime(
+    public R findOneByTime(
         @PathVariable("id") Long entityId, @PathVariable("timeStamp")
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime timeStamp
     ) {
@@ -330,12 +361,12 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
             Optional<S> entity = service.findOneByTime(entityId, timeStamp);
 
             if (entity.isPresent()) {
-                S persistedEntity = entity.get();
+                R readDto = mapper.toReadDto(entity.get());
 
                 log.trace("Successfully got entity of type {} with ID {}",
                     getGenericClassName(), entityId);
 
-                return persistedEntity;
+                return readDto;
             } else {
                 log.error("Could not find entity of type {} with ID {} for time {}",
                     getGenericClassName(), entityId, timeStamp);
@@ -384,7 +415,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
     @GetMapping("/{id}/lastrev")
     @ResponseStatus(HttpStatus.OK)
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
-    public Revision<Integer, S> findLastChangeRevision(@PathVariable("id") Long entityId) {
+    public Revision<Integer, R> findLastChangeRevision(@PathVariable("id") Long entityId) {
         log.trace("Requested to return the latest revision for entity of type {} with ID {}",
             getGenericClassName(), entityId);
 
@@ -395,10 +426,17 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
                 Optional<Revision<Integer, S>> revision = service.findLastChangeRevision(entity.get());
 
                 if (revision.isPresent()) {
+                    // Map revision's entity to DTO
+                    Revision<Integer, S> entityRevision = revision.get();
+                    Revision<Integer, R> dtoRevision = Revision.of(
+                        entityRevision.getMetadata(),
+                        mapper.toReadDto(entityRevision.getEntity())
+                    );
+
                     log.trace("Successfully got the latest revision for entity of type {} with ID {}",
                         getGenericClassName(), entityId);
 
-                    return revision.get();
+                    return dtoRevision;
                 } else {
                     log.error("Could not find the latest revision for entity with ID {}", entityId);
 
@@ -459,17 +497,20 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
-    public S add(@RequestBody S entity) {
+    public R add(@RequestBody C dto) {
+        // TODO Check logger message
         log.trace("Requested to create a new entity of type {} ({})",
-            getGenericClassName(), entity);
+            getGenericClassName(), dto);
 
         try {
+            S entity = mapper.fromCreateDto(dto);
             S persistedEntity = service.create(entity);
 
             log.trace("Successfully created the entity of type {} with ID {}",
                 getGenericClassName(), persistedEntity.getId());
 
-            return persistedEntity;
+            // Map entity to Read DTO for response
+            return mapper.toReadDto(persistedEntity);
         } catch (AccessDeniedException ade) {
             log.warn("Creating entity of type {} is denied", getGenericClassName());
 
@@ -485,7 +526,8 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
         } catch (ResponseStatusException rse) {
             throw rse;
         } catch (Exception e) {
-            log.error("Error while creating entity {}: \n {}", entity, e.getMessage());
+            // TODO Check logger message
+            log.error("Error while creating entity {}: \n {}", dto, e.getMessage());
             log.trace("Full stack trace: ", e);
 
             throw new ResponseStatusException(
@@ -503,27 +545,22 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
-    public S update(@RequestBody S entity, @PathVariable("id") Long entityId) {
+    public R update(@RequestBody U dto, @PathVariable("id") Long entityId) {
         log.trace("Requested to update entity of type {} with ID {} ({})",
-            getGenericClassName(), entityId, entity);
+            getGenericClassName(), entityId, dto);
 
         try {
-            if (!entityId.equals(entity.getId())) {
-                log.error("IDs of update candidate (ID: {}) and update data ({}) don't match.",
-                    entityId, entity);
-
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-            }
-
             Optional<S> persistedEntity = service.findOne(entityId);
 
             if (persistedEntity.isPresent()) {
+                S entity = mapper.fromUpdateDto(persistedEntity.get(), dto);
                 S updatedEntity = service.update(entityId, entity);
 
                 log.trace("Successfully updated entity of type {} with ID {}",
                     getGenericClassName(), entityId);
 
-                return updatedEntity;
+                // Map entity to Read DTO for response
+                return mapper.toReadDto(updatedEntity);
             } else {
                 log.error("Could not find entity of type {} with ID {}",
                         getGenericClassName(), entityId);
@@ -572,7 +609,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
     @PatchMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
-    public S updatePartial(@RequestBody JsonMergePatch patch, @PathVariable("id") Long entityId) {
+    public R updatePartial(@RequestBody JsonMergePatch patch, @PathVariable("id") Long entityId) {
         log.trace("Requested to partially update entity of type {} with ID {} ({})", getGenericClassName(), entityId, patch);
 
         try {
@@ -583,7 +620,8 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
                 log.trace("Successfully updated values for entity of type {} with ID {}",
                     getGenericClassName(), entityId);
 
-                return updatedEntity;
+                // Map entity to Read DTO for response
+                return mapper.toReadDto(updatedEntity);
             } else {
                 log.error("Could not find entity of type {} with ID {}",
                     getGenericClassName(), entityId);
@@ -640,6 +678,7 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(
         summary = "Delete entity by its ID",
+        // TODO
         description = "TODO"
 //        security = { @SecurityRequirement(name = "bearer-key") }
 //        content = { @Content(mediaType = "application/json", schema = @Schema(implementation = Class<S>)) }
@@ -727,7 +766,8 @@ public abstract class BaseController<T extends BaseService<?, S>, S extends Base
         Class<?>[] resolvedTypeArguments = GenericTypeResolver.resolveTypeArguments(getClass(),
             BaseController.class);
 
-        if (resolvedTypeArguments != null && resolvedTypeArguments.length == 2) {
+        if (resolvedTypeArguments != null && resolvedTypeArguments.length == 6) {
+            // S is the second type parameter (index 1)
             return resolvedTypeArguments[1].getSimpleName();
         } else {
             return null;

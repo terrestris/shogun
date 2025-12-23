@@ -16,8 +16,10 @@
  */
 package de.terrestris.shogun.lib.model;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.*;
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -39,24 +41,12 @@ import org.hibernate.envers.Audited;
 public class TextualContent extends BaseEntity {
 
     @Column(nullable = false)
-    @Schema(
-        description = "The category of the textual content.",
-        requiredMode = Schema.RequiredMode.REQUIRED
-    )
     private String category;
 
     @Column(nullable = false)
-    @Schema(
-        description = "The title of the textual content.",
-        requiredMode = Schema.RequiredMode.REQUIRED
-    )
     private String title;
 
     @Column(nullable = false)
-    @Schema(
-        description = "The textual content.",
-        requiredMode = Schema.RequiredMode.REQUIRED
-    )
     private String markdown;
 
 }

@@ -19,7 +19,6 @@ package de.terrestris.shogun.lib.model;
 import de.terrestris.shogun.lib.model.jsonb.UserClientConfig;
 import de.terrestris.shogun.lib.model.jsonb.UserDetails;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
@@ -47,36 +46,21 @@ import java.util.Objects;
 public class User<T> extends BaseEntity {
 
     @Column(unique = true, nullable = false)
-    @Schema(
-        description = "The backend ID of the user.",
-        requiredMode = Schema.RequiredMode.REQUIRED
-    )
     private String authProviderId;
 
     @Transient
-    @Schema(
-        description = "The user details stored in the associated provider.",
-        accessMode = Schema.AccessMode.READ_ONLY
-    )
     private T providerDetails;
 
     @Column(columnDefinition = "jsonb", name = "details")
     @Type(JsonBinaryType.class)
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
-    @Schema(
-        description = "Custom user details that aren't stored inside the provider."
-    )
     private UserDetails details;
 
     @Column(columnDefinition = "jsonb", name = "client_config")
     @Type(JsonBinaryType.class)
     @Basic(fetch = FetchType.LAZY)
     @ToString.Exclude
-    @Schema(
-        description = "The configuration of the user which should be used to define client specific aspects of " +
-            "the user. This may include the locale set by the user, the last application visited by the user or similar."
-    )
     private UserClientConfig clientConfig;
 
     @Override

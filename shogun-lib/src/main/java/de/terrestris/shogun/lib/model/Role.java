@@ -16,7 +16,6 @@
  */
 package de.terrestris.shogun.lib.model;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
@@ -43,17 +42,9 @@ import java.util.Objects;
 public class Role<T> extends BaseEntity {
 
     @Column(unique = true, nullable = false)
-    @Schema(
-        description = "The backend ID of the user.",
-        requiredMode = Schema.RequiredMode.REQUIRED
-    )
     private String authProviderId;
 
     @Transient
-    @Schema(
-        description = "The role details stored in the associated provider.",
-        accessMode = Schema.AccessMode.READ_ONLY
-    )
     private T providerDetails;
 
     @Override

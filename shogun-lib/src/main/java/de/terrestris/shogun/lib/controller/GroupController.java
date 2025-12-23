@@ -16,6 +16,8 @@
  */
 package de.terrestris.shogun.lib.controller;
 
+import de.terrestris.shogun.lib.dto.model.GroupDto;
+import de.terrestris.shogun.lib.mapper.GroupMapper;
 import de.terrestris.shogun.lib.model.Group;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.service.GroupService;
@@ -44,7 +46,14 @@ import java.util.Optional;
     description = "The endpoints to manage groups"
 )
 @SecurityRequirement(name = "bearer-key")
-public class GroupController extends BaseController<GroupService, Group> {
+public class GroupController extends BaseController<
+    GroupService,
+    Group,
+    GroupDto.Read,
+    GroupDto.Create,
+    GroupDto.Update,
+    GroupMapper
+> {
 
     @GetMapping("/user/{id}")
     @ResponseStatus(HttpStatus.OK)
@@ -151,4 +160,5 @@ public class GroupController extends BaseController<GroupService, Group> {
             );
         }
     }
+
 }

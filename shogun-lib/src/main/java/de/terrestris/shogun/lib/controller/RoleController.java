@@ -16,6 +16,8 @@
  */
 package de.terrestris.shogun.lib.controller;
 
+import de.terrestris.shogun.lib.dto.model.RoleDto;
+import de.terrestris.shogun.lib.mapper.RoleMapper;
 import de.terrestris.shogun.lib.model.Role;
 import de.terrestris.shogun.lib.service.RoleService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,7 +45,14 @@ import org.springframework.web.server.ResponseStatusException;
     description = "The endpoints to manage roles"
 )
 @SecurityRequirement(name = "bearer-key")
-public class RoleController extends BaseController<RoleService, Role> {
+public class RoleController extends BaseController<
+    RoleService,
+    Role,
+    RoleDto.Read,
+    RoleDto.Create,
+    RoleDto.Update,
+    RoleMapper
+> {
 
     @PostMapping("/createAllFromProvider")
     @ResponseStatus(HttpStatus.NO_CONTENT)

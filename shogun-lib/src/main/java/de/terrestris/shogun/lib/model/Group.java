@@ -16,7 +16,6 @@
  */
 package de.terrestris.shogun.lib.model;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
@@ -43,17 +42,9 @@ import java.util.Objects;
 public class Group<T> extends BaseEntity {
 
     @Column(unique = true, nullable = false)
-    @Schema(
-        description = "The internal Keycloak ID of the group.",
-        example = "image/png"
-    )
     private String authProviderId;
 
     @Transient
-    @Schema(
-        description = "The group details stored in the associated Keycloak entity.",
-        accessMode = Schema.AccessMode.READ_ONLY
-    )
     private T providerDetails;
 
     @Override

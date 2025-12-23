@@ -16,6 +16,8 @@
  */
 package de.terrestris.shogun.lib.controller;
 
+import de.terrestris.shogun.lib.dto.model.LayerDto;
+import de.terrestris.shogun.lib.mapper.LayerMapper;
 import de.terrestris.shogun.lib.model.Layer;
 import de.terrestris.shogun.lib.service.LayerService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -32,4 +34,11 @@ import org.springframework.web.bind.annotation.RestController;
     description = "The endpoints to manage layers"
 )
 @SecurityRequirement(name = "bearer-key")
-public class LayerController extends BaseController<LayerService, Layer> { }
+public class LayerController extends BaseController<
+    LayerService,
+    Layer,
+    LayerDto.Read,
+    LayerDto.Create,
+    LayerDto.Update,
+    LayerMapper
+> { }

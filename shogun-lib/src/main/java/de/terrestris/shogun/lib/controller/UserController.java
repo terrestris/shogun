@@ -16,6 +16,8 @@
  */
 package de.terrestris.shogun.lib.controller;
 
+import de.terrestris.shogun.lib.dto.model.UserDto;
+import de.terrestris.shogun.lib.mapper.UserMapper;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,7 +45,14 @@ import org.springframework.web.server.ResponseStatusException;
     description = "The endpoints to manage users"
 )
 @SecurityRequirement(name = "bearer-key")
-public class UserController extends BaseController<UserService, User> {
+public class UserController extends BaseController<
+    UserService,
+    User,
+    UserDto.Read,
+    UserDto.Create,
+    UserDto.Update,
+    UserMapper
+> {
 
     @PostMapping("/createAllFromProvider")
     @ResponseStatus(HttpStatus.NO_CONTENT)

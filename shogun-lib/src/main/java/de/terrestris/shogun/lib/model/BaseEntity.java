@@ -16,9 +16,6 @@
  */
 package de.terrestris.shogun.lib.model;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
@@ -35,7 +32,6 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public abstract class BaseEntity implements Serializable {
 
     // TODO Replace with @GeneratedValue(strategy = GenerationType.IDENTITY) and remove hibernate_sequence from flyway migrations
@@ -43,28 +39,16 @@ public abstract class BaseEntity implements Serializable {
     @GeneratedValue(strategy= GenerationType.SEQUENCE)
     @Column(unique = true, nullable = false)
     @Getter
-    @Schema(
-        description = "The ID of the entity.",
-        accessMode = Schema.AccessMode.READ_ONLY
-    )
     private Long id;
 
     @CreationTimestamp
     @Column(updatable = false)
     @Getter @Setter
-    @Schema(
-        description = "The timestamp of creation.",
-        accessMode = Schema.AccessMode.READ_ONLY
-    )
     private OffsetDateTime created;
 
     @UpdateTimestamp
     @Column
     @Getter @Setter
-    @Schema(
-        description = "The timestamp of the last modification.",
-        accessMode = Schema.AccessMode.READ_ONLY
-    )
     private OffsetDateTime modified;
 
     @Override

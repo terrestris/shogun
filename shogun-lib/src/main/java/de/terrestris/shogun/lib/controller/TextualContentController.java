@@ -16,9 +16,10 @@
  */
 package de.terrestris.shogun.lib.controller;
 
+import de.terrestris.shogun.lib.dto.model.TextualContentDto;
+import de.terrestris.shogun.lib.mapper.TextualContentMapper;
 import de.terrestris.shogun.lib.model.TextualContent;
 import de.terrestris.shogun.lib.service.TextualContentService;
-import de.terrestris.shogun.lib.controller.BaseController;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -34,4 +35,11 @@ import org.springframework.web.bind.annotation.RestController;
     description = "The endpoints to manage textual contents"
 )
 @SecurityRequirement(name = "bearer-key")
-public class TextualContentController extends BaseController<TextualContentService, TextualContent> { }
+public class TextualContentController extends BaseController<
+    TextualContentService,
+    TextualContent,
+    TextualContentDto.Read,
+    TextualContentDto.Create,
+    TextualContentDto.Update,
+    TextualContentMapper
+> { }

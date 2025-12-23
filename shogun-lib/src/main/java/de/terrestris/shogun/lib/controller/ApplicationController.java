@@ -16,6 +16,8 @@
  */
 package de.terrestris.shogun.lib.controller;
 
+import de.terrestris.shogun.lib.dto.model.ApplicationDto;
+import de.terrestris.shogun.lib.mapper.ApplicationMapper;
 import de.terrestris.shogun.lib.model.Application;
 import de.terrestris.shogun.lib.service.ApplicationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,7 +45,14 @@ import java.util.Optional;
 )
 @SecurityRequirement(name = "bearer-key")
 @Log4j2
-public class ApplicationController extends BaseController<ApplicationService, Application> {
+public class ApplicationController extends BaseController<
+    ApplicationService,
+    Application,
+    ApplicationDto.Read,
+    ApplicationDto.Create,
+    ApplicationDto.Update,
+    ApplicationMapper
+> {
     @GetMapping("/findByName/{name}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })

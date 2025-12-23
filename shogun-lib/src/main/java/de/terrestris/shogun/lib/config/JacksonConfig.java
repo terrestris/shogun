@@ -42,6 +42,8 @@ import java.util.Map;
 
 @Log4j2
 @Configuration
+// TODO Is the implementatio of ObjectMapperSupplier still needed with the custom mappers
+//      in place? -> there should be no connection between jackson and hibernate anymore?
 public class JacksonConfig implements ObjectMapperSupplier {
 
     private static ObjectMapper mapper;
