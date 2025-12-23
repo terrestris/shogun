@@ -23,18 +23,18 @@ import de.terrestris.shogun.lib.enumeration.PermissionCollectionType;
 import de.terrestris.shogun.lib.model.User;
 import de.terrestris.shogun.lib.repository.UserRepository;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.web.servlet.server.Encoding;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -116,7 +116,7 @@ public class UserControllerTest extends BaseControllerTest<UserController, UserR
                 MockMvcRequestBuilders
                     .post(String.format("%s", basePath))
                     .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding(Encoding.DEFAULT_CHARSET.toString())
+                    .characterEncoding(Charset.defaultCharset())
                     .content(objectMapper.writeValueAsString(insertNode))
                     .with(csrf())
             )
@@ -138,7 +138,7 @@ public class UserControllerTest extends BaseControllerTest<UserController, UserR
                 MockMvcRequestBuilders
                     .post(String.format("%s", basePath))
                     .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding(Encoding.DEFAULT_CHARSET.toString())
+                    .characterEncoding(Charset.defaultCharset())
                     .content(objectMapper.writeValueAsString(insertNode))
                     .with(authentication(getMockAuthentication(this.user)))
                     .with(csrf())
@@ -164,7 +164,7 @@ public class UserControllerTest extends BaseControllerTest<UserController, UserR
                 MockMvcRequestBuilders
                     .post(String.format("%s", basePath))
                     .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding(Encoding.DEFAULT_CHARSET.toString())
+                    .characterEncoding(Charset.defaultCharset())
                     .content(objectMapper.writeValueAsString(insertNode))
                     .with(authentication(getMockAuthentication(this.adminUser)))
                     .with(csrf())
@@ -190,7 +190,7 @@ public class UserControllerTest extends BaseControllerTest<UserController, UserR
                 MockMvcRequestBuilders
                     .post(String.format("%s", basePath))
                     .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding(Encoding.DEFAULT_CHARSET.toString())
+                    .characterEncoding(Charset.defaultCharset())
                     .content(objectMapper.writeValueAsString(insertNode))
                     .with(authentication(getMockAuthentication(this.adminUser)))
                     .with(csrf())
@@ -293,7 +293,7 @@ public class UserControllerTest extends BaseControllerTest<UserController, UserR
                 MockMvcRequestBuilders
                     .put(String.format("%s/%s", basePath, testData.get(0).getId()))
                     .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding(Encoding.DEFAULT_CHARSET.toString())
+                    .characterEncoding(Charset.defaultCharset())
                     .content(objectMapper.writeValueAsString(updateNode))
                     .with(csrf())
             )
