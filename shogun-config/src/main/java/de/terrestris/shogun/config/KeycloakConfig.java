@@ -16,6 +16,8 @@
  */
 package de.terrestris.shogun.config;
 
+import static org.keycloak.OAuth2Constants.CLIENT_CREDENTIALS;
+
 import de.terrestris.shogun.properties.KeycloakProperties;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -27,8 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import static org.keycloak.OAuth2Constants.CLIENT_CREDENTIALS;
 
 /**
  * Credits to https://stackoverflow.com/questions/57787768/issues-running-example-keycloak-spring-boot-app
