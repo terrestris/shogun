@@ -134,7 +134,7 @@
 
     <!-- GeoServer/Geodata -->
     <geoserver-manager.version>1.7.0</geoserver-manager.version>
-    <geotools.version>34.1</geotools.version>
+    <geotools.version>34.2</geotools.version>
 
     <!-- Utils -->
     <commons.io.version>2.21.0</commons.io.version>
