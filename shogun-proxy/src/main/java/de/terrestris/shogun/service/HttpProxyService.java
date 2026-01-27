@@ -23,6 +23,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.net.URIBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
@@ -145,8 +147,8 @@ public class HttpProxyService {
         // transform to URL
         URL url;
         try {
-            url = new URL(baseUrl);
-        } catch (MalformedURLException use) {
+            url = URI.create(baseUrl).toURL();
+        } catch (IllegalArgumentException | MalformedURLException use) {
             log.error(RESPONSE_500_INTERNAL_SERVER_ERROR);
             log.trace(RESPONSE_500_INTERNAL_SERVER_ERROR, use);
             return RESPONSE_500_INTERNAL_SERVER_ERROR;
@@ -214,7 +216,7 @@ public class HttpProxyService {
         final HttpHeaders responseHeadersToForward = response.getHeaders();
 
         // LOG response headers
-        Set<Map.Entry<String, List<String>>> headerEntries = responseHeadersToForward.entrySet();
+        Set<Map.Entry<String, List<String>>> headerEntries = responseHeadersToForward.headerSet();
         for (Map.Entry<String, List<String>> headerEntry : headerEntries) {
             String headerKey = headerEntry.getKey();
             List<String> headerValues = headerEntry.getValue();
@@ -241,7 +243,7 @@ public class HttpProxyService {
         URIBuilder uriBuilder = new URIBuilder(url.toURI());
 
         params.forEach((key, value) -> {
-            if (!StringUtils.equalsIgnoreCase(key, "baseUrl")) {
+            if (!Strings.CI.equals(key, "baseUrl")) {
                 uriBuilder.addParameter(key, value);
             } else {
                 log.warn("Skipping baseUrl empty parameter: baseUrl ={}", value);
@@ -266,7 +268,7 @@ public class HttpProxyService {
         if (port != -1) {
             portToTest = port;
         } else {
-            portToTest = StringUtils.equalsIgnoreCase(protocol, "https") ? HTTPS_PORT : HTTP_PORT;
+            portToTest = Strings.CI.equals(protocol, "https") ? HTTPS_PORT : HTTP_PORT;
         }
 
         final int finalPortToTest = portToTest;
@@ -274,16 +276,16 @@ public class HttpProxyService {
         return proxyWhiteList.stream().anyMatch(whitelistEntry -> {
             String whitelistHost;
             int whitelistPort;
-            if (StringUtils.contains(whitelistEntry, ":")) {
+            if (Strings.CS.contains(whitelistEntry, ":")) {
                 whitelistHost = whitelistEntry.split(":")[0];
                 whitelistPort = Integer.parseInt(whitelistEntry.split(":")[1]);
             } else {
                 whitelistHost = whitelistEntry;
                 whitelistPort = -1;
             }
-            final int portToTestAgainst = (whitelistPort != -1) ? whitelistPort : (StringUtils.equalsIgnoreCase(protocol, "https") ? HTTPS_PORT : HTTP_PORT);
+            final int portToTestAgainst = (whitelistPort != -1) ? whitelistPort : (Strings.CI.equals(protocol, "https") ? HTTPS_PORT : HTTP_PORT);
             final boolean portIsMatching = portToTestAgainst == finalPortToTest;
-            final boolean domainIsMatching = StringUtils.equalsIgnoreCase(host, whitelistHost) || StringUtils.endsWith(host, whitelistHost);
+            final boolean domainIsMatching = Strings.CI.equals(host, whitelistHost) || Strings.CS.endsWith(host, whitelistHost);
             return (portIsMatching && domainIsMatching);
         });
     }
