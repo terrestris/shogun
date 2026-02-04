@@ -17,7 +17,10 @@
 package de.terrestris.shogun.lib.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.*;
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -35,27 +38,33 @@ import org.hibernate.envers.Audited;
 @EqualsAndHashCode(callSuper = true)
 @Audited
 @AuditTable(value = "textualcontents_rev", schema = "shogun_rev")
-
+@Schema(
+    description = "The textual content entity holds markdown content along with its category and title, used " +
+        "for various informational purposes within the application."
+)
 public class TextualContent extends BaseEntity {
 
     @Column(nullable = false)
     @Schema(
-        description = "The category of the textual content.",
-        required = true
+        description = "The category of the textual content, e.g., NEWS, INFO, etc.",
+        example = "NEWS",
+        requiredMode = Schema.RequiredMode.REQUIRED
     )
     private String category;
 
     @Column(nullable = false)
     @Schema(
         description = "The title of the textual content.",
-        required = true
+        example = "Breaking news",
+        requiredMode = Schema.RequiredMode.REQUIRED
     )
     private String title;
 
     @Column(nullable = false)
     @Schema(
-        description = "The textual content.",
-        required = true
+        description = "The content of the textual content as markdown formatted text.",
+        example = "# Breaking news \n This is the **content** of the news.",
+        requiredMode = Schema.RequiredMode.REQUIRED
     )
     private String markdown;
 
