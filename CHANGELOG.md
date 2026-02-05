@@ -1,3 +1,10 @@
+# [22.4.0](https://github.com/terrestris/shogun/compare/v22.3.1...v22.4.0) (2026-02-05)
+
+
+### Features
+
+* add missing graphql handling for TextualContent ([fe4abc5](https://github.com/terrestris/shogun/commit/fe4abc5ba97a509eccf10606b278291de6a77db3))
+
 ## [22.3.1](https://github.com/terrestris/shogun/compare/v22.3.0...v22.3.1) (2025-11-20)
 
 
