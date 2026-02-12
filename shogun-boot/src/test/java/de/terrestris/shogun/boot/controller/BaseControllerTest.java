@@ -39,9 +39,9 @@ import org.keycloak.representations.IDToken;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.servlet.server.Encoding;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.test.context.ActiveProfiles;
@@ -51,13 +51,14 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.nio.charset.Charset;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -191,8 +192,25 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
         return new JwtAuthenticationToken(jwt, authorities);
     }
 
+    /**
+     * Helper method to set up SecurityContext with authentication for calling secured services directly in tests
+     */
+    protected void setAuthentication(User<UserRepresentation> user) {
+        JwtAuthenticationToken authentication = getMockAuthentication(user);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    /**
+     * Helper method to clear SecurityContext after test
+     */
+    protected void clearAuthentication() {
+        SecurityContextHolder.clearContext();
+        SecurityContextHolder.setContext(SecurityContextHolder.createEmptyContext());
+    }
+
     @BeforeEach
     public void setUp() {
+        clearAuthentication();
         initMockMvc();
         initAdminUser();
         initUser();
@@ -207,12 +225,20 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
         deinitUser();
         deinitAdminUser();
         cleanupTestData();
+        clearAuthentication();
     }
 
     @Test
     public void findAll_shouldReturnOnlyPublicEntitiesForRoleAnonymous() throws Exception {
+        // Ensure clean state
+        clearAuthentication();
 
+        // Set authentication context for service call
+        setAuthentication(this.adminUser);
         publicInstancePermissionService.setPublic(this.testData.get(0), true);
+
+        // Clear authentication for anonymous MockMvc request
+        clearAuthentication();
 
         this.mockMvc
             .perform(
@@ -355,7 +381,7 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
                 MockMvcRequestBuilders
                     .post(String.format("%s", basePath))
                     .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding(Encoding.DEFAULT_CHARSET.toString())
+                    .characterEncoding(Charset.defaultCharset())
                     .content(objectMapper.writeValueAsString(insertNode))
                     .with(csrf())
             )
@@ -376,7 +402,7 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
                 MockMvcRequestBuilders
                     .post(String.format("%s", basePath))
                     .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding(Encoding.DEFAULT_CHARSET.toString())
+                    .characterEncoding(Charset.defaultCharset())
                     .content(objectMapper.writeValueAsString(insertNode))
                     .with(authentication(getMockAuthentication(this.user)))
                     .with(csrf())
@@ -401,7 +427,7 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
                 MockMvcRequestBuilders
                     .post(String.format("%s", basePath))
                     .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding(Encoding.DEFAULT_CHARSET.toString())
+                    .characterEncoding(Charset.defaultCharset())
                     .content(objectMapper.writeValueAsString(insertNode))
                     .with(authentication(getMockAuthentication(this.adminUser)))
                     .with(csrf())
@@ -426,7 +452,7 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
                 MockMvcRequestBuilders
                     .post(String.format("%s", basePath))
                     .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding(Encoding.DEFAULT_CHARSET.toString())
+                    .characterEncoding(Charset.defaultCharset())
                     .content(objectMapper.writeValueAsString(insertNode))
                     .with(authentication(getMockAuthentication(this.adminUser)))
                     .with(csrf())
@@ -451,7 +477,7 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
                 MockMvcRequestBuilders
                     .put(String.format("%s/%s", basePath, testData.get(0).getId()))
                     .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding(Encoding.DEFAULT_CHARSET.toString())
+                    .characterEncoding(Charset.defaultCharset())
                     .content(objectMapper.writeValueAsString(updateNode))
                     .with(csrf())
             )
@@ -469,7 +495,7 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
                 MockMvcRequestBuilders
                     .put(String.format("%s/%s", basePath, testData.get(0).getId()))
                     .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding(Encoding.DEFAULT_CHARSET.toString())
+                    .characterEncoding(Charset.defaultCharset())
                     .content(objectMapper.writeValueAsString(updateNode))
                     .with(authentication(getMockAuthentication(this.user)))
                     .with(csrf())
@@ -491,7 +517,7 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
                 MockMvcRequestBuilders
                     .put(String.format("%s/%s", basePath, testData.get(0).getId()))
                     .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding(Encoding.DEFAULT_CHARSET.toString())
+                    .characterEncoding(Charset.defaultCharset())
                     .content(objectMapper.writeValueAsString(updateNode))
                     .with(authentication(getMockAuthentication(this.adminUser)))
                     .with(csrf())
@@ -516,7 +542,7 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
                 MockMvcRequestBuilders
                     .put(String.format("%s/%s", basePath, testData.get(0).getId()))
                     .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding(Encoding.DEFAULT_CHARSET.toString())
+                    .characterEncoding(Charset.defaultCharset())
                     .content(objectMapper.writeValueAsString(updateNode))
                     .with(authentication(getMockAuthentication(this.adminUser)))
                     .with(csrf())
@@ -609,7 +635,10 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
 
     @Test
     public void delete_permission_public_shouldRemovePublicReadPermission() throws Exception {
+        // Set authentication context for service call
+        setAuthentication(this.adminUser);
         publicInstancePermissionService.setPublic(testData.get(0), true);
+        clearAuthentication();
 
         this.mockMvc
             .perform(
@@ -626,7 +655,10 @@ public abstract class BaseControllerTest<U extends BaseController, R extends Bas
 
     @Test
     public void get_permission_public_shouldReturnPublicReadPermission() throws Exception {
+        // Set authentication context for service call
+        setAuthentication(this.adminUser);
         publicInstancePermissionService.setPublic(testData.get(0), true);
+        clearAuthentication();
 
         this.mockMvc
             .perform(

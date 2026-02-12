@@ -24,6 +24,7 @@ import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.resource.*;
 import org.keycloak.representations.IDToken;
@@ -133,7 +134,7 @@ public class KeycloakUtil {
     public List<GroupRepresentation> getGroupByName(String groupName) {
         GroupsResource kcGroupRepresentation = this.keycloakRealm.groups();
         return kcGroupRepresentation.groups().stream()
-            .filter(groupRepresentation -> StringUtils.equalsIgnoreCase(groupName, groupRepresentation.getName()))
+            .filter(groupRepresentation -> Strings.CI.equals(groupName, groupRepresentation.getName()))
             .collect(Collectors.toList());
     }
 

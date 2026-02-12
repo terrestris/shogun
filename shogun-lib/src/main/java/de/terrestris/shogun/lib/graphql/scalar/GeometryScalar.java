@@ -19,13 +19,18 @@ package de.terrestris.shogun.lib.graphql.scalar;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.terrestris.shogun.lib.config.JacksonConfig;
+import graphql.GraphQLContext;
 import graphql.Internal;
+import graphql.execution.CoercedVariables;
 import graphql.language.StringValue;
+import graphql.language.Value;
 import graphql.schema.*;
 import lombok.extern.log4j.Log4j2;
+import org.jspecify.annotations.NonNull;
 import org.locationtech.jts.geom.Geometry;
 
 import java.util.HashMap;
+import java.util.Locale;
 
 @Log4j2
 @Internal
@@ -36,7 +41,7 @@ public class GeometryScalar {
 
     static final Coercing<Object, Object> GEOMETRY_COERCING = new Coercing<>() {
         @Override
-        public Object serialize(Object dataFetcherResult) {
+        public Object serialize(@NonNull Object dataFetcherResult, @NonNull GraphQLContext graphQLContext, @NonNull Locale locale) {
             if (isAGeometry(dataFetcherResult)) {
                 Geometry geometry = (Geometry) dataFetcherResult;
                 try {
@@ -52,7 +57,7 @@ public class GeometryScalar {
         }
 
         @Override
-        public Object parseValue(Object input) {
+        public Object parseValue(@NonNull Object input, @NonNull GraphQLContext graphQLContext, @NonNull Locale locale) {
             if (input instanceof HashMap) {
                 try {
                     return om.readValue(om.writeValueAsString(input), Geometry.class);
@@ -64,7 +69,7 @@ public class GeometryScalar {
         }
 
         @Override
-        public Object parseLiteral(Object input) {
+        public Object parseLiteral(@NonNull Value<?> input, @NonNull CoercedVariables variables, @NonNull GraphQLContext graphQLContext, @NonNull Locale locale) {
             if (input instanceof StringValue) {
                 String geometryString = ((StringValue) input).getValue();
                 try {

@@ -23,11 +23,13 @@ import jakarta.servlet.http.Part;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.client5.http.auth.AuthCache;
 import org.apache.hc.client5.http.auth.AuthScope;
 import org.apache.hc.client5.http.auth.Credentials;
 import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
 import org.apache.hc.client5.http.classic.methods.*;
+import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
 import org.apache.hc.client5.http.entity.mime.ByteArrayBody;
@@ -38,7 +40,11 @@ import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
 import org.apache.hc.client5.http.impl.auth.BasicScheme;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.impl.routing.DefaultProxyRoutePlanner;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.core5.http.*;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
@@ -1862,7 +1868,7 @@ public class HttpUtil {
 
                 proxyAuthScope = new AuthScope(systemProxy.getHostName(), systemProxy.getPort());
 
-                if (StringUtils.equalsIgnoreCase(uriScheme, "http")) {
+                if (Strings.CI.equals(uriScheme, "http")) {
                     log.debug("Using http proxy");
 
                     if (!StringUtils.isEmpty(httpProxyUser) && !StringUtils.isEmpty(httpProxyPassword)) {
@@ -1870,7 +1876,7 @@ public class HttpUtil {
                         proxyCredentials = new UsernamePasswordCredentials(httpProxyUser, httpProxyPassword.toCharArray());
                     }
 
-                } else if (StringUtils.equalsIgnoreCase(uriScheme, "https")) {
+                } else if (Strings.CI.equals(uriScheme, "https")) {
                     log.debug("Using https proxy");
 
                     if (!StringUtils.isEmpty(httpsProxyUser) && !StringUtils.isEmpty(httpsProxyPassword)) {
@@ -1883,19 +1889,33 @@ public class HttpUtil {
             log.error("Error while detecting system wide proxy: " + e.getMessage());
         }
 
+        ConnectionConfig connectionConfig = ConnectionConfig.custom()
+            .setConnectTimeout(Timeout.ofMilliseconds(httpTimeout))
+            .build();
 
         // set the request configuration that will be passed to the httpRequest
         RequestConfig requestConfig = RequestConfig.custom()
             .setConnectionRequestTimeout(Timeout.ofMilliseconds(httpTimeout))
-            .setConnectTimeout(Timeout.ofMilliseconds(httpTimeout))
             .setResponseTimeout(Timeout.ofMilliseconds(httpTimeout))
-            .setProxy(systemProxy)
+            .build();
+
+        PoolingHttpClientConnectionManager poolingHttpClientConnectionManager = PoolingHttpClientConnectionManagerBuilder.create()
+            .setDefaultConnectionConfig(connectionConfig)
             .build();
 
         try {
+            HttpClientBuilder httpClientBuilder = HttpClients.custom()
+                .setConnectionManager(poolingHttpClientConnectionManager)
+                .setDefaultRequestConfig(requestConfig);
+
+            if (systemProxy != null) {
+                DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(systemProxy);
+
+                httpClientBuilder.setRoutePlanner(routePlanner);
+            }
+
             // set (preemptive) authentication if credentials are given
             if (credentials != null || (proxyAuthScope != null && proxyCredentials != null)) {
-
                 BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
 
                 if (proxyAuthScope != null && proxyCredentials != null) {
@@ -1920,17 +1940,12 @@ public class HttpUtil {
                 httpContext.setCredentialsProvider(credentialsProvider);
                 httpContext.setAuthCache(authCache);
 
-                httpClient = HttpClients.custom()
-                    .setDefaultCredentialsProvider(credentialsProvider)
-                    .build();
-
-            } else {
-                httpClient = HttpClients.createDefault();
+                httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
             }
 
-            HttpHeaders headersMap = new HttpHeaders();
+            httpClient = httpClientBuilder.build();
 
-            httpRequest.setConfig(requestConfig);
+            HttpHeaders headersMap = new HttpHeaders();
 
             // apply HTTP header
             if (requestHeaders != null) {
@@ -1938,7 +1953,7 @@ public class HttpUtil {
             }
 
             // todo: pass additional argument HttpClientResponseHandler
-            httpResponse = httpClient.execute(httpRequest, httpContext);
+            httpResponse = httpClient.execute(httpRequest, httpContext, null);
 
             HttpStatus httpStatus = HttpStatus.valueOf(
                 httpResponse.getCode()
@@ -2093,7 +2108,7 @@ public class HttpUtil {
             return null;
         }
         for (Header header : headersToClean) {
-            if (!StringUtils.equalsAnyIgnoreCase(header.getName(), headersToRemove)) {
+            if (!Strings.CI.equalsAny(header.getName(), headersToRemove)) {
                 headers.add(header);
             }
         }
@@ -2180,13 +2195,13 @@ public class HttpUtil {
         }
 
         // Check if the system properties for the proxy are set via JVM arguments
-        if (StringUtils.equalsIgnoreCase("http", scheme)) {
+        if (Strings.CI.equals("http", scheme)) {
             proxyHost = System.getProperty("http.proxyHost");
             String port = System.getProperty("http.proxyPort");
             if (StringUtils.isNotEmpty(port)) {
                 proxyPort = Integer.parseInt(port);
             }
-        } else if (StringUtils.equalsIgnoreCase("https", scheme)) {
+        } else if (Strings.CI.equals("https", scheme)) {
             proxyHost = System.getProperty("https.proxyHost");
             String port = System.getProperty("https.proxyPort");
             if (StringUtils.isNotEmpty(port)) {
@@ -2197,19 +2212,19 @@ public class HttpUtil {
         // Check if the system properties are empty, then try to get the proxy settings using the environment variables
         if (StringUtils.isEmpty(proxyHost) && proxyPort <= 0) {
             String envProxy = null;
-            if (StringUtils.equalsIgnoreCase("http", scheme)) {
+            if (Strings.CI.equals("http", scheme)) {
                 envProxy = System.getenv("http_proxy");
                 if (StringUtils.isEmpty(envProxy)) {
                     envProxy = System.getenv("HTTP_PROXY");
                 }
-            } else if (StringUtils.equalsIgnoreCase("https", scheme)) {
+            } else if (Strings.CI.equals("https", scheme)) {
                 envProxy = System.getenv("https_proxy");
                 if (StringUtils.isEmpty(envProxy)) {
                     envProxy = System.getenv("HTTPS_PROXY");
                 }
             }
 
-            if (StringUtils.startsWith(envProxy, "http")) {
+            if (Strings.CS.startsWith(envProxy, "http")) {
                 try {
                     URI proxyUri = URI.create(envProxy);
                     proxyHost = proxyUri.getHost();
