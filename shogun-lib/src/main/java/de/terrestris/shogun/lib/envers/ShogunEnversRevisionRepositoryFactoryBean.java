@@ -93,8 +93,7 @@ public class ShogunEnversRevisionRepositoryFactoryBean<T extends RevisionReposit
         @Override
         protected RepositoryComposition.RepositoryFragments getRepositoryFragments(RepositoryMetadata metadata) {
 
-            Object fragmentImplementation = getTargetRepositoryViaReflection(
-                ShogunRevisionRepositoryImpl.class,
+            ShogunRevisionRepositoryImpl<?, Object, N> fragmentImplementation = new ShogunRevisionRepositoryImpl<>(
                 getEntityInformation(metadata.getDomainType()),
                 revisionEntityInformation,
                 entityManager

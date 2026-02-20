@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.terrestris.shogun.boot.runner.ApplicationInitializer;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.LineString;
@@ -56,7 +57,7 @@ public class JacksonConfigTest {
         boolean hasJtsModuleRegistered = false;
         for (Object module : registeredModules) {
             System.out.println(module);
-            if (StringUtils.equalsIgnoreCase((CharSequence) module, "JtsModule")) {
+            if (Strings.CI.equals((CharSequence) module, "JtsModule")) {
                 hasJtsModuleRegistered = true;
             }
         }

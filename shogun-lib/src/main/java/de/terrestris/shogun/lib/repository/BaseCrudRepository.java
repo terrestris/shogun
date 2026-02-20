@@ -18,6 +18,7 @@ package de.terrestris.shogun.lib.repository;
 
 import jakarta.persistence.QueryHint;
 import org.hibernate.jpa.AvailableHints;
+import org.jspecify.annotations.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -26,7 +27,6 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.history.RevisionRepository;
-import org.springframework.lang.NonNull;
 
 import java.util.List;
 
