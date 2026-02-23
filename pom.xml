@@ -103,7 +103,7 @@
     <maven-project-info-reports-plugin.version>3.9.0</maven-project-info-reports-plugin.version>
     <jib-maven-plugin.version>3.5.1</jib-maven-plugin.version>
     <exec-maven-plugin.version>3.6.3</exec-maven-plugin.version>
-    <hibernate-enhance-maven-plugin.version>6.6.39.Final</hibernate-enhance-maven-plugin.version>
+    <hibernate-enhance-maven-plugin.version>6.6.43.Final</hibernate-enhance-maven-plugin.version>
 
     <!-- Spring -->
     <spring-boot.version>4.0.3</spring-boot.version>
