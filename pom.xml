@@ -106,7 +106,7 @@
     <hibernate-enhance-maven-plugin.version>6.6.39.Final</hibernate-enhance-maven-plugin.version>
 
     <!-- Spring -->
-    <spring-boot.version>4.0.2</spring-boot.version>
+    <spring-boot.version>4.0.3</spring-boot.version>
     <spring-data.version>4.0.2</spring-data.version>
 
     <!-- Mail -->
