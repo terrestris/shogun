@@ -131,7 +131,7 @@
     <springdoc-openapi.version>2.5.0</springdoc-openapi.version>
 
     <!-- JSON/Dataformats -->
-    <geojson-jackson.version>1.14</geojson-jackson.version>
+    <geojson-jackson.version>3.0</geojson-jackson.version>
 
     <!-- GeoServer/Geodata -->
     <geoserver-manager.version>1.7.0</geoserver-manager.version>
