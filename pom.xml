@@ -27,7 +27,7 @@
 
   <groupId>de.terrestris</groupId>
   <artifactId>shogun</artifactId>
-  <version>22.4.1-SNAPSHOT</version>
+  <version>23.0.0</version>
   <name>SHOGun</name>
   <packaging>pom</packaging>
 

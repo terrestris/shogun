@@ -1,3 +1,16 @@
+# [23.0.0](https://github.com/terrestris/shogun/compare/v22.4.0...v23.0.0) (2026-02-24)
+
+
+### Features
+
+* update to Spring Boot 4 (and related libraries) ([3ab1680](https://github.com/terrestris/shogun/commit/3ab1680883d796022ca182f6f4df118b9bfe424f))
+
+
+### BREAKING CHANGES
+
+* several import paths from the updated libraries
+might need to get updated in child projects
+
 # [22.4.0](https://github.com/terrestris/shogun/compare/v22.3.1...v22.4.0) (2026-02-05)
 
 
