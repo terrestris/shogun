@@ -1,3 +1,10 @@
+## [23.0.1](https://github.com/terrestris/shogun/compare/v23.0.0...v23.0.1) (2026-03-05)
+
+
+### Bug Fixes
+
+* fix http util null pointer ([f530092](https://github.com/terrestris/shogun/commit/f53009273cabbdaff1b7ff1ba731dbde603b639e))
+
 # [23.0.0](https://github.com/terrestris/shogun/compare/v22.4.0...v23.0.0) (2026-02-24)
 
 
