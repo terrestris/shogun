@@ -1953,7 +1953,7 @@ public class HttpUtil {
             }
 
             // todo: pass additional argument HttpClientResponseHandler
-            httpResponse = httpClient.execute(httpRequest, httpContext, null);
+            httpResponse = httpClient.execute(httpRequest, httpContext);
 
             HttpStatus httpStatus = HttpStatus.valueOf(
                 httpResponse.getCode()
