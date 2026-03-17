@@ -1,3 +1,11 @@
+## [23.0.2](https://github.com/terrestris/shogun/compare/v23.0.1...v23.0.2) (2026-03-17)
+
+
+### Bug Fixes
+
+* replace outdated hibernate-enhance-maven plugin ([36b6daa](https://github.com/terrestris/shogun/commit/36b6daa8f9b6b6009b53bd7ac62eb483451396fa))
+* use postgresql testcontainers version provided by spring boot ([faf74e1](https://github.com/terrestris/shogun/commit/faf74e1e43f6d939b17f734babd6d0da0b2e1a6a))
+
 ## [23.0.1](https://github.com/terrestris/shogun/compare/v23.0.0...v23.0.1) (2026-03-05)
 
 
