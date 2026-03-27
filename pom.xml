@@ -105,7 +105,7 @@
     <exec-maven-plugin.version>3.6.3</exec-maven-plugin.version>
 
     <!-- Spring -->
-    <spring-boot.version>4.0.4</spring-boot.version>
+    <spring-boot.version>4.0.5</spring-boot.version>
     <spring-data.version>4.0.4</spring-data.version>
 
     <!-- Mail -->
