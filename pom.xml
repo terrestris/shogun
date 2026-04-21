@@ -146,7 +146,7 @@
     <!-- Testing -->
     <maven-project-info-reports-plugin.version>3.9.0</maven-project-info-reports-plugin.version>
     <archunit.version>1.4.2</archunit.version>
-    <sonar-maven-plugin.version>5.5.0.6356</sonar-maven-plugin.version>
+    <sonar-maven-plugin.version>5.6.0.6792</sonar-maven-plugin.version>
 
     <!-- Frontend (Landing Page) -->
     <bootstrap.version>5.1.1</bootstrap.version>
