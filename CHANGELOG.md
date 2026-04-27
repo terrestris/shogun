@@ -1,3 +1,10 @@
+## [23.0.3](https://github.com/terrestris/shogun/compare/v23.0.2...v23.0.3) (2026-04-27)
+
+
+### Bug Fixes
+
+* update spring-boot-starter-partent to 4.0.6 ([1893d7e](https://github.com/terrestris/shogun/commit/1893d7efb261bf00ce7d221acce1d6801fd41cf9))
+
 ## [23.0.2](https://github.com/terrestris/shogun/compare/v23.0.1...v23.0.2) (2026-03-17)
 
 
