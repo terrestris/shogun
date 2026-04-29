@@ -1,0 +1,66 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  jpa:
+    open-in-view: false
+    properties:
+      org:
+        hibernate:
+          envers:
+            default_schema: shogun_rev
+            audit_table_suffix: _rev
+      hibernate:
+        id:
+          db_structure_naming_strategy: single
+        default_schema: shogun
+        search:
+          backend:
+            type: lucene
+            directory:
+              root: /tmp/lucene-test
+              type: local-filesystem
+
+  datasource:
+    url: placeholder
+    username: placeholder
+    password: placeholder
+    driver-class-name: org.postgresql.Driver
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+    schemas: shogun,shogun_rev,interceptor
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: placeholder
+
+keycloak:
+  server-url: placeholder
+  realm: SHOGun
+  master-realm: master
+  admin-client-id: shogun-boot
+  admin-client-secret: test-secret
+  principal-attribute: preferred_username
+
+upload:
+  file:
+    supportedContentTypes:
+      - application/json
+      - application/pdf
+      - application/xml
+      - text/plain
+      - image/png
+      - image/jpeg
+
+interceptor:
+  namespaceBoundUrl: false
+  defaultOwsUrl: ${wiremock.base-url}/ows
+
+shogun-proxy:
+  whitelist:
+    - localhost
+  
