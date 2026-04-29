@@ -19,6 +19,7 @@ package de.terrestris.shogun;
 import dasniko.testcontainers.keycloak.KeycloakContainer;
 import de.terrestris.shogun.boot.config.ApplicationConfig;
 import io.restassured.RestAssured;
+import io.restassured.config.HttpClientConfig;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -92,6 +93,10 @@ public abstract class AbstractIT {
   @BeforeEach
   void setupPort() {
     RestAssured.port = port;
+    RestAssured.config = RestAssured.config()
+        .httpClient(HttpClientConfig.httpClientConfig()
+            .setParam("http.connection.timeout", 10000)
+            .setParam("http.socket.timeout", 10000));
   }
 
   @DynamicPropertySource
@@ -110,7 +115,7 @@ public abstract class AbstractIT {
     registry.add("interceptor.defaultOwsUrl",
         () -> "http://" + wiremock.getHost() + ":" + wiremock.getMappedPort(8080) + "/ows");
     registry.add("spring.datasource.url",
-    () -> postgres.getJdbcUrl() + "?currentSchema=shogun,interceptor,shogun_rev,public");
+        () -> postgres.getJdbcUrl() + "?currentSchema=shogun,interceptor,shogun_rev,public");
   }
 
   protected String getToken(String username, String password) {

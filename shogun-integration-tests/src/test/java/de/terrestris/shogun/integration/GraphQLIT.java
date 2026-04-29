@@ -16,17 +16,21 @@
  */
 package de.terrestris.shogun.integration;
 
+import de.terrestris.shogun.AbstractIT;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.notNullValue;
 
-class GraphQLIT {
+class GraphQLIT extends AbstractIT {
 
   @Test
   void shouldReturnGraphQLUsersQuery() {
+    String token = getToken("admin", "admin");
+
     given()
+        .auth().oauth2(token)
         .contentType(ContentType.JSON)
         .body("{\"query\": \"{ allUsers { id } }\"}")
         .when()
