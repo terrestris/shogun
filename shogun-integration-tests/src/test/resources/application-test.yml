@@ -32,7 +32,7 @@ spring:
           backend:
             type: lucene
             directory:
-              root: /tmp/lucene-test
+              root: ${java.io.tmpdir}/lucene-test-${random.uuid}
               type: local-filesystem
 
   datasource:

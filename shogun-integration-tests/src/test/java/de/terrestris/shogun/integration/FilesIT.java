@@ -20,6 +20,7 @@ import de.terrestris.shogun.AbstractIT;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
@@ -35,7 +36,7 @@ class FilesIT extends AbstractIT {
 
     String fileUuid = given()
         .auth().oauth2(token)
-        .multiPart("file", "test.txt", content.getBytes(), "text/plain")
+        .multiPart("file", "test.txt", content.getBytes(StandardCharsets.UTF_8), "text/plain")
         .when()
         .post("/files/upload")
         .then()
@@ -57,7 +58,7 @@ class FilesIT extends AbstractIT {
         .extract()
         .asByteArray();
 
-    assertArrayEquals(content.getBytes(), downloaded);
+    assertArrayEquals(content.getBytes(StandardCharsets.UTF_8), downloaded);
 
     given()
         .auth().oauth2(token)
