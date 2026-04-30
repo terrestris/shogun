@@ -87,6 +87,7 @@
     <module>shogun-lib</module>
     <module>shogun-manager</module>
     <module>shogun-proxy</module>
+    <module>shogun-integration-tests</module>
   </modules>
 
   <properties>
@@ -94,6 +95,7 @@
     <sonar.host.url>https://sq.terrestris.de</sonar.host.url>
     <sonar.login>terrestris</sonar.login>
     <sonar.sources>src/main/</sonar.sources>
+    <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml,${project.build.directory}/site/jacoco-it/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     <project.encoding>UTF-8</project.encoding>
     <java.version>21</java.version>
 
@@ -285,6 +287,19 @@
               <goal>report</goal>
             </goals>
           </execution>
+          <execution>
+            <id>prepare-agent-integration</id>
+            <goals>
+                <goal>prepare-agent-integration</goal>
+            </goals>
+        </execution>
+        <execution>
+            <id>report-integration</id>
+            <phase>post-integration-test</phase>
+            <goals>
+                <goal>report-integration</goal>
+            </goals>
+        </execution>
         </executions>
       </plugin>
     </plugins>
