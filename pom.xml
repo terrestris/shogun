@@ -290,8 +290,12 @@
           <execution>
             <id>prepare-agent-integration</id>
             <goals>
-                <goal>prepare-agent-integration</goal>
+              <goal>prepare-agent-integration</goal>
             </goals>
+            <configuration>
+              <destFile>${maven.multiModuleProjectDirectory}/shogun-integration-tests/target/jacoco-it.exec</destFile>
+              <append>true</append>
+            </configuration>
         </execution>
         <execution>
             <id>report-integration</id>
