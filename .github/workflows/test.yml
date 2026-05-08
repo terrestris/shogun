@@ -60,7 +60,42 @@ jobs:
     - name: Test SHOGun with Maven
       env:
         KEYCLOAK_HOST: localhost
-      run: mvn -B test
+      run: mvn -B test -pl '!shogun-integration-tests'
+
+  integration-tests:
+
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v6
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+          architecture: x64
+
+      - name: Cache Maven repository
+        uses: actions/cache@v5
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Build dependencies
+        run: mvn -B install -DskipTests -pl '!shogun-integration-tests'
+
+      - name: Run integration tests
+        run: mvn -B verify -pl shogun-integration-tests
+
+      - name: Publish test results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: shogun-integration-tests/target/failsafe-reports/TEST-*.xml
 
   startup:
 
