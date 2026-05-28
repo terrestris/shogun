@@ -1,3 +1,15 @@
+# [23.1.0](https://github.com/terrestris/shogun/compare/v23.0.3...v23.1.0) (2026-05-28)
+
+
+### Bug Fixes
+
+* lombok mvn setup ([c7aa534](https://github.com/terrestris/shogun/commit/c7aa534976019181fed6c9cc4c75b747ba8e508f))
+
+
+### Features
+
+* update java to v25 ([cd68c86](https://github.com/terrestris/shogun/commit/cd68c8695ee0f1b301b73d2e96e1bfec207c137a))
+
 ## [23.0.3](https://github.com/terrestris/shogun/compare/v23.0.2...v23.0.3) (2026-04-27)
 
 
