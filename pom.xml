@@ -95,7 +95,7 @@
     <sonar.login>terrestris</sonar.login>
     <sonar.sources>src/main/</sonar.sources>
     <project.encoding>UTF-8</project.encoding>
-    <java.version>21</java.version>
+    <java.version>25</java.version>
 
     <!-- Plugins -->
     <maven-site-plugin.version>3.22.0</maven-site-plugin.version>
@@ -178,6 +178,13 @@
             <target>${java.version}</target>
             <showWarnings>true</showWarnings>
             <showDeprecation>true</showDeprecation>
+            <annotationProcessorPaths>
+              <path>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+              </path>
+            </annotationProcessorPaths>
           </configuration>
         </plugin>
         <plugin>
@@ -238,7 +245,7 @@
           </executions>
           <configuration>
             <from>
-              <image>eclipse-temurin:21-jdk-alpine</image>
+              <image>eclipse-temurin:25-jdk-alpine</image>
             </from>
             <to>
               <image>${image}</image>

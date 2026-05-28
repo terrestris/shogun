@@ -38,7 +38,7 @@ jobs:
                 match($0, /^v([0-9]+)\./, m)
                 major = m[1]
 
-                # Skip versions below v21
+                # Skip SHOGun versions below v21
                 if (major < 21) {
                   next
                 }
