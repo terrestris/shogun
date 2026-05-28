@@ -13,7 +13,7 @@ meet the demands of flexible project requirements.
 
 SHOGun…
 
-* …is written in Java and supports Java >= 21.
+* …is written in Java and supports Java >= 25.
 * …is based on top of Spring / Spring Boot.
 * …provides a set of configuration entities to manage the contents of a geospatial data infrastructure (e.g. layers,
 applications, users or groups).
@@ -28,7 +28,7 @@ an application configuration).
 For the development of SHOGun the following tools are required locally:
 
 - maven >= 3.9
-- Java 21
+- Java 25
 - docker and docker compose
 - IntelliJ (recommended)
 - [IntelliJ Lombok plugin](https://plugins.jetbrains.com/plugin/6317-lombok/)
