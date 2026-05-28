@@ -1,3 +1,15 @@
+# [24.0.0](https://github.com/terrestris/shogun/compare/v23.1.0...v24.0.0) (2026-05-28)
+
+
+### Bug Fixes
+
+* correct previous breaking change classification ([adcb5d9](https://github.com/terrestris/shogun/commit/adcb5d92e6b79e80615ded9eb441f07ba7eb4c29))
+
+
+### BREAKING CHANGES
+
+* now requires java 25
+
 # [23.1.0](https://github.com/terrestris/shogun/compare/v23.0.3...v23.1.0) (2026-05-28)
 
 
