@@ -9,7 +9,7 @@ on:
 jobs:
   license-headers:
 
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     steps:
 
@@ -23,7 +23,7 @@ jobs:
 
   commitlint:
 
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     steps:
 
@@ -36,7 +36,7 @@ jobs:
 
   mvn-test:
 
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     steps:
     - name: Checkout sources
@@ -64,7 +64,7 @@ jobs:
 
   startup:
 
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     steps:
       - uses: actions/checkout@v6
