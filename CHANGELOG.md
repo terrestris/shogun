@@ -1,3 +1,10 @@
+## [24.0.1](https://github.com/terrestris/shogun/compare/v24.0.0...v24.0.1) (2026-06-15)
+
+
+### Bug Fixes
+
+* add renovate config ([acc68c9](https://github.com/terrestris/shogun/commit/acc68c9ec1322135b92eb5e6c824f4c902f699f6))
+
 # [24.0.0](https://github.com/terrestris/shogun/compare/v23.1.0...v24.0.0) (2026-05-28)
 
 
