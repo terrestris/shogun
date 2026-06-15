@@ -42,5 +42,6 @@ header:
     - '.releaserc.json'
     - '.commitlintrc.json'
     - '.java-version'
+    - 'renovate.json'
 
   comment: on-failure
