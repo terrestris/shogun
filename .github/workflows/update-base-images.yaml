@@ -89,9 +89,9 @@ jobs:
       tag: ${{ matrix.tag }}
     secrets:
       nexus_user: ${{ secrets.NEXUS_USER }}
-      nexus_docker_user: ${{ secrets.NEXUS_DOCKER_USER }}
       nexus_pass: ${{ secrets.NEXUS_PASSWORD }}
-      nexus_docker_password: ${{ secrets.NEXUS_DOCKER_PASSWORD }}
+      docker_registry_user: ${{ secrets.DOCKER_REGISTRY_USER }}
+      docker_registry_password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
 
   run-latest-tag:
     needs: [latest-tags, run-for-tag]
@@ -100,6 +100,6 @@ jobs:
       tag: ${{ needs.latest-tags.outputs.latest_tag }}
     secrets:
       nexus_user: ${{ secrets.NEXUS_USER }}
-      nexus_docker_user: ${{ secrets.NEXUS_DOCKER_USER }}
       nexus_pass: ${{ secrets.NEXUS_PASSWORD }}
-      nexus_docker_password: ${{ secrets.NEXUS_DOCKER_PASSWORD }}
+      docker_registry_user: ${{ secrets.DOCKER_REGISTRY_USER }}
+      docker_registry_password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
