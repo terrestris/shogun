@@ -153,7 +153,7 @@
     <fontawesome.version>5.15.4</fontawesome.version>
 
     <!-- Jib -->
-    <image>docker-public.terrestris.de/shogun/${project.artifactId}:latest</image>
+    <image>hub.terrestris.de/shogun/${project.artifactId}:latest</image>
   </properties>
 
   <build>

@@ -34,8 +34,8 @@ jobs:
       with:
         servers: |
           [
+            { "id": "hub.terrestris.de", "username": "${{ secrets.DOCKER_REGISTRY_USER }}", "password": "${{ secrets.DOCKER_REGISTRY_PASSWORD }}" },
             { "id": "nexus.terrestris.de", "username": "${{ secrets.NEXUS_USER }}", "password": "${{ secrets.NEXUS_PASSWORD }}" },
-            { "id": "docker-public.terrestris.de", "username": "${{ secrets.NEXUS_DOCKER_USER }}", "password": "${{ secrets.NEXUS_DOCKER_PASSWORD }}" },
             { "id": "terrestris-nexus", "username": "${{ secrets.NEXUS_USER }}", "password": "${{ secrets.NEXUS_PASSWORD }}" },
             { "id": "terrestris-nexus-snapshots", "username": "${{ secrets.NEXUS_USER }}", "password": "${{ secrets.NEXUS_PASSWORD }}" }
           ]
