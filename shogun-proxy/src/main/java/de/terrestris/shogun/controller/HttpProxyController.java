@@ -18,14 +18,12 @@ package de.terrestris.shogun.controller;
 
 import de.terrestris.shogun.service.HttpProxyService;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.Map;
 
 /**
  * Controller for simple HTTP Proxy service (forward proxy)
@@ -36,8 +34,11 @@ import java.util.Map;
 @Controller
 public class HttpProxyController {
 
-    @Autowired
-    protected HttpProxyService httpProxyService;
+    private final HttpProxyService httpProxyService;
+
+    public HttpProxyController(HttpProxyService httpProxyService) {
+        this.httpProxyService = httpProxyService;
+    }
 
     /**
      * Web controller mapping <i>proxy.action</i> to doProxy method. Provided parameters are passed to {@link HttpProxyService}
@@ -47,7 +48,7 @@ public class HttpProxyController {
      * @param params  Request params
      * @return ResponseEntity
      */
-    @RequestMapping("/proxy.action")
+    @GetMapping("/proxy.action")
     public @ResponseBody
     ResponseEntity<?> doProxy(HttpServletRequest request, @RequestParam String baseUrl, @RequestParam(required = false) Map<String, String> params) {
         return httpProxyService.doProxy(request, baseUrl, params);
