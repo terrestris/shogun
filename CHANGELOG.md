@@ -1,3 +1,26 @@
+# [25.0.0](https://github.com/terrestris/shogun/compare/v24.0.1...v25.0.0) (2026-08-27)
+
+
+### Bug Fixes
+
+* close http client in HTTPutil after request was executed ([c21fbb9](https://github.com/terrestris/shogun/commit/c21fbb92ea638cdca942b8566a63005aea9828d0))
+* **deps:** update dependency io.hypersistence:hypersistence-utils-hibernate-71 to v3.15.4 ([ae52344](https://github.com/terrestris/shogun/commit/ae52344a45bcc8d8a3e054fdd65e9c00d9fdb37d))
+* **deps:** update dependency io.hypersistence:hypersistence-utils-hibernate-71 to v3.15.5 ([2776395](https://github.com/terrestris/shogun/commit/2776395fe253dbb715810581ca4d7cb7f9d7f7e7))
+* **deps:** update dependency org.springframework.data:spring-data-jpa to v4.1.1 ([be46e88](https://github.com/terrestris/shogun/commit/be46e88abcf8f1ed7c9dc7f3abe9c7056744cab9))
+* **deps:** update spring boot to v4.1.1 ([9973ecb](https://github.com/terrestris/shogun/commit/9973ecbb9a566db5d95b0e721d0c12ce20e6468d))
+* **deps:** update tika monorepo to v3.3.2 ([2e91ed1](https://github.com/terrestris/shogun/commit/2e91ed18f3927159351b020f62719505b24748d1))
+* remove @Transactional from interceptGeoServerRequest to prevent DB connection leaks ([eaddcd5](https://github.com/terrestris/shogun/commit/eaddcd51c397d6f6d241f5fd746a837d9e703430))
+
+
+### Continuous Integration
+
+* switch to new registry ([88f9f75](https://github.com/terrestris/shogun/commit/88f9f75b5300ef89ac65f38e507e9a7114fc110a))
+
+
+### BREAKING CHANGES
+
+* registry changed to hub.terrestris.de/shogun
+
 ## [24.0.1](https://github.com/terrestris/shogun/compare/v24.0.0...v24.0.1) (2026-06-15)
 
 
