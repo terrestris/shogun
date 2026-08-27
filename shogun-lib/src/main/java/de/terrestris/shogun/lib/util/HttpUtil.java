@@ -1997,6 +1997,9 @@ public class HttpUtil {
                 log.error("Error while closing resources: {}", e.getMessage());
                 log.trace("Full stack trace:", e);
             }
+
+            // Close the connection manager to release pooled connections
+            poolingHttpClientConnectionManager.close();
         }
 
         return response;
