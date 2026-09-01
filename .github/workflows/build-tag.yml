@@ -99,6 +99,13 @@ jobs:
               { "id": "terrestris-nexus-snapshots", "username": "${{ secrets.nexus_user }}", "password": "${{ secrets.nexus_pass }}" }
             ]
 
+      - name: Ensure latest Docker image registry
+        shell: bash
+        run: |
+          sed -i \
+            's#docker-public\.terrestris\.de/shogun/#hub\.terrestris\.de/shogun/#' \
+            pom.xml
+
       - name: Install dependencies
         run: mvn compile --batch-mode
 
