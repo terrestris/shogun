@@ -24,11 +24,60 @@ jobs:
         with:
           ref: v${{ inputs.tag }}
 
-      - name: Set up Java 25
+      - name: Detect Java version from pom.xml
+        id: detect-java
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os
+          import xml.etree.ElementTree as ET
+
+          fallback = "25"
+          pom_path = "pom.xml"
+
+          def find_with_ns(root, path):
+              ns = {"m": "http://maven.apache.org/POM/4.0.0"}
+              return root.find(path, ns)
+
+          def first_property_text(root, paths):
+              for path in paths:
+                  elem = find_with_ns(root, path)
+                  if elem is not None and elem.text:
+                      value = elem.text.strip()
+                      if value:
+                          return value
+              return None
+
+          java_version = None
+
+          try:
+              tree = ET.parse(pom_path)
+              root = tree.getroot()
+
+              # Prefer explicit java.version; fallback to compiler release/source.
+              java_version = first_property_text(root, [
+                  "./m:properties/m:java.version",
+                  "./m:properties/m:maven.compiler.release",
+                  "./m:properties/m:maven.compiler.source",
+              ])
+          except Exception:
+              java_version = None
+
+          if not java_version:
+              java_version = fallback
+
+          github_output = os.environ["GITHUB_OUTPUT"]
+          with open(github_output, "a", encoding="utf-8") as fh:
+              fh.write(f"java-version={java_version}\n")
+
+          print(f"Using Java version: {java_version}")
+          PY
+
+      - name: Set up Java ${{ steps.detect-java.outputs.java-version }}
         uses: actions/setup-java@v6
         with:
           distribution: temurin
-          java-version: '25'
+          java-version: '${{ steps.detect-java.outputs.java-version }}'
           architecture: x64
 
       - name: Restore cache
