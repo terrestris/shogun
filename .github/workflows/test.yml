@@ -46,7 +46,7 @@ jobs:
       uses: actions/setup-java@v6
       with:
         distribution: temurin
-        java-version: '25'
+        java-version: '25.0.4+101.0.LTS'
         architecture: x64
 
     - name: Handle caching of maven repository
@@ -73,7 +73,7 @@ jobs:
         uses: actions/setup-java@v6
         with:
           distribution: temurin
-          java-version: '25'
+          java-version: '25.0.4+101.0.LTS'
           architecture: x64
 
       - name: Cache the Maven packages to speed up build
