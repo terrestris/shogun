@@ -53,7 +53,7 @@ jobs:
       id: semantic
       uses: cycjimmy/semantic-release-action@v6
       with:
-        semantic_version: 23
+        semantic_version: 25
         extra_plugins: |
           @semantic-release/changelog@6
           @terrestris/maven-semantic-release@2
