@@ -19,14 +19,13 @@ package de.terrestris.shogun.config;
 import de.terrestris.shogun.converter.KeycloakJwtAuthenticationConverter;
 import de.terrestris.shogun.properties.KeycloakProperties;
 import jakarta.annotation.PostConstruct;
+import javax.net.ssl.HttpsURLConnection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-
-import javax.net.ssl.HttpsURLConnection;
 
 @ConditionalOnExpression("${keycloak.enabled:true}")
 @Configuration
@@ -58,10 +57,9 @@ public class KeycloakWebSecurityConfig implements DefaultWebSecurityConfig {
             keycloakProperties.getExtractRolesFromResource()
         );
 
-        http
-            .oauth2ResourceServer(oauth -> oauth
-                .jwt(jwt -> jwt.jwtAuthenticationConverter(authConverter))
-            );
+        http.oauth2ResourceServer(
+            oauth -> oauth.jwt(jwt -> jwt.jwtAuthenticationConverter(authConverter))
+        );
     }
 
 }
