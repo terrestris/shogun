@@ -24,22 +24,22 @@
   <meta name="description" content="Static landing page for the SHOGun demo">
   <meta name="author" content="The SHOGun contributors">
 
-  <link rel="shortcut icon" type="image/x-icon" href="./assets/img/favicon.ico">
+  <link rel="shortcut icon" type="image/x-icon" th:href="@{/assets/img/favicon.ico}">
 
   <title>SHOGun</title>
 
-  <link href="./assets/lib/bootstrap/package/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="./assets/lib/bootstrap/package/dist/js/bootstrap.bundle.min.js"></script>
-  <link href="./assets/lib/fontawesome/package/css/all.min.css" rel="stylesheet">
-  <link href="./index.css" rel="stylesheet">
+  <link th:href="@{/assets/lib/bootstrap/package/dist/css/bootstrap.min.css}" rel="stylesheet">
+  <script th:src="@{/assets/lib/bootstrap/package/dist/js/bootstrap.bundle.min.js}"></script>
+  <link th:href="@{/assets/lib/fontawesome/package/css/all.min.css}" rel="stylesheet">
+  <link th:href="@{/index.css}" rel="stylesheet">
 </head>
 
 <body>
 
   <header
     class="container d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
-    <a href="./" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
-      <img class="header-image" src="./assets/img/shogun_logo.png" alt="SHOGun logo">
+    <a th:href="@{/}" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
+      <img class="header-image" th:src="@{/assets/img/shogun_logo.png}" alt="SHOGun logo">
     </a>
     <ul class="nav col-md-3">
       <li class="nav-item">
@@ -53,7 +53,7 @@
   <main>
     <!-- web component template starts -->
     <template id="shogun-app" url="">
-      <link href="./assets/lib/fontawesome/package/css/all.min.css" rel="stylesheet">
+      <link th:href="@{/assets/lib/fontawesome/package/css/all.min.css}" rel="stylesheet">
       <div class="app-card">
         <div class="app-buttons">
           <slot name="admin-btn"></slot>
@@ -99,7 +99,7 @@
     <div class="container px-4 py-5">
       <h2 class="pb-2">Welcome to SHOGun</h2>
       <div style="display: none" id="keycloak-host" th:text="${@environment.getProperty('KEYCLOAK_HOST')}"></div>
-      <a href="/admin">
+      <a th:href="@{/admin}">
         <button id="admin-panel-btn" class="btn btn-primary">
           Open Admin Panel <em class="fas fa-lock"></em>
         </button>
@@ -120,7 +120,10 @@
   </footer>
 
   <script th:inline="javascript" type="module">
-    import Keycloak from './assets/lib/keycloak/package/lib/keycloak.js';
+    import Keycloak from /*[[@{/assets/lib/keycloak/package/lib/keycloak.js}]]*/ './assets/lib/keycloak/package/lib/keycloak.js';
+
+    // context path incl. a possible X-Forwarded-Prefix, e.g. '/' or '/gis_client/'
+    const basePath = /*[[@{/}]]*/ '/';
 
     window.onload = async () => {
       const keycloakHost = [[${@environment.getProperty('KEYCLOAK_HOST')}]];
@@ -181,7 +184,7 @@
             );
           }
           connectedCallback() {
-            this.onclick = () => window.open(`/client?applicationId=${this.getAttribute('app')}`);
+            this.onclick = () => window.open(`${basePath}client?applicationId=${this.getAttribute('app')}`);
           }
         }
       );
@@ -189,7 +192,7 @@
       if (appsEl) {
         appInfos.forEach(app => {
           const html = `<shogun-app app='${app.id}'>` +
-            `<a style='visibility: hidden' class='admin-btn' title='Edit application' slot='admin-btn' href='/admin/portal/application/${app.id}'>` +
+            `<a style='visibility: hidden' class='admin-btn' title='Edit application' slot='admin-btn' href='${basePath}admin/portal/application/${app.id}'>` +
             `<em class='fas fa-cog'></em></a>` +
             `<span>${app.logo}</span>` +
             `<img class='app-icon' slot='app-logoPath' src='${app.logo}' alt=''>` +
@@ -214,7 +217,7 @@
     const getApplications = async (token) => {
       if (token) {
         try {
-          const response = await fetch('./applications', {
+          const response = await fetch(`${basePath}applications`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }
@@ -240,7 +243,7 @@
           body: JSON.stringify(graphqlQuery),
         }
         try {
-          const response = await fetch('./graphql', requestInit);
+          const response = await fetch(`${basePath}graphql`, requestInit);
           const graphqlResponse = await response.json();
           if (graphqlResponse && graphqlResponse.data && graphqlResponse.data.allApplications) {
             return graphqlResponse.data.allApplications;
