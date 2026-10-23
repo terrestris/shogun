@@ -106,6 +106,7 @@ keycloak:
   admin-client-secret: ${KEYCLOAK_ADMIN_CLIENT_SECRET}
   realm: SHOGun
   client-id: shogun-boot
+  login-client-id: shogun-client
   principal-attribute: preferred_username
   disable-hostname-verification: true
   extract-roles-from-resource: true

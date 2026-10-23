@@ -126,11 +126,10 @@
     const basePath = /*[[@{/}]]*/ '/';
 
     window.onload = async () => {
-      const keycloakHost = [[${@environment.getProperty('KEYCLOAK_HOST')}]];
       const keycloak = new Keycloak({
-        url: `https://${keycloakHost}/auth`,
-        realm: 'SHOGun',
-        clientId: 'shogun-client'
+        url: /*[[${@environment.getProperty('keycloak.server-url', 'https://localhost/auth')}]]*/ 'https://localhost/auth',
+        realm: /*[[${@environment.getProperty('keycloak.realm', 'SHOGun')}]]*/ 'SHOGun',
+        clientId: /*[[${@environment.getProperty('keycloak.login-client-id', 'shogun-client')}]]*/ 'shogun-client'
       });
       try {
         const authenticated = await keycloak.init({

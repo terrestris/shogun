@@ -41,6 +41,8 @@ public class KeycloakProperties {
 
     private String clientId;
 
+    private String loginClientId;
+
     private String principalAttribute;
 
     private Boolean disableHostnameVerification = false;
