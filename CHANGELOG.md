@@ -1,3 +1,20 @@
+# [25.1.0](https://github.com/terrestris/shogun/compare/v25.0.0...v25.1.0) (2026-10-27)
+
+
+### Bug Fixes
+
+* **deps:** update dependency io.hypersistence:hypersistence-utils-hibernate-71 to v3.16.0 ([9e69aa0](https://github.com/terrestris/shogun/commit/9e69aa062fde79d2b52adde6153cb36755640dc5))
+* **deps:** update dependency org.apache.tika:tika-parsers-standard-package to v3.3.3 ([a64431d](https://github.com/terrestris/shogun/commit/a64431de950f3ebdc5b859209079fcd33cb0ade8))
+* **deps:** update dependency org.springframework.data:spring-data-jpa to v4.1.2 ([666b1a7](https://github.com/terrestris/shogun/commit/666b1a7d1019587939dcb7b530754e52d8d94372))
+* **deps:** update geotools.version to v35.1 ([f873066](https://github.com/terrestris/shogun/commit/f8730668ffbccc07e1176eb7ed7508082d4c140d))
+* **deps:** update spring boot to v4.1.2 ([ecd30f3](https://github.com/terrestris/shogun/commit/ecd30f3fc04836c741cdd6235fed60c62826d157))
+* make the paths aware of any potential X-Forwarded-Prefix header ([1f2be2b](https://github.com/terrestris/shogun/commit/1f2be2b465906c82f1b034dfcca20c261f71bfee))
+
+
+### Features
+
+* make all keycloak settings configurable ([aa3dfad](https://github.com/terrestris/shogun/commit/aa3dfadb4f4a9f82f4d6b5ae26b9211d79b1a11a))
+
 # [25.0.0](https://github.com/terrestris/shogun/compare/v24.0.1...v25.0.0) (2026-08-27)
 
 
