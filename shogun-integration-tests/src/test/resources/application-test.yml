@@ -1,0 +1,81 @@
+#  SHOGun, https://terrestris.github.io/shogun/
+#
+#  Copyright © 2026-present terrestris GmbH & Co. KG
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#    https://www.apache.org/licenses/LICENSE-2.0.txt
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  jpa:
+    open-in-view: false
+    properties:
+      org:
+        hibernate:
+          envers:
+            default_schema: shogun_rev
+            audit_table_suffix: _rev
+      hibernate:
+        id:
+          db_structure_naming_strategy: single
+        default_schema: shogun
+        search:
+          backend:
+            type: lucene
+            directory:
+              root: ${java.io.tmpdir}/lucene-test-${random.uuid}
+              type: local-filesystem
+
+  datasource:
+    url: placeholder
+    username: placeholder
+    password: placeholder
+    driver-class-name: org.postgresql.Driver
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+    schemas: shogun,shogun_rev,interceptor
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: placeholder
+
+keycloak:
+  server-url: placeholder
+  realm: SHOGun
+  master-realm: master
+  admin-client-id: shogun-boot
+  admin-client-secret: test-secret
+  principal-attribute: preferred_username
+
+upload:
+  file:
+    supportedContentTypes:
+      - application/json
+      - application/pdf
+      - application/xml
+      - text/plain
+      - image/png
+      - image/jpeg
+
+interceptor:
+  namespaceBoundUrl: false
+  defaultOwsUrl: ${wiremock.base-url}/ows
+
+shogun-proxy:
+  whitelist:
+    - localhost
+  
