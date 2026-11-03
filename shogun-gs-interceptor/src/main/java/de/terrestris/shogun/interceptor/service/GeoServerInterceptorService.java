@@ -27,7 +27,7 @@ import de.terrestris.shogun.interceptor.model.InterceptorRule;
 import de.terrestris.shogun.interceptor.servlet.MutableHttpServletRequest;
 import de.terrestris.shogun.interceptor.util.OgcXmlUtil;
 import de.terrestris.shogun.lib.dto.HttpResponse;
-import de.terrestris.shogun.lib.util.HttpUtil;
+import de.terrestris.shogun.lib.http.PooledHttpClient;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
@@ -39,12 +39,10 @@ import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.http.message.BasicHeader;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.apache.hc.core5.net.URIBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -75,14 +73,22 @@ public class GeoServerInterceptorService {
     private static final String WMS_REFLECT_ENDPOINT = "/reflect";
     private static final String USE_REFLECT_PARAM = "useReflect";
 
-    @Autowired
-    protected OgcMessageDistributor ogcMessageDistributor;
+    private final OgcMessageDistributor ogcMessageDistributor;
+    private final InterceptorRuleService interceptorRuleService;
+    private final InterceptorProperties interceptorProperties;
+    private final PooledHttpClient pooledHttpClient;
 
-    @Autowired
-    protected InterceptorRuleService interceptorRuleService;
-
-    @Autowired
-    protected InterceptorProperties interceptorProperties;
+    public GeoServerInterceptorService(
+        OgcMessageDistributor ogcMessageDistributor,
+        InterceptorRuleService interceptorRuleService,
+        InterceptorProperties interceptorProperties,
+        PooledHttpClient pooledHttpClient
+    ) {
+        this.ogcMessageDistributor = ogcMessageDistributor;
+        this.interceptorRuleService = interceptorRuleService;
+        this.interceptorProperties = interceptorProperties;
+        this.pooledHttpClient = pooledHttpClient;
+    }
 
     /**
      * @param params
@@ -129,7 +135,7 @@ public class GeoServerInterceptorService {
      * @throws InterceptorException
      * @throws HttpException
      */
-    public static HttpResponse sendRequest(MutableHttpServletRequest request) throws InterceptorException, HttpException {
+    public HttpResponse sendRequest(MutableHttpServletRequest request) throws InterceptorException, HttpException {
         HttpResponse httpResponse = new HttpResponse();
         String requestMethod = request.getMethod();
         boolean getRequest = "GET".equalsIgnoreCase(requestMethod);
@@ -151,7 +157,7 @@ public class GeoServerInterceptorService {
             if (getRequest) {
                 // if we're called via GET method
                 // perform the request with the given parameters
-                httpResponse = HttpUtil.get(fullRequestUri, requestHeaders);
+                httpResponse = pooledHttpClient.get(fullRequestUri, requestHeaders);
 
             } else if (postRequest) {
                 // if we're called via POST method
@@ -176,10 +182,10 @@ public class GeoServerInterceptorService {
                     }
 
                     // perform the POST request to the URI with queryString and with the given body
-                    httpResponse = HttpUtil.post(requestUri, body, contentType, requestHeaders, false);
+                    httpResponse = pooledHttpClient.post(requestUri, body, contentType, requestHeaders);
                 } else {
                     // perform the POST request with the given name value pairs,
-                    httpResponse = HttpUtil.post(requestUri, allQueryParams, requestHeaders);
+                    httpResponse = pooledHttpClient.post(requestUri, allQueryParams, requestHeaders);
                 }
 
             } else {
@@ -187,7 +193,7 @@ public class GeoServerInterceptorService {
                 throw new InterceptorException("Only GET or POST method is allowed");
             }
 
-        } catch (URISyntaxException | UnsupportedEncodingException e) {
+        } catch (URISyntaxException e) {
             log.error("Error while sending request: " + e.getMessage());
         }
 
@@ -243,7 +249,6 @@ public class GeoServerInterceptorService {
 
     /**
      * @return
-     * @throws UnsupportedEncodingException
      */
     private static HttpHeaders getResponseHeadersToForward(HttpHeaders headers) {
         HttpHeaders responseHeaders = new HttpHeaders();

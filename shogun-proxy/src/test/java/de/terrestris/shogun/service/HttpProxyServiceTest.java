@@ -18,7 +18,7 @@ package de.terrestris.shogun.service;
 
 import de.terrestris.shogun.config.HttpProxyConfig;
 import de.terrestris.shogun.lib.dto.HttpResponse;
-import de.terrestris.shogun.lib.util.HttpUtil;
+import de.terrestris.shogun.lib.http.PooledHttpClient;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpException;
@@ -26,7 +26,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
@@ -34,9 +33,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
@@ -47,8 +46,13 @@ import static org.springframework.test.util.AssertionErrors.assertNotNull;
 @ActiveProfiles("proxy-test")
 public class HttpProxyServiceTest {
 
+    private static final String INTERNET_CONTENT = "THE INTERNET!";
+
     @Autowired
     protected HttpProxyService httpProxyService;
+
+    @MockitoBean
+    protected PooledHttpClient pooledHttpClient;
 
     @Test
     @DisplayName("Return status code 400 if request and base URL are null")
@@ -103,237 +107,132 @@ public class HttpProxyServiceTest {
 
     @Test
     @DisplayName("Return status code 200 for allowed HTTP GET request")
-    public void proxy_returns_200_for_allowed_GET_request() throws URISyntaxException {
-        HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
-        final String internetContent = "THE INTERNET!";
+    public void proxy_returns_200_for_allowed_GET_request() throws Exception {
         final String baseUrl = "https://www.terrestris.de/internet.txt";
-        final URI baseUri = new URI(baseUrl);
-        HttpResponse mockedResponse = mock(HttpResponse.class);
+        HttpServletRequest mockedRequest = mockRequest("GET", null);
+        when(pooledHttpClient.forwardGet(new URI(baseUrl), mockedRequest, false))
+            .thenReturn(mockResponse(HttpStatus.OK, INTERNET_CONTENT));
 
-        final HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, "text/plain");
-        HttpStatus status = HttpStatus.OK;
+        final ResponseEntity<?> responseEntity = httpProxyService.doProxy(mockedRequest, baseUrl, null);
 
-        when(mockedResponse.getHeaders()).thenReturn(headers);
-        when(mockedResponse.getBody()).thenReturn(internetContent.getBytes());
-        when(mockedResponse.getStatusCode()).thenReturn(status);
-
-        try (
-            MockedStatic<HttpUtil> httpUtilMock = mockStatic(HttpUtil.class)
-        ) {
-            httpUtilMock.when(() -> HttpUtil.isHttpGetRequest(mockedRequest)).thenReturn(true);
-            httpUtilMock.when(() -> HttpUtil.forwardGet(baseUri, mockedRequest, false)).thenReturn(mockedResponse);
-
-            final ResponseEntity<?> responseEntity = httpProxyService.doProxy(mockedRequest, baseUrl, null);
-            assertEquals("Returned Status code matched mocked one.", HttpStatus.OK, responseEntity.getStatusCode());
-
-            final byte[] responseBodyAsByteArray = (byte[]) responseEntity.getBody();
-            assertNotNull("Response body is null.", responseBodyAsByteArray);
-            assert responseBodyAsByteArray != null;
-            assertEquals("Returned content matched mocked one.", new String(responseBodyAsByteArray), internetContent);
-        }
+        assertOkWithContent(responseEntity, INTERNET_CONTENT);
     }
 
     @Test
     @DisplayName("Return status code 400 for erroneous HTTP GET request")
-    public void proxy_returns_400_for_erroneous_GET_requests() throws URISyntaxException {
-        HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
-        final String internetContent = "THE INTERNET!";
+    public void proxy_returns_400_for_erroneous_GET_requests() throws Exception {
         final String baseUrl = "https://www.terrestris.de/internet.txt";
-        final URI baseUri = new URI(baseUrl);
-        HttpResponse mockedResponse = mock(HttpResponse.class);
-        final String msg = "ERROR";
+        HttpServletRequest mockedRequest = mockRequest("GET", null);
+        when(pooledHttpClient.forwardGet(new URI(baseUrl), mockedRequest, false))
+            .thenThrow(new HttpException("ERROR"));
 
-        final HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, "text/plain");
-        HttpStatus status = HttpStatus.OK;
+        final ResponseEntity<?> responseEntity = httpProxyService.doProxy(mockedRequest, baseUrl, null);
 
-        when(mockedResponse.getHeaders()).thenReturn(headers);
-        when(mockedResponse.getBody()).thenReturn(internetContent.getBytes());
-        when(mockedResponse.getStatusCode()).thenReturn(status);
-
-        try (
-            MockedStatic<HttpUtil> httpUtilMock = mockStatic(HttpUtil.class)
-        ) {
-            httpUtilMock.when(() -> HttpUtil.isHttpGetRequest(mockedRequest)).thenReturn(true);
-            httpUtilMock.when(() -> HttpUtil.forwardGet(baseUri, mockedRequest, false)).thenThrow(new HttpException(msg));
-            final ResponseEntity<?> responseEntity = httpProxyService.doProxy(mockedRequest, baseUrl, null);
-            assertEquals("Returned Status code matched mocked one.", HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-            assertEquals("Returned Status matched", HttpProxyService.ERR_MSG_400_COMMON, responseEntity.getBody());
-        }
+        assertBadRequest(responseEntity);
     }
 
     @Test
     @DisplayName("Return status code 200 for allowed HTTP POST request")
-    public void proxy_returns_200_for_allowed_POST_request() throws URISyntaxException {
-        HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
-        final String internetContent = "THE INTERNET!";
+    public void proxy_returns_200_for_allowed_POST_request() throws Exception {
         final String baseUrl = "https://www.terrestris.de/endpointToPostAt";
-        final URI baseUri = new URI(baseUrl);
-        HttpResponse mockedResponse = mock(HttpResponse.class);
+        HttpServletRequest mockedRequest = mockRequest("POST", "text/plain");
+        when(pooledHttpClient.forwardPost(new URI(baseUrl), mockedRequest, false))
+            .thenReturn(mockResponse(HttpStatus.OK, INTERNET_CONTENT));
 
-        final HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, "text/plain");
-        HttpStatus status = HttpStatus.OK;
+        final ResponseEntity<?> responseEntity = httpProxyService.doProxy(mockedRequest, baseUrl, null);
 
-        when(mockedResponse.getHeaders()).thenReturn(headers);
-        when(mockedResponse.getBody()).thenReturn(internetContent.getBytes());
-        when(mockedResponse.getStatusCode()).thenReturn(status);
-
-        try (
-            MockedStatic<HttpUtil> httpUtilMock = mockStatic(HttpUtil.class)
-        ) {
-            httpUtilMock.when(() -> HttpUtil.isHttpGetRequest(mockedRequest)).thenReturn(false);
-            httpUtilMock.when(() -> HttpUtil.isHttpPostRequest(mockedRequest)).thenReturn(true);
-            httpUtilMock.when(() -> HttpUtil.forwardPost(baseUri, mockedRequest, false)).thenReturn(mockedResponse);
-            final ResponseEntity<?> responseEntity = httpProxyService.doProxy(mockedRequest, baseUrl, null);
-            assertEquals("Returned Status code matched mocked one.", HttpStatus.OK, responseEntity.getStatusCode());
-
-            final byte[] responseBodyAsByteArray = (byte[]) responseEntity.getBody();
-            assertNotNull("Response body is null.", responseBodyAsByteArray);
-            assert responseBodyAsByteArray != null;
-
-            assertEquals("Returned content matched mocked one.", new String(responseBodyAsByteArray), internetContent);
-        }
+        assertOkWithContent(responseEntity, INTERNET_CONTENT);
     }
 
     @Test
     @DisplayName("Return status code 400 for erroneous HTTP POST request")
-    public void proxy_returns_400_for_erroneous_POST_requests() throws URISyntaxException {
-        HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
-        final String internetContent = "THE INTERNET!";
+    public void proxy_returns_400_for_erroneous_POST_requests() throws Exception {
         final String baseUrl = "https://www.terrestris.de/internet.txt";
-        final URI baseUri = new URI(baseUrl);
-        HttpResponse mockedResponse = mock(HttpResponse.class);
-        final String msg = "ERROR";
+        HttpServletRequest mockedRequest = mockRequest("POST", "text/plain");
+        when(pooledHttpClient.forwardPost(new URI(baseUrl), mockedRequest, false))
+            .thenThrow(new HttpException("ERROR"));
 
-        final HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, "text/plain");
-        HttpStatus status = HttpStatus.OK;
+        final ResponseEntity<?> responseEntity = httpProxyService.doProxy(mockedRequest, baseUrl, null);
 
-        when(mockedResponse.getHeaders()).thenReturn(headers);
-        when(mockedResponse.getBody()).thenReturn(internetContent.getBytes());
-        when(mockedResponse.getStatusCode()).thenReturn(status);
-
-        try (
-            MockedStatic<HttpUtil> httpUtilMock = mockStatic(HttpUtil.class)
-        ) {
-            httpUtilMock.when(() -> HttpUtil.isHttpGetRequest(mockedRequest)).thenReturn(false);
-            httpUtilMock.when(() -> HttpUtil.isHttpPostRequest(mockedRequest)).thenReturn(true);
-            httpUtilMock.when(() -> HttpUtil.forwardPost(baseUri, mockedRequest, false)).thenThrow(new HttpException(msg));
-            final ResponseEntity<?> responseEntity = httpProxyService.doProxy(mockedRequest, baseUrl, null);
-            assertEquals("Returned Status code matched mocked one.", HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-            assertEquals("Returned Status matched", HttpProxyService.ERR_MSG_400_COMMON, responseEntity.getBody());
-        }
+        assertBadRequest(responseEntity);
     }
 
     @Test
     @DisplayName("Return status code 200 for allowed HTTP multipart POST request")
-    public void proxy_returns_200_for_allowed_FormMultipartPost_request() throws URISyntaxException {
-        HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
-        final String internetContent = "THE INTERNET!";
+    public void proxy_returns_200_for_allowed_FormMultipartPost_request() throws Exception {
         final String baseUrl = "https://www.terrestris.de/endpointToPostAt";
-        final URI baseUri = new URI(baseUrl);
-        HttpResponse mockedResponse = mock(HttpResponse.class);
+        HttpServletRequest mockedRequest = mockRequest("POST", "multipart/form-data; boundary=x");
+        when(pooledHttpClient.forwardFormMultipartPost(new URI(baseUrl), mockedRequest, false))
+            .thenReturn(mockResponse(HttpStatus.OK, INTERNET_CONTENT));
 
-        final HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, "text/plain");
-        HttpStatus status = HttpStatus.OK;
+        final ResponseEntity<?> responseEntity = httpProxyService.doProxy(mockedRequest, baseUrl, null);
 
-        when(mockedResponse.getHeaders()).thenReturn(headers);
-        when(mockedResponse.getBody()).thenReturn(internetContent.getBytes());
-        when(mockedResponse.getStatusCode()).thenReturn(status);
-
-        try (
-            MockedStatic<HttpUtil> httpUtilMock = mockStatic(HttpUtil.class)
-        ) {
-            httpUtilMock.when(() -> HttpUtil.isHttpGetRequest(mockedRequest)).thenReturn(false);
-            httpUtilMock.when(() -> HttpUtil.isHttpPostRequest(mockedRequest)).thenReturn(true);
-            httpUtilMock.when(() -> HttpUtil.isFormMultipartPost(mockedRequest)).thenReturn(true);
-            httpUtilMock.when(() -> HttpUtil.forwardFormMultipartPost(baseUri, mockedRequest, false)).thenReturn(mockedResponse);
-            final ResponseEntity<?> responseEntity = httpProxyService.doProxy(mockedRequest, baseUrl, null);
-            assertEquals("Returned Status code matched mocked one.", HttpStatus.OK, responseEntity.getStatusCode());
-
-            final byte[] responseBodyAsByteArray = (byte[]) responseEntity.getBody();
-            assertNotNull("Response body is null.", responseBodyAsByteArray);
-            assert responseBodyAsByteArray != null;
-            assertEquals("Returned content matched mocked one.", new String(responseBodyAsByteArray), internetContent);
-        }
+        assertOkWithContent(responseEntity, INTERNET_CONTENT);
     }
 
     @Test
     @DisplayName("Return status code 400 for erroneous HTTP multipart POST request")
-    public void proxy_returns_400_for_erroneous_FormMultipartPost_requests() throws URISyntaxException {
-        HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
-        final String internetContent = "THE INTERNET!";
+    public void proxy_returns_400_for_erroneous_FormMultipartPost_requests() throws Exception {
         final String baseUrl = "https://www.terrestris.de/internet.txt";
-        final URI baseUri = new URI(baseUrl);
-        HttpResponse mockedResponse = mock(HttpResponse.class);
-        final String msg = "ERROR";
+        HttpServletRequest mockedRequest = mockRequest("POST", "multipart/form-data; boundary=x");
+        when(pooledHttpClient.forwardFormMultipartPost(new URI(baseUrl), mockedRequest, false))
+            .thenThrow(new HttpException("ERROR"));
 
-        final HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, "text/plain");
-        HttpStatus status = HttpStatus.OK;
+        final ResponseEntity<?> responseEntity = httpProxyService.doProxy(mockedRequest, baseUrl, null);
 
-        when(mockedResponse.getHeaders()).thenReturn(headers);
-        when(mockedResponse.getBody()).thenReturn(internetContent.getBytes());
-        when(mockedResponse.getStatusCode()).thenReturn(status);
-        try (
-            MockedStatic<HttpUtil> httpUtilMock = mockStatic(HttpUtil.class)
-        ) {
-            httpUtilMock.when(() -> HttpUtil.isHttpGetRequest(mockedRequest)).thenReturn(false);
-            httpUtilMock.when(() -> HttpUtil.isHttpPostRequest(mockedRequest)).thenReturn(true);
-            httpUtilMock.when(() -> HttpUtil.isFormMultipartPost(mockedRequest)).thenReturn(true);
-            httpUtilMock.when(() -> HttpUtil.forwardFormMultipartPost(baseUri, mockedRequest, false)).thenThrow(new HttpException(msg));
-
-            final ResponseEntity<?> responseEntity = httpProxyService.doProxy(mockedRequest, baseUrl, null);
-            assertEquals("Returned Status code matched mocked one.", HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-            assertEquals("Returned Status matched", HttpProxyService.ERR_MSG_400_COMMON, responseEntity.getBody());
-        }
+        assertBadRequest(responseEntity);
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"http", "https"})
-    @DisplayName("Should use system proxy settings when forwarding request")
+    @DisplayName("Should keep system proxy settings untouched while forwarding request")
     public void proxy_uses_system_proxy_settings(String scheme) throws Exception {
-        // Set system proxy properties
         final String proxyHost = "1.2.2.4";
         System.setProperty("%s.proxyHost".formatted(scheme), proxyHost);
         System.setProperty("%s.proxyPort".formatted(scheme), "8888");
 
-        HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
         final String baseUrl = "%s://my-test-example.org/resource".formatted(scheme);
-        final URI baseUri = new URI(baseUrl);
-        HttpResponse mockedResponse = mock(HttpResponse.class);
+        HttpServletRequest mockedRequest = mockRequest("GET", null);
 
-        final HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, "text/plain");
-        HttpStatus status = HttpStatus.OK;
-
-        when(mockedResponse.getHeaders()).thenReturn(headers);
-        when(mockedResponse.getBody()).thenReturn("proxied".getBytes());
-        when(mockedResponse.getStatusCode()).thenReturn(status);
-
-        try (
-            MockedStatic<HttpUtil> httpUtilMock = mockStatic(HttpUtil.class)
-        ) {
-            httpUtilMock.when(() -> HttpUtil.isHttpGetRequest(mockedRequest)).thenReturn(true);
-            httpUtilMock.when(() -> HttpUtil.forwardGet(baseUri, mockedRequest, false)).thenAnswer(invocation -> {
-                // Assert system proxy properties are set
+        try {
+            when(pooledHttpClient.forwardGet(new URI(baseUrl), mockedRequest, false)).thenAnswer(invocation -> {
                 assertEquals("Proxy host does not match", proxyHost, System.getProperty("%s.proxyHost".formatted(scheme)));
                 assertEquals("Proxy port does not match", "8888", System.getProperty("%s.proxyPort".formatted(scheme)));
-                return mockedResponse;
+                return mockResponse(HttpStatus.OK, "proxied");
             });
 
             final ResponseEntity<?> responseEntity = httpProxyService.doProxy(mockedRequest, baseUrl, null);
-            assertEquals("HttpStatus does not match", HttpStatus.OK, responseEntity.getStatusCode());
-            assertNotNull("Response body is null.", responseEntity.getBody());
-            assertEquals("Proxies request body does not match", "proxied", new String((byte[]) responseEntity.getBody()));
+
+            assertOkWithContent(responseEntity, "proxied");
         } finally {
-            // Cleanup system properties
             System.clearProperty("%s.proxyHost".formatted(scheme));
             System.clearProperty("%s.proxyPort".formatted(scheme));
         }
+    }
+
+    private static HttpServletRequest mockRequest(String method, String contentType) {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getMethod()).thenReturn(method);
+        when(request.getContentType()).thenReturn(contentType);
+        return request;
+    }
+
+    private static HttpResponse mockResponse(HttpStatus status, String content) {
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, "text/plain");
+        return new HttpResponse(status, headers, content.getBytes());
+    }
+
+    private static void assertOkWithContent(ResponseEntity<?> responseEntity, String content) {
+        assertEquals("Returned Status code matched mocked one.", HttpStatus.OK, responseEntity.getStatusCode());
+        final byte[] body = (byte[]) responseEntity.getBody();
+        assertNotNull("Response body is null.", body);
+        assertEquals("Returned content matched mocked one.", content, new String(body));
+    }
+
+    private static void assertBadRequest(ResponseEntity<?> responseEntity) {
+        assertEquals("Returned Status code matched mocked one.", HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+        assertEquals("Returned Status matched", HttpProxyService.ERR_MSG_400_COMMON, responseEntity.getBody());
     }
 
 }
