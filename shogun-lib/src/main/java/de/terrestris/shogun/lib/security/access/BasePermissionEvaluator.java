@@ -24,6 +24,7 @@ import de.terrestris.shogun.lib.security.access.entity.DefaultPermissionEvaluato
 import de.terrestris.shogun.lib.service.security.provider.UserProviderService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -36,12 +37,15 @@ import java.util.Optional;
 @Log4j2
 public class BasePermissionEvaluator implements PermissionEvaluator {
 
+    @Lazy
     @Autowired
     protected List<BaseEntityPermissionEvaluator<?>> permissionEvaluators;
 
+    @Lazy
     @Autowired
     protected DefaultPermissionEvaluator defaultPermissionEvaluator;
 
+    @Lazy
     @Autowired
     private UserProviderService userProviderService;
 
