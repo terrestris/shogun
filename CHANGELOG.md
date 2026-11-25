@@ -1,3 +1,12 @@
+## [25.1.1](https://github.com/terrestris/shogun/compare/v25.1.0...v25.1.1) (2026-11-25)
+
+
+### Bug Fixes
+
+* basepermissionevaluator tests ([ed9807a](https://github.com/terrestris/shogun/commit/ed9807a1506ba34b20666484fd69cd930f61d2c8))
+* revert geotools upgrade ([005baf1](https://github.com/terrestris/shogun/commit/005baf1fb4ad6efabfcf9109d134250a80c5a91f))
+* update spring-boot to v4.2.0 ([9baf05c](https://github.com/terrestris/shogun/commit/9baf05c6985df88eaa41c498a68ae47f9cb1bf00))
+
 # [25.1.0](https://github.com/terrestris/shogun/compare/v25.0.0...v25.1.0) (2026-10-27)
 
 
