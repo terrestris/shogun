@@ -18,7 +18,8 @@ package de.terrestris.shogun.service;
 
 import de.terrestris.shogun.config.properties.HttpProxyProperties;
 import de.terrestris.shogun.lib.dto.HttpResponse;
-import de.terrestris.shogun.lib.util.HttpUtil;
+import de.terrestris.shogun.lib.http.HttpRequestUtil;
+import de.terrestris.shogun.lib.http.PooledHttpClient;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
@@ -26,7 +27,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.net.URIBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -114,8 +114,13 @@ public class HttpProxyService {
     private static final int HTTPS_PORT = 443;
     private static final int HTTP_PORT = 80;
 
-    @Autowired
-    protected HttpProxyProperties httpProxyProperties;
+    private final HttpProxyProperties httpProxyProperties;
+    private final PooledHttpClient pooledHttpClient;
+
+    public HttpProxyService(HttpProxyProperties httpProxyProperties, PooledHttpClient pooledHttpClient) {
+        this.httpProxyProperties = httpProxyProperties;
+        this.pooledHttpClient = pooledHttpClient;
+    }
 
     /**
      * Proxy {@link HttpServletRequest} given the base URL and its params
@@ -175,21 +180,21 @@ public class HttpProxyService {
 
         // Proxy the request
         HttpResponse response;
-        if (HttpUtil.isHttpGetRequest(request)) {
+        if (HttpRequestUtil.isHttpGetRequest(request)) {
             try {
                 log.debug("Forwarding as GET to: {}", url);
-                response = HttpUtil.forwardGet(url.toURI(), request, false);
+                response = pooledHttpClient.forwardGet(url.toURI(), request, false);
             } catch (URISyntaxException | HttpException e) {
                 String errorMessage = String.format("Error forwarding GET request: %s", e.getMessage());
                 log.error(errorMessage);
                 log.trace(errorMessage, e);
                 return RESPONSE_400_BAD_REQUEST_COMMON;
             }
-        } else if (HttpUtil.isHttpPostRequest(request)) {
-            if (HttpUtil.isFormMultipartPost(request)) {
+        } else if (HttpRequestUtil.isHttpPostRequest(request)) {
+            if (HttpRequestUtil.isFormMultipartPost(request)) {
                 try {
                     log.debug("Forwarding as form/multipart POST");
-                    response = HttpUtil.forwardFormMultipartPost(url.toURI(), request, false);
+                    response = pooledHttpClient.forwardFormMultipartPost(url.toURI(), request, false);
                 } catch (URISyntaxException | HttpException | IllegalStateException | IOException | ServletException e) {
                     String errorMessage = String.format("Error forwarding form/multipart POST request: %s", e.getMessage());
                     log.error(errorMessage);
@@ -199,7 +204,7 @@ public class HttpProxyService {
             } else {
                 try {
                     log.debug("Forwarding as POST");
-                    response = HttpUtil.forwardPost(url.toURI(), request, false);
+                    response = pooledHttpClient.forwardPost(url.toURI(), request, false);
                 } catch (URISyntaxException | HttpException e) {
                     String errorMessage = "Error forwarding POST request: " + e.getMessage();
                     log.error(errorMessage);
